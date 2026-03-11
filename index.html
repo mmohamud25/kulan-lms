@@ -782,7 +782,7 @@
       <div class="c-info">
         <div class="c-info-item">
           <div class="c-icon">📧</div>
-          <div><div class="c-lbl">Email</div><div class="c-val">info@kulaninstitute.com</div></div>
+          <div><div class="c-lbl">Email</div><div class="c-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="80e9eee6efc0ebf5ece1eee9eef3f4e9f4f5f4e5aee3efed">[email&#160;protected]</a></div></div>
         </div>
         <div class="c-info-item">
           <div class="c-icon">🌐</div>
@@ -801,34 +801,40 @@
         <div class="so">Isdiiwaangeli ama Nala Soo Xiriir</div>
       </div>
 
-      <div class="f-row">
-        <div class="f-group">
-          <label class="f-label">Full Name <span class="so">Magacaaga Oo Dhan</span></label>
-          <input type="text" class="f-input" placeholder="Your full name">
+      <form name="enrollment" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <!-- Spam protection - hidden field -->
+        <input type="hidden" name="form-name" value="enrollment">
+        <p style="display:none"><input name="bot-field"></p>
+
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Full Name <span class="so">Magacaaga Oo Dhan</span></label>
+            <input type="text" name="name" class="f-input" placeholder="Your full name" required>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Email <span class="so">Iimayl</span></label>
+            <input type="email" name="email" class="f-input" placeholder="you@example.com" required>
+          </div>
         </div>
+
         <div class="f-group">
-          <label class="f-label">Email <span class="so">Iimayl</span></label>
-          <input type="email" class="f-input" placeholder="you@example.com">
+          <label class="f-label">Course of Interest <span class="so">Koorska Aad Dooranayso</span></label>
+          <select name="course" class="f-select" required>
+            <option value="" disabled selected>Select a course</option>
+            <option>AI for Beginners</option>
+            <option>Cybersecurity Fundamentals</option>
+            <option>Digital Literacy (Waitlist)</option>
+            <option>General Inquiry</option>
+          </select>
         </div>
-      </div>
 
-      <div class="f-group">
-        <label class="f-label">Course of Interest <span class="so">Koorska Aad Dooranayso</span></label>
-        <select class="f-select">
-          <option value="" disabled selected>Select a course</option>
-          <option>AI for Beginners</option>
-          <option>Cybersecurity Fundamentals</option>
-          <option>Digital Literacy (Waitlist)</option>
-          <option>General Inquiry</option>
-        </select>
-      </div>
+        <div class="f-group">
+          <label class="f-label">Message <span class="so">Farriin</span></label>
+          <textarea name="message" class="f-area" placeholder="Tell us about yourself or ask a question..."></textarea>
+        </div>
 
-      <div class="f-group">
-        <label class="f-label">Message <span class="so">Farriin</span></label>
-        <textarea class="f-area" placeholder="Tell us about yourself or ask a question..."></textarea>
-      </div>
-
-      <button class="f-submit">Send Message & Enroll</button>
+        <button type="submit" class="f-submit">Send Message & Enroll</button>
+      </form>
     </div>
   </div>
 </section>
@@ -854,7 +860,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const toggle  = document.getElementById('langToggle');
   const btnEN   = document.getElementById('btnEN');
   const btnSO   = document.getElementById('btnSO');
@@ -862,12 +868,3 @@
 
   toggle.addEventListener('click', () => {
     soOn = !soOn;
-    document.body.classList.toggle('somali-on', soOn);
-    btnEN.classList.toggle('active', !soOn);
-    btnSO.classList.toggle('active',  soOn);
-    btnSO.textContent = soOn ? '✓ Somali' : '+ Somali';
-  });
-</script>
-
-</body>
-</html>
