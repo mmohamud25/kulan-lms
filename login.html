@@ -139,6 +139,11 @@
   }
 
   .info-box strong { color: var(--cyan); }
+
+  @media (max-width: 480px) {
+    .card { padding: 36px 24px; margin: 16px; }
+    h1 { font-size: 24px; }
+  }
 </style>
 </head>
 <body>
@@ -170,21 +175,32 @@
   // Initialize Netlify Identity
   netlifyIdentity.init();
 
+  // 🔒 Your admin email
+  const ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
+
+  function redirectUser(user) {
+    netlifyIdentity.close();
+    if (user.email === ADMIN_EMAIL) {
+      window.location.href = '/admin.html';
+    } else {
+      window.location.href = '/dashboard.html';
+    }
+  }
+
   // When login button clicked, open the Netlify Identity modal
   document.getElementById('loginBtn').addEventListener('click', () => {
     netlifyIdentity.open();
   });
 
-  // After login, redirect to dashboard
+  // After login, redirect based on email
   netlifyIdentity.on('login', user => {
-    netlifyIdentity.close();
-    window.location.href = '/dashboard.html';
+    redirectUser(user);
   });
 
-  // If already logged in, go straight to dashboard
+  // If already logged in, redirect immediately
   const user = netlifyIdentity.currentUser();
   if (user) {
-    window.location.href = '/dashboard.html';
+    redirectUser(user);
   }
 </script>
 </body>

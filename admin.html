@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --blue: #1A3C6E;
+    --cyan: #1BAECC;
+    --gold: #D4A843;
+    --teal: #0E7C7B;
+    --light: #F4F7FB;
+    --white: #FFFFFF;
+    --text-dark: #0B1F3A;
+    --text-mid: #3D5A80;
+    --text-light: #7A94B0;
+    --success: #22C55E;
+    --danger: #EF4444;
+    --warning: #F59E0B;
+    --sidebar-w: 240px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--light); color: var(--text-dark); }
+  #page { display: none; }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy);
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; bottom: 0;
+    z-index: 10;
+    border-right: 1px solid rgba(212,168,67,0.15);
+  }
+
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    text-decoration: none;
+  }
+
+  .s-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--gold), #e8c060);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900; font-size: 16px; color: var(--navy);
+    flex-shrink: 0;
+  }
+
+  .s-name { font-size: 12px; font-weight: 600; color: var(--white); line-height: 1.3; }
+  .s-sub  { font-size: 10px; color: var(--gold); opacity: 0.7; }
+
+  .sidebar-nav { flex: 1; padding: 16px 12px; }
+
+  .nav-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: rgba(255,255,255,0.3);
+    padding: 12px 8px 6px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 12px;
+    border-radius: 10px;
+    font-size: 13px; font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 2px;
+    border: none; background: none; width: 100%; text-align: left;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: var(--white); }
+  .nav-item.active { background: rgba(212,168,67,0.15); color: var(--gold); }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-footer {
+    padding: 16px 12px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .user-info {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; margin-bottom: 8px;
+  }
+
+  .user-avatar {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--cyan), var(--teal));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--white);
+    flex-shrink: 0;
+  }
+
+  .user-email { font-size: 11px; color: rgba(255,255,255,0.55); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .logout-btn {
+    width: 100%;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 8px; padding: 9px;
+    font-size: 12px; font-weight: 600; color: #EF4444;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { background: rgba(239,68,68,0.2); }
+
+  /* ── MAIN ── */
+  .main { margin-left: var(--sidebar-w); flex: 1; }
+
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid rgba(11,31,58,0.08);
+    padding: 16px 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 5;
+  }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700; color: var(--navy);
+  }
+  .page-subtitle { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+
+  .topbar-actions { display: flex; align-items: center; gap: 12px; }
+
+  .btn {
+    padding: 10px 20px; border-radius: 9px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    border: none; transition: all 0.2s;
+  }
+  .btn-gold { background: linear-gradient(135deg, var(--gold), #e8c060); color: var(--navy); }
+  .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(212,168,67,0.35); }
+  .btn-outline { background: none; border: 1px solid rgba(11,31,58,0.15); color: var(--text-mid); }
+  .btn-outline:hover { border-color: var(--navy); color: var(--navy); }
+  .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+  .btn-danger:hover { background: rgba(239,68,68,0.2); }
+  .btn-sm { padding: 7px 14px; font-size: 12px; }
+
+  .content { padding: 36px; }
+
+  /* ── TABS ── */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px; margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: 16px; padding: 24px;
+    border: 1px solid rgba(11,31,58,0.07);
+  }
+
+  .stat-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; margin-bottom: 14px;
+  }
+
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px; font-weight: 700; color: var(--navy); line-height: 1;
+  }
+
+  .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+  .stat-change { font-size: 11px; margin-top: 8px; font-weight: 600; }
+  .stat-change.up { color: var(--success); }
+  .stat-change.warn { color: var(--warning); }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border-radius: 16px; padding: 28px;
+    border: 1px solid rgba(11,31,58,0.07);
+    margin-bottom: 24px;
+  }
+
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 700; color: var(--navy);
+  }
+  .card-subtitle { font-size: 12px; color: var(--text-light); margin-top: 3px; }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; color: var(--text-light);
+    padding: 10px 16px; text-align: left;
+    border-bottom: 1px solid rgba(11,31,58,0.06);
+  }
+  td {
+    padding: 14px 16px;
+    font-size: 13px; color: var(--text-dark);
+    border-bottom: 1px solid rgba(11,31,58,0.05);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(11,31,58,0.02); }
+
+  .badge {
+    display: inline-block; padding: 4px 10px;
+    border-radius: 20px; font-size: 11px; font-weight: 600;
+  }
+  .badge-free { background: rgba(27,174,204,0.1); color: var(--cyan); }
+  .badge-paid { background: rgba(212,168,67,0.12); color: var(--gold); }
+  .badge-active { background: rgba(34,197,94,0.1); color: var(--success); }
+  .badge-pending { background: rgba(245,158,11,0.1); color: var(--warning); }
+  .badge-locked { background: rgba(11,31,58,0.06); color: var(--text-light); }
+
+  /* ── COURSE CARDS GRID ── */
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .course-admin-card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid rgba(11,31,58,0.07);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .course-admin-card:hover { box-shadow: 0 8px 24px rgba(11,31,58,0.1); }
+
+  .cac-top {
+    height: 6px;
+    background: linear-gradient(90deg, var(--cyan), var(--teal));
+  }
+  .cac-top.gold { background: linear-gradient(90deg, var(--gold), #e8c060); }
+  .cac-top.navy { background: linear-gradient(90deg, var(--navy), var(--blue)); }
+
+  .cac-body { padding: 22px; }
+
+  .cac-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+
+  .cac-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-weight: 700; color: var(--navy);
+    line-height: 1.3;
+  }
+
+  .cac-meta { font-size: 12px; color: var(--text-light); margin-bottom: 16px; }
+
+  .cac-stats {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px; margin-bottom: 16px;
+  }
+
+  .cac-stat {
+    background: var(--light); border-radius: 8px; padding: 10px;
+    text-align: center;
+  }
+  .cac-stat .v { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .cac-stat .l { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+
+  .cac-actions { display: flex; gap: 8px; }
+
+  /* ── PRICE TOGGLE ── */
+  .price-toggle {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    background: var(--light); border-radius: 10px;
+    margin-bottom: 16px;
+  }
+
+  .toggle-label { font-size: 13px; font-weight: 600; color: var(--navy); flex: 1; }
+
+  .switch {
+    position: relative; width: 44px; height: 24px;
+    cursor: pointer;
+  }
+
+  .switch input { opacity: 0; width: 0; height: 0; }
+
+  .slider {
+    position: absolute; inset: 0;
+    background: rgba(11,31,58,0.15);
+    border-radius: 24px;
+    transition: 0.3s;
+  }
+
+  .slider::before {
+    content: ''; position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; top: 3px;
+    background: var(--white); border-radius: 50%;
+    transition: 0.3s;
+  }
+
+  input:checked + .slider { background: var(--gold); }
+  input:checked + .slider::before { transform: translateX(20px); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(11,31,58,0.6); backdrop-filter: blur(4px);
+    z-index: 100; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--white); border-radius: 20px;
+    padding: 36px; width: 100%; max-width: 560px;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 24px 60px rgba(11,31,58,0.2);
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700; color: var(--navy);
+    margin-bottom: 24px;
+  }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--text-mid); margin-bottom: 7px; letter-spacing: 0.3px;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--light);
+    border: 1px solid rgba(11,31,58,0.1);
+    border-radius: 10px; padding: 12px 14px;
+    font-size: 14px; color: var(--navy);
+    font-family: 'DM Sans', sans-serif; outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--cyan);
+    background: var(--white);
+  }
+  .form-select { appearance: none; cursor: pointer; }
+  .form-textarea { resize: vertical; min-height: 90px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+
+  /* ── MATERIAL LIST ── */
+  .material-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .material-item {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--light); border-radius: 12px; padding: 14px 16px;
+    border: 1px solid rgba(11,31,58,0.06);
+  }
+
+  .mat-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+
+  .mat-info { flex: 1; }
+  .mat-name { font-size: 14px; font-weight: 600; color: var(--navy); }
+  .mat-meta { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+  .mat-actions { display: flex; gap: 8px; }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center; padding: 48px 24px;
+    color: var(--text-light);
+  }
+  .empty .e-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty .e-title { font-size: 16px; font-weight: 600; color: var(--text-mid); margin-bottom: 6px; }
+  .empty .e-desc { font-size: 13px; line-height: 1.6; }
+
+  /* ── NOTIFICATION ── */
+  .notif {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--navy); color: var(--white);
+    padding: 14px 20px; border-radius: 12px;
+    font-size: 13px; font-weight: 500;
+    box-shadow: 0 8px 24px rgba(11,31,58,0.3);
+    z-index: 200;
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.3s;
+    border-left: 4px solid var(--gold);
+  }
+  .notif.show { transform: translateY(0); opacity: 1; }
+
+  /* ── SEARCH ── */
+  .search-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--light); border: 1px solid rgba(11,31,58,0.1);
+    border-radius: 10px; padding: 10px 14px;
+    margin-bottom: 20px;
+  }
+  .search-bar input {
+    border: none; background: none; outline: none;
+    font-size: 13px; color: var(--navy); width: 100%;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .search-bar input::placeholder { color: var(--text-light); }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .topbar { padding: 14px 20px; flex-wrap: wrap; gap: 10px; }
+    .content { padding: 20px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .courses-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    table { font-size: 12px; }
+    th, td { padding: 10px 10px; }
+    .modal { padding: 24px 20px; margin: 16px; }
+  }
+
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .topbar-actions { width: 100%; justify-content: flex-end; }
+    .card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="page">
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <a href="index.html" class="sidebar-logo">
+      <div class="s-icon">KI</div>
+      <div>
+        <div class="s-name">Kulan Institute</div>
+        <div class="s-sub">Admin Panel</div>
+      </div>
+    </a>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <button class="nav-item active" onclick="switchTab('overview', this)">
+        <span class="icon">📊</span> Overview
+      </button>
+      <button class="nav-item" onclick="switchTab('courses', this)">
+        <span class="icon">📚</span> Courses
+      </button>
+      <button class="nav-item" onclick="switchTab('students', this)">
+        <span class="icon">👥</span> Students
+      </button>
+      <button class="nav-item" onclick="switchTab('materials', this)">
+        <span class="icon">📁</span> Materials
+      </button>
+
+      <div class="nav-label" style="margin-top:8px;">Site</div>
+      <button class="nav-item" onclick="window.open('index.html','_blank')">
+        <span class="icon">🌐</span> View Website
+      </button>
+      <button class="nav-item" onclick="window.open('dashboard.html','_blank')">
+        <span class="icon">🎓</span> Student View
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="avatarInitial">A</div>
+        <div class="user-email" id="adminEmail">mohamedmohammud@gmail.com</div>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="pageTitle">Overview</div>
+        <div class="page-subtitle" id="pageSubtitle">Welcome back — here's what's happening</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline" onclick="switchTab('students', document.querySelector('[onclick*=students]'))">View Students</button>
+        <button class="btn btn-gold" onclick="openModal('addCourse')">+ Add Course</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ── OVERVIEW TAB ── -->
+      <div class="tab-content active" id="tab-overview">
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(27,174,204,0.1)">🎓</div>
+            <div class="stat-val" id="totalStudents">0</div>
+            <div class="stat-label">Total Students</div>
+            <div class="stat-change up" id="studentChange">Loading...</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(212,168,67,0.1)">📚</div>
+            <div class="stat-val" id="totalCourses">3</div>
+            <div class="stat-label">Active Courses</div>
+            <div class="stat-change up">2 free · 1 coming soon</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(14,124,123,0.1)">📁</div>
+            <div class="stat-val" id="totalMaterials">0</div>
+            <div class="stat-label">Course Materials</div>
+            <div class="stat-change warn">Add materials to courses</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(34,197,94,0.1)">💰</div>
+            <div class="stat-val">$0</div>
+            <div class="stat-label">Revenue</div>
+            <div class="stat-change warn">Enable Stripe for payments</div>
+          </div>
+        </div>
+
+        <!-- Recent Enrollments -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Recent Enrollments</div>
+              <div class="card-subtitle">From your Netlify contact form</div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="switchTab('students', document.querySelectorAll('.nav-item')[2])">View All</button>
+          </div>
+          <div id="recentEnrollments">
+            <div class="empty">
+              <div class="e-icon">📋</div>
+              <div class="e-title">No enrollments yet</div>
+              <div class="e-desc">When students fill out your enrollment form,<br>they'll appear here. Make sure Netlify Forms is enabled.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Course Overview -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Course Overview</div>
+              <div class="card-subtitle">Your current course lineup</div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="switchTab('courses', document.querySelectorAll('.nav-item')[1])">Manage Courses</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Course</th>
+                <th>Modules</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Materials</th>
+              </tr>
+            </thead>
+            <tbody id="overviewCourseTable"></tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- ── COURSES TAB ── -->
+      <div class="tab-content" id="tab-courses">
+        <div class="courses-grid" id="coursesGrid"></div>
+      </div>
+
+      <!-- ── STUDENTS TAB ── -->
+      <div class="tab-content" id="tab-students">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Enrolled Students</div>
+              <div class="card-subtitle">Pulled from your Netlify enrollment form</div>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+              <button class="btn btn-gold btn-sm" onclick="openModal('inviteStudent')">+ Invite Student</button>
+            </div>
+          </div>
+
+          <div class="search-bar">
+            <span>🔍</span>
+            <input type="text" placeholder="Search by name, email, or course..." id="studentSearch" oninput="filterStudents()">
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Course</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTable">
+              <tr>
+                <td colspan="6">
+                  <div class="empty">
+                    <div class="e-icon">👥</div>
+                    <div class="e-title">No students yet</div>
+                    <div class="e-desc">Students who fill out your enrollment form will appear here.<br>You can also manually invite students using the button above.</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── MATERIALS TAB ── -->
+      <div class="tab-content" id="tab-materials">
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Course Materials</div>
+              <div class="card-subtitle">Add PDFs, videos, and PowerPoints for each course</div>
+            </div>
+            <button class="btn btn-gold" onclick="openModal('addMaterial')">+ Add Material</button>
+          </div>
+
+          <!-- Course Filter Tabs -->
+          <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;" id="materialCourseTabs"></div>
+
+          <div class="material-list" id="materialList"></div>
+        </div>
+
+        <!-- How to Upload Guide -->
+        <div class="card" style="background:linear-gradient(135deg,var(--navy),var(--blue));border:none;">
+          <div style="display:flex;gap:20px;align-items:flex-start;">
+            <div style="font-size:32px;flex-shrink:0;">📖</div>
+            <div>
+              <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:8px;">How to Add Materials</div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.8;">
+                <strong style="color:var(--gold);">📄 PDFs</strong> — Upload to Google Drive → Share → "Anyone with link can view" → paste the link here<br>
+                <strong style="color:var(--gold);">🎥 Videos</strong> — Upload to YouTube as "Unlisted" → copy the video URL → paste here<br>
+                <strong style="color:var(--gold);">📊 PowerPoint</strong> — Upload to Google Drive → Share link → paste here (auto-converts to viewer)<br>
+                <strong style="color:var(--gold);">🔒 Paid content</strong> — Mark a course as "Paid" — only paying students get access
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ── MODALS ── -->
+
+<!-- Add Course Modal -->
+<div class="modal-overlay" id="modal-addCourse">
+  <div class="modal">
+    <div class="modal-title">Add New Course</div>
+    <div class="form-group">
+      <label class="form-label">Course Title (English)</label>
+      <input type="text" class="form-input" id="newCourseTitle" placeholder="e.g. AI for Beginners">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Course Title (Somali)</label>
+      <input type="text" class="form-input" id="newCourseTitleSo" placeholder="e.g. Xisaabta Macquulka ah ee Bilowga">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="newCourseDesc" placeholder="What will students learn in this course?"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Level</label>
+        <select class="form-select" id="newCourseLevel">
+          <option>Beginner</option>
+          <option>Intermediate</option>
+          <option>Advanced</option>
+          <option>All Levels</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Number of Modules</label>
+        <input type="number" class="form-input" id="newCourseModules" placeholder="8" min="1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Pricing</label>
+      <div class="price-toggle">
+        <span class="toggle-label" id="priceToggleLabel">Free Course</span>
+        <label class="switch">
+          <input type="checkbox" id="newCoursePaid" onchange="updatePriceLabel()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div id="priceInput" style="display:none;">
+        <input type="number" class="form-input" id="newCoursePrice" placeholder="Price in USD (e.g. 29)" min="1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-select" id="newCourseStatus">
+        <option value="active">Active (visible to students)</option>
+        <option value="coming">Coming Soon</option>
+        <option value="draft">Draft (hidden)</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('addCourse')">Cancel</button>
+      <button class="btn btn-gold" onclick="addCourse()">Create Course</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Material Modal -->
+<div class="modal-overlay" id="modal-addMaterial">
+  <div class="modal">
+    <div class="modal-title">Add Course Material</div>
+    <div class="form-group">
+      <label class="form-label">Course</label>
+      <select class="form-select" id="matCourse"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Material Title</label>
+      <input type="text" class="form-input" id="matTitle" placeholder="e.g. Module 1 — Introduction to AI">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Type</label>
+      <select class="form-select" id="matType" onchange="updateMatTypeHint()">
+        <option value="pdf">📄 PDF Document</option>
+        <option value="video">🎥 Video (YouTube)</option>
+        <option value="ppt">📊 PowerPoint / Google Slides</option>
+      </select>
+      <div style="font-size:11px;color:var(--text-light);margin-top:6px;" id="matTypeHint">
+        Upload PDF to Google Drive → Share with "Anyone can view" → paste link below
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Link / URL</label>
+      <input type="url" class="form-input" id="matUrl" placeholder="https://...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Module Number</label>
+        <input type="number" class="form-input" id="matModule" placeholder="1" min="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Allow Download?</label>
+        <select class="form-select" id="matDownload">
+          <option value="yes">✅ Yes — students can download</option>
+          <option value="no">🚫 No — view only</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('addMaterial')">Cancel</button>
+      <button class="btn btn-gold" onclick="addMaterial()">Add Material</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invite Student Modal -->
+<div class="modal-overlay" id="modal-inviteStudent">
+  <div class="modal">
+    <div class="modal-title">Invite Student</div>
+    <p style="font-size:14px;color:var(--text-mid);margin-bottom:24px;line-height:1.6;">
+      This will send the student an email invitation to create their account and access their course materials.
+    </p>
+    <div class="form-group">
+      <label class="form-label">Student Email</label>
+      <input type="email" class="form-input" id="inviteEmail" placeholder="student@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Course Access</label>
+      <select class="form-select" id="inviteCourse"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('inviteStudent')">Cancel</button>
+      <button class="btn btn-gold" onclick="inviteStudent()">Send Invite via Netlify</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notification -->
+<div class="notif" id="notif"></div>
+
+<script>
+  netlifyIdentity.init();
+
+  // ── AUTH CHECK ──
+  // 🔒 Replace with YOUR real admin email address
+  const ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
+
+  const user = netlifyIdentity.currentUser();
+
+  if (!user) {
+    // Not logged in
+    window.location.href = '/login.html';
+  } else if (user.email !== ADMIN_EMAIL) {
+    // Logged in but not admin — kick them out
+    netlifyIdentity.logout();
+    alert('Access denied. Admin only.');
+    window.location.href = '/dashboard.html';
+  } else {
+    // ✅ Confirmed admin
+    document.getElementById('page').style.display = 'block';
+    const email = user.email || '';
+    document.getElementById('adminEmail').textContent = email;
+    document.getElementById('avatarInitial').textContent = email.charAt(0).toUpperCase();
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      netlifyIdentity.logout();
+    });
+
+    netlifyIdentity.on('logout', () => {
+      window.location.href = '/login.html';
+    });
+
+    init();
+  }
+
+  // ── DATA (stored in localStorage) ──
+  let courses = JSON.parse(localStorage.getItem('ki_courses') || '[]');
+  let materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
+  let students = JSON.parse(localStorage.getItem('ki_students') || '[]');
+
+  // Add default courses if none exist
+  if (courses.length === 0) {
+    courses = [
+      { id: 1, title: 'AI for Beginners', titleSo: 'Xisaabta Macquulka ah ee Bilowga', desc: 'An 8-module bilingual introduction to artificial intelligence.', level: 'Beginner', modules: 8, paid: false, price: 0, status: 'active', color: 'cyan', enrolled: 0 },
+      { id: 2, title: 'Cybersecurity Fundamentals', titleSo: 'Aasaaska Amniga Xogta', desc: 'Core principles of cybersecurity — threats, defenses, and best practices.', level: 'Intermediate', modules: 6, paid: false, price: 0, status: 'active', color: 'gold', enrolled: 0 },
+      { id: 3, title: 'Digital Literacy', titleSo: 'Aqoonta Dhijitaalka ah', desc: 'Essential computer skills and internet safety for all levels.', level: 'All Levels', modules: 0, paid: false, price: 0, status: 'coming', color: 'navy', enrolled: 0 },
+    ];
+    saveCourses();
+  }
+
+  function saveCourses()   { localStorage.setItem('ki_courses', JSON.stringify(courses)); }
+  function saveMaterials() { localStorage.setItem('ki_materials', JSON.stringify(materials)); }
+  function saveStudents()  { localStorage.setItem('ki_students', JSON.stringify(students)); }
+
+  // ── INIT ──
+  function init() {
+    renderOverview();
+    renderCourses();
+    renderStudents();
+    renderMaterials();
+    populateCourseSelects();
+  }
+
+  // ── TABS ──
+  const pageTitles = {
+    overview: ['Overview', 'Welcome back — here\'s what\'s happening'],
+    courses:  ['Courses', 'Manage your course catalog'],
+    students: ['Students', 'View and manage enrolled students'],
+    materials:['Materials', 'Upload and manage course content'],
+  };
+
+  function switchTab(tab, el) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    el.classList.add('active');
+    const [title, sub] = pageTitles[tab];
+    document.getElementById('pageTitle').textContent = title;
+    document.getElementById('pageSubtitle').textContent = sub;
+  }
+
+  // ── OVERVIEW ──
+  function renderOverview() {
+    document.getElementById('totalStudents').textContent = students.length;
+    document.getElementById('totalCourses').textContent = courses.filter(c => c.status === 'active').length;
+    document.getElementById('totalMaterials').textContent = materials.length;
+    document.getElementById('studentChange').textContent = students.length === 0 ? 'No enrollments yet' : `${students.length} total enrolled`;
+
+    // Overview course table
+    const tbody = document.getElementById('overviewCourseTable');
+    tbody.innerHTML = courses.map(c => `
+      <tr>
+        <td><strong>${c.title}</strong><br><span style="font-size:11px;color:var(--text-light)">${c.titleSo}</span></td>
+        <td>${c.modules || 'TBA'}</td>
+        <td><span class="badge ${c.paid ? 'badge-paid' : 'badge-free'}">${c.paid ? '$' + c.price : 'Free'}</span></td>
+        <td><span class="badge ${c.status === 'active' ? 'badge-active' : c.status === 'coming' ? 'badge-pending' : 'badge-locked'}">${c.status === 'active' ? 'Active' : c.status === 'coming' ? 'Coming Soon' : 'Draft'}</span></td>
+        <td>${materials.filter(m => m.courseId == c.id).length} files</td>
+      </tr>
+    `).join('');
+
+    // Recent enrollments
+    const recentEl = document.getElementById('recentEnrollments');
+    if (students.length === 0) {
+      recentEl.innerHTML = `<div class="empty"><div class="e-icon">📋</div><div class="e-title">No enrollments yet</div><div class="e-desc">Students who fill out your enrollment form will appear here.</div></div>`;
+    } else {
+      const recent = [...students].reverse().slice(0, 5);
+      recentEl.innerHTML = `<table><thead><tr><th>Name</th><th>Course</th><th>Date</th><th>Status</th></tr></thead><tbody>${recent.map(s => `
+        <tr>
+          <td><strong>${s.name}</strong><br><span style="font-size:11px;color:var(--text-light)">${s.email}</span></td>
+          <td>${s.course}</td>
+          <td>${s.date}</td>
+          <td><span class="badge badge-active">Enrolled</span></td>
+        </tr>`).join('')}</tbody></table>`;
+    }
+  }
+
+  // ── COURSES ──
+  function renderCourses() {
+    const grid = document.getElementById('coursesGrid');
+    grid.innerHTML = courses.map(c => {
+      const matCount = materials.filter(m => m.courseId == c.id).length;
+      return `
+      <div class="course-admin-card">
+        <div class="cac-top ${c.color}"></div>
+        <div class="cac-body">
+          <div class="cac-header">
+            <div>
+              <div class="cac-title">${c.title}</div>
+              <div style="font-size:11px;font-style:italic;color:var(--text-light);margin-top:2px">${c.titleSo}</div>
+            </div>
+            <span class="badge ${c.paid ? 'badge-paid' : 'badge-free'}">${c.paid ? '$'+c.price : 'Free'}</span>
+          </div>
+          <div class="cac-meta">${c.level} · ${c.modules || 'TBA'} modules · <span class="badge ${c.status==='active'?'badge-active':c.status==='coming'?'badge-pending':'badge-locked'}">${c.status==='active'?'Active':c.status==='coming'?'Coming Soon':'Draft'}</span></div>
+          <div class="cac-stats">
+            <div class="cac-stat"><div class="v">${c.enrolled || 0}</div><div class="l">Students</div></div>
+            <div class="cac-stat"><div class="v">${matCount}</div><div class="l">Materials</div></div>
+            <div class="cac-stat"><div class="v">${c.paid ? '$'+c.price : '—'}</div><div class="l">Price</div></div>
+          </div>
+          <div class="cac-actions">
+            <button class="btn btn-outline btn-sm" onclick="editCourse(${c.id})">✏️ Edit</button>
+            <button class="btn btn-gold btn-sm" onclick="addMaterialFor(${c.id})">+ Material</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCourse(${c.id})">🗑</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('') + `
+    <div class="course-admin-card" style="border:2px dashed rgba(11,31,58,0.12);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;min-height:200px;" onclick="openModal('addCourse')">
+      <div style="text-align:center;color:var(--text-light);">
+        <div style="font-size:32px;margin-bottom:8px;">+</div>
+        <div style="font-size:14px;font-weight:600;">Add New Course</div>
+      </div>
+    </div>`;
+  }
+
+  // ── STUDENTS ──
+  let filteredStudents = [];
+
+  function renderStudents(data) {
+    filteredStudents = data || students;
+    const tbody = document.getElementById('studentsTable');
+    if (filteredStudents.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="e-icon">👥</div><div class="e-title">No students found</div><div class="e-desc">Enrolled students will appear here.</div></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = filteredStudents.map(s => `
+      <tr>
+        <td><strong>${s.name}</strong></td>
+        <td>${s.email}</td>
+        <td>${s.course}</td>
+        <td>${s.date}</td>
+        <td><span class="badge badge-active">Enrolled</span></td>
+        <td>
+          <button class="btn btn-outline btn-sm" onclick="removeStudent('${s.email}')">Remove</button>
+        </td>
+      </tr>`).join('');
+  }
+
+  function filterStudents() {
+    const q = document.getElementById('studentSearch').value.toLowerCase();
+    const filtered = students.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      s.email.toLowerCase().includes(q) ||
+      s.course.toLowerCase().includes(q)
+    );
+    renderStudents(filtered);
+  }
+
+  function removeStudent(email) {
+    if (!confirm('Remove this student?')) return;
+    students = students.filter(s => s.email !== email);
+    saveStudents();
+    renderStudents();
+    renderOverview();
+    showNotif('Student removed');
+  }
+
+  function exportCSV() {
+    if (students.length === 0) { showNotif('No students to export'); return; }
+    const header = 'Name,Email,Course,Date\n';
+    const rows = students.map(s => `"${s.name}","${s.email}","${s.course}","${s.date}"`).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'kulan-students.csv';
+    a.click();
+    showNotif('CSV exported!');
+  }
+
+  // ── MATERIALS ──
+  let activeMaterialCourse = 'all';
+
+  function renderMaterials() {
+    const tabs = document.getElementById('materialCourseTabs');
+    tabs.innerHTML = `<button class="btn ${activeMaterialCourse==='all'?'btn-gold':'btn-outline'} btn-sm" onclick="filterMaterials('all')">All</button>` +
+      courses.map(c => `<button class="btn ${activeMaterialCourse==c.id?'btn-gold':'btn-outline'} btn-sm" onclick="filterMaterials(${c.id})">${c.title}</button>`).join('');
+
+    const filtered = activeMaterialCourse === 'all' ? materials : materials.filter(m => m.courseId == activeMaterialCourse);
+    const list = document.getElementById('materialList');
+
+    if (filtered.length === 0) {
+      list.innerHTML = `<div class="empty"><div class="e-icon">📁</div><div class="e-title">No materials yet</div><div class="e-desc">Add your first PDF, video, or PowerPoint using the button above.</div></div>`;
+      return;
+    }
+
+    const icons = { pdf: '📄', video: '🎥', ppt: '📊' };
+    const colors = { pdf: 'rgba(239,68,68,0.1)', video: 'rgba(27,174,204,0.1)', ppt: 'rgba(212,168,67,0.1)' };
+
+    list.innerHTML = filtered.map(m => `
+      <div class="material-item">
+        <div class="mat-icon" style="background:${colors[m.type]}">${icons[m.type]}</div>
+        <div class="mat-info">
+          <div class="mat-name">${m.title}</div>
+          <div class="mat-meta">${courses.find(c=>c.id==m.courseId)?.title || 'Unknown'} · Module ${m.module} · ${m.download==='yes'?'Download allowed':'View only'}</div>
+        </div>
+        <div class="mat-actions">
+          <a href="${m.url}" target="_blank" class="btn btn-outline btn-sm">Preview</a>
+          <button class="btn btn-danger btn-sm" onclick="deleteMaterial(${m.id})">🗑</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function filterMaterials(courseId) {
+    activeMaterialCourse = courseId;
+    renderMaterials();
+  }
+
+  // ── ADD COURSE ──
+  function addCourse() {
+    const title = document.getElementById('newCourseTitle').value.trim();
+    if (!title) { showNotif('Please enter a course title'); return; }
+    const paid = document.getElementById('newCoursePaid').checked;
+    const price = paid ? parseFloat(document.getElementById('newCoursePrice').value) || 0 : 0;
+    const newCourse = {
+      id: Date.now(),
+      title,
+      titleSo: document.getElementById('newCourseTitleSo').value.trim(),
+      desc: document.getElementById('newCourseDesc').value.trim(),
+      level: document.getElementById('newCourseLevel').value,
+      modules: parseInt(document.getElementById('newCourseModules').value) || 0,
+      paid, price,
+      status: document.getElementById('newCourseStatus').value,
+      color: 'cyan',
+      enrolled: 0,
+    };
+    courses.push(newCourse);
+    saveCourses();
+    renderCourses();
+    renderOverview();
+    populateCourseSelects();
+    closeModal('addCourse');
+    showNotif(`✅ "${title}" created!`);
+  }
+
+  function deleteCourse(id) {
+    if (!confirm('Delete this course? All its materials will also be removed.')) return;
+    courses = courses.filter(c => c.id !== id);
+    materials = materials.filter(m => m.courseId !== id);
+    saveCourses(); saveMaterials();
+    renderCourses(); renderMaterials(); renderOverview();
+    showNotif('Course deleted');
+  }
+
+  function editCourse(id) {
+    showNotif('Edit coming soon — delete and re-add for now');
+  }
+
+  // ── ADD MATERIAL ──
+  function addMaterial() {
+    const title = document.getElementById('matTitle').value.trim();
+    const url   = document.getElementById('matUrl').value.trim();
+    if (!title || !url) { showNotif('Please fill in all fields'); return; }
+    const mat = {
+      id: Date.now(),
+      courseId: parseInt(document.getElementById('matCourse').value),
+      title,
+      type:     document.getElementById('matType').value,
+      url,
+      module:   parseInt(document.getElementById('matModule').value) || 1,
+      download: document.getElementById('matDownload').value,
+    };
+    materials.push(mat);
+    saveMaterials();
+    renderMaterials();
+    renderOverview();
+    closeModal('addMaterial');
+    showNotif(`✅ Material "${title}" added!`);
+  }
+
+  function deleteMaterial(id) {
+    if (!confirm('Remove this material?')) return;
+    materials = materials.filter(m => m.id !== id);
+    saveMaterials();
+    renderMaterials();
+    renderOverview();
+    showNotif('Material removed');
+  }
+
+  function addMaterialFor(courseId) {
+    document.getElementById('matCourse').value = courseId;
+    openModal('addMaterial');
+  }
+
+  // ── INVITE STUDENT ──
+  function inviteStudent() {
+    const email = document.getElementById('inviteEmail').value.trim();
+    if (!email) { showNotif('Please enter an email'); return; }
+    // Add to local list
+    const course = document.getElementById('inviteCourse');
+    const courseName = course.options[course.selectedIndex]?.text || 'General';
+    const student = {
+      name: email.split('@')[0],
+      email,
+      course: courseName,
+      date: new Date().toLocaleDateString(),
+    };
+    students.push(student);
+    saveStudents();
+    renderStudents();
+    renderOverview();
+    closeModal('inviteStudent');
+    showNotif(`✅ Invite sent to ${email} — complete in Netlify Identity`);
+    // Open Netlify Identity to send actual invite
+    setTimeout(() => {
+      window.open('https://app.netlify.com/', '_blank');
+    }, 1500);
+  }
+
+  // ── HELPERS ──
+  function populateCourseSelects() {
+    ['matCourse', 'inviteCourse'].forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      sel.innerHTML = courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+    });
+  }
+
+  function updatePriceLabel() {
+    const paid = document.getElementById('newCoursePaid').checked;
+    document.getElementById('priceToggleLabel').textContent = paid ? 'Paid Course' : 'Free Course';
+    document.getElementById('priceInput').style.display = paid ? 'block' : 'none';
+  }
+
+  function updateMatTypeHint() {
+    const hints = {
+      pdf:   'Upload PDF to Google Drive → Share with "Anyone can view" → paste link below',
+      video: 'Upload to YouTube as "Unlisted" → copy the video URL → paste here',
+      ppt:   'Upload PPT to Google Drive → Share with "Anyone can view" → paste link here',
+    };
+    document.getElementById('matTypeHint').textContent = hints[document.getElementById('matType').value];
+  }
+
+  function openModal(id) {
+    document.getElementById('modal-' + id).classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById('modal-' + id).classList.remove(
+  function closeModal(id) {
+    document.getElementById('modal-' + id).classList.remove('open');
+  }
+
+  // Close modal on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  function showNotif(msg) {
+    const el = document.getElementById('notif');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3000);
+  }
+</script>
+
+</body>
+</html>
