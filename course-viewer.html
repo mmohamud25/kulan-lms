@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Course Viewer — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<style>
+  :root {
+    --navy: #0B1F3A; --blue: #1A3C6E; --cyan: #1BAECC;
+    --gold: #D4A843; --teal: #0E7C7B; --light: #F4F7FB;
+    --white: #FFFFFF; --text-mid: #3D5A80; --text-light: #7A94B0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--light); }
+  #page { display: none; }
+
+  .topbar {
+    background: var(--navy);
+    padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(212,168,67,0.2);
+    position: sticky; top: 0; z-index: 50;
+  }
+
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+
+  .back-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px; padding: 8px 14px;
+    color: rgba(255,255,255,0.7); font-size: 13px;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    text-decoration: none; transition: all 0.2s;
+  }
+  .back-btn:hover { background: rgba(255,255,255,0.14); color: var(--white); }
+
+  .course-badge {
+    font-size: 13px; font-weight: 600; color: var(--white);
+  }
+
+  .course-badge span { color: var(--gold); }
+
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+  .download-btn {
+    background: linear-gradient(135deg, var(--gold), #e8c060);
+    color: var(--navy); border: none; border-radius: 8px;
+    padding: 9px 18px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    text-decoration: none; transition: all 0.2s;
+  }
+  .download-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212,168,67,0.4); }
+  .download-btn.hidden { display: none; }
+
+  .layout { display: flex; height: calc(100vh - 57px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 300px; flex-shrink: 0;
+    background: var(--white);
+    border-right: 1px solid rgba(11,31,58,0.08);
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+
+  .sidebar-header {
+    padding: 20px; border-bottom: 1px solid rgba(11,31,58,0.07);
+    position: sticky; top: 0; background: var(--white); z-index: 1;
+  }
+
+  .sidebar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700; color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .sidebar-sub { font-size: 12px; color: var(--text-light); }
+
+  .module-list { padding: 12px; }
+
+  .module-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 10px;
+    cursor: pointer; transition: all 0.2s;
+    margin-bottom: 4px; border: 1px solid transparent;
+  }
+
+  .module-item:hover { background: var(--light); }
+  .module-item.active { background: rgba(27,174,204,0.08); border-color: rgba(27,174,204,0.2); }
+
+  .module-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+
+  .module-info { flex: 1; min-width: 0; }
+  .module-name { font-size: 13px; font-weight: 600; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .module-meta { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+  .module-check { font-size: 14px; flex-shrink: 0; }
+
+  /* VIEWER */
+  .viewer {
+    flex: 1; display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  .viewer-header {
+    padding: 20px 28px;
+    background: var(--white);
+    border-bottom: 1px solid rgba(11,31,58,0.07);
+  }
+
+  .viewer-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700; color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .viewer-meta { font-size: 13px; color: var(--text-light); }
+
+  .viewer-frame {
+    flex: 1; position: relative;
+    background: #1a1a2e;
+  }
+
+  .viewer-frame iframe {
+    width: 100%; height: 100%; border: none;
+  }
+
+  .no-content {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    height: 100%; color: rgba(255,255,255,0.4);
+    text-align: center; padding: 40px;
+  }
+
+  .no-content .icon { font-size: 48px; margin-bottom: 16px; }
+  .no-content h3 { font-size: 20px; color: rgba(255,255,255,0.7); margin-bottom: 8px; }
+  .no-content p { font-size: 14px; line-height: 1.6; }
+
+  .progress-bar-wrap {
+    height: 4px; background: rgba(11,31,58,0.08);
+  }
+  .progress-bar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--cyan), var(--teal));
+    transition: width 0.5s ease;
+  }
+</style>
+</head>
+<body>
+
+<div id="page">
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="dashboard.html" class="back-btn">← Back</a>
+      <div class="course-badge" id="courseBadge">Loading...</div>
+    </div>
+    <div class="topbar-right">
+      <div id="progressLabel" style="font-size:12px;color:rgba(255,255,255,0.5);"></div>
+      <a href="#" class="download-btn hidden" id="downloadBtn" target="_blank">⬇ Download</a>
+    </div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+
+  <div class="layout">
+    <!-- Module List Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title" id="sidebarTitle">Course Materials</div>
+        <div class="sidebar-sub" id="sidebarSub">Select a module to begin</div>
+      </div>
+      <div class="module-list" id="moduleList">
+        <div style="text-align:center;padding:40px 20px;color:var(--text-light);">
+          <div style="font-size:32px;margin-bottom:8px;">📭</div>
+          <div style="font-size:13px;">No materials added yet.<br>Check back soon!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Viewer -->
+    <div class="viewer">
+      <div class="viewer-header" id="viewerHeader" style="display:none;">
+        <div class="viewer-title" id="viewerTitle"></div>
+        <div class="viewer-meta" id="viewerMeta"></div>
+      </div>
+      <div class="viewer-frame">
+        <div class="no-content" id="noContent">
+          <div class="icon">🎓</div>
+          <h3>Select a module to start learning</h3>
+          <p>Choose a lesson from the sidebar on the left<br>to view your course materials.</p>
+        </div>
+        <iframe id="contentFrame" style="display:none;"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  netlifyIdentity.init();
+
+  const user = netlifyIdentity.currentUser();
+  if (!user) {
+    window.location.href = '/login.html';
+  } else {
+    document.getElementById('page').style.display = 'block';
+    loadCourse();
+  }
+
+  function loadCourse() {
+    const params   = new URLSearchParams(window.location.search);
+    const courseId = parseInt(params.get('course')) || null;
+
+    const courses   = JSON.parse(localStorage.getItem('ki_courses') || '[]');
+    const materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
+
+    const course = courses.find(c => c.id === courseId) || courses[0];
+    if (!course) return;
+
+    // Update header
+    document.getElementById('courseBadge').innerHTML = `<span>${course.title}</span>`;
+    document.getElementById('sidebarTitle').textContent = course.title;
+
+    const courseMats = materials
+      .filter(m => m.courseId === course.id)
+      .sort((a, b) => a.module - b.module);
+
+    document.getElementById('sidebarSub').textContent = `${courseMats.length} module${courseMats.length !== 1 ? 's' : ''}`;
+
+    const moduleList = document.getElementById('moduleList');
+
+    if (courseMats.length === 0) {
+      moduleList.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-light);"><div style="font-size:32px;margin-bottom:8px;">📭</div><div style="font-size:13px;">No materials yet.<br>Check back soon!</div></div>`;
+      return;
+    }
+
+    const icons = { pdf: '📄', video: '🎥', ppt: '📊' };
+    const colors = { pdf: 'rgba(239,68,68,0.1)', video: 'rgba(27,174,204,0.1)', ppt: 'rgba(212,168,67,0.1)' };
+
+    // Track completed modules
+    const completedKey = `ki_completed_${course.id}`;
+    let completed = JSON.parse(localStorage.getItem(completedKey) || '[]');
+
+    function updateProgress() {
+      const pct = Math.round((completed.length / courseMats.length) * 100);
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent = `${completed.length}/${courseMats.length} completed`;
+    }
+
+    updateProgress();
+
+    moduleList.innerHTML = courseMats.map((m, i) => `
+      <div class="module-item" id="mod-${m.id}" onclick="openMaterial(${JSON.stringify(m).replace(/"/g, '&quot;')}, '${completedKey}')">
+        <div class="mat-icon" style="background:${colors[m.type]}">${icons[m.type]}</div>
+        <div class="module-info">
+          <div class="module-name">Module ${m.module} — ${m.title}</div>
+          <div class="module-meta">${m.type.toUpperCase()} · ${m.download === 'yes' ? 'Downloadable' : 'View only'}</div>
+        </div>
+        <div class="module-check">${completed.includes(m.id) ? '✅' : '○'}</div>
+      </div>`).join('');
+
+    window._courseMats = courseMats;
+    window._completedKey = completedKey;
+    window._completed = completed;
+    window._updateProgress = updateProgress;
+  }
+
+  function openMaterial(mat, completedKey) {
+    // Mark active
+    document.querySelectorAll('.module-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('mod-' + mat.id)?.classList.add('active');
+
+    // Show header
+    const header = document.getElementById('viewerHeader');
+    header.style.display = 'block';
+    document.getElementById('viewerTitle').textContent = `Module ${mat.module} — ${mat.title}`;
+
+    const typeLabels = { pdf: 'PDF Document', video: 'Video Lesson', ppt: 'Presentation' };
+    document.getElementById('viewerMeta').textContent = `${typeLabels[mat.type]} · ${mat.download === 'yes' ? 'Download available' : 'View only'}`;
+
+    // Handle download button
+    const dlBtn = document.getElementById('downloadBtn');
+    if (mat.download === 'yes') {
+      dlBtn.classList.remove('hidden');
+      dlBtn.href = mat.url;
+    } else {
+      dlBtn.classList.add('hidden');
+    }
+
+    // Show content
+    document.getElementById('noContent').style.display = 'none';
+    const frame = document.getElementById('contentFrame');
+    frame.style.display = 'block';
+
+    let embedUrl = mat.url;
+
+    if (mat.type === 'pdf') {
+      // Google Drive PDF viewer
+      if (mat.url.includes('drive.google.com')) {
+        embedUrl = mat.url.replace('/view', '/preview');
+      } else {
+        // Generic PDF embed via Google Docs viewer
+        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(mat.url)}&embedded=true`;
+      }
+    } else if (mat.type === 'video') {
+      // YouTube embed
+      const ytMatch = mat.url.match(/(?:v=|youtu\.be\/)([^&\s]+)/);
+      if (ytMatch) {
+        embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}?rel=0`;
+      }
+    } else if (mat.type === 'ppt') {
+      // Google Drive PPT viewer
+      if (mat.url.includes('drive.google.com')) {
+        embedUrl = mat.url.replace('/view', '/preview');
+      } else {
+        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(mat.url)}&embedded=true`;
+      }
+    }
+
+    frame.src = embedUrl;
+
+    // Mark as completed
+    if (!window._completed.includes(mat.id)) {
+      window._completed.push(mat.id);
+      localStorage.setItem(completedKey, JSON.stringify(window._completed));
+
+      // Update checkmark
+      const modEl = document.getElementById('mod-' + mat.id);
+      if (modEl) {
+        modEl.querySelector('.module-check').textContent = '✅';
+      }
+      window._updateProgress();
+    }
+  }
+</script>
+
+</body>
+</html>
