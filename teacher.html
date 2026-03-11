@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Portal — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<style>
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --teal:#0E7C7B; --light:#F4F7FB;
+  --white:#FFFFFF; --text-mid:#3D5A80; --text-light:#7A94B0;
+  --sidebar:260px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--light);color:var(--navy);}
+
+/* LOADING */
+#loadingScreen{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(160deg,var(--navy),var(--blue));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.ld-icon{
+  width:56px;height:56px;background:linear-gradient(135deg,var(--gold),#e8c060);
+  border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-weight:900;font-size:26px;color:var(--navy);
+  margin-bottom:20px;
+}
+.ld-text{color:rgba(255,255,255,0.7);font-size:15px;margin-bottom:8px;}
+.ld-sub{color:rgba(212,168,67,0.6);font-size:12px;min-height:20px;}
+
+/* PAGE */
+#page{display:none;}
+.layout{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sidebar);background:var(--navy);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  border-right:1px solid rgba(212,168,67,0.12);
+}
+.sb-logo{
+  display:flex;align-items:center;gap:12px;
+  padding:24px 20px;border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.sb-icon{
+  width:40px;height:40px;background:linear-gradient(135deg,var(--gold),#e8c060);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-weight:900;font-size:18px;color:var(--navy);
+  flex-shrink:0;
+}
+.sb-name{font-size:13px;font-weight:600;color:var(--white);}
+.sb-role{
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;
+  color:var(--gold);background:rgba(212,168,67,0.1);border-radius:4px;
+  padding:2px 8px;display:inline-block;margin-top:3px;
+}
+
+.sb-nav{flex:1;padding:16px 12px;overflow-y:auto;}
+.nav-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.25);padding:12px 8px 4px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:11px 12px;border:none;background:none;
+  color:rgba(255,255,255,0.55);font-size:13px;font-weight:500;
+  border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:all 0.2s;text-align:left;margin-bottom:2px;
+}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:var(--white);}
+.nav-item.active{background:rgba(212,168,67,0.14);color:var(--gold);font-weight:600;}
+.nav-icon{font-size:17px;width:22px;text-align:center;flex-shrink:0;}
+
+.sb-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06);}
+.user-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.user-av{
+  width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#e8c060);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:var(--navy);flex-shrink:0;
+}
+.user-info-text{flex:1;overflow:hidden;}
+.user-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-email-text{font-size:11px;color:rgba(255,255,255,0.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.logout-btn{
+  width:100%;padding:9px;border:1px solid rgba(255,255,255,0.12);
+  border-radius:8px;background:none;color:rgba(255,255,255,0.45);
+  font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;
+}
+.logout-btn:hover{background:rgba(255,255,255,0.07);color:var(--white);}
+
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;}
+.topbar{
+  background:var(--white);padding:18px 36px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(11,31,58,0.07);
+  position:sticky;top:0;z-index:10;
+}
+.page-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);}
+.topbar-right{display:flex;gap:10px;align-items:center;}
+
+.content{padding:36px;max-width:1200px;}
+
+/* TABS */
+.tab{display:none;}
+.tab.active{display:block;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:36px;}
+.stat-card{
+  background:var(--white);border-radius:16px;padding:24px;
+  border:1px solid rgba(11,31,58,0.07);
+}
+.stat-icon{font-size:28px;margin-bottom:12px;}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:6px;}
+.stat-val{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--navy);line-height:1;}
+.stat-sub{font-size:12px;color:var(--text-light);margin-top:6px;}
+
+/* UPLOAD ZONE */
+.upload-zone{
+  border:2px dashed rgba(27,174,204,0.3);border-radius:16px;
+  padding:48px 24px;text-align:center;background:rgba(27,174,204,0.03);
+  transition:all 0.2s;cursor:pointer;margin-bottom:24px;
+}
+.upload-zone:hover{border-color:var(--cyan);background:rgba(27,174,204,0.06);}
+.upload-zone .uz-icon{font-size:44px;margin-bottom:16px;}
+.upload-zone h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px;}
+.upload-zone p{font-size:14px;color:var(--text-light);line-height:1.6;margin-bottom:24px;}
+.upload-types{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;}
+.upload-type{
+  display:flex;align-items:center;gap:8px;padding:10px 18px;
+  background:var(--white);border:1px solid rgba(11,31,58,0.1);border-radius:10px;
+  font-size:13px;font-weight:600;color:var(--text-mid);cursor:pointer;
+  transition:all 0.2s;
+}
+.upload-type:hover,.upload-type.active{border-color:var(--cyan);color:var(--cyan);background:rgba(27,174,204,0.05);}
+
+/* FORM */
+.form-card{
+  background:var(--white);border-radius:16px;padding:28px;
+  border:1px solid rgba(11,31,58,0.07);margin-bottom:24px;
+}
+.form-card-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:6px;}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:12px 16px;border:1px solid rgba(11,31,58,0.13);
+  border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;
+  color:var(--navy);outline:none;transition:border 0.2s;background:var(--white);
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(27,174,204,0.08);}
+.form-textarea{resize:vertical;min-height:90px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-hint{font-size:12px;color:var(--text-light);margin-top:5px;line-height:1.5;}
+.form-hint a{color:var(--cyan);}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all 0.2s;
+  text-decoration:none;
+}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#e8c060);color:var(--navy);}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(212,168,67,0.3);}
+.btn-cyan{background:linear-gradient(135deg,var(--cyan),var(--teal));color:var(--white);}
+.btn-cyan:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(27,174,204,0.3);}
+.btn-outline{background:none;border:1px solid rgba(11,31,58,0.15);color:var(--text-mid);}
+.btn-outline:hover{background:rgba(11,31,58,0.03);border-color:rgba(11,31,58,0.25);}
+.btn-danger{background:rgba(239,68,68,0.08);color:#dc2626;border:1px solid rgba(239,68,68,0.15);}
+.btn-danger:hover{background:rgba(239,68,68,0.14);}
+.btn-sm{padding:8px 14px;font-size:12px;}
+.btn-lg{padding:14px 28px;font-size:15px;}
+.btn-full{width:100%;justify-content:center;}
+
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;gap:10px;margin-top:6px;}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:rgba(11,31,58,0.15);border-radius:24px;cursor:pointer;transition:0.3s;}
+.toggle-slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+input:checked + .toggle-slider{background:var(--teal);}
+input:checked + .toggle-slider::before{transform:translateX(20px);}
+
+/* MATERIAL CARDS */
+.mat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px;}
+.mat-card{
+  background:var(--white);border-radius:14px;padding:20px;
+  border:1px solid rgba(11,31,58,0.07);transition:box-shadow 0.2s;
+}
+.mat-card:hover{box-shadow:0 6px 20px rgba(11,31,58,0.08);}
+.mat-card-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;}
+.mat-card-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+}
+.mat-card-info{flex:1;min-width:0;}
+.mat-card-title{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mat-card-meta{font-size:12px;color:var(--text-light);margin-top:3px;}
+.mat-card-actions{display:flex;gap:8px;}
+
+/* COURSE ROWS */
+.course-list{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;}
+.course-row{
+  background:var(--white);border-radius:14px;padding:20px 24px;
+  border:1px solid rgba(11,31,58,0.07);
+  display:flex;align-items:center;gap:16px;
+}
+.course-row-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.course-row-info{flex:1;}
+.course-row-title{font-weight:700;font-size:15px;}
+.course-row-meta{font-size:12px;color:var(--text-light);margin-top:3px;}
+.course-row-actions{display:flex;gap:8px;}
+
+/* TABLE */
+.table-card{background:var(--white);border-radius:16px;border:1px solid rgba(11,31,58,0.07);overflow:hidden;margin-bottom:24px;}
+.table-head{padding:18px 24px;border-bottom:1px solid rgba(11,31,58,0.06);display:flex;align-items:center;justify-content:space-between;}
+.table-head-title{font-weight:700;font-size:15px;}
+table{width:100%;border-collapse:collapse;}
+th{padding:12px 20px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);background:rgba(11,31,58,0.015);border-bottom:1px solid rgba(11,31,58,0.06);}
+td{padding:14px 20px;font-size:13px;border-bottom:1px solid rgba(11,31,58,0.04);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(11,31,58,0.015);}
+
+/* BADGE */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-green{background:rgba(34,197,94,0.1);color:#16a34a;}
+.badge-blue{background:rgba(27,174,204,0.1);color:var(--cyan);}
+.badge-gold{background:rgba(212,168,67,0.12);color:var(--gold);}
+.badge-gray{background:rgba(11,31,58,0.07);color:var(--text-light);}
+.badge-red{background:rgba(239,68,68,0.08);color:#dc2626;}
+
+/* SEARCH */
+.search-wrap{display:flex;align-items:center;gap:8px;background:rgba(11,31,58,0.04);border:1px solid rgba(11,31,58,0.1);border-radius:10px;padding:9px 14px;}
+.search-wrap input{border:none;background:none;outline:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--navy);width:220px;}
+
+/* SECTION HEADER */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;}
+
+/* NOTIF */
+.notif{
+  position:fixed;bottom:28px;right:28px;z-index:999;
+  background:var(--navy);color:var(--white);
+  padding:14px 22px;border-radius:12px;font-size:14px;
+  transform:translateY(80px);opacity:0;transition:all 0.3s;
+  box-shadow:0 8px 24px rgba(11,31,58,0.25);border-left:4px solid var(--gold);
+}
+.notif.show{transform:translateY(0);opacity:1;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(11,31,58,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:20px;padding:36px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(11,31,58,0.2);}
+.modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:24px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:28px;}
+
+/* TIPS BOX */
+.tip-box{background:rgba(27,174,204,0.06);border:1px solid rgba(27,174,204,0.15);border-radius:12px;padding:16px;font-size:13px;color:var(--text-mid);line-height:1.7;margin-bottom:20px;}
+.tip-box strong{color:var(--cyan);}
+
+/* MOBILE */
+@media(max-width:960px){
+  .sidebar{transform:translateX(-100%);transition:transform 0.3s;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .content{padding:20px;}
+  .topbar{padding:14px 20px;}
+  .mat-grid{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .stats-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="ld-icon">KI</div>
+  <div class="ld-text">Loading Teacher Portal...</div>
+  <div class="ld-sub" id="loadingMsg"></div>
+</div>
+
+<div id="page">
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-icon">KI</div>
+    <div>
+      <div class="sb-name">Kulan Institute</div>
+      <span class="sb-role">Teacher</span>
+    </div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="nav-section">Dashboard</div>
+    <button class="nav-item active" onclick="switchTab('overview',this)">
+      <span class="nav-icon">📊</span> Overview
+    </button>
+    <button class="nav-item" onclick="switchTab('upload',this)">
+      <span class="nav-icon">📤</span> Upload Materials
+    </button>
+    <button class="nav-item" onclick="switchTab('materials',this)">
+      <span class="nav-icon">📁</span> My Materials
+    </button>
+    <button class="nav-item" onclick="switchTab('courses',this)">
+      <span class="nav-icon">📚</span> Courses
+    </button>
+    <button class="nav-item" onclick="switchTab('students',this)">
+      <span class="nav-icon">👥</span> Students
+    </button>
+    <div class="nav-section">Links</div>
+    <button class="nav-item" onclick="window.open('/','_blank')">
+      <span class="nav-icon">🌐</span> View Website
+    </button>
+    <button class="nav-item" onclick="window.open('/dashboard.html','_blank')">
+      <span class="nav-icon">🎓</span> Student View
+    </button>
+  </div>
+
+  <div class="sb-footer">
+    <div class="user-row">
+      <div class="user-av" id="userAv">T</div>
+      <div class="user-info-text">
+        <div class="user-name" id="userName">Teacher</div>
+        <div class="user-email-text" id="userEmail">—</div>
+      </div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">Sign Out</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Overview</div>
+    <div class="topbar-right">
+      <button class="btn btn-outline btn-sm" onclick="switchTab('upload',document.querySelectorAll('.nav-item')[1])">📤 Upload</button>
+      <button class="btn btn-gold btn-sm" onclick="openModal('addCourse')">+ New Course</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="tab active" id="tab-overview">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-label">Active Courses</div>
+          <div class="stat-val" id="statCourses">0</div>
+          <div class="stat-sub">Published courses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📁</div>
+          <div class="stat-label">Total Materials</div>
+          <div class="stat-val" id="statMaterials">0</div>
+          <div class="stat-sub">PDFs, videos, PPTs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-label">Students</div>
+          <div class="stat-val" id="statStudents">0</div>
+          <div class="stat-sub">Enrolled learners</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-label">Coming Soon</div>
+          <div class="stat-val" id="statComing">0</div>
+          <div class="stat-sub">Courses in progress</div>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <strong>Quick Start:</strong> Use <strong>Upload Materials</strong> to add PDFs, videos, or PowerPoint files to your courses. Students will see them instantly in their dashboard. To add a new course, click <strong>+ New Course</strong> above.
+      </div>
+
+      <div class="table-card">
+        <div class="table-head">
+          <div class="table-head-title">Recent Activity</div>
+        </div>
+        <table>
+          <thead><tr><th>Student</th><th>Course</th><th>Enrolled</th><th>Status</th></tr></thead>
+          <tbody id="recentActivity">
+            <tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:32px;">No students yet. Invite students from the Students tab.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- UPLOAD MATERIALS -->
+    <div class="tab" id="tab-upload">
+      <div class="sec-header">
+        <div class="sec-title">Upload Materials</div>
+      </div>
+
+      <div class="tip-box">
+        <strong>How to upload:</strong> Kulan Institute uses links instead of direct file uploads to keep things fast and free.
+        <br>• <strong>PDF or PPT:</strong> Upload to <a href="https://drive.google.com" target="_blank">Google Drive</a> → Right-click → Share → "Anyone with the link can view" → Copy link → Paste below.
+        <br>• <strong>Video:</strong> Upload to <a href="https://youtube.com" target="_blank">YouTube</a> → Set as "Unlisted" → Copy link → Paste below.
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">📤 Add New Material</div>
+
+        <div class="form-group">
+          <label class="form-label">Course</label>
+          <select class="form-select" id="upCourse">
+            <option value="">Select a course...</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Module Number</label>
+            <input type="number" class="form-input" id="upModule" placeholder="e.g. 1" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Material Type</label>
+            <select class="form-select" id="upType" onchange="updateUploadHint()">
+              <option value="pdf">PDF Document</option>
+              <option value="video">Video (YouTube)</option>
+              <option value="ppt">PowerPoint / Slides</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Material Title</label>
+          <input type="text" class="form-input" id="upTitle" placeholder="e.g. Module 1: Introduction to AI">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Link / URL</label>
+          <input type="text" class="form-input" id="upUrl" placeholder="Paste Google Drive or YouTube link...">
+          <div class="form-hint" id="upHint">
+            Upload your PDF to Google Drive → Share as "Anyone with the link" → Copy link → Paste above.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Allow Students to Download</label>
+          <div class="toggle-wrap">
+            <label class="toggle">
+              <input type="checkbox" id="upDownload">
+              <span class="toggle-slider"></span>
+            </label>
+            <span style="font-size:13px;color:var(--text-mid);">Students can download this material</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Notes for Students (optional)</label>
+          <textarea class="form-textarea" id="upNotes" placeholder="Any instructions or notes for students viewing this material..."></textarea>
+        </div>
+
+        <button class="btn btn-gold btn-lg btn-full" onclick="uploadMaterial()">
+          📤 Add Material to Course
+        </button>
+      </div>
+
+      <!-- Upload steps guide -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div class="form-card" style="text-align:center;">
+          <div style="font-size:36px;margin-bottom:12px;">📄</div>
+          <div style="font-weight:700;margin-bottom:6px;">PDF Files</div>
+          <div style="font-size:12px;color:var(--text-light);line-height:1.7;">
+            1. Go to drive.google.com<br>
+            2. Upload your PDF<br>
+            3. Right-click → Share<br>
+            4. "Anyone with the link"<br>
+            5. Copy link → Paste above
+          </div>
+        </div>
+        <div class="form-card" style="text-align:center;">
+          <div style="font-size:36px;margin-bottom:12px;">🎬</div>
+          <div style="font-weight:700;margin-bottom:6px;">Videos</div>
+          <div style="font-size:12px;color:var(--text-light);line-height:1.7;">
+            1. Go to youtube.com<br>
+            2. Upload your video<br>
+            3. Set visibility to "Unlisted"<br>
+            4. Copy the video URL<br>
+            5. Paste above
+          </div>
+        </div>
+        <div class="form-card" style="text-align:center;">
+          <div style="font-size:36px;margin-bottom:12px;">📊</div>
+          <div style="font-weight:700;margin-bottom:6px;">PowerPoint</div>
+          <div style="font-size:12px;color:var(--text-light);line-height:1.7;">
+            1. Go to drive.google.com<br>
+            2. Upload your PPT file<br>
+            3. Right-click → Share<br>
+            4. "Anyone with the link"<br>
+            5. Copy link → Paste above
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY MATERIALS -->
+    <div class="tab" id="tab-materials">
+      <div class="sec-header">
+        <div class="sec-title">My Materials</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <select class="form-select" id="matFilterCourse" style="width:auto;padding:9px 14px;font-size:13px;" onchange="renderMaterials()">
+            <option value="">All Courses</option>
+          </select>
+          <button class="btn btn-gold btn-sm" onclick="switchTab('upload',document.querySelectorAll('.nav-item')[1])">+ Add</button>
+        </div>
+      </div>
+      <div id="matGrid" class="mat-grid"></div>
+    </div>
+
+    <!-- COURSES -->
+    <div class="tab" id="tab-courses">
+      <div class="sec-header">
+        <div class="sec-title">Manage Courses</div>
+        <button class="btn btn-gold" onclick="openModal('addCourse')">+ Add Course</button>
+      </div>
+      <div class="course-list" id="courseList"></div>
+    </div>
+
+    <!-- STUDENTS -->
+    <div class="tab" id="tab-students">
+      <div class="sec-header">
+        <div class="sec-title">Students</div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+          <button class="btn btn-gold btn-sm" onclick="openModal('inviteStudent')">+ Invite Student</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-head">
+          <div class="search-wrap">
+            <span>🔍</span>
+            <input type="text" id="studentSearch" placeholder="Search students..." oninput="renderStudents()">
+          </div>
+          <span id="studentCount" style="font-size:13px;color:var(--text-light);"></span>
+        </div>
+        <table>
+          <thead><tr><th>Student</th><th>Email</th><th>Course</th><th>Enrolled</th><th></th></tr></thead>
+          <tbody id="studentsTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
+</div><!-- /page -->
+
+<div class="notif" id="notif"></div>
+
+<!-- MODAL: Add Course -->
+<div class="modal-overlay" id="modal-addCourse">
+  <div class="modal">
+    <div class="modal-title">Create New Course</div>
+    <div class="form-group">
+      <label class="form-label">Course Title (English)</label>
+      <input type="text" class="form-input" id="cTitle" placeholder="e.g. AI for Beginners">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Course Title (Somali) — optional</label>
+      <input type="text" class="form-input" id="cTitleSo" placeholder="e.g. Xisaabta Macquulka ah ee Bilowga">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Modules</label>
+        <input type="number" class="form-input" id="cModules" placeholder="8" min="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Level</label>
+        <select class="form-select" id="cLevel">
+          <option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>All Levels</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="cStatus">
+          <option value="active">Active</option>
+          <option value="coming">Coming Soon</option>
+          <option value="draft">Draft</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Language</label>
+        <select class="form-select" id="cLang">
+          <option>EN + SO</option><option>English</option><option>Somali</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="cDesc" placeholder="Brief course description..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Pricing</label>
+      <div class="toggle-wrap">
+        <label class="toggle">
+          <input type="checkbox" id="cPaid" onchange="document.getElementById('cPriceWrap').style.display=this.checked?'block':'none'">
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="font-size:13px;color:var(--text-mid);">This is a paid course</span>
+      </div>
+      <div id="cPriceWrap" style="display:none;margin-top:12px;">
+        <input type="number" class="form-input" id="cPrice" placeholder="Price in USD">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('addCourse')">Cancel</button>
+      <button class="btn btn-gold" onclick="addCourse()">Create Course</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Invite Student -->
+<div class="modal-overlay" id="modal-inviteStudent">
+  <div class="modal">
+    <div class="modal-title">Invite Student</div>
+    <div class="tip-box">
+      <strong>Two steps:</strong> Save the student record here, then go to <strong>Netlify → Identity → Invite Users</strong> and enter the same email. The student gets a link to set their password.
+    </div>
+    <div class="form-group">
+      <label class="form-label">Student Name</label>
+      <input type="text" class="form-input" id="inviteName" placeholder="Full name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Student Email</label>
+      <input type="email" class="form-input" id="inviteEmail" placeholder="student@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Course</label>
+      <select class="form-select" id="inviteCourse"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('inviteStudent')">Cancel</button>
+      <button class="btn btn-gold" onclick="inviteStudent()">Save & Invite</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var TEACHER_EMAIL = 'mohamedmohammud@gmail.com';
+
+function setMsg(msg) { document.getElementById('loadingMsg').textContent = msg; }
+function hideLoading() { document.getElementById('loadingScreen').style.display = 'none'; }
+
+function checkTeacher(user) {
+  if (!user) {
+    window.location.href = '/#teacher-portal';
+    return;
+  }
+  if (user.email.toLowerCase().trim() !== TEACHER_EMAIL.toLowerCase().trim()) {
+    document.getElementById('loadingScreen').innerHTML =
+      '<div style="text-align:center;padding:32px;">'
+      + '<div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
+      + '<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: ' + user.email + '</div>'
+      + '<button onclick="netlifyIdentity.logout();location.href=\'/#teacher-portal\';" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;font-family:sans-serif;">Sign out and try again</button>'
+      + '</div>';
+    return;
+  }
+  hideLoading();
+  document.getElementById('page').style.display = 'block';
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('userAv').textContent = user.email.charAt(0).toUpperCase();
+  var name = (user.user_metadata && user.user_metadata.full_name) ? user.user_metadata.full_name : 'Teacher';
+  document.getElementById('userName').textContent = name;
+  document.getElementById('logoutBtn').addEventListener('click', function() { netlifyIdentity.logout(); });
+  netlifyIdentity.on('logout', function() { window.location.href = '/#teacher-portal'; });
+  init();
+}
+
+var authTimeout = setTimeout(function() { window.location.href = '/#teacher-portal'; }, 5000);
+netlifyIdentity.on('init', function(u) { clearTimeout(authTimeout); checkTeacher(u); });
+netlifyIdentity.on('login', function(u) { clearTimeout(authTimeout); netlifyIdentity.close(); checkTeacher(u); });
+netlifyIdentity.init();
+setTimeout(function() { var u = netlifyIdentity.currentUser(); if (u) { clearTimeout(authTimeout); checkTeacher(u); } }, 600);
+
+// DATA
+var courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
+var materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
+var students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
+function saveCourses()   { localStorage.setItem('ki_courses',   JSON.stringify(courses)); }
+function saveMaterials() { localStorage.setItem('ki_materials', JSON.stringify(materials)); }
+function saveStudents()  { localStorage.setItem('ki_students',  JSON.stringify(students)); }
+
+function init() {
+  if (courses.length === 0) {
+    courses = [
+      { id:'c1', title:'AI for Beginners', titleSo:'Xisaabta Macquulka ah ee Bilowga', modules:8, level:'Beginner', status:'active', lang:'EN + SO', paid:false, price:0, desc:'An 8-module bilingual course introducing artificial intelligence.' },
+      { id:'c2', title:'Cybersecurity Fundamentals', titleSo:'Aasaaska Amniga Xogta', modules:6, level:'Intermediate', status:'active', lang:'EN + SO', paid:false, price:0, desc:'Core principles of cybersecurity.' },
+      { id:'c3', title:'Digital Literacy', titleSo:'Aqoonta Dhijitaalka ah', modules:0, level:'All Levels', status:'coming', lang:'SO', paid:false, price:0, desc:'Foundational digital skills.' },
+    ];
+    saveCourses();
+  }
+  renderAll();
+}
+
+function renderAll() {
+  renderStats();
+  renderCourses();
+  renderMaterials();
+  renderStudents();
+  populateSelects();
+}
+
+function renderStats() {
+  document.getElementById('statCourses').textContent   = courses.filter(function(c){ return c.status==='active'; }).length;
+  document.getElementById('statMaterials').textContent = materials.length;
+  document.getElementById('statStudents').textContent  = students.length;
+  document.getElementById('statComing').textContent    = courses.filter(function(c){ return c.status==='coming'; }).length;
+
+  var tbody = document.getElementById('recentActivity');
+  if (!students.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:32px;">No students yet.</td></tr>';
+  } else {
+    var recent = students.slice(-6).reverse();
+    tbody.innerHTML = recent.map(function(s) {
+      var c = courses.find(function(x){ return x.id===s.courseId; });
+      return '<tr><td style="font-weight:600;">' + s.name + '</td><td>' + s.email + '</td><td>' + (c?c.title:'—') + '</td><td><span class="badge badge-green">Active</span></td></tr>';
+    }).join('');
+  }
+}
+
+var courseIcons  = ['🤖','🔐','💻','📊','🌐','🧠','📱','🛡️'];
+var courseBgList = ['rgba(27,174,204,0.1)','rgba(212,168,67,0.1)','rgba(14,124,123,0.1)','rgba(11,31,58,0.07)'];
+
+function renderCourses() {
+  var el = document.getElementById('courseList');
+  if (!courses.length) {
+    el.innerHTML = '<div style="color:var(--text-light);padding:20px;">No courses yet. Click "+ Add Course" to create one.</div>';
+    return;
+  }
+  el.innerHTML = courses.map(function(c, i) {
+    var mats = materials.filter(function(m){ return m.courseId===c.id; }).length;
+    var sb = c.status==='active'?'badge-green':c.status==='coming'?'badge-blue':'badge-gray';
+    var sl = c.status==='active'?'Active':c.status==='coming'?'Coming Soon':'Draft';
+    return '<div class="course-row">'
+      + '<div class="course-row-icon" style="background:' + courseBgList[i%courseBgList.length] + '">' + courseIcons[i%courseIcons.length] + '</div>'
+      + '<div class="course-row-info">'
+      + '<div class="course-row-title">' + c.title + (c.titleSo ? ' <span style="font-size:12px;font-style:italic;color:var(--text-light);">— ' + c.titleSo + '</span>' : '') + '</div>'
+      + '<div class="course-row-meta">' + (c.modules||'TBA') + ' modules · ' + c.level + ' · ' + c.lang + ' · ' + mats + ' material' + (mats!==1?'s':'') + '</div>'
+      + '</div>'
+      + '<span class="badge ' + sb + '">' + sl + '</span>'
+      + '<div class="course-row-actions">'
+      + '<button class="btn btn-outline btn-sm" onclick="viewMatsFor(\'' + c.id + '\')">Materials</button>'
+      + '<button class="btn btn-danger btn-sm" onclick="deleteCourse(\'' + c.id + '\')">Delete</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderMaterials() {
+  var filter = document.getElementById('matFilterCourse');
+  var sel = filter ? filter.value : '';
+  if (filter) {
+    filter.innerHTML = '<option value="">All Courses</option>'
+      + courses.map(function(c){ return '<option value="' + c.id + '"' + (c.id===sel?' selected':'') + '>' + c.title + '</option>'; }).join('');
+  }
+  var list = sel ? materials.filter(function(m){ return m.courseId===sel; }) : materials;
+  list = list.slice().sort(function(a,b){ return (a.module||0)-(b.module||0); });
+
+  var el = document.getElementById('matGrid');
+  if (!list.length) {
+    el.innerHTML = '<div style="color:var(--text-light);padding:20px;grid-column:1/-1;">No materials yet. Go to "Upload Materials" to add content.</div>';
+    return;
+  }
+  var typeIcon = {pdf:'📄',video:'🎬',ppt:'📊'};
+  var typeBg   = {pdf:'rgba(239,68,68,0.1)',video:'rgba(27,174,204,0.1)',ppt:'rgba(212,168,67,0.1)'};
+  el.innerHTML = list.map(function(m) {
+    var c = courses.find(function(x){ return x.id===m.courseId; });
+    return '<div class="mat-card">'
+      + '<div class="mat-card-top">'
+      + '<div class="mat-card-icon" style="background:' + (typeBg[m.type]||'rgba(11,31,58,0.07)') + '">' + (typeIcon[m.type]||'📎') + '</div>'
+      + '<div class="mat-card-info">'
+      + '<div class="mat-card-title">Module ' + (m.module||'?') + ': ' + m.title + '</div>'
+      + '<div class="mat-card-meta">' + (c?c.title:'Unknown') + ' · ' + m.type.toUpperCase() + (m.download?' · Downloadable':'') + '</div>'
+      + '</div></div>'
+      + (m.notes ? '<div style="font-size:12px;color:var(--text-light);margin-bottom:12px;line-height:1.5;">' + m.notes + '</div>' : '')
+      + '<div class="mat-card-actions">'
+      + '<a href="' + m.url + '" target="_blank" class="btn btn-outline btn-sm">Preview</a>'
+      + '<button class="btn btn-danger btn-sm" onclick="deleteMaterial(\'' + m.id + '\')">Delete</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderStudents() {
+  var q = (document.getElementById('studentSearch')||{}).value || '';
+  var list = students.filter(function(s){
+    return !q || s.name.toLowerCase().includes(q.toLowerCase()) || s.email.toLowerCase().includes(q.toLowerCase());
+  });
+  document.getElementById('studentCount').textContent = list.length + ' student' + (list.length!==1?'s':'');
+  var tbody = document.getElementById('studentsTable');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:32px;">' + (q?'No results':'No students yet. Invite students using the button above.') + '</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(function(s) {
+    var c = courses.find(function(x){ return x.id===s.courseId; });
+    return '<tr>'
+      + '<td style="font-weight:600;">' + s.name + '</td>'
+      + '<td>' + s.email + '</td>'
+      + '<td>' + (c?c.title:'—') + '</td>'
+      + '<td>' + (s.joined||'—') + '</td>'
+      + '<td><button class="btn btn-danger btn-sm" onclick="removeStudent(\'' + s.id + '\')">Remove</button></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function populateSelects() {
+  var opts = '<option value="">Select a course...</option>'
+    + courses.map(function(c){ return '<option value="' + c.id + '">' + c.title + '</option>'; }).join('');
+  var ids = ['upCourse','inviteCourse'];
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = opts;
+  });
+}
+
+// UPLOAD
+function updateUploadHint() {
+  var hints = {
+    pdf:   'Upload your PDF to Google Drive → Share as "Anyone with the link" → Copy link → Paste above.',
+    video: 'Upload your video to YouTube → Set as "Unlisted" (not private) → Copy the video URL → Paste above.',
+    ppt:   'Upload your PPT to Google Drive → Share as "Anyone with the link" → Copy link → Paste above.',
+  };
+  document.getElementById('upHint').textContent = hints[document.getElementById('upType').value] || '';
+}
+
+function uploadMaterial() {
+  // Always reload from storage first
+  materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
+  var courseId = document.getElementById('upCourse').value;
+  var title    = document.getElementById('upTitle').value.trim();
+  var url      = document.getElementById('upUrl').value.trim();
+  var type     = document.getElementById('upType').value;
+  var module   = parseInt(document.getElementById('upModule').value) || 1;
+
+  if (!courseId) { showNotif('Please select a course'); return; }
+  if (!title)    { showNotif('Please enter a title'); return; }
+  if (!url)      { showNotif('Please enter a URL link'); return; }
+
+  // Auto-fix Google Drive URL
+  url = url.replace('/view?usp=sharing','').replace('/view?usp=drive_link','').replace('/view','');
+  if (url.includes('drive.google.com') && !url.includes('/preview')) url = url + '/preview';
+
+  // Auto-fix YouTube URL
+  var yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+  if (yt) url = 'https://www.youtube.com/embed/' + yt[1];
+
+  var m = {
+    id:       'm' + Date.now(),
+    courseId: courseId,
+    title:    title,
+    type:     type,
+    url:      url,
+    module:   module,
+    download: document.getElementById('upDownload').checked,
+    notes:    document.getElementById('upNotes').value.trim(),
+  };
+  materials.push(m);
+  saveMaterials();
+  renderAll();
+
+  // Reset form
+  ['upTitle','upUrl','upModule','upNotes'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('upDownload').checked = false;
+
+  showNotif('Material added to course!');
+  // Switch to materials tab after a moment
+  setTimeout(function(){ switchTab('materials', document.querySelectorAll('.nav-item')[2]); }, 1200);
+}
+
+// COURSE ACTIONS
+function addCourse() {
+  // Always reload from storage first
+  courses = JSON.parse(localStorage.getItem('ki_courses') || '[]');
+
+  var titleEl = document.getElementById('cTitle');
+  var title = titleEl.value.trim();
+  if (!title) {
+    titleEl.style.borderColor = '#dc2626';
+    titleEl.placeholder = 'Please enter a title!';
+    showNotif('Course title is required');
+    setTimeout(function(){ titleEl.style.borderColor = ''; }, 2000);
+    return;
+  }
+  titleEl.style.borderColor = '';
+
+  var newCourse = {
+    id:       'c' + Date.now(),
+    title:    title,
+    titleSo:  document.getElementById('cTitleSo').value.trim(),
+    modules:  parseInt(document.getElementById('cModules').value) || 0,
+    level:    document.getElementById('cLevel').value,
+    status:   document.getElementById('cStatus').value,
+    lang:     document.getElementById('cLang').value,
+    paid:     document.getElementById('cPaid').checked,
+    price:    parseFloat(document.getElementById('cPrice').value) || 0,
+    desc:     document.getElementById('cDesc').value.trim(),
+  };
+
+  courses.push(newCourse);
+  saveCourses();
+
+  // Reset form
+  document.getElementById('cTitle').value    = '';
+  document.getElementById('cTitleSo').value  = '';
+  document.getElementById('cModules').value  = '';
+  document.getElementById('cDesc').value     = '';
+  document.getElementById('cPrice').value    = '';
+  document.getElementById('cPaid').checked   = false;
+  document.getElementById('cPriceWrap').style.display = 'none';
+  document.getElementById('cLevel').selectedIndex  = 0;
+  document.getElementById('cStatus').selectedIndex = 0;
+  document.getElementById('cLang').selectedIndex   = 0;
+
+  closeModal('addCourse');
+  renderAll();
+  showNotif('Course "' + newCourse.title + '" created!');
+  switchTab('courses', document.querySelectorAll('.nav-item')[3]);
+}
+
+function deleteCourse(id) {
+  if (!confirm('Delete this course and all its materials?')) return;
+  courses   = courses.filter(function(c){ return c.id!==id; });
+  materials = materials.filter(function(m){ return m.courseId!==id; });
+  saveCourses(); saveMaterials();
+  renderAll();
+  showNotif('Course deleted');
+}
+
+function viewMatsFor(courseId) {
+  document.getElementById('matFilterCourse').value = courseId;
+  switchTab('materials', document.querySelectorAll('.nav-item')[2]);
+  renderMaterials();
+}
+
+function deleteMaterial(id) {
+  if (!confirm('Delete this material?')) return;
+  materials = materials.filter(function(m){ return m.id!==id; });
+  saveMaterials();
+  renderAll();
+  showNotif('Material deleted');
+}
+
+function inviteStudent() {
+  // Always reload from storage first
+  students = JSON.parse(localStorage.getItem('ki_students') || '[]');
+
+  var nameEl  = document.getElementById('inviteName');
+  var emailEl = document.getElementById('inviteEmail');
+  var name    = nameEl.value.trim();
+  var email   = emailEl.value.trim();
+  var courseId = document.getElementById('inviteCourse').value;
+
+  if (!email) {
+    emailEl.style.borderColor = '#dc2626';
+    showNotif('Email address is required');
+    setTimeout(function(){ emailEl.style.borderColor = ''; }, 2000);
+    return;
+  }
+  if (!email.includes('@')) {
+    emailEl.style.borderColor = '#dc2626';
+    showNotif('Please enter a valid email address');
+    setTimeout(function(){ emailEl.style.borderColor = ''; }, 2000);
+    return;
+  }
+  // Check for duplicate
+  var exists = students.find(function(s){ return s.email.toLowerCase() === email.toLowerCase(); });
+  if (exists) {
+    emailEl.style.borderColor = '#dc2626';
+    showNotif('This student is already enrolled');
+    setTimeout(function(){ emailEl.style.borderColor = ''; }, 2000);
+    return;
+  }
+
+  students.push({
+    id:       's' + Date.now(),
+    name:     name || email.split('@')[0],
+    email:    email,
+    courseId: courseId,
+    joined:   new Date().toLocaleDateString(),
+  });
+  saveStudents();
+
+  // Reset form
+  nameEl.value  = '';
+  emailEl.value = '';
+  document.getElementById('inviteCourse').selectedIndex = 0;
+
+  closeModal('inviteStudent');
+  renderAll();
+  showNotif('Student saved! Now go to Netlify → Identity → Invite: ' + email);
+  switchTab('students', document.querySelectorAll('.nav-item')[4]);
+}
+
+function removeStudent(id) {
+  if (!confirm('Remove this student?')) return;
+  students = students.filter(function(s){ return s.id!==id; });
+  saveStudents();
+  renderAll();
+  showNotif('Student removed');
+}
+
+function exportCSV() {
+  if (!students.length) { showNotif('No students to export'); return; }
+  var rows = [['Name','Email','Course','Enrolled']];
+  students.forEach(function(s) {
+    var c = courses.find(function(x){ return x.id===s.courseId; });
+    rows.push([s.name, s.email, c?c.title:'Unknown', s.joined||'']);
+  });
+  var csv = rows.map(function(r){ return r.map(function(v){ return '"'+v+'"'; }).join(','); }).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'kulan-students.csv';
+  a.click();
+  showNotif('CSV exported!');
+}
+
+// UI
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (el) el.classList.add('active');
+  var titles = {overview:'Overview',upload:'Upload Materials',materials:'My Materials',courses:'Courses',students:'Students'};
+  document.getElementById('pageTitle').textContent = titles[tab]||'';
+}
+
+function openModal(id) { populateSelects(); document.getElementById('modal-' + id).classList.add('open'); }
+function closeModal(id) { document.getElementById('modal-' + id).classList.remove('open'); }
+
+function showNotif(msg) {
+  var el = document.getElementById('notif');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
+});
+</script>
+
+</body>
+</html>
