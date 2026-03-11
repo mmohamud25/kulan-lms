@@ -8,136 +8,82 @@
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
   :root {
-    --navy: #0B1F3A;
-    --blue: #1A3C6E;
-    --cyan: #1BAECC;
-    --gold: #D4A843;
-    --teal: #0E7C7B;
-    --light: #F4F7FB;
-    --white: #FFFFFF;
-    --text-mid: #3D5A80;
-    --text-light: #7A94B0;
+    --navy: #0B1F3A; --blue: #1A3C6E; --cyan: #1BAECC;
+    --gold: #D4A843; --teal: #0E7C7B; --light: #F4F7FB;
+    --white: #FFFFFF; --text-mid: #3D5A80; --text-light: #7A94B0;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--light);
-    color: var(--navy);
-    min-height: 100vh;
-  }
-
-  /* Page hidden until auth check */
+  body { font-family: 'DM Sans', sans-serif; background: var(--light); color: var(--navy); min-height: 100vh; }
   #page { display: none; }
 
-  /* ── TOPBAR ── */
   .topbar {
-    background: var(--navy);
-    padding: 14px 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background: var(--navy); padding: 14px 48px;
+    display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid rgba(212,168,67,0.2);
+    position: sticky; top: 0; z-index: 10;
   }
 
-  .topbar-logo {
-    display: flex; align-items: center; gap: 10px;
-    text-decoration: none;
-  }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 
   .t-icon {
     width: 36px; height: 36px;
     background: linear-gradient(135deg, var(--gold), #e8c060);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', serif;
-    font-weight: 900; font-size: 16px; color: var(--navy);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-weight: 900; font-size: 16px; color: var(--navy);
   }
 
   .t-name { font-size: 13px; font-weight: 600; color: var(--white); }
 
-  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
 
   .user-pill {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 20px;
-    padding: 7px 16px;
-    font-size: 13px; color: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px; padding: 7px 16px; font-size: 13px; color: rgba(255,255,255,0.8);
   }
 
   .logout-btn {
-    background: none; border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 8px; padding: 8px 16px;
-    font-size: 13px; color: rgba(255,255,255,0.6);
-    cursor: pointer; font-family: 'DM Sans', sans-serif;
-    transition: all 0.2s;
+    background: none; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+    padding: 8px 16px; font-size: 13px; color: rgba(255,255,255,0.6);
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
   }
   .logout-btn:hover { color: var(--white); border-color: rgba(255,255,255,0.4); }
 
-  /* ── MAIN ── */
   .main { max-width: 1100px; margin: 0 auto; padding: 48px 24px; }
 
-  .welcome {
-    margin-bottom: 40px;
-  }
-
+  .welcome { margin-bottom: 40px; }
   .welcome h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 32px; font-weight: 700;
-    color: var(--navy);
+    font-size: 32px; font-weight: 700; color: var(--navy);
   }
-
   .welcome h1 span { color: var(--gold); }
   .welcome p { font-size: 15px; color: var(--text-mid); margin-top: 6px; }
 
-  /* ── PROGRESS CARDS ── */
-  .progress-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-bottom: 40px;
-  }
+  .progress-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-bottom: 40px; }
 
   .prog-card {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 24px;
+    background: var(--white); border-radius: 16px; padding: 24px;
     border: 1px solid rgba(11,31,58,0.07);
   }
 
   .prog-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-light); margin-bottom: 8px; }
-  .prog-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 32px; font-weight: 700; color: var(--navy);
-  }
+  .prog-val { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--navy); }
   .prog-val span { font-size: 14px; font-weight: 400; color: var(--text-light); }
   .prog-sub { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+  .prog-bar-wrap { background: rgba(11,31,58,0.08); border-radius: 8px; height: 6px; margin-top: 12px; }
+  .prog-bar { height: 6px; border-radius: 8px; background: linear-gradient(90deg,var(--cyan),var(--teal)); transition: width 0.6s ease; }
 
-  .prog-bar-wrap {
-    background: rgba(11,31,58,0.08);
-    border-radius: 8px; height: 6px; margin-top: 12px;
-  }
-  .prog-bar { height: 6px; border-radius: 8px; background: linear-gradient(90deg, var(--cyan), var(--teal)); }
-
-  /* ── COURSES ── */
   .section-title {
     font-family: 'Playfair Display', serif;
-    font-size: 22px; font-weight: 700;
-    color: var(--navy); margin-bottom: 20px;
+    font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 20px;
   }
 
   .courses-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px; }
 
   .course-row {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 24px 28px;
+    background: var(--white); border-radius: 16px; padding: 24px 28px;
     border: 1px solid rgba(11,31,58,0.07);
-    display: flex;
-    align-items: center;
-    gap: 20px;
+    display: flex; align-items: center; gap: 20px;
     transition: box-shadow 0.2s;
   }
   .course-row:hover { box-shadow: 0 8px 24px rgba(11,31,58,0.08); }
@@ -145,70 +91,69 @@
   .course-icon {
     width: 52px; height: 52px; border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 24px; flex-shrink: 0;
+    font-size: 26px; flex-shrink: 0;
   }
 
   .course-info { flex: 1; }
-  .course-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px; font-weight: 700; color: var(--navy);
-  }
-  .course-meta-line { font-size: 13px; color: var(--text-light); margin-top: 3px; }
+  .course-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--navy); }
+  .course-name-so { font-size: 12px; font-style: italic; color: var(--text-light); margin-top: 2px; }
+  .course-meta-line { font-size: 13px; color: var(--text-light); margin-top: 6px; }
 
-  .course-progress { min-width: 160px; }
+  .badge-free { display: inline-block; padding: 3px 10px; background: rgba(27,174,204,0.1); color: var(--cyan); border-radius: 20px; font-size: 11px; font-weight: 600; margin-left: 8px; }
+  .badge-paid { display: inline-block; padding: 3px 10px; background: rgba(212,168,67,0.12); color: var(--gold); border-radius: 20px; font-size: 11px; font-weight: 600; margin-left: 8px; }
+
+  .course-progress { min-width: 180px; }
   .cp-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-light); margin-bottom: 6px; }
   .cp-bar-wrap { background: rgba(11,31,58,0.08); border-radius: 8px; height: 8px; }
-  .cp-bar { height: 8px; border-radius: 8px; }
+  .cp-bar { height: 8px; border-radius: 8px; transition: width 0.6s ease; }
   .cp-pct { font-size: 12px; color: var(--text-mid); margin-top: 5px; font-weight: 600; }
 
   .course-btn {
-    background: linear-gradient(135deg, var(--gold), #e8c060);
-    color: var(--navy); border: none; border-radius: 10px;
-    padding: 12px 22px; font-size: 13px; font-weight: 700;
-    cursor: pointer; font-family: 'DM Sans', sans-serif;
-    text-decoration: none; white-space: nowrap;
-    transition: transform 0.2s, box-shadow 0.2s;
-    flex-shrink: 0;
+    background: linear-gradient(135deg,var(--gold),#e8c060); color: var(--navy);
+    border: none; border-radius: 10px; padding: 12px 22px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; text-decoration: none;
+    white-space: nowrap; flex-shrink: 0; transition: transform 0.2s, box-shadow 0.2s;
   }
   .course-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(212,168,67,0.35); }
 
   .locked-btn {
-    background: rgba(11,31,58,0.06);
-    color: var(--text-light); border: none; border-radius: 10px;
-    padding: 12px 22px; font-size: 13px; font-weight: 600;
-    cursor: not-allowed; font-family: 'DM Sans', sans-serif;
-    flex-shrink: 0;
+    background: rgba(11,31,58,0.06); color: var(--text-light);
+    border: none; border-radius: 10px; padding: 12px 22px;
+    font-size: 13px; font-weight: 600; cursor: not-allowed;
+    font-family: 'DM Sans', sans-serif; flex-shrink: 0;
   }
 
-  /* ── ANNOUNCEMENTS ── */
+  .empty-state {
+    background: var(--white); border-radius: 16px; padding: 60px 24px;
+    border: 1px solid rgba(11,31,58,0.07); text-align: center; color: var(--text-light);
+  }
+  .empty-state .e-icon { font-size: 44px; margin-bottom: 14px; }
+  .empty-state .e-title { font-size: 18px; font-weight: 600; color: var(--text-mid); margin-bottom: 8px; }
+  .empty-state .e-desc { font-size: 14px; line-height: 1.7; }
+
   .announce {
-    background: linear-gradient(135deg, var(--navy), var(--blue));
-    border-radius: 16px;
-    padding: 28px 32px;
-    color: var(--white);
-    display: flex;
-    align-items: center;
-    gap: 20px;
+    background: linear-gradient(135deg,var(--navy),var(--blue));
+    border-radius: 16px; padding: 28px 32px; color: var(--white);
+    display: flex; align-items: center; gap: 20px;
   }
-
-  .announce-icon {
-    font-size: 32px; flex-shrink: 0;
-  }
-
-  .announce h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px; font-weight: 700;
-    margin-bottom: 4px;
-  }
-
+  .announce-icon { font-size: 32px; flex-shrink: 0; }
+  .announce h3 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; margin-bottom: 4px; }
   .announce p { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.6; }
+
+  @media (max-width: 768px) {
+    .topbar { padding: 14px 20px; }
+    .main { padding: 32px 16px; }
+    .progress-row { grid-template-columns: 1fr; }
+    .course-row { flex-wrap: wrap; }
+    .course-progress { min-width: 100%; }
+  }
 </style>
 </head>
 <body>
 
 <div id="page">
 
-  <!-- TOPBAR -->
   <div class="topbar">
     <a href="index.html" class="topbar-logo">
       <div class="t-icon">KI</div>
@@ -220,98 +165,43 @@
     </div>
   </div>
 
-  <!-- MAIN -->
   <div class="main">
 
-    <!-- Welcome -->
     <div class="welcome">
       <h1>Welcome back, <span id="userName">Student</span> 👋</h1>
       <p>Here's your learning progress at Kulan Institute.</p>
     </div>
 
-    <!-- Progress Summary -->
     <div class="progress-row">
       <div class="prog-card">
         <div class="prog-label">Courses Enrolled</div>
-        <div class="prog-val">2 <span>courses</span></div>
-        <div class="prog-sub">Active learner</div>
+        <div class="prog-val" id="totalEnrolled">0 <span>courses</span></div>
+        <div class="prog-sub" id="enrolledSub">No active courses yet</div>
       </div>
       <div class="prog-card">
         <div class="prog-label">Modules Completed</div>
-        <div class="prog-val">3 <span>/ 8</span></div>
+        <div class="prog-val" id="totalCompleted">0 <span>modules</span></div>
         <div class="prog-bar-wrap">
-          <div class="prog-bar" style="width: 37%"></div>
+          <div class="prog-bar" id="completedBar" style="width:0%"></div>
         </div>
       </div>
       <div class="prog-card">
         <div class="prog-label">Overall Progress</div>
-        <div class="prog-val">37 <span>%</span></div>
+        <div class="prog-val" id="overallPct">0 <span>%</span></div>
         <div class="prog-bar-wrap">
-          <div class="prog-bar" style="width: 37%; background: linear-gradient(90deg, var(--gold), #e8c060);"></div>
+          <div class="prog-bar" id="overallBar" style="width:0%;background:linear-gradient(90deg,var(--gold),#e8c060)"></div>
         </div>
       </div>
     </div>
 
-    <!-- My Courses -->
     <h2 class="section-title">My Courses</h2>
-    <div class="courses-list">
+    <div class="courses-list" id="coursesList"></div>
 
-      <div class="course-row">
-        <div class="course-icon" style="background: rgba(27,174,204,0.1);">🤖</div>
-        <div class="course-info">
-          <div class="course-name">AI for Beginners</div>
-          <div class="course-meta-line">8 Modules · Bilingual EN + SO · Beginner</div>
-        </div>
-        <div class="course-progress">
-          <div class="cp-label">Progress</div>
-          <div class="cp-bar-wrap">
-            <div class="cp-bar" style="width:37%; background: linear-gradient(90deg, var(--cyan), var(--teal));"></div>
-          </div>
-          <div class="cp-pct">3 of 8 modules complete</div>
-        </div>
-        <a href="#" class="course-btn">Continue →</a>
-      </div>
-
-      <div class="course-row">
-        <div class="course-icon" style="background: rgba(212,168,67,0.1);">🔐</div>
-        <div class="course-info">
-          <div class="course-name">Cybersecurity Fundamentals</div>
-          <div class="course-meta-line">6 Modules · Bilingual EN + SO · Intermediate</div>
-        </div>
-        <div class="course-progress">
-          <div class="cp-label">Progress</div>
-          <div class="cp-bar-wrap">
-            <div class="cp-bar" style="width:0%; background: linear-gradient(90deg, var(--gold), #e8c060);"></div>
-          </div>
-          <div class="cp-pct">Not started yet</div>
-        </div>
-        <a href="#" class="course-btn">Start →</a>
-      </div>
-
-      <div class="course-row" style="opacity:0.6">
-        <div class="course-icon" style="background: rgba(11,31,58,0.06);">💻</div>
-        <div class="course-info">
-          <div class="course-name">Digital Literacy</div>
-          <div class="course-meta-line">Coming Soon · Somali · All Levels</div>
-        </div>
-        <div class="course-progress">
-          <div class="cp-label">Status</div>
-          <div class="cp-bar-wrap">
-            <div class="cp-bar" style="width:0%;"></div>
-          </div>
-          <div class="cp-pct">Available soon</div>
-        </div>
-        <button class="locked-btn">🔒 Locked</button>
-      </div>
-
-    </div>
-
-    <!-- Announcement -->
     <div class="announce">
       <div class="announce-icon">📢</div>
       <div>
-        <h3>Modules 4–8 coming soon!</h3>
-        <p>We're actively building out the remaining AI for Beginners modules. You'll receive an email notification as soon as they are ready. Keep up the great work!</p>
+        <h3>New modules coming soon!</h3>
+        <p>We're actively building out more course materials. You'll be notified by email as soon as new modules are ready. Keep up the great work!</p>
       </div>
     </div>
 
@@ -324,26 +214,117 @@
   const user = netlifyIdentity.currentUser();
 
   if (!user) {
-    // Not logged in — send to login page
     window.location.href = '/login.html';
   } else {
-    // Show page
     document.getElementById('page').style.display = 'block';
 
-    // Show user info
     const email = user.email || '';
     const name  = user.user_metadata?.full_name || email.split('@')[0] || 'Student';
     document.getElementById('userEmail').textContent = email;
     document.getElementById('userName').textContent  = name;
 
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      netlifyIdentity.logout();
+    document.getElementById('logoutBtn').addEventListener('click', () => netlifyIdentity.logout());
+    netlifyIdentity.on('logout', () => window.location.href = '/login.html');
+
+    loadDashboard();
+  }
+
+  function loadDashboard() {
+    const courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
+    const materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
+
+    const activeCourses = courses.filter(c => c.status === 'active');
+    const comingCourses = courses.filter(c => c.status === 'coming');
+
+    // Calculate overall progress across all courses
+    let totalMats = 0, totalDone = 0;
+    activeCourses.forEach(c => {
+      const mats      = materials.filter(m => m.courseId === c.id);
+      const completed = JSON.parse(localStorage.getItem('ki_completed_' + c.id) || '[]');
+      totalMats += mats.length;
+      totalDone += completed.length;
     });
 
-    netlifyIdentity.on('logout', () => {
-      window.location.href = '/login.html';
-    });
+    const pct = totalMats > 0 ? Math.round((totalDone / totalMats) * 100) : 0;
+
+    document.getElementById('totalEnrolled').innerHTML  = activeCourses.length + ' <span>courses</span>';
+    document.getElementById('enrolledSub').textContent  = activeCourses.length > 0 ? 'Active learner 🎓' : 'No active courses yet';
+    document.getElementById('totalCompleted').innerHTML = totalDone + ' <span>/ ' + totalMats + '</span>';
+    document.getElementById('completedBar').style.width = pct + '%';
+    document.getElementById('overallPct').innerHTML     = pct + ' <span>%</span>';
+    document.getElementById('overallBar').style.width   = pct + '%';
+
+    const icons     = ['🤖','🔐','💻','📊','🌐','🧠','📱','🛡️'];
+    const bgColors  = ['rgba(27,174,204,0.12)','rgba(212,168,67,0.12)','rgba(14,124,123,0.12)','rgba(11,31,58,0.08)'];
+    const barStyles = [
+      'linear-gradient(90deg,var(--cyan),var(--teal))',
+      'linear-gradient(90deg,var(--gold),#e8c060)',
+      'linear-gradient(90deg,var(--teal),#0a5c5b)',
+      'linear-gradient(90deg,var(--blue),var(--navy))',
+    ];
+
+    let html = '';
+
+    if (activeCourses.length === 0 && comingCourses.length === 0) {
+      html = `<div class="empty-state">
+        <div class="e-icon">📚</div>
+        <div class="e-title">No courses available yet</div>
+        <div class="e-desc">Your instructor is setting up the courses.<br>Check back soon or contact Kulan Institute.</div>
+      </div>`;
+    } else {
+
+      activeCourses.forEach((c, i) => {
+        const mats      = materials.filter(m => m.courseId === c.id);
+        const completed = JSON.parse(localStorage.getItem('ki_completed_' + c.id) || '[]');
+        const cpPct     = mats.length > 0 ? Math.round((completed.length / mats.length) * 100) : 0;
+        const btnText   = completed.length === 0 ? 'Start →' : (completed.length >= mats.length ? 'Review →' : 'Continue →');
+        const hasContent = mats.length > 0;
+
+        html += `
+          <div class="course-row">
+            <div class="course-icon" style="background:${bgColors[i % bgColors.length]}">${icons[i % icons.length]}</div>
+            <div class="course-info">
+              <div class="course-name">
+                ${c.title}
+                <span class="${c.paid ? 'badge-paid' : 'badge-free'}">${c.paid ? '$' + c.price : 'Free'}</span>
+              </div>
+              ${c.titleSo ? '<div class="course-name-so">' + c.titleSo + '</div>' : ''}
+              <div class="course-meta-line">${c.modules || mats.length || 'TBA'} Modules · ${c.level} · ${mats.length} material${mats.length !== 1 ? 's' : ''} available</div>
+            </div>
+            <div class="course-progress">
+              <div class="cp-label">Progress</div>
+              <div class="cp-bar-wrap">
+                <div class="cp-bar" style="width:${cpPct}%;background:${barStyles[i % barStyles.length]}"></div>
+              </div>
+              <div class="cp-pct">${completed.length} of ${mats.length || c.modules || '?'} complete</div>
+            </div>
+            ${hasContent
+              ? '<a href="course-viewer.html?course=' + c.id + '" class="course-btn">' + btnText + '</a>'
+              : '<button class="locked-btn">📭 No content yet</button>'
+            }
+          </div>`;
+      });
+
+      comingCourses.forEach((c, i) => {
+        html += `
+          <div class="course-row" style="opacity:0.6">
+            <div class="course-icon" style="background:rgba(11,31,58,0.06)">💻</div>
+            <div class="course-info">
+              <div class="course-name">${c.title}</div>
+              ${c.titleSo ? '<div class="course-name-so">' + c.titleSo + '</div>' : ''}
+              <div class="course-meta-line">Coming Soon · ${c.level}</div>
+            </div>
+            <div class="course-progress">
+              <div class="cp-label">Status</div>
+              <div class="cp-bar-wrap"><div class="cp-bar" style="width:0%"></div></div>
+              <div class="cp-pct">Not available yet</div>
+            </div>
+            <button class="locked-btn">🔒 Coming Soon</button>
+          </div>`;
+      });
+    }
+
+    document.getElementById('coursesList').innerHTML = html;
   }
 </script>
 
