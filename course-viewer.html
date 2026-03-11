@@ -166,6 +166,9 @@
 </head>
 <body>
 
+<div id="loadingScreen" style="position:fixed;inset:0;background:#0B1F3A;display:flex;align-items:center;justify-content:center;z-index:9999;">
+  <div style="color:rgba(255,255,255,0.6);font-size:14px;font-family:sans-serif;">Loading course...</div>
+</div>
 <div id="page">
   <div class="topbar">
     <div class="topbar-left">
@@ -217,15 +220,18 @@
 
 <script>
   function startViewer(user) {
+    const loader = document.getElementById('loadingScreen');
     if (!user) {
-      window.location.href = '/login.html';
+      setTimeout(() => { window.location.href = '/login.html'; }, 500);
     } else {
+      if (loader) loader.style.display = 'none';
       document.getElementById('page').style.display = 'block';
       loadCourse();
     }
   }
 
-  netlifyIdentity.on('init', user => startViewer(user));
+  const authTimeout = setTimeout(() => { window.location.href = '/login.html'; }, 5000);
+  netlifyIdentity.on('init', user => { clearTimeout(authTimeout); startViewer(user); });
   netlifyIdentity.init();
 
   function loadCourse() {

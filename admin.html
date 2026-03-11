@@ -443,6 +443,26 @@
 </head>
 <body>
 
+<!-- Loading Screen -->
+<div id="loadingScreen" style="
+  position:fixed;inset:0;
+  background:linear-gradient(160deg,#0B1F3A,#1A3C6E);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:9999;font-family:'DM Sans',sans-serif;
+">
+  <div style="
+    width:48px;height:48px;
+    background:linear-gradient(135deg,#D4A843,#e8c060);
+    border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:serif;font-weight:900;font-size:22px;color:#0B1F3A;
+    margin-bottom:20px;
+  ">KI</div>
+  <div style="color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:8px;">Loading admin panel...</div>
+  <div id="loadingMsg" style="color:rgba(212,168,67,0.6);font-size:12px;"></div>
+</div>
+
 <div id="page">
 <div class="layout">
 
@@ -806,37 +826,55 @@
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
 
+  function showLoading(msg) {
+    document.getElementById('loadingMsg').textContent = msg || '';
+  }
+
+  function hideLoading() {
+    const el = document.getElementById('loadingScreen');
+    if (el) el.style.display = 'none';
+  }
+
   function checkAdmin(user) {
     if (!user) {
-      window.location.href = '/login.html';
-    } else if (user.email !== ADMIN_EMAIL) {
-      netlifyIdentity.logout();
-      alert('Access denied. Admin only.');
-      window.location.href = '/dashboard.html';
+      // Not logged in — show login button instead of auto-redirecting
+      document.getElementById('loadingScreen').innerHTML = \`
+        <div style="text-align:center;">
+          <div style="width:48px;height:48px;background:linear-gradient(135deg,#D4A843,#e8c060);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:serif;font-weight:900;font-size:22px;color:#0B1F3A;margin:0 auto 20px;">KI</div>
+          <div style="color:white;font-size:18px;font-weight:600;margin-bottom:8px;">Admin Login Required</div>
+          <div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:24px;">Please sign in to access the admin panel</div>
+          <button onclick="netlifyIdentity.open()" style="background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;border:none;border-radius:10px;padding:14px 32px;font-size:15px;font-weight:700;cursor:pointer;">Sign In</button>
+        </div>
+      \`;
+      netlifyIdentity.on('login', u => {
+        netlifyIdentity.close();
+        checkAdmin(u);
+      });
+    } else if (user.email.toLowerCase().trim() !== ADMIN_EMAIL.toLowerCase().trim()) {
+      // Wrong account logged in
+      document.getElementById('loadingScreen').innerHTML = \`
+        <div style="text-align:center;">
+          <div style="color:#ff6b6b;font-size:18px;font-weight:600;margin-bottom:8px;">⛔ Access Denied</div>
+          <div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:6px;">Logged in as: <strong style="color:white">\${user.email}</strong></div>
+          <div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:24px;">Admin email required: <strong style="color:white">\${ADMIN_EMAIL}</strong></div>
+          <button onclick="netlifyIdentity.logout().then(()=>location.reload())" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign out &amp; try again</button>
+        </div>
+      \`;
     } else {
-      // ✅ Confirmed admin — show the page
+      // ✅ Admin confirmed
+      hideLoading();
       document.getElementById('page').style.display = 'block';
       const email = user.email || '';
       document.getElementById('adminEmail').textContent = email;
       document.getElementById('avatarInitial').textContent = email.charAt(0).toUpperCase();
-
-      document.getElementById('logoutBtn').addEventListener('click', () => {
-        netlifyIdentity.logout();
-      });
-
-      netlifyIdentity.on('logout', () => {
-        window.location.href = '/login.html';
-      });
-
+      document.getElementById('logoutBtn').addEventListener('click', () => netlifyIdentity.logout());
+      netlifyIdentity.on('logout', () => window.location.href = '/admin-login.html');
       init();
     }
   }
 
-  // Wait for Netlify Identity to finish loading before checking auth
-  netlifyIdentity.on('init', user => {
-    checkAdmin(user);
-  });
-
+  netlifyIdentity.on('init', user => checkAdmin(user));
+  netlifyIdentity.on('login', user => { netlifyIdentity.close(); checkAdmin(user); });
   netlifyIdentity.init();
 
   // ── DATA (stored in localStorage) ──

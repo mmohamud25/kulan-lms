@@ -7,143 +7,89 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
-  :root {
-    --navy: #0B1F3A;
-    --blue: #1A3C6E;
-    --cyan: #1BAECC;
-    --gold: #D4A843;
-    --teal: #0E7C7B;
-    --white: #FFFFFF;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --gold:#D4A843; --teal:#0E7C7B; --white:#FFFFFF; }
+  * { margin:0; padding:0; box-sizing:border-box; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
-    background: linear-gradient(160deg, var(--navy) 0%, var(--blue) 60%, #0E3A5A 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
+    font-family:'DM Sans',sans-serif;
+    background:linear-gradient(160deg,var(--navy) 0%,var(--blue) 60%,#0E3A5A 100%);
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
   }
 
   .grid-bg {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(27,174,204,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(27,174,204,0.06) 1px, transparent 1px);
-    background-size: 60px 60px;
+    position:absolute; inset:0;
+    background-image:linear-gradient(rgba(27,174,204,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.06) 1px,transparent 1px);
+    background-size:60px 60px;
   }
 
   .glow {
-    position: absolute;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(14,124,123,0.2) 0%, transparent 70%);
-    right: -100px; top: -100px; border-radius: 50%;
+    position:absolute; width:500px; height:500px;
+    background:radial-gradient(circle,rgba(27,174,204,0.15) 0%,transparent 70%);
+    left:-100px; bottom:-100px; border-radius:50%;
   }
 
   .card {
-    position: relative; z-index: 1;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 24px;
-    padding: 52px 48px;
-    width: 100%;
-    max-width: 440px;
-    backdrop-filter: blur(12px);
-    text-align: center;
+    position:relative; z-index:1;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:24px; padding:52px 48px;
+    width:100%; max-width:440px;
+    backdrop-filter:blur(12px); text-align:center;
   }
 
-  .logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    margin-bottom: 36px;
-  }
-
+  .logo { display:inline-flex; align-items:center; gap:12px; text-decoration:none; margin-bottom:32px; }
   .logo-icon {
-    width: 48px; height: 48px;
-    background: linear-gradient(135deg, var(--gold), #e8c060);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', serif;
-    font-weight: 900; font-size: 22px;
-    color: var(--navy);
+    width:48px; height:48px;
+    background:linear-gradient(135deg,var(--gold),#e8c060);
+    border-radius:12px; display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display',serif; font-weight:900; font-size:22px; color:var(--navy);
+  }
+  .logo-text .t1 { font-size:14px; font-weight:600; color:var(--white); text-align:left; }
+  .logo-text .t2 { font-size:11px; color:rgba(212,168,67,0.7); text-align:left; }
+
+  .badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(27,174,204,0.12); border:1px solid rgba(27,174,204,0.25);
+    border-radius:20px; padding:5px 14px; font-size:12px; font-weight:600;
+    color:var(--cyan); margin-bottom:20px;
   }
 
-  .logo-text { text-align: left; }
-  .logo-text .t1 { font-size: 14px; font-weight: 600; color: var(--white); line-height: 1.2; }
-  .logo-text .t2 { font-size: 11px; color: rgba(212,168,67,0.7); }
-
-  h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px; font-weight: 700;
-    color: var(--white);
-    margin-bottom: 8px;
-  }
-
-  .subtitle {
-    font-size: 14px;
-    color: rgba(255,255,255,0.55);
-    margin-bottom: 36px;
-    line-height: 1.6;
-  }
+  h1 { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--white); margin-bottom:8px; }
+  .subtitle { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:36px; line-height:1.6; }
 
   .login-btn {
-    width: 100%;
-    background: linear-gradient(135deg, var(--gold), #e8c060);
-    color: var(--navy);
-    border: none;
-    border-radius: 12px;
-    padding: 16px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: transform 0.2s, box-shadow 0.2s;
-    margin-bottom: 16px;
+    width:100%;
+    background:linear-gradient(135deg,var(--cyan),var(--teal));
+    color:var(--white); border:none; border-radius:12px;
+    padding:16px; font-size:16px; font-weight:700;
+    cursor:pointer; font-family:'DM Sans',sans-serif;
+    transition:transform 0.2s,box-shadow 0.2s; margin-bottom:20px;
   }
-  .login-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(212,168,67,0.4); }
-
-  .divider {
-    display: flex; align-items: center; gap: 12px;
-    margin: 20px 0; color: rgba(255,255,255,0.25); font-size: 12px;
-  }
-  .divider::before, .divider::after {
-    content: ''; flex: 1;
-    height: 1px; background: rgba(255,255,255,0.1);
-  }
-
-  .back-link {
-    display: inline-block;
-    margin-top: 28px;
-    font-size: 13px;
-    color: rgba(255,255,255,0.4);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .back-link:hover { color: var(--gold); }
+  .login-btn:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(27,174,204,0.35); }
 
   .info-box {
-    background: rgba(27,174,204,0.08);
-    border: 1px solid rgba(27,174,204,0.2);
-    border-radius: 12px;
-    padding: 16px;
-    margin-top: 24px;
-    font-size: 13px;
-    color: rgba(255,255,255,0.55);
-    line-height: 1.6;
+    background:rgba(27,174,204,0.07); border:1px solid rgba(27,174,204,0.15);
+    border-radius:12px; padding:16px; font-size:13px;
+    color:rgba(255,255,255,0.5); line-height:1.7; margin-bottom:24px;
   }
+  .info-box strong { color:var(--cyan); }
 
-  .info-box strong { color: var(--cyan); }
+  .divider { text-align:center; color:rgba(255,255,255,0.2); font-size:12px; margin:16px 0; }
 
-  @media (max-width: 480px) {
-    .card { padding: 36px 24px; margin: 16px; }
-    h1 { font-size: 24px; }
+  .admin-link {
+    display:block; font-size:13px; color:rgba(255,255,255,0.3);
+    text-decoration:none; transition:color 0.2s; margin-top:4px;
   }
+  .admin-link:hover { color:var(--gold); }
+
+  .back-link {
+    display:inline-block; margin-top:20px; font-size:13px;
+    color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s;
+  }
+  .back-link:hover { color:rgba(255,255,255,0.6); }
+
+  @media (max-width:480px) { .card { padding:36px 24px; margin:16px; } h1 { font-size:24px; } }
 </style>
 </head>
 <body>
@@ -159,44 +105,38 @@
     </div>
   </a>
 
-  <h1>Student Portal</h1>
-  <p class="subtitle">Sign in to access your course materials and track your progress.</p>
+  <div class="badge">🎓 Student Portal</div>
+  <h1>Welcome Back</h1>
+  <p class="subtitle">Sign in to access your courses, track progress, and continue learning.</p>
 
-  <button class="login-btn" id="loginBtn">Sign In / Create Account</button>
+  <button class="login-btn" id="loginBtn">🔑 Student Sign In</button>
 
   <div class="info-box">
-    <strong>New student?</strong> Click the button above and select "Sign up" to create your free account. Once enrolled, you'll get access to all your course materials.
+    <strong>New student?</strong> Click above and select "Sign up" to create your free account. You'll need an invitation link sent by Kulan Institute.
   </div>
 
+  <div class="divider">──────── or ────────</div>
+  <a href="admin-login.html" class="admin-link">🔐 Admin / Teacher Login →</a>
+
+  <br>
   <a href="index.html" class="back-link">← Back to main site</a>
 </div>
 
 <script>
-  // Initialize Netlify Identity
-  const ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
-
-  function redirectUser(user) {
-    netlifyIdentity.close();
-    if (user.email === ADMIN_EMAIL) {
-      window.location.href = '/admin.html';
-    } else {
+  netlifyIdentity.on('init', user => {
+    if (user) {
+      // Already logged in — go straight to dashboard
       window.location.href = '/dashboard.html';
     }
-  }
+  });
 
-  // When login button clicked, open the Netlify Identity modal
   document.getElementById('loginBtn').addEventListener('click', () => {
     netlifyIdentity.open();
   });
 
-  // After login, redirect based on email
   netlifyIdentity.on('login', user => {
-    redirectUser(user);
-  });
-
-  // Wait for init then check if already logged in
-  netlifyIdentity.on('init', user => {
-    if (user) redirectUser(user);
+    netlifyIdentity.close();
+    window.location.href = '/dashboard.html';
   });
 
   netlifyIdentity.init();
