@@ -216,15 +216,17 @@
 </div>
 
 <script>
-  netlifyIdentity.init();
-
-  const user = netlifyIdentity.currentUser();
-  if (!user) {
-    window.location.href = '/login.html';
-  } else {
-    document.getElementById('page').style.display = 'block';
-    loadCourse();
+  function startViewer(user) {
+    if (!user) {
+      window.location.href = '/login.html';
+    } else {
+      document.getElementById('page').style.display = 'block';
+      loadCourse();
+    }
   }
+
+  netlifyIdentity.on('init', user => startViewer(user));
+  netlifyIdentity.init();
 
   function loadCourse() {
     const params   = new URLSearchParams(window.location.search);

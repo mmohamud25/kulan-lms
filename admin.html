@@ -483,7 +483,7 @@
     <div class="sidebar-footer">
       <div class="user-info">
         <div class="user-avatar" id="avatarInitial">A</div>
-        <div class="user-email" id="adminEmail">mohamedmohammud@gmail.com</div>
+        <div class="user-email" id="adminEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b1dcded9d0dcd4d5dcded9d0dcdcc4d5f1d6dcd0d8dd9fd2dedc">[email&#160;protected]</a></div>
       </div>
       <button class="logout-btn" id="logoutBtn">Sign Out</button>
     </div>
@@ -803,40 +803,41 @@
 <!-- Notification -->
 <div class="notif" id="notif"></div>
 
-<script>
-  netlifyIdentity.init();
-
-  // ── AUTH CHECK ──
-  // 🔒 Replace with YOUR real admin email address
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
 
-  const user = netlifyIdentity.currentUser();
-
-  if (!user) {
-    // Not logged in
-    window.location.href = '/login.html';
-  } else if (user.email !== ADMIN_EMAIL) {
-    // Logged in but not admin — kick them out
-    netlifyIdentity.logout();
-    alert('Access denied. Admin only.');
-    window.location.href = '/dashboard.html';
-  } else {
-    // ✅ Confirmed admin
-    document.getElementById('page').style.display = 'block';
-    const email = user.email || '';
-    document.getElementById('adminEmail').textContent = email;
-    document.getElementById('avatarInitial').textContent = email.charAt(0).toUpperCase();
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      netlifyIdentity.logout();
-    });
-
-    netlifyIdentity.on('logout', () => {
+  function checkAdmin(user) {
+    if (!user) {
       window.location.href = '/login.html';
-    });
+    } else if (user.email !== ADMIN_EMAIL) {
+      netlifyIdentity.logout();
+      alert('Access denied. Admin only.');
+      window.location.href = '/dashboard.html';
+    } else {
+      // ✅ Confirmed admin — show the page
+      document.getElementById('page').style.display = 'block';
+      const email = user.email || '';
+      document.getElementById('adminEmail').textContent = email;
+      document.getElementById('avatarInitial').textContent = email.charAt(0).toUpperCase();
 
-    init();
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        netlifyIdentity.logout();
+      });
+
+      netlifyIdentity.on('logout', () => {
+        window.location.href = '/login.html';
+      });
+
+      init();
+    }
   }
+
+  // Wait for Netlify Identity to finish loading before checking auth
+  netlifyIdentity.on('init', user => {
+    checkAdmin(user);
+  });
+
+  netlifyIdentity.init();
 
   // ── DATA (stored in localStorage) ──
   let courses = JSON.parse(localStorage.getItem('ki_courses') || '[]');
@@ -1188,16 +1189,3 @@
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => {
       if (e.target === overlay) overlay.classList.remove('open');
-    });
-  });
-
-  function showNotif(msg) {
-    const el = document.getElementById('notif');
-    el.textContent = msg;
-    el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 3000);
-  }
-</script>
-
-</body>
-</html>

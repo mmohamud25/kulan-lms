@@ -173,9 +173,6 @@
 
 <script>
   // Initialize Netlify Identity
-  netlifyIdentity.init();
-
-  // 🔒 Your admin email
   const ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
 
   function redirectUser(user) {
@@ -197,11 +194,12 @@
     redirectUser(user);
   });
 
-  // If already logged in, redirect immediately
-  const user = netlifyIdentity.currentUser();
-  if (user) {
-    redirectUser(user);
-  }
+  // Wait for init then check if already logged in
+  netlifyIdentity.on('init', user => {
+    if (user) redirectUser(user);
+  });
+
+  netlifyIdentity.init();
 </script>
 </body>
 </html>

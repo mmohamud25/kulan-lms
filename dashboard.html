@@ -209,25 +209,23 @@
 </div>
 
 <script>
-  netlifyIdentity.init();
-
-  const user = netlifyIdentity.currentUser();
-
-  if (!user) {
-    window.location.href = '/login.html';
-  } else {
-    document.getElementById('page').style.display = 'block';
-
-    const email = user.email || '';
-    const name  = user.user_metadata?.full_name || email.split('@')[0] || 'Student';
-    document.getElementById('userEmail').textContent = email;
-    document.getElementById('userName').textContent  = name;
-
-    document.getElementById('logoutBtn').addEventListener('click', () => netlifyIdentity.logout());
-    netlifyIdentity.on('logout', () => window.location.href = '/login.html');
-
-    loadDashboard();
+  function startDashboard(user) {
+    if (!user) {
+      window.location.href = '/login.html';
+    } else {
+      document.getElementById('page').style.display = 'block';
+      const email = user.email || '';
+      const name  = user.user_metadata?.full_name || email.split('@')[0] || 'Student';
+      document.getElementById('userEmail').textContent = email;
+      document.getElementById('userName').textContent  = name;
+      document.getElementById('logoutBtn').addEventListener('click', () => netlifyIdentity.logout());
+      netlifyIdentity.on('logout', () => window.location.href = '/login.html');
+      loadDashboard();
+    }
   }
+
+  netlifyIdentity.on('init', user => startDashboard(user));
+  netlifyIdentity.init();
 
   function loadDashboard() {
     const courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
