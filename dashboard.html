@@ -154,7 +154,11 @@
 
 <div id="loadingScreen" style="position:fixed;inset:0;background:linear-gradient(160deg,#0B1F3A,#1A3C6E);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;font-family:sans-serif;">
   <div style="width:44px;height:44px;background:linear-gradient(135deg,#D4A843,#e8c060);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:#0B1F3A;margin-bottom:16px;">KI</div>
-  <div style="color:rgba(255,255,255,0.7);font-size:14px;">Loading your dashboard...</div>
+  <div style="color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:8px;">Loading your dashboard...</div>
+  <div id="ldFallback" style="display:none;margin-top:16px;text-align:center;">
+    <div style="color:rgba(255,255,255,0.4);font-size:12px;margin-bottom:10px;">Taking longer than usual?</div>
+    <a href="/login.html" style="color:#D4A843;font-size:13px;text-decoration:underline;">Return to login</a>
+  </div>
 </div>
 <div id="page">
 
@@ -164,7 +168,10 @@
       <span class="t-name">Kulan Institute of Learning</span>
     </a>
     <div class="topbar-right">
-      <div class="user-pill">👤 <span id="userEmail">Loading...</span></div>
+      <div class="user-pill" style="cursor:pointer;" onclick="openProfile()" title="Edit profile">
+        <span id="userAvSmall"></span>👤 <span id="userEmail">Loading...</span>
+      </div>
+      <button onclick="openProfile()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:rgba(255,255,255,0.75);padding:7px 14px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.3px;transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">⚙ Profile</button>
       <button class="logout-btn" id="logoutBtn">Sign Out</button>
     </div>
   </div>
@@ -227,13 +234,28 @@
       document.getElementById('logoutBtn').addEventListener('click', () => netlifyIdentity.logout());
       netlifyIdentity.on('logout', () => window.location.href = '/login.html');
       loadDashboard();
-      loadStudentProfile();
+      loadSavedProfile(user);
     }
   }
 
-  const authTimeout = setTimeout(() => { window.location.href = '/login.html'; }, 5000);
-  netlifyIdentity.on('init', user => { clearTimeout(authTimeout); startDashboard(user); });
+  setTimeout(function(){ var el=document.getElementById('ldFallback'); if(el&&!_started) el.style.display='block'; },5000);
+  var _started = false;
+  function tryStart(user) {
+    if (_started) return;
+    _started = true;
+    startDashboard(user || netlifyIdentity.currentUser());
+  }
+  // Event listener fires when widget is ready
+  netlifyIdentity.on('init',  function(u) { tryStart(u); });
+  netlifyIdentity.on('login', function(u) { netlifyIdentity.close(); tryStart(u); });
   netlifyIdentity.init();
+  // Fallback polls in case init event is slow (Cloudflare cache issues, etc.)
+  setTimeout(function(){ tryStart(netlifyIdentity.currentUser()); }, 1500);
+  setTimeout(function(){ tryStart(netlifyIdentity.currentUser()); }, 3500);
+  // Last-resort redirect if nothing worked after 9s
+  setTimeout(function(){
+    if (!_started) window.location.href = '/login.html';
+  }, 9000);
 
   function loadDashboard() {
     const courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
@@ -288,7 +310,7 @@
 
         html += `
           <div class="course-row">
-            ${c.thumb ? '<img src="' + c.thumb + '" style="width:80px;height:60px;object-fit:cover;border-radius:10px;flex-shrink:0;" onerror="this.style.display='none'">' : '<div class="course-icon" style="background:' + bgColors[i % bgColors.length] + '">' + icons[i % icons.length] + '</div>'}
+            <div class="course-icon" style="background:${bgColors[i % bgColors.length]}">${icons[i % icons.length]}</div>
             <div class="course-info">
               <div class="course-name">
                 ${c.title}
@@ -335,171 +357,159 @@
 </script>
 
 
+<!-- ════ STUDENT PROFILE MODAL ════ -->
 <style>
-.p-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(11,31,58,0.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;}
-.p-overlay.open{display:flex;}
-.p-modal{background:#fff;border-radius:24px;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;box-shadow:0 32px 80px rgba(11,31,58,0.25);}
-.p-header{background:linear-gradient(135deg,var(--navy),var(--blue));padding:28px 32px;border-radius:24px 24px 0 0;position:relative;}
-.p-header-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;}
-.p-header-sub{font-size:13px;color:rgba(255,255,255,0.5);}
-.p-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.p-av-wrap{display:flex;justify-content:center;margin-top:-40px;margin-bottom:20px;}
-.p-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#fff;border:4px solid #fff;box-shadow:0 4px 16px rgba(27,174,204,0.3);overflow:hidden;position:relative;cursor:pointer;}
-.p-av-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;font-size:20px;border-radius:50%;}
-.p-av:hover .p-av-overlay{display:flex;}
-.p-body{padding:0 28px 28px;}
-.p-field{margin-bottom:16px;}
-.p-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:5px;}
-.p-input{width:100%;padding:11px 14px;border:1px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border 0.2s;}
-.p-input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(27,174,204,0.08);}
-.p-input:disabled{opacity:0.4;cursor:not-allowed;background:rgba(11,31,58,0.02);}
-.p-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.p-actions{display:flex;gap:10px;margin-top:24px;}
-.p-btn{flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all 0.2s;}
-.p-btn-save{background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;}
-.p-btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(27,174,204,0.3);}
-.p-btn-cancel{background:rgba(11,31,58,0.06);color:var(--text-mid);}
-.p-notif{text-align:center;padding:10px;border-radius:8px;font-size:13px;font-weight:600;display:none;margin-bottom:12px;}
+.kp-bg{display:none;position:fixed;inset:0;z-index:600;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
+.kp-bg.open{display:flex;}
+.kp-box{background:#fff;border-radius:22px;width:100%;max-width:440px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
+.kp-head{background:linear-gradient(135deg,#0B1F3A 0%,#1A3C6E 100%);padding:22px 24px 44px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
+.kp-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
+.kp-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px;}
+.kp-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.kp-av-wrap{display:flex;justify-content:center;margin-top:-36px;margin-bottom:12px;}
+.kp-av{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1BAECC,#0E7C7B);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;border:4px solid #fff;box-shadow:0 4px 18px rgba(27,174,204,.4);overflow:hidden;cursor:pointer;position:relative;}
+.kp-av:hover .kp-cam{display:flex;}
+.kp-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:18px;border-radius:50%;}
+.kp-email-badge{text-align:center;margin-bottom:18px;font-size:12px;color:#7A94B0;}
+.kp-body{padding:0 22px 22px;}
+.kp-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.kp-g{margin-bottom:13px;}
+.kp-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
+.kp-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
+.kp-i:focus{border-color:#1BAECC;box-shadow:0 0 0 3px rgba(27,174,204,.1);}
+.kp-i:disabled{opacity:.4;cursor:not-allowed;background:rgba(11,31,58,.02);}
+.kp-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
+.kp-btns{display:flex;gap:10px;}
+.kp-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
+.kp-save{background:linear-gradient(135deg,#1BAECC,#0E7C7B);color:#fff;}
+.kp-save:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(27,174,204,.35);}
+.kp-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
+.kp-ok{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
 </style>
 
-<div class="p-overlay" id="studentProfileModal">
-  <div class="p-modal">
-    <div class="p-header">
-      <div class="p-header-title">My Profile</div>
-      <div class="p-header-sub">Update your personal information</div>
-      <button class="p-close" onclick="closeStudentProfile()">✕</button>
+<div class="kp-bg" id="kpBg">
+  <div class="kp-box">
+    <div class="kp-head">
+      <h3>My Profile</h3>
+      <p>Kulan Institute of Learning</p>
+      <button class="kp-x" onclick="closeProfile()">✕</button>
     </div>
-    <div class="p-av-wrap">
+    <div class="kp-av-wrap">
       <label>
-        <div class="p-av" id="spAvatar" title="Click to upload photo">
-          <span id="spAvInit">S</span>
-          <div class="p-av-overlay">📷</div>
-          <input type="file" accept="image/*" style="display:none;" onchange="handleStudentAvatar(this)">
+        <div class="kp-av" id="kpAv">
+          <span id="kpAvLetter">S</span>
+          <div class="kp-cam">📷</div>
+          <input type="file" accept="image/*" style="display:none" onchange="kpAvatarPick(this)">
         </div>
       </label>
     </div>
-    <div style="text-align:center;margin-bottom:20px;">
-      <div id="spEmailBadge" style="display:inline-block;padding:4px 14px;background:rgba(27,174,204,0.1);border-radius:20px;font-size:12px;color:var(--cyan);font-weight:600;"></div>
-      <span style="display:inline-block;margin-left:6px;padding:4px 12px;background:rgba(27,174,204,0.08);border-radius:20px;font-size:11px;color:var(--cyan);font-weight:600;">🎓 Student</span>
+    <div class="kp-email-badge">
+      <span id="kpEmailShow"></span>
+      &nbsp;<span style="padding:3px 9px;background:rgba(27,174,204,.1);border-radius:20px;font-size:10px;color:#1BAECC;font-weight:700;">🎓 STUDENT</span>
     </div>
-    <div class="p-body">
-      <div class="p-notif" id="spNotif"></div>
-      <div class="p-row">
-        <div class="p-field">
-          <label class="p-label">First Name</label>
-          <input type="text" class="p-input" id="spFirst" placeholder="First name">
-        </div>
-        <div class="p-field">
-          <label class="p-label">Last Name</label>
-          <input type="text" class="p-input" id="spLast" placeholder="Last name">
-        </div>
+    <div class="kp-body">
+      <div class="kp-ok" id="kpOk">✓ Profile saved!</div>
+      <div class="kp-row">
+        <div class="kp-g"><label class="kp-l">First Name</label><input class="kp-i" id="kpFirst" type="text" placeholder="First name"></div>
+        <div class="kp-g"><label class="kp-l">Last Name</label><input class="kp-i" id="kpLast"  type="text" placeholder="Last name"></div>
       </div>
-      <div class="p-field">
-        <label class="p-label">Email Address</label>
-        <input type="text" class="p-input" id="spEmail" disabled>
-      </div>
-      <div class="p-row">
-        <div class="p-field">
-          <label class="p-label">Preferred Language</label>
-          <select class="p-input" id="spLang">
+      <div class="kp-g"><label class="kp-l">Email</label><input class="kp-i" id="kpEmail" type="text" disabled></div>
+      <div class="kp-row">
+        <div class="kp-g">
+          <label class="kp-l">Language</label>
+          <select class="kp-i" id="kpLang">
             <option value="en">English</option>
             <option value="so">Somali</option>
-            <option value="both">Both (Bilingual)</option>
+            <option value="both">Bilingual</option>
           </select>
         </div>
-        <div class="p-field">
-          <label class="p-label">Country</label>
-          <input type="text" class="p-input" id="spCountry" placeholder="e.g. USA, Somalia">
-        </div>
+        <div class="kp-g"><label class="kp-l">Country</label><input class="kp-i" id="kpCountry" type="text" placeholder="e.g. USA"></div>
       </div>
-      <div class="p-field">
-        <label class="p-label">Learning Goal</label>
-        <textarea class="p-input" id="spGoal" rows="3" placeholder="e.g. I want to break into cybersecurity..." style="resize:vertical;"></textarea>
-      </div>
-      <div style="padding:12px;background:rgba(27,174,204,0.05);border:1px solid rgba(27,174,204,0.12);border-radius:10px;font-size:12px;color:var(--text-mid);line-height:1.7;margin-bottom:4px;">
-        <strong style="color:var(--cyan);">🔒 Password Reset:</strong> Contact your instructor to receive a password reset email to your registered address.
-      </div>
-      <div class="p-actions">
-        <button class="p-btn p-btn-cancel" onclick="closeStudentProfile()">Cancel</button>
-        <button class="p-btn p-btn-save" onclick="saveStudentProfile()">Save Profile</button>
+      <div class="kp-g"><label class="kp-l">Learning Goal</label><textarea class="kp-i" id="kpGoal" rows="2" style="resize:vertical" placeholder="What are you working toward?"></textarea></div>
+      <div class="kp-note"><strong style="color:#1BAECC">🔒 Password:</strong> Contact your instructor to get a password reset email sent to your address.</div>
+      <div class="kp-btns">
+        <button class="kp-btn kp-cancel" onclick="closeProfile()">Cancel</button>
+        <button class="kp-btn kp-save"   onclick="saveProfile()">Save Profile</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-function openStudentProfile() {
-  var user = netlifyIdentity.currentUser();
-  if (!user) return;
-  var key = 'ki_student_profile_' + user.email;
-  var meta = JSON.parse(localStorage.getItem(key) || '{}');
-  var nameParts = (meta.name || '').split(' ');
-  document.getElementById('spFirst').value   = meta.first || nameParts[0] || '';
-  document.getElementById('spLast').value    = meta.last  || nameParts.slice(1).join(' ') || '';
-  document.getElementById('spEmail').value   = user.email;
-  document.getElementById('spEmailBadge').textContent = user.email;
-  document.getElementById('spLang').value    = meta.lang || 'en';
-  document.getElementById('spCountry').value = meta.country || '';
-  document.getElementById('spGoal').value    = meta.goal || '';
-  // Avatar
-  var av = meta.avatar || '';
-  var avEl = document.getElementById('spAvatar');
-  document.getElementById('spAvInit').textContent = user.email.charAt(0).toUpperCase();
-  if (av) {
-    document.getElementById('spAvInit').innerHTML = '<img src="' + av + '" style="width:80px;height:80px;object-fit:cover;border-radius:50%;">';
+var _kpImg = '';
+
+function openProfile() {
+  var u = netlifyIdentity.currentUser();
+  if (!u) { alert('Please wait — still loading your session.'); return; }
+  var m = JSON.parse(localStorage.getItem('ki_sp_' + u.email) || '{}');
+  document.getElementById('kpFirst').value   = m.first   || '';
+  document.getElementById('kpLast').value    = m.last    || '';
+  document.getElementById('kpEmail').value   = u.email;
+  document.getElementById('kpEmailShow').textContent = u.email;
+  document.getElementById('kpLang').value    = m.lang    || 'en';
+  document.getElementById('kpCountry').value = m.country || '';
+  document.getElementById('kpGoal').value    = m.goal    || '';
+  _kpImg = m.avatar || '';
+  var letter = document.getElementById('kpAvLetter');
+  if (_kpImg) {
+    letter.innerHTML = '<img src="'+_kpImg+'" style="width:72px;height:72px;border-radius:50%;object-fit:cover;">';
+  } else {
+    letter.innerHTML = u.email.charAt(0).toUpperCase();
   }
-  document.getElementById('studentProfileModal').classList.add('open');
+  document.getElementById('kpOk').style.display = 'none';
+  document.getElementById('kpBg').classList.add('open');
 }
-function closeStudentProfile() {
-  document.getElementById('studentProfileModal').classList.remove('open');
+
+function closeProfile() {
+  document.getElementById('kpBg').classList.remove('open');
 }
-function handleStudentAvatar(input) {
-  if (!input.files || !input.files[0]) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    window._studentAvatarData = e.target.result;
-    document.getElementById('spAvInit').innerHTML = '<img src="' + e.target.result + '" style="width:80px;height:80px;object-fit:cover;border-radius:50%;">';
+
+function kpAvatarPick(inp) {
+  if (!inp.files || !inp.files[0]) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    _kpImg = e.target.result;
+    document.getElementById('kpAvLetter').innerHTML = '<img src="'+e.target.result+'" style="width:72px;height:72px;border-radius:50%;object-fit:cover;">';
   };
-  reader.readAsDataURL(input.files[0]);
+  r.readAsDataURL(inp.files[0]);
 }
-function saveStudentProfile() {
-  var user = netlifyIdentity.currentUser();
-  if (!user) return;
-  var first = document.getElementById('spFirst').value.trim();
-  var last  = document.getElementById('spLast').value.trim();
-  var name  = (first + ' ' + last).trim();
-  var key   = 'ki_student_profile_' + user.email;
-  var existing = JSON.parse(localStorage.getItem(key) || '{}');
-  var meta = {
+
+function saveProfile() {
+  var u = netlifyIdentity.currentUser();
+  if (!u) return;
+  var first = document.getElementById('kpFirst').value.trim();
+  var last  = document.getElementById('kpLast').value.trim();
+  var m = {
     first:   first,
     last:    last,
-    name:    name || existing.name || '',
-    lang:    document.getElementById('spLang').value,
-    country: document.getElementById('spCountry').value.trim(),
-    goal:    document.getElementById('spGoal').value.trim(),
-    avatar:  window._studentAvatarData || existing.avatar || '',
+    name:    (first+' '+last).trim(),
+    lang:    document.getElementById('kpLang').value,
+    country: document.getElementById('kpCountry').value.trim(),
+    goal:    document.getElementById('kpGoal').value.trim(),
+    avatar:  _kpImg
   };
-  localStorage.setItem(key, JSON.stringify(meta));
-  if (name) document.getElementById('userName').textContent = first || name;
-  // Update topbar avatar if exists
-  var topAvEl = document.getElementById('topbarAvatar');
-  if (topAvEl && meta.avatar) topAvEl.innerHTML = '<img src="' + meta.avatar + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">';
-  var n = document.getElementById('spNotif');
-  n.style.display = 'block';
-  n.style.background = 'rgba(34,197,94,0.1)';
-  n.style.color = '#16a34a';
-  n.textContent = 'Profile saved!';
-  setTimeout(function(){ closeStudentProfile(); n.style.display='none'; }, 1200);
+  localStorage.setItem('ki_sp_'+u.email, JSON.stringify(m));
+  var display = first || m.name || u.email.split('@')[0];
+  document.getElementById('userName').textContent = display;
+  if (_kpImg) renderSmallAvatar(_kpImg);
+  var ok = document.getElementById('kpOk');
+  ok.style.display = 'block';
+  setTimeout(closeProfile, 900);
 }
-function loadStudentProfile() {
-  var user = netlifyIdentity.currentUser();
-  if (!user) return;
-  var meta = JSON.parse(localStorage.getItem('ki_student_profile_' + user.email) || '{}');
-  if (meta.first || meta.name) document.getElementById('userName').textContent = meta.first || meta.name.split(' ')[0];
+
+function loadSavedProfile(u) {
+  if (!u) return;
+  var m = JSON.parse(localStorage.getItem('ki_sp_'+u.email) || '{}');
+  if (m.first || m.name) document.getElementById('userName').textContent = m.first || m.name.split(' ')[0];
+  if (m.avatar) renderSmallAvatar(m.avatar);
 }
-document.getElementById('studentProfileModal').addEventListener('click', function(e){
-  if (e.target === this) closeStudentProfile();
-});
+
+function renderSmallAvatar(src) {
+  var el = document.getElementById('userAvSmall');
+  if (el) el.innerHTML = '<img src="'+src+'" style="width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px;">';
+}
+
+document.getElementById('kpBg').addEventListener('click', function(e){ if(e.target===this) closeProfile(); });
 </script>
 
 </body>
