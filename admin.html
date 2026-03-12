@@ -284,14 +284,10 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
   </div>
 
   <div class="sb-footer">
-    <div class="user-info" style="cursor:pointer;" onclick="openAdminProfile()" title="Edit profile">
-      <div class="user-avatar" id="avatarInitial" style="overflow:hidden;">A</div>
-      <div>
-        <div class="user-email" id="adminEmail">admin</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:1px;">Click to edit profile</div>
-      </div>
+    <div class="user-info">
+      <div class="user-avatar" id="avatarInitial">A</div>
+      <div class="user-email" id="adminEmail">admin</div>
     </div>
-    <button onclick="openAdminProfile()" style="width:100%;padding:9px;margin-bottom:7px;border:1px solid rgba(212,168,67,0.25);border-radius:8px;background:rgba(212,168,67,0.07);color:#D4A843;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;" onmouseover="this.style.background='rgba(212,168,67,0.16)'" onmouseout="this.style.background='rgba(212,168,67,0.07)'">⚙ Profile Settings</button>
     <button class="logout-btn" id="logoutBtn">Sign Out</button>
   </div>
 </div>
@@ -478,21 +474,6 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
       <label class="form-label">Description</label>
       <textarea class="form-textarea" id="cDesc" placeholder="Brief course description..."></textarea>
     </div>
-    <div class="form-group">
-      <label class="form-label">Course Thumbnail <span style="font-size:11px;color:var(--text-light);font-weight:400;">(optional)</span></label>
-      <div id="cThumbPreview" style="display:none;margin-bottom:8px;">
-        <img id="cThumbImg" style="width:100%;height:130px;object-fit:cover;border-radius:10px;border:1px solid rgba(11,31,58,0.1);">
-        <button type="button" onclick="clearThumb()" style="font-size:11px;color:#dc2626;background:none;border:none;cursor:pointer;margin-top:3px;">✕ Remove</button>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <input type="text" class="form-input" id="cThumbUrl" placeholder="Paste image URL..." oninput="previewThumbUrl(this.value)" style="flex:1;font-size:13px;">
-        <label style="flex-shrink:0;padding:10px 14px;background:rgba(11,31,58,0.05);border:1px solid rgba(11,31,58,0.12);border-radius:9px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text-mid);white-space:nowrap;">
-          📁 Upload
-          <input type="file" id="cThumbFile" accept="image/*" style="display:none;" onchange="handleThumbFile(this)">
-        </label>
-      </div>
-      <div class="form-hint">Upload or link a course thumbnail shown on the student dashboard.</div>
-    </div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal('addCourse')">Cancel</button>
       <button class="btn btn-gold" onclick="addCourse()">Create Course</button>
@@ -502,35 +483,79 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
 
 <!-- MODAL: Add Material -->
 <div class="modal-overlay" id="modal-addMaterial">
-  <div class="modal">
-    <div class="modal-title">Add Course Material</div>
-    <div class="form-group">
-      <label class="form-label">Course</label>
-      <select class="form-select" id="matCourse"></select>
-    </div>
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-title">📤 Add Course Material</div>
+
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Module Number</label>
+        <label class="form-label">Course</label>
+        <select class="form-select" id="matCourse"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Module #</label>
         <input type="number" class="form-input" id="matModule" placeholder="1" min="1">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input type="text" class="form-input" id="matTitle" placeholder="e.g. Module 1: Introduction to AI">
       </div>
       <div class="form-group">
         <label class="form-label">Type</label>
-        <select class="form-select" id="matType" onchange="updateMatHint()">
+        <select class="form-select" id="matType">
           <option value="pdf">PDF</option>
           <option value="video">Video</option>
           <option value="ppt">PowerPoint</option>
+          <option value="other">Other</option>
         </select>
       </div>
     </div>
+
+    <!-- SOURCE TABS -->
     <div class="form-group">
-      <label class="form-label">Title</label>
-      <input type="text" class="form-input" id="matTitle" placeholder="e.g. Module 1: Introduction to AI">
+      <label class="form-label">Source</label>
+      <div style="display:flex;gap:0;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;overflow:hidden;margin-bottom:14px;">
+        <button id="matTabUpload" onclick="switchMatTab('upload')" style="flex:1;padding:11px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;">📁 Upload File</button>
+        <button id="matTabLink"   onclick="switchMatTab('link')"   style="flex:1;padding:11px;border:none;background:rgba(11,31,58,0.04);color:var(--text-mid);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;">🔗 Paste Link</button>
+      </div>
+
+      <!-- UPLOAD TAB -->
+      <div id="matPanelUpload">
+        <div id="matDropZone" onclick="document.getElementById('matFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--cyan)';this.style.background='rgba(27,174,204,0.05)'" ondragleave="this.style.borderColor='rgba(11,31,58,0.12)';this.style.background='none'" ondrop="matHandleDrop(event)" style="border:2px dashed rgba(11,31,58,0.15);border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;transition:all .2s;">
+          <div style="font-size:36px;margin-bottom:8px;">📄</div>
+          <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px;">Drag & drop your file here</div>
+          <div style="font-size:12px;color:var(--text-light);margin-bottom:14px;">or click to browse from your computer</div>
+          <div style="display:inline-block;padding:8px 18px;background:var(--navy);color:#fff;border-radius:8px;font-size:12px;font-weight:600;">Choose File</div>
+        </div>
+        <input type="file" id="matFileInput" accept=".pdf,.ppt,.pptx,.mp4,.mov,.avi,.doc,.docx,.xlsx,.csv,.zip" style="display:none" onchange="matFileSelected(this)">
+        <div id="matFileInfo" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(27,174,204,0.06);border:1px solid rgba(27,174,204,0.2);border-radius:10px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span id="matFileIcon" style="font-size:22px;">📄</span>
+            <div style="flex:1;min-width:0;">
+              <div id="matFileName" style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+              <div id="matFileSize" style="font-size:11px;color:var(--text-light);margin-top:2px;"></div>
+            </div>
+            <button onclick="clearMatFile()" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text-light);flex-shrink:0;">✕</button>
+          </div>
+          <div id="matUploadProgress" style="display:none;margin-top:10px;">
+            <div style="height:4px;background:rgba(11,31,58,0.08);border-radius:4px;overflow:hidden;">
+              <div id="matProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),var(--teal));transition:width .3s;border-radius:4px;"></div>
+            </div>
+            <div id="matProgressText" style="font-size:11px;color:var(--text-light);margin-top:5px;text-align:center;"></div>
+          </div>
+        </div>
+        <div class="form-hint" style="margin-top:8px;">Accepted: PDF, PPT, PowerPoint, Word, Video, Excel, ZIP. Max size: 50MB stored as base64 in browser.</div>
+      </div>
+
+      <!-- LINK TAB -->
+      <div id="matPanelLink" style="display:none;">
+        <input type="text" class="form-input" id="matUrl" placeholder="Paste any link — Google Drive, YouTube, website, Dropbox...">
+        <div class="form-hint" style="margin-top:6px;">Any link works — Google Drive, YouTube, Dropbox, a website, anything. Google Drive links and YouTube URLs are auto-converted to embed format.</div>
+      </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">URL / Link</label>
-      <input type="text" class="form-input" id="matUrl" placeholder="Paste Google Drive or YouTube link...">
-      <div class="form-hint" id="matTypeHint">Upload PDF to Google Drive, share as "Anyone can view", paste link here.</div>
-    </div>
+
     <div class="form-group">
       <label class="form-label">Allow Download</label>
       <div class="toggle-wrap">
@@ -541,6 +566,7 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
         <span style="font-size:13px;color:var(--text-mid);">Students can download this material</span>
       </div>
     </div>
+
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal('addMaterial')">Cancel</button>
       <button class="btn btn-gold" onclick="addMaterial()">Add Material</button>
@@ -614,7 +640,6 @@ function checkAdmin(user) {
     window.location.href = '/admin-login.html';
   });
   init();
-  loadAdminProfile();
 }
 
 // Auth flow
@@ -651,8 +676,7 @@ function saveMaterials() { localStorage.setItem('ki_materials', JSON.stringify(m
 function saveStudents()  { localStorage.setItem('ki_students',  JSON.stringify(students)); }
 
 function init() {
-  // Seed default courses if storage empty (re-read fresh first)
-  courses = JSON.parse(localStorage.getItem('ki_courses') || '[]');
+  // Seed default courses if empty
   if (courses.length === 0) {
     courses = [
       { id:'c1', title:'AI for Beginners', titleSo:'Xisaabta Macquulka ah ee Bilowga', modules:8, level:'Beginner', status:'active', lang:'EN + SO', paid:false, price:0, desc:'An 8-module bilingual course introducing artificial intelligence.' },
@@ -665,9 +689,6 @@ function init() {
 }
 
 function renderAll() {
-  courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
-  materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
-  students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
   renderOverview();
   renderCourses();
   renderStudents();
@@ -726,7 +747,6 @@ function renderCourses() {
     var statusBadge = c.status==='active' ? 'badge-green' : c.status==='coming' ? 'badge-blue' : 'badge-gray';
     var statusLabel = c.status==='active' ? 'Active' : c.status==='coming' ? 'Coming Soon' : 'Draft';
     return '<div class="course-card">'
-      + (c.thumb ? '<img src="'+c.thumb+'" style="width:100%;height:120px;object-fit:cover;border-radius:12px 12px 0 0;display:block;" onerror="this.style.display=\'none\'">' : '')
       + '<div class="cc-header">'
       + '<div><div class="cc-title">' + icons[i%icons.length] + ' ' + c.title + '</div>'
       + '<div class="cc-meta">' + (c.modules||'TBA') + ' modules · ' + c.level + ' · ' + c.lang + ' · ' + mats + ' files</div></div>'
@@ -788,18 +808,24 @@ function renderMaterials() {
   var typeBg = {pdf:'rgba(239,68,68,0.1)',video:'rgba(27,174,204,0.1)',ppt:'rgba(212,168,67,0.1)'};
   list.innerHTML = filtered.map(function(m) {
     var course = courses.find(function(c){ return c.id===m.courseId; });
+    var srcBadge = m.isFile
+      ? '<span style="padding:2px 8px;background:rgba(34,197,94,0.1);color:#16a34a;border-radius:20px;font-size:10px;font-weight:700;margin-left:6px;">📁 FILE</span>'
+      : '<span style="padding:2px 8px;background:rgba(27,174,204,0.1);color:var(--cyan);border-radius:20px;font-size:10px;font-weight:700;margin-left:6px;">🔗 LINK</span>';
+    var prevBtn = m.isFile
+      ? '<button class="btn btn-outline btn-sm" onclick="previewMatFile(\'' + m.id + '\')">Preview</button>'
+      : '<a href="' + m.url + '" target="_blank" class="btn btn-outline btn-sm">Preview</a>';
     return '<div class="mat-item">'
       + '<div class="mat-icon" style="background:' + (typeBg[m.type]||'rgba(11,31,58,0.07)') + '">' + (typeIcons[m.type]||'📎') + '</div>'
       + '<div class="mat-info">'
       + '<div class="mat-name">Module ' + (m.module||'?') + ': ' + m.title + '</div>'
-      + '<div class="mat-sub">' + (course?course.title:'Unknown course') + ' · ' + m.type.toUpperCase() + (m.download?' · Downloadable':'') + '</div>'
+      + '<div class="mat-sub">' + (course?course.title:'Unknown') + srcBadge + (m.isFile&&m.fileName?' <span style="color:var(--text-light);font-size:11px;">('+m.fileName+')</span>':'') + (m.download?' &nbsp;↓ <span style="color:var(--teal);font-size:11px;">Downloadable</span>':'') + '</div>'
       + '</div>'
       + '<div class="mat-actions">'
-      + '<a href="' + m.url + '" target="_blank" class="btn btn-outline btn-sm">Preview</a>'
+      + prevBtn
       + '<button class="btn btn-danger btn-sm" onclick="deleteMaterial(\'' + m.id + '\')">Delete</button>'
       + '</div>'
       + '</div>';
-  }).join('');
+  }).join('');;
 }
 
 function populateCourseSelects() {
@@ -825,8 +851,6 @@ function addCourse() {
     return;
   }
 
-  var thumbEl = document.getElementById('cThumbUrl');
-  var thumb = (thumbEl && thumbEl.value.trim()) ? thumbEl.value.trim() : (window._pendingThumb || '');
   var newCourse = {
     id:      'c' + Date.now(),
     title:   title,
@@ -838,7 +862,6 @@ function addCourse() {
     paid:    document.getElementById('cPaid').checked,
     price:   parseFloat(document.getElementById('cPrice').value) || 0,
     desc:    document.getElementById('cDesc').value.trim(),
-    thumb:   thumb,
   };
 
   courses.push(newCourse);
@@ -890,37 +913,153 @@ function openMaterialsFor(courseId) {
   renderMaterials();
 }
 
-function addMaterial() {
-  var title   = document.getElementById('matTitle').value.trim();
-  var url     = document.getElementById('matUrl').value.trim();
-  var courseId = document.getElementById('matCourse').value;
-  if (!title || !url || !courseId) { showNotif('Please fill in all required fields'); return; }
+// Track current material tab and file data
+var _matTab = 'upload';
+var _matFileData = null; // { name, size, type, dataUrl }
 
-  // Auto-convert Google Drive /view to /preview
-  url = url.replace('/view?usp=sharing','').replace('/view','');
-  if (url.includes('drive.google.com') && !url.includes('/preview')) {
-    url = url + '/preview';
+function switchMatTab(tab) {
+  _matTab = tab;
+  var uploadBtn = document.getElementById('matTabUpload');
+  var linkBtn   = document.getElementById('matTabLink');
+  var uploadPanel = document.getElementById('matPanelUpload');
+  var linkPanel   = document.getElementById('matPanelLink');
+  if (tab === 'upload') {
+    uploadBtn.style.background = 'var(--navy)';
+    uploadBtn.style.color = '#fff';
+    linkBtn.style.background = 'rgba(11,31,58,0.04)';
+    linkBtn.style.color = 'var(--text-mid)';
+    uploadPanel.style.display = 'block';
+    linkPanel.style.display = 'none';
+  } else {
+    linkBtn.style.background = 'var(--navy)';
+    linkBtn.style.color = '#fff';
+    uploadBtn.style.background = 'rgba(11,31,58,0.04)';
+    uploadBtn.style.color = 'var(--text-mid)';
+    uploadPanel.style.display = 'none';
+    linkPanel.style.display = 'block';
   }
-  // Auto-convert YouTube to embed
-  var ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
-  if (ytMatch) url = 'https://www.youtube.com/embed/' + ytMatch[1];
+}
 
-  var m = {
-    id: 'm' + Date.now(),
+function matHandleDrop(event) {
+  event.preventDefault();
+  document.getElementById('matDropZone').style.borderColor = 'rgba(11,31,58,0.12)';
+  document.getElementById('matDropZone').style.background = 'none';
+  if (event.dataTransfer.files && event.dataTransfer.files[0]) {
+    processMatFile(event.dataTransfer.files[0]);
+  }
+}
+
+function matFileSelected(input) {
+  if (input.files && input.files[0]) processMatFile(input.files[0]);
+}
+
+function processMatFile(file) {
+  var maxMB = 50;
+  if (file.size > maxMB * 1024 * 1024) {
+    showNotif('File too large. Max ' + maxMB + 'MB.');
+    return;
+  }
+  var icons = { pdf:'📄', mp4:'🎬', mov:'🎬', avi:'🎬', ppt:'📊', pptx:'📊', doc:'📝', docx:'📝', xlsx:'📊', csv:'📊', zip:'📦' };
+  var ext = file.name.split('.').pop().toLowerCase();
+  var icon = icons[ext] || '📎';
+  document.getElementById('matFileIcon').textContent = icon;
+  document.getElementById('matFileName').textContent = file.name;
+  document.getElementById('matFileSize').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+  document.getElementById('matFileInfo').style.display = 'block';
+  document.getElementById('matDropZone').style.display = 'none';
+  // Auto-fill title if empty
+  var titleEl = document.getElementById('matTitle');
+  if (!titleEl.value.trim()) {
+    titleEl.value = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+  }
+  // Auto-detect type
+  var typeEl = document.getElementById('matType');
+  if (['mp4','mov','avi'].includes(ext)) typeEl.value = 'video';
+  else if (['ppt','pptx'].includes(ext)) typeEl.value = 'ppt';
+  else if (['pdf'].includes(ext)) typeEl.value = 'pdf';
+  // Read as base64 with progress
+  var progress = document.getElementById('matUploadProgress');
+  var bar = document.getElementById('matProgressBar');
+  var txt = document.getElementById('matProgressText');
+  progress.style.display = 'block';
+  txt.textContent = 'Reading file...';
+  var reader = new FileReader();
+  reader.onprogress = function(e) {
+    if (e.lengthComputable) {
+      var pct = Math.round((e.loaded / e.total) * 100);
+      bar.style.width = pct + '%';
+      txt.textContent = 'Loading... ' + pct + '%';
+    }
+  };
+  reader.onload = function(e) {
+    bar.style.width = '100%';
+    txt.textContent = 'Ready to add ✓';
+    _matFileData = { name: file.name, size: file.size, ext: ext, dataUrl: e.target.result };
+  };
+  reader.onerror = function() {
+    showNotif('Could not read file. Try a smaller file or use a link instead.');
+    clearMatFile();
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearMatFile() {
+  _matFileData = null;
+  document.getElementById('matFileData') && (document.getElementById('matFileData').value = '');
+  document.getElementById('matFileInfo').style.display = 'none';
+  document.getElementById('matDropZone').style.display = 'block';
+  document.getElementById('matFileInput').value = '';
+  document.getElementById('matUploadProgress').style.display = 'none';
+  document.getElementById('matProgressBar').style.width = '0%';
+}
+
+function addMaterial() {
+  var title    = document.getElementById('matTitle').value.trim();
+  var courseId = document.getElementById('matCourse').value;
+  if (!title)    { showNotif('Please enter a title.'); return; }
+  if (!courseId) { showNotif('Please select a course.'); return; }
+
+  var url = '';
+  var isFile = false;
+
+  if (_matTab === 'upload') {
+    if (!_matFileData) { showNotif('Please select a file to upload.'); return; }
+    url = _matFileData.dataUrl;
+    isFile = true;
+  } else {
+    url = document.getElementById('matUrl').value.trim();
+    if (!url) { showNotif('Please paste a link.'); return; }
+    // Auto-convert Google Drive
+    url = url.replace('/view?usp=sharing','').replace('/view?usp=drive_link','').replace('/view','');
+    if (url.includes('drive.google.com/file') && !url.includes('/preview')) url += '/preview';
+    // Auto-convert YouTube
+    var yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if (yt) url = 'https://www.youtube.com/embed/' + yt[1];
+  }
+
+  var mat = {
+    id:       'm' + Date.now(),
     courseId: courseId,
-    title: title,
-    type: document.getElementById('matType').value,
-    url: url,
-    module: parseInt(document.getElementById('matModule').value)||1,
+    title:    title,
+    type:     document.getElementById('matType').value,
+    url:      url,
+    fileName: isFile ? _matFileData.name : '',
+    isFile:   isFile,
+    module:   parseInt(document.getElementById('matModule').value) || 1,
     download: document.getElementById('matDownload').checked,
   };
-  materials.push(m);
+  materials.push(mat);
   saveMaterials();
   renderAll();
   closeModal('addMaterial');
-  showNotif('Material added!');
-  ['matTitle','matUrl','matModule'].forEach(function(id){ document.getElementById(id).value=''; });
+  showNotif('Material "' + title + '" added!');
+  // Reset form
+  document.getElementById('matTitle').value = '';
+  document.getElementById('matUrl').value   = '';
+  document.getElementById('matModule').value = '';
   document.getElementById('matDownload').checked = false;
+  clearMatFile();
+  switchMatTab('upload');
 }
 
 function deleteMaterial(id) {
@@ -1029,174 +1168,25 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ════ ADMIN PROFILE ════
-var _apImg = '';
-
-function openAdminProfile() {
-  var u = netlifyIdentity.currentUser();
-  if (!u) { alert('Session not ready yet, please wait a moment.'); return; }
-  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  document.getElementById('apName').value      = m.name      || '';
-  document.getElementById('apRole').value      = m.role      || 'Administrator';
-  document.getElementById('apInstitute').value = m.institute || 'Kulan Institute of Learning';
-  document.getElementById('apBio').value       = m.bio       || '';
-  document.getElementById('apEmailShow').textContent = u.email;
-  _apImg = m.avatar || '';
-  var av = document.getElementById('apAvEl');
-  if (_apImg) {
-    av.innerHTML = '<img src="'+_apImg+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;">';
+function previewMatFile(matId) {
+  var mat = materials.find(function(m){ return m.id===matId; });
+  if (!mat || !mat.isFile) return;
+  var w = window.open('', '_blank');
+  if (!w) { showNotif('Popup blocked — allow popups for this site.'); return; }
+  if (mat.type === 'video') {
+    w.document.write('<body style="margin:0;background:#000;"><video src="'+mat.url+'" controls autoplay style="width:100%;max-height:100vh;display:block;"></video></body>');
+  } else if (mat.type === 'pdf') {
+    w.document.write('<body style="margin:0;"><iframe src="'+mat.url+'" style="width:100%;height:100vh;border:none;"></iframe></body>');
   } else {
-    av.innerHTML = u.email.charAt(0).toUpperCase();
+    var a = document.createElement('a');
+    a.href = mat.url;
+    a.download = mat.fileName || mat.title;
+    a.click();
+    w.close();
   }
-  document.getElementById('apModal').style.display = 'flex';
-}
-
-function closeAdminProfile() {
-  document.getElementById('apModal').style.display = 'none';
-}
-
-function apAvatarPick(inp) {
-  if (!inp.files || !inp.files[0]) return;
-  var r = new FileReader();
-  r.onload = function(e) {
-    _apImg = e.target.result;
-    document.getElementById('apAvEl').innerHTML = '<img src="'+e.target.result+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;">';
-  };
-  r.readAsDataURL(inp.files[0]);
-}
-
-function saveAdminProfile() {
-  var u = netlifyIdentity.currentUser();
-  var name = document.getElementById('apName').value.trim();
-  var m = {
-    name:      name,
-    role:      document.getElementById('apRole').value.trim(),
-    institute: document.getElementById('apInstitute').value.trim(),
-    bio:       document.getElementById('apBio').value.trim(),
-    avatar:    _apImg
-  };
-  localStorage.setItem('ki_admin_profile', JSON.stringify(m));
-  if (name) {
-    var el = document.getElementById('adminEmail');
-    if (el) el.textContent = name;
-  }
-  if (_apImg) {
-    var av = document.getElementById('avatarInitial');
-    if (av) av.innerHTML = '<img src="'+_apImg+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-  }
-  // flash
-  var ok = document.getElementById('apOk');
-  if (ok) { ok.style.display='block'; setTimeout(function(){ ok.style.display='none'; closeAdminProfile(); },900); }
-  else closeAdminProfile();
-}
-
-function loadAdminProfile() {
-  var u = netlifyIdentity.currentUser();
-  if (!u) return;
-  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  if (m.name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=m.name; }
-  if (m.avatar) {
-    var av=document.getElementById('avatarInitial');
-    if(av) av.innerHTML='<img src="'+m.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-  }
-}
-
-
-// ── THUMBNAIL HELPERS
-function previewThumbUrl(url) {
-  if (!url) { document.getElementById('cThumbPreview').style.display='none'; return; }
-  var img = document.getElementById('cThumbImg');
-  img.src = url;
-  img.onload  = function(){ document.getElementById('cThumbPreview').style.display='block'; };
-  img.onerror = function(){ document.getElementById('cThumbPreview').style.display='none'; };
-}
-function handleThumbFile(input) {
-  if (!input.files||!input.files[0]) return;
-  var r = new FileReader();
-  r.onload = function(e) {
-    window._pendingThumb = e.target.result;
-    var img = document.getElementById('cThumbImg');
-    img.src = e.target.result;
-    document.getElementById('cThumbPreview').style.display='block';
-    document.getElementById('cThumbUrl').value='';
-    document.getElementById('cThumbUrl').placeholder='Uploaded: '+input.files[0].name;
-  };
-  r.readAsDataURL(input.files[0]);
-}
-function clearThumb() {
-  window._pendingThumb='';
-  document.getElementById('cThumbUrl').value='';
-  document.getElementById('cThumbUrl').placeholder='Paste image URL...';
-  document.getElementById('cThumbPreview').style.display='none';
-  document.getElementById('cThumbFile').value='';
 }
 
 </script>
-
-
-<!-- ════ ADMIN PROFILE MODAL ════ -->
-<style>
-#apModal{display:none;position:fixed;inset:0;z-index:700;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
-.ap-box{background:#fff;border-radius:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
-.ap-head{background:linear-gradient(135deg,#0B1F3A,#1A3C6E);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
-.ap-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
-.ap-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;}
-.ap-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.ap-av-wrap{display:flex;justify-content:center;margin-top:-34px;margin-bottom:10px;}
-.ap-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#D4A843,#e8c060);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#0B1F3A;border:4px solid #fff;box-shadow:0 4px 16px rgba(212,168,67,.4);overflow:hidden;cursor:pointer;position:relative;}
-.ap-av:hover .ap-cam{display:flex;}
-.ap-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:16px;border-radius:50%;}
-.ap-ebadge{text-align:center;margin-bottom:16px;font-size:12px;color:#7A94B0;}
-.ap-body{padding:0 22px 22px;}
-.ap-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.ap-g{margin-bottom:13px;}
-.ap-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
-.ap-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
-.ap-i:focus{border-color:#D4A843;box-shadow:0 0 0 3px rgba(212,168,67,.12);}
-.ap-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
-.ap-btns{display:flex;gap:10px;}
-.ap-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
-.ap-save{background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;}
-.ap-save:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(212,168,67,.4);}
-.ap-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
-#apOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
-</style>
-
-<div id="apModal" onclick="if(event.target===this)closeAdminProfile()">
-  <div class="ap-box">
-    <div class="ap-head">
-      <h3>⚙ Admin Profile</h3>
-      <p>Kulan Institute of Learning</p>
-      <button class="ap-x" onclick="closeAdminProfile()">✕</button>
-    </div>
-    <div class="ap-av-wrap">
-      <label>
-        <div class="ap-av" id="apAvEl">A
-          <div class="ap-cam">📷</div>
-          <input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">
-        </div>
-      </label>
-    </div>
-    <div class="ap-ebadge">
-      <span id="apEmailShow"></span>
-      &nbsp;<span style="padding:3px 9px;background:rgba(212,168,67,.12);border-radius:20px;font-size:10px;color:#D4A843;font-weight:700;">🔐 ADMIN</span>
-    </div>
-    <div class="ap-body">
-      <div id="apOk">✓ Profile saved!</div>
-      <div class="ap-row">
-        <div class="ap-g"><label class="ap-l">Full Name</label><input class="ap-i" id="apName" type="text" placeholder="Your name"></div>
-        <div class="ap-g"><label class="ap-l">Role / Title</label><input class="ap-i" id="apRole" type="text" placeholder="e.g. Director"></div>
-      </div>
-      <div class="ap-g"><label class="ap-l">Institute Name</label><input class="ap-i" id="apInstitute" type="text" placeholder="Kulan Institute of Learning"></div>
-      <div class="ap-g"><label class="ap-l">Short Bio</label><textarea class="ap-i" id="apBio" rows="2" style="resize:vertical" placeholder="Brief description..."></textarea></div>
-      <div class="ap-note"><strong style="color:#1BAECC">🔒 Password Reset:</strong> Go to <strong>Netlify → Identity → Users</strong>, find your account, and click "Send Password Reset Email."</div>
-      <div class="ap-btns">
-        <button class="ap-btn ap-cancel" onclick="closeAdminProfile()">Cancel</button>
-        <button class="ap-btn ap-save"   onclick="saveAdminProfile()">Save Changes</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
