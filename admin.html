@@ -284,14 +284,10 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
   </div>
 
   <div class="sb-footer">
-    <div class="user-info" onclick="openAdminProfile()" style="cursor:pointer;" title="Edit profile">
-      <div class="user-avatar" id="avatarInitial" style="overflow:hidden;">A</div>
-      <div>
-        <div class="user-email" id="adminEmail">admin</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:1px;">Click to edit profile</div>
-      </div>
+    <div class="user-info">
+      <div class="user-avatar" id="avatarInitial">A</div>
+      <div class="user-email" id="adminEmail">admin</div>
     </div>
-    <button onclick="openAdminProfile()" type="button" style="width:100%;padding:9px;margin-bottom:7px;border:1px solid rgba(212,168,67,0.25);border-radius:8px;background:rgba(212,168,67,0.07);color:#D4A843;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;" onmouseover="this.style.background='rgba(212,168,67,0.16)'" onmouseout="this.style.background='rgba(212,168,67,0.07)'">⚙ Profile Settings</button>
     <button class="logout-btn" id="logoutBtn">Sign Out</button>
   </div>
 </div>
@@ -478,21 +474,6 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
       <label class="form-label">Description</label>
       <textarea class="form-textarea" id="cDesc" placeholder="Brief course description..."></textarea>
     </div>
-    <div class="form-group">
-      <label class="form-label">Course Thumbnail <span style="font-size:11px;color:var(--text-light);font-weight:400;">(optional)</span></label>
-      <div id="cThumbPreview" style="display:none;margin-bottom:8px;">
-        <img id="cThumbImg" style="width:100%;height:120px;object-fit:cover;border-radius:10px;border:1px solid rgba(11,31,58,0.1);">
-        <button type="button" onclick="clearThumb()" style="font-size:11px;color:#dc2626;background:none;border:none;cursor:pointer;margin-top:3px;">✕ Remove</button>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <input type="text" class="form-input" id="cThumbUrl" placeholder="Paste image URL..." oninput="previewThumbUrl(this.value)" style="flex:1;font-size:13px;">
-        <label style="flex-shrink:0;padding:10px 14px;background:rgba(11,31,58,0.05);border:1px solid rgba(11,31,58,0.12);border-radius:9px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text-mid);white-space:nowrap;">
-          📁 Upload
-          <input type="file" id="cThumbFile" accept="image/*" style="display:none;" onchange="handleThumbFile(this)">
-        </label>
-      </div>
-      <div class="form-hint">Shown on the student dashboard. Recommended 1280x720.</div>
-    </div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal('addCourse')">Cancel</button>
       <button class="btn btn-gold" onclick="addCourse()">Create Course</button>
@@ -502,7 +483,7 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
 
 <!-- MODAL: Add Material -->
 <div class="modal-overlay" id="modal-addMaterial">
-  <div class="modal" style="max-width:520px;">
+  <div class="modal" style="max-width:540px;">
     <div class="modal-title">📤 Add Course Material</div>
 
     <div class="form-row">
@@ -535,24 +516,20 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
     <!-- SOURCE TABS -->
     <div class="form-group">
       <label class="form-label">Source</label>
-      <div style="display:flex;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;overflow:hidden;margin-bottom:14px;">
-        <button id="matTabUpload" onclick="switchMatTab('upload')" type="button" style="flex:1;padding:11px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">📁 Upload File</button>
-        <button id="matTabLink"   onclick="switchMatTab('link')"   type="button" style="flex:1;padding:11px;border:none;background:rgba(11,31,58,0.04);color:var(--text-mid);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🔗 Paste Link</button>
+      <div style="display:flex;gap:0;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;overflow:hidden;margin-bottom:14px;">
+        <button id="matTabUpload" onclick="switchMatTab('upload')" style="flex:1;padding:11px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;">📁 Upload File</button>
+        <button id="matTabLink"   onclick="switchMatTab('link')"   style="flex:1;padding:11px;border:none;background:rgba(11,31,58,0.04);color:var(--text-mid);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;">🔗 Paste Link</button>
       </div>
 
-      <!-- UPLOAD PANEL -->
+      <!-- UPLOAD TAB -->
       <div id="matPanelUpload">
-        <div id="matDropZone" onclick="document.getElementById('matFileInput').click()"
-          ondragover="event.preventDefault();this.style.borderColor='var(--cyan)'"
-          ondragleave="this.style.borderColor='rgba(11,31,58,0.15)'"
-          ondrop="matHandleDrop(event)"
-          style="border:2px dashed rgba(11,31,58,0.15);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;">
-          <div style="font-size:34px;margin-bottom:8px;">📄</div>
+        <div id="matDropZone" onclick="document.getElementById('matFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--cyan)';this.style.background='rgba(27,174,204,0.05)'" ondragleave="this.style.borderColor='rgba(11,31,58,0.12)';this.style.background='none'" ondrop="matHandleDrop(event)" style="border:2px dashed rgba(11,31,58,0.15);border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;transition:all .2s;">
+          <div style="font-size:36px;margin-bottom:8px;">📄</div>
           <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px;">Drag & drop your file here</div>
-          <div style="font-size:12px;color:var(--text-light);margin-bottom:12px;">or click to browse from your computer</div>
-          <span style="padding:8px 18px;background:var(--navy);color:#fff;border-radius:8px;font-size:12px;font-weight:600;">Choose File</span>
+          <div style="font-size:12px;color:var(--text-light);margin-bottom:14px;">or click to browse from your computer</div>
+          <div style="display:inline-block;padding:8px 18px;background:var(--navy);color:#fff;border-radius:8px;font-size:12px;font-weight:600;">Choose File</div>
         </div>
-        <input type="file" id="matFileInput" accept=".pdf,.ppt,.pptx,.mp4,.mov,.doc,.docx,.xlsx,.csv,.zip" style="display:none" onchange="matFileSelected(this)">
+        <input type="file" id="matFileInput" accept=".pdf,.ppt,.pptx,.mp4,.mov,.avi,.doc,.docx,.xlsx,.csv,.zip" style="display:none" onchange="matFileSelected(this)">
         <div id="matFileInfo" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(27,174,204,0.06);border:1px solid rgba(27,174,204,0.2);border-radius:10px;">
           <div style="display:flex;align-items:center;gap:10px;">
             <span id="matFileIcon" style="font-size:22px;">📄</span>
@@ -560,29 +537,32 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
               <div id="matFileName" style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
               <div id="matFileSize" style="font-size:11px;color:var(--text-light);margin-top:2px;"></div>
             </div>
-            <button type="button" onclick="clearMatFile()" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text-light);">✕</button>
+            <button onclick="clearMatFile()" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text-light);flex-shrink:0;">✕</button>
           </div>
-          <div id="matProgressWrap" style="display:none;margin-top:10px;">
+          <div id="matUploadProgress" style="display:none;margin-top:10px;">
             <div style="height:4px;background:rgba(11,31,58,0.08);border-radius:4px;overflow:hidden;">
               <div id="matProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),var(--teal));transition:width .3s;border-radius:4px;"></div>
             </div>
             <div id="matProgressText" style="font-size:11px;color:var(--text-light);margin-top:5px;text-align:center;"></div>
           </div>
         </div>
-        <div class="form-hint" style="margin-top:8px;">PDF, PPT, Word, Video, Excel, ZIP. Max ~10MB for reliable storage.</div>
+        <div class="form-hint" style="margin-top:8px;">Accepted: PDF, PPT, PowerPoint, Word, Video, Excel, ZIP. Max size: 50MB stored as base64 in browser.</div>
       </div>
 
-      <!-- LINK PANEL -->
+      <!-- LINK TAB -->
       <div id="matPanelLink" style="display:none;">
-        <input type="text" class="form-input" id="matUrl" placeholder="Paste any URL — Google Drive, YouTube, website, Dropbox...">
-        <div class="form-hint" style="margin-top:6px;">Any link works. Google Drive and YouTube links are auto-converted to embed format.</div>
+        <input type="text" class="form-input" id="matUrl" placeholder="Paste any link — Google Drive, YouTube, website, Dropbox...">
+        <div class="form-hint" style="margin-top:6px;">Any link works — Google Drive, YouTube, Dropbox, a website, anything. Google Drive links and YouTube URLs are auto-converted to embed format.</div>
       </div>
     </div>
 
     <div class="form-group">
       <label class="form-label">Allow Download</label>
       <div class="toggle-wrap">
-        <label class="toggle"><input type="checkbox" id="matDownload"><span class="toggle-slider"></span></label>
+        <label class="toggle">
+          <input type="checkbox" id="matDownload">
+          <span class="toggle-slider"></span>
+        </label>
         <span style="font-size:13px;color:var(--text-mid);">Students can download this material</span>
       </div>
     </div>
@@ -660,7 +640,6 @@ function checkAdmin(user) {
     window.location.href = '/admin-login.html';
   });
   init();
-  loadAdminProfile();
 }
 
 // Auth flow
@@ -692,38 +671,12 @@ var courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
 var materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
 var students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
 
-function saveCourses() {
-  try {
-    localStorage.setItem('ki_courses', JSON.stringify(courses));
-  } catch(e) {
-    showNotif('⚠ Storage full — could not save. Try deleting large file uploads first.');
-    console.error('saveCourses failed:', e);
-  }
-}
-function saveMaterials() {
-  try {
-    // Strip large base64 data from the index — files are stored separately
-    var slim = materials.map(function(m) {
-      if (m.isFile && m.url && m.url.startsWith('data:')) {
-        // Save file data under its own key, keep url as reference
-        try { localStorage.setItem('ki_file_' + m.id, m.url); } catch(e) {}
-        var copy = Object.assign({}, m);
-        copy.url = 'ki_file_' + m.id; // reference key instead of raw data
-        return copy;
-      }
-      return m;
-    });
-    localStorage.setItem('ki_materials', JSON.stringify(slim));
-  } catch(e) {
-    showNotif('⚠ Storage full — could not save material. Try a link instead of uploading a large file.');
-    console.error('saveMaterials failed:', e);
-  }
-}
+function saveCourses()   { localStorage.setItem('ki_courses',   JSON.stringify(courses)); }
+function saveMaterials() { localStorage.setItem('ki_materials', JSON.stringify(materials)); }
 function saveStudents()  { localStorage.setItem('ki_students',  JSON.stringify(students)); }
 
 function init() {
-  // Always re-read storage before checking — in-memory array may not be current
-  courses = JSON.parse(localStorage.getItem('ki_courses') || '[]');
+  // Seed default courses if empty
   if (courses.length === 0) {
     courses = [
       { id:'c1', title:'AI for Beginners', titleSo:'Xisaabta Macquulka ah ee Bilowga', modules:8, level:'Beginner', status:'active', lang:'EN + SO', paid:false, price:0, desc:'An 8-module bilingual course introducing artificial intelligence.' },
@@ -736,12 +689,6 @@ function init() {
 }
 
 function renderAll() {
-  // Always reload fresh from storage — prevents stale in-memory data
-  try {
-    courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
-    materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
-    students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
-  } catch(e) { console.warn('Storage reload error:', e); }
   renderOverview();
   renderCourses();
   renderStudents();
@@ -800,7 +747,6 @@ function renderCourses() {
     var statusBadge = c.status==='active' ? 'badge-green' : c.status==='coming' ? 'badge-blue' : 'badge-gray';
     var statusLabel = c.status==='active' ? 'Active' : c.status==='coming' ? 'Coming Soon' : 'Draft';
     return '<div class="course-card">'
-      + (c.thumb ? '<img src="'+c.thumb+'" style="width:100%;height:110px;object-fit:cover;border-radius:12px 12px 0 0;display:block;" onerror="this.style.display=\'none\'">' : '')
       + '<div class="cc-header">'
       + '<div><div class="cc-title">' + icons[i%icons.length] + ' ' + c.title + '</div>'
       + '<div class="cc-meta">' + (c.modules||'TBA') + ' modules · ' + c.level + ' · ' + c.lang + ' · ' + mats + ' files</div></div>'
@@ -858,13 +804,13 @@ function renderMaterials() {
     list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-light);">No materials yet. Click "+ Add Material" to upload content!</div>';
     return;
   }
-  var typeIcons = {pdf:'📄',video:'🎬',ppt:'📊',other:'📎'};
-  var typeBg    = {pdf:'rgba(239,68,68,0.08)',video:'rgba(27,174,204,0.1)',ppt:'rgba(212,168,67,0.1)',other:'rgba(11,31,58,0.07)'};
+  var typeIcons = {pdf:'📄',video:'🎬',ppt:'📊'};
+  var typeBg = {pdf:'rgba(239,68,68,0.1)',video:'rgba(27,174,204,0.1)',ppt:'rgba(212,168,67,0.1)'};
   list.innerHTML = filtered.map(function(m) {
     var course = courses.find(function(c){ return c.id===m.courseId; });
-    var srcTag = m.isFile
-      ? '<span style="padding:2px 7px;background:rgba(34,197,94,0.1);color:#16a34a;border-radius:20px;font-size:10px;font-weight:700;">📁 FILE</span>'
-      : '<span style="padding:2px 7px;background:rgba(27,174,204,0.1);color:var(--cyan);border-radius:20px;font-size:10px;font-weight:700;">🔗 LINK</span>';
+    var srcBadge = m.isFile
+      ? '<span style="padding:2px 8px;background:rgba(34,197,94,0.1);color:#16a34a;border-radius:20px;font-size:10px;font-weight:700;margin-left:6px;">📁 FILE</span>'
+      : '<span style="padding:2px 8px;background:rgba(27,174,204,0.1);color:var(--cyan);border-radius:20px;font-size:10px;font-weight:700;margin-left:6px;">🔗 LINK</span>';
     var prevBtn = m.isFile
       ? '<button class="btn btn-outline btn-sm" onclick="previewMatFile(\'' + m.id + '\')">Preview</button>'
       : '<a href="' + m.url + '" target="_blank" class="btn btn-outline btn-sm">Preview</a>';
@@ -872,18 +818,14 @@ function renderMaterials() {
       + '<div class="mat-icon" style="background:' + (typeBg[m.type]||'rgba(11,31,58,0.07)') + '">' + (typeIcons[m.type]||'📎') + '</div>'
       + '<div class="mat-info">'
       + '<div class="mat-name">Module ' + (m.module||'?') + ': ' + m.title + '</div>'
-      + '<div class="mat-sub" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'
-      + (course ? course.title : 'Unknown') + '&nbsp;' + srcTag
-      + (m.isFile && m.fileName ? '&nbsp;<span style="color:var(--text-light);font-size:11px;">(' + m.fileName + ')</span>' : '')
-      + (m.download ? '&nbsp;<span style="color:var(--teal);font-size:11px;">↓ Downloadable</span>' : '')
-      + '</div>'
+      + '<div class="mat-sub">' + (course?course.title:'Unknown') + srcBadge + (m.isFile&&m.fileName?' <span style="color:var(--text-light);font-size:11px;">('+m.fileName+')</span>':'') + (m.download?' &nbsp;↓ <span style="color:var(--teal);font-size:11px;">Downloadable</span>':'') + '</div>'
       + '</div>'
       + '<div class="mat-actions">'
       + prevBtn
       + '<button class="btn btn-danger btn-sm" onclick="deleteMaterial(\'' + m.id + '\')">Delete</button>'
       + '</div>'
       + '</div>';
-  }).join('');
+  }).join('');;
 }
 
 function populateCourseSelects() {
@@ -909,7 +851,6 @@ function addCourse() {
     return;
   }
 
-  var thumbUrl = document.getElementById('cThumbUrl') ? document.getElementById('cThumbUrl').value.trim() : '';
   var newCourse = {
     id:      'c' + Date.now(),
     title:   title,
@@ -921,7 +862,6 @@ function addCourse() {
     paid:    document.getElementById('cPaid').checked,
     price:   parseFloat(document.getElementById('cPrice').value) || 0,
     desc:    document.getElementById('cDesc').value.trim(),
-    thumb:   thumbUrl || (window._pendingThumb || ''),
   };
 
   courses.push(newCourse);
@@ -934,9 +874,6 @@ function addCourse() {
   document.getElementById('cPrice').value   = '';
   document.getElementById('cPaid').checked  = false;
   document.getElementById('cPriceWrap').style.display = 'none';
-  if (document.getElementById('cThumbUrl'))  document.getElementById('cThumbUrl').value = '';
-  if (document.getElementById('cThumbPreview')) document.getElementById('cThumbPreview').style.display = 'none';
-  window._pendingThumb = '';
 
   closeModal('addCourse');
   renderAll();
@@ -976,68 +913,91 @@ function openMaterialsFor(courseId) {
   renderMaterials();
 }
 
-// ── MATERIAL UPLOAD STATE
+// Track current material tab and file data
 var _matTab = 'upload';
-var _matFileData = null;
+var _matFileData = null; // { name, size, type, dataUrl }
 
 function switchMatTab(tab) {
   _matTab = tab;
-  var isUpload = tab === 'upload';
-  document.getElementById('matTabUpload').style.background = isUpload ? 'var(--navy)' : 'rgba(11,31,58,0.04)';
-  document.getElementById('matTabUpload').style.color      = isUpload ? '#fff' : 'var(--text-mid)';
-  document.getElementById('matTabLink').style.background   = isUpload ? 'rgba(11,31,58,0.04)' : 'var(--navy)';
-  document.getElementById('matTabLink').style.color        = isUpload ? 'var(--text-mid)' : '#fff';
-  document.getElementById('matPanelUpload').style.display  = isUpload ? 'block' : 'none';
-  document.getElementById('matPanelLink').style.display    = isUpload ? 'none'  : 'block';
+  var uploadBtn = document.getElementById('matTabUpload');
+  var linkBtn   = document.getElementById('matTabLink');
+  var uploadPanel = document.getElementById('matPanelUpload');
+  var linkPanel   = document.getElementById('matPanelLink');
+  if (tab === 'upload') {
+    uploadBtn.style.background = 'var(--navy)';
+    uploadBtn.style.color = '#fff';
+    linkBtn.style.background = 'rgba(11,31,58,0.04)';
+    linkBtn.style.color = 'var(--text-mid)';
+    uploadPanel.style.display = 'block';
+    linkPanel.style.display = 'none';
+  } else {
+    linkBtn.style.background = 'var(--navy)';
+    linkBtn.style.color = '#fff';
+    uploadBtn.style.background = 'rgba(11,31,58,0.04)';
+    uploadBtn.style.color = 'var(--text-mid)';
+    uploadPanel.style.display = 'none';
+    linkPanel.style.display = 'block';
+  }
 }
 
-function matHandleDrop(ev) {
-  ev.preventDefault();
-  document.getElementById('matDropZone').style.borderColor = 'rgba(11,31,58,0.15)';
-  if (ev.dataTransfer.files && ev.dataTransfer.files[0]) processMatFile(ev.dataTransfer.files[0]);
+function matHandleDrop(event) {
+  event.preventDefault();
+  document.getElementById('matDropZone').style.borderColor = 'rgba(11,31,58,0.12)';
+  document.getElementById('matDropZone').style.background = 'none';
+  if (event.dataTransfer.files && event.dataTransfer.files[0]) {
+    processMatFile(event.dataTransfer.files[0]);
+  }
 }
 
-function matFileSelected(inp) {
-  if (inp.files && inp.files[0]) processMatFile(inp.files[0]);
+function matFileSelected(input) {
+  if (input.files && input.files[0]) processMatFile(input.files[0]);
 }
 
 function processMatFile(file) {
+  var maxMB = 50;
+  if (file.size > maxMB * 1024 * 1024) {
+    showNotif('File too large. Max ' + maxMB + 'MB.');
+    return;
+  }
+  var icons = { pdf:'📄', mp4:'🎬', mov:'🎬', avi:'🎬', ppt:'📊', pptx:'📊', doc:'📝', docx:'📝', xlsx:'📊', csv:'📊', zip:'📦' };
   var ext = file.name.split('.').pop().toLowerCase();
-  var icons = {pdf:'📄',mp4:'🎬',mov:'🎬',avi:'🎬',ppt:'📊',pptx:'📊',doc:'📝',docx:'📝',xlsx:'📊',csv:'📊',zip:'📦'};
-  document.getElementById('matFileIcon').textContent = icons[ext] || '📎';
+  var icon = icons[ext] || '📎';
+  document.getElementById('matFileIcon').textContent = icon;
   document.getElementById('matFileName').textContent = file.name;
-  document.getElementById('matFileSize').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
+  document.getElementById('matFileSize').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
   document.getElementById('matFileInfo').style.display = 'block';
   document.getElementById('matDropZone').style.display = 'none';
-  // Auto-fill title
-  if (!document.getElementById('matTitle').value.trim()) {
-    document.getElementById('matTitle').value = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g,' ');
+  // Auto-fill title if empty
+  var titleEl = document.getElementById('matTitle');
+  if (!titleEl.value.trim()) {
+    titleEl.value = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
   }
   // Auto-detect type
-  if (['mp4','mov','avi'].indexOf(ext) > -1) document.getElementById('matType').value = 'video';
-  else if (['ppt','pptx'].indexOf(ext) > -1)  document.getElementById('matType').value = 'ppt';
-  else if (ext === 'pdf')                       document.getElementById('matType').value = 'pdf';
-  // Read file
-  var prog = document.getElementById('matProgressWrap');
-  var bar  = document.getElementById('matProgressBar');
-  var txt  = document.getElementById('matProgressText');
-  prog.style.display = 'block';
+  var typeEl = document.getElementById('matType');
+  if (['mp4','mov','avi'].includes(ext)) typeEl.value = 'video';
+  else if (['ppt','pptx'].includes(ext)) typeEl.value = 'ppt';
+  else if (['pdf'].includes(ext)) typeEl.value = 'pdf';
+  // Read as base64 with progress
+  var progress = document.getElementById('matUploadProgress');
+  var bar = document.getElementById('matProgressBar');
+  var txt = document.getElementById('matProgressText');
+  progress.style.display = 'block';
   txt.textContent = 'Reading file...';
   var reader = new FileReader();
   reader.onprogress = function(e) {
     if (e.lengthComputable) {
-      var pct = Math.round(e.loaded/e.total*100);
+      var pct = Math.round((e.loaded / e.total) * 100);
       bar.style.width = pct + '%';
-      txt.textContent = pct + '% loaded...';
+      txt.textContent = 'Loading... ' + pct + '%';
     }
   };
   reader.onload = function(e) {
     bar.style.width = '100%';
-    txt.textContent = 'Ready ✓';
-    _matFileData = { name: file.name, ext: ext, size: file.size, dataUrl: e.target.result };
+    txt.textContent = 'Ready to add ✓';
+    _matFileData = { name: file.name, size: file.size, ext: ext, dataUrl: e.target.result };
   };
   reader.onerror = function() {
-    showNotif('Could not read file. Try a smaller file or use the link tab.');
+    showNotif('Could not read file. Try a smaller file or use a link instead.');
     clearMatFile();
   };
   reader.readAsDataURL(file);
@@ -1045,10 +1005,11 @@ function processMatFile(file) {
 
 function clearMatFile() {
   _matFileData = null;
+  document.getElementById('matFileData') && (document.getElementById('matFileData').value = '');
   document.getElementById('matFileInfo').style.display = 'none';
   document.getElementById('matDropZone').style.display = 'block';
   document.getElementById('matFileInput').value = '';
-  document.getElementById('matProgressWrap').style.display = 'none';
+  document.getElementById('matUploadProgress').style.display = 'none';
   document.getElementById('matProgressBar').style.width = '0%';
 }
 
@@ -1058,42 +1019,32 @@ function addMaterial() {
   if (!title)    { showNotif('Please enter a title.'); return; }
   if (!courseId) { showNotif('Please select a course.'); return; }
 
-  var matId = 'm' + Date.now();
   var url = '';
   var isFile = false;
-  var fileName = '';
 
   if (_matTab === 'upload') {
     if (!_matFileData) { showNotif('Please select a file to upload.'); return; }
-    // Store file data in its own key so it never bloats the materials index
-    try {
-      localStorage.setItem('ki_file_' + matId, _matFileData.dataUrl);
-    } catch(e) {
-      showNotif('File too large for browser storage. Please use the Link tab instead.');
-      return;
-    }
-    url = 'ki_file_' + matId;
+    url = _matFileData.dataUrl;
     isFile = true;
-    fileName = _matFileData.name;
   } else {
     url = document.getElementById('matUrl').value.trim();
     if (!url) { showNotif('Please paste a link.'); return; }
     // Auto-convert Google Drive
     url = url.replace('/view?usp=sharing','').replace('/view?usp=drive_link','').replace('/view','');
-    if (url.indexOf('drive.google.com/file') > -1 && url.indexOf('/preview') === -1) url += '/preview';
+    if (url.includes('drive.google.com/file') && !url.includes('/preview')) url += '/preview';
     // Auto-convert YouTube
     var yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
     if (yt) url = 'https://www.youtube.com/embed/' + yt[1];
   }
 
   var mat = {
-    id:       matId,
+    id:       'm' + Date.now(),
     courseId: courseId,
     title:    title,
     type:     document.getElementById('matType').value,
     url:      url,
+    fileName: isFile ? _matFileData.name : '',
     isFile:   isFile,
-    fileName: fileName,
     module:   parseInt(document.getElementById('matModule').value) || 1,
     download: document.getElementById('matDownload').checked,
   };
@@ -1102,9 +1053,9 @@ function addMaterial() {
   renderAll();
   closeModal('addMaterial');
   showNotif('Material "' + title + '" added!');
-  // Reset
-  document.getElementById('matTitle').value  = '';
-  document.getElementById('matUrl').value    = '';
+  // Reset form
+  document.getElementById('matTitle').value = '';
+  document.getElementById('matUrl').value   = '';
   document.getElementById('matModule').value = '';
   document.getElementById('matDownload').checked = false;
   clearMatFile();
@@ -1112,14 +1063,11 @@ function addMaterial() {
 }
 
 function deleteMaterial(id) {
-  var mat = materials.find(function(m){ return m.id===id; });
-  if (mat && mat.isFile) {
-    try { localStorage.removeItem('ki_file_' + id); } catch(e) {}
-  }
+  if (!confirm('Delete this material?')) return;
   materials = materials.filter(function(m){ return m.id!==id; });
   saveMaterials();
   renderAll();
-  showNotif('Material deleted.');
+  showNotif('Material deleted');
 }
 
 function inviteStudent() {
@@ -1222,489 +1170,22 @@ document.addEventListener('click', function(e) {
 
 function previewMatFile(matId) {
   var mat = materials.find(function(m){ return m.id===matId; });
-  if (!mat) return;
-  var dataUrl = localStorage.getItem('ki_file_' + matId);
-  if (!dataUrl) { showNotif('File data not found in this browser.'); return; }
+  if (!mat || !mat.isFile) return;
   var w = window.open('', '_blank');
-  if (!w) { showNotif('Popup blocked — please allow popups for this site.'); return; }
+  if (!w) { showNotif('Popup blocked — allow popups for this site.'); return; }
   if (mat.type === 'video') {
-    w.document.write('<body style="margin:0;background:#000;"><video src="'+dataUrl+'" controls autoplay style="width:100%;max-height:100vh;display:block;margin:auto;"></video>
-<!-- ════ ADMIN PROFILE MODAL ════ -->
-<style>
-#apModal{display:none;position:fixed;inset:0;z-index:700;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
-#apModal.open{display:flex;}
-.ap-box{background:#fff;border-radius:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
-.ap-head{background:linear-gradient(135deg,#0B1F3A,#1A3C6E);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
-.ap-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
-.ap-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;}
-.ap-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.ap-av-wrap{display:flex;justify-content:center;margin-top:-34px;margin-bottom:10px;}
-.ap-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#D4A843,#e8c060);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#0B1F3A;border:4px solid #fff;box-shadow:0 4px 16px rgba(212,168,67,.4);overflow:hidden;cursor:pointer;position:relative;}
-.ap-av:hover .ap-cam{display:flex;}
-.ap-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:16px;border-radius:50%;}
-.ap-ebadge{text-align:center;margin-bottom:16px;font-size:12px;color:#7A94B0;}
-.ap-body{padding:0 22px 22px;}
-.ap-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.ap-g{margin-bottom:13px;}
-.ap-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
-.ap-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
-.ap-i:focus{border-color:#D4A843;box-shadow:0 0 0 3px rgba(212,168,67,.12);}
-.ap-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
-.ap-btns{display:flex;gap:10px;}
-.ap-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
-.ap-save{background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;}
-.ap-save:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(212,168,67,.4);}
-.ap-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
-#apOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
-</style>
-
-<div id="apModal" onclick="if(event.target===this)closeAdminProfile()">
-  <div class="ap-box">
-    <div class="ap-head">
-      <h3>⚙ Admin Profile</h3>
-      <p>Kulan Institute of Learning</p>
-      <button class="ap-x" onclick="closeAdminProfile()">✕</button>
-    </div>
-    <div class="ap-av-wrap">
-      <label>
-        <div class="ap-av" id="apAvEl">A
-          <div class="ap-cam">📷</div>
-          <input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">
-        </div>
-      </label>
-    </div>
-    <div class="ap-ebadge">
-      <span id="apEmailShow"></span>
-      &nbsp;<span style="padding:3px 9px;background:rgba(212,168,67,.12);border-radius:20px;font-size:10px;color:#D4A843;font-weight:700;">🔐 ADMIN</span>
-    </div>
-    <div class="ap-body">
-      <div id="apOk">✓ Profile saved!</div>
-      <div class="ap-row">
-        <div class="ap-g"><label class="ap-l">Full Name</label><input class="ap-i" id="apName" type="text" placeholder="Your name"></div>
-        <div class="ap-g"><label class="ap-l">Role / Title</label><input class="ap-i" id="apRole" type="text" placeholder="e.g. Director"></div>
-      </div>
-      <div class="ap-g"><label class="ap-l">Institute Name</label><input class="ap-i" id="apInstitute" type="text"></div>
-      <div class="ap-g"><label class="ap-l">Short Bio</label><textarea class="ap-i" id="apBio" rows="2" style="resize:vertical" placeholder="Brief description..."></textarea></div>
-      <div class="ap-note"><strong style="color:#1BAECC">🔒 Password Reset:</strong> Go to <strong>Netlify → Identity → Users</strong>, find your account, and click "Send Password Reset Email."</div>
-      <div class="ap-btns">
-        <button class="ap-btn ap-cancel" onclick="closeAdminProfile()">Cancel</button>
-        <button class="ap-btn ap-save" onclick="saveAdminProfile()">Save Changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-// ── THUMBNAIL HELPERS
-var _pendingThumb = '';
-function previewThumbUrl(url) {
-  if (!url) { document.getElementById('cThumbPreview').style.display='none'; return; }
-  var img = document.getElementById('cThumbImg');
-  img.src = url;
-  img.onload  = function(){ document.getElementById('cThumbPreview').style.display='block'; };
-  img.onerror = function(){ document.getElementById('cThumbPreview').style.display='none'; };
-}
-function handleThumbFile(input) {
-  if (!input.files || !input.files[0]) return;
-  var r = new FileReader();
-  r.onload = function(e) {
-    window._pendingThumb = e.target.result;
-    document.getElementById('cThumbImg').src = e.target.result;
-    document.getElementById('cThumbPreview').style.display = 'block';
-    document.getElementById('cThumbUrl').value = '';
-    document.getElementById('cThumbUrl').placeholder = 'Uploaded: ' + input.files[0].name;
-  };
-  r.readAsDataURL(input.files[0]);
-}
-function clearThumb() {
-  window._pendingThumb = '';
-  document.getElementById('cThumbUrl').value = '';
-  document.getElementById('cThumbUrl').placeholder = 'Paste image URL...';
-  document.getElementById('cThumbPreview').style.display = 'none';
-  document.getElementById('cThumbFile').value = '';
-}
-
-// ── ADMIN PROFILE
-var _apImg = '';
-function openAdminProfile() {
-  var u = netlifyIdentity.currentUser();
-  if (!u) { showNotif('Session not ready yet, please wait a moment.'); return; }
-  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  document.getElementById('apName').value      = m.name      || '';
-  document.getElementById('apRole').value      = m.role      || 'Administrator';
-  document.getElementById('apInstitute').value = m.institute || 'Kulan Institute of Learning';
-  document.getElementById('apBio').value       = m.bio       || '';
-  document.getElementById('apEmailShow').textContent = u.email;
-  _apImg = m.avatar || '';
-  var av = document.getElementById('apAvEl');
-  if (_apImg) {
-    av.innerHTML = '<img src="'+_apImg+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
+    w.document.write('<body style="margin:0;background:#000;"><video src="'+mat.url+'" controls autoplay style="width:100%;max-height:100vh;display:block;"></video></body>');
+  } else if (mat.type === 'pdf') {
+    w.document.write('<body style="margin:0;"><iframe src="'+mat.url+'" style="width:100%;height:100vh;border:none;"></iframe></body>');
   } else {
-    av.innerHTML = u.email.charAt(0).toUpperCase() + '<div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
-  }
-  document.getElementById('apOk').style.display = 'none';
-  document.getElementById('apModal').classList.add('open');
-}
-function closeAdminProfile() {
-  document.getElementById('apModal').classList.remove('open');
-}
-function apAvatarPick(inp) {
-  if (!inp.files || !inp.files[0]) return;
-  var r = new FileReader();
-  r.onload = function(e) {
-    _apImg = e.target.result;
-    document.getElementById('apAvEl').innerHTML = '<img src="'+e.target.result+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
-  };
-  r.readAsDataURL(inp.files[0]);
-}
-function saveAdminProfile() {
-  var name = document.getElementById('apName').value.trim();
-  var m = {
-    name:      name,
-    role:      document.getElementById('apRole').value.trim(),
-    institute: document.getElementById('apInstitute').value.trim(),
-    bio:       document.getElementById('apBio').value.trim(),
-    avatar:    _apImg
-  };
-  localStorage.setItem('ki_admin_profile', JSON.stringify(m));
-  if (name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=name; }
-  if (_apImg) {
-    var av=document.getElementById('avatarInitial');
-    if(av) av.innerHTML='<img src="'+_apImg+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-  }
-  document.getElementById('apOk').style.display = 'block';
-  setTimeout(function(){ document.getElementById('apOk').style.display='none'; closeAdminProfile(); }, 900);
-}
-function loadAdminProfile() {
-  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  if (m.name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=m.name; }
-  if (m.avatar) {
-    var av=document.getElementById('avatarInitial');
-    if(av) av.innerHTML='<img src="'+m.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-  }
-}
-</script>
-
-</body>');
-  } else {
-    w.document.write('<body style="margin:0;"><iframe src="'+dataUrl+'" style="width:100%;height:100vh;border:none;"></iframe>
-<!-- ════ ADMIN PROFILE MODAL ════ -->
-<style>
-#apModal{display:none;position:fixed;inset:0;z-index:700;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
-#apModal.open{display:flex;}
-.ap-box{background:#fff;border-radius:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
-.ap-head{background:linear-gradient(135deg,#0B1F3A,#1A3C6E);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
-.ap-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
-.ap-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;}
-.ap-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.ap-av-wrap{display:flex;justify-content:center;margin-top:-34px;margin-bottom:10px;}
-.ap-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#D4A843,#e8c060);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#0B1F3A;border:4px solid #fff;box-shadow:0 4px 16px rgba(212,168,67,.4);overflow:hidden;cursor:pointer;position:relative;}
-.ap-av:hover .ap-cam{display:flex;}
-.ap-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:16px;border-radius:50%;}
-.ap-ebadge{text-align:center;margin-bottom:16px;font-size:12px;color:#7A94B0;}
-.ap-body{padding:0 22px 22px;}
-.ap-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.ap-g{margin-bottom:13px;}
-.ap-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
-.ap-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
-.ap-i:focus{border-color:#D4A843;box-shadow:0 0 0 3px rgba(212,168,67,.12);}
-.ap-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
-.ap-btns{display:flex;gap:10px;}
-.ap-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
-.ap-save{background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;}
-.ap-save:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(212,168,67,.4);}
-.ap-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
-#apOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
-</style>
-
-<div id="apModal" onclick="if(event.target===this)closeAdminProfile()">
-  <div class="ap-box">
-    <div class="ap-head">
-      <h3>⚙ Admin Profile</h3>
-      <p>Kulan Institute of Learning</p>
-      <button class="ap-x" onclick="closeAdminProfile()">✕</button>
-    </div>
-    <div class="ap-av-wrap">
-      <label>
-        <div class="ap-av" id="apAvEl">A
-          <div class="ap-cam">📷</div>
-          <input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">
-        </div>
-      </label>
-    </div>
-    <div class="ap-ebadge">
-      <span id="apEmailShow"></span>
-      &nbsp;<span style="padding:3px 9px;background:rgba(212,168,67,.12);border-radius:20px;font-size:10px;color:#D4A843;font-weight:700;">🔐 ADMIN</span>
-    </div>
-    <div class="ap-body">
-      <div id="apOk">✓ Profile saved!</div>
-      <div class="ap-row">
-        <div class="ap-g"><label class="ap-l">Full Name</label><input class="ap-i" id="apName" type="text" placeholder="Your name"></div>
-        <div class="ap-g"><label class="ap-l">Role / Title</label><input class="ap-i" id="apRole" type="text" placeholder="e.g. Director"></div>
-      </div>
-      <div class="ap-g"><label class="ap-l">Institute Name</label><input class="ap-i" id="apInstitute" type="text"></div>
-      <div class="ap-g"><label class="ap-l">Short Bio</label><textarea class="ap-i" id="apBio" rows="2" style="resize:vertical" placeholder="Brief description..."></textarea></div>
-      <div class="ap-note"><strong style="color:#1BAECC">🔒 Password Reset:</strong> Go to <strong>Netlify → Identity → Users</strong>, find your account, and click "Send Password Reset Email."</div>
-      <div class="ap-btns">
-        <button class="ap-btn ap-cancel" onclick="closeAdminProfile()">Cancel</button>
-        <button class="ap-btn ap-save" onclick="saveAdminProfile()">Save Changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-// ── THUMBNAIL HELPERS
-var _pendingThumb = '';
-function previewThumbUrl(url) {
-  if (!url) { document.getElementById('cThumbPreview').style.display='none'; return; }
-  var img = document.getElementById('cThumbImg');
-  img.src = url;
-  img.onload  = function(){ document.getElementById('cThumbPreview').style.display='block'; };
-  img.onerror = function(){ document.getElementById('cThumbPreview').style.display='none'; };
-}
-function handleThumbFile(input) {
-  if (!input.files || !input.files[0]) return;
-  var r = new FileReader();
-  r.onload = function(e) {
-    window._pendingThumb = e.target.result;
-    document.getElementById('cThumbImg').src = e.target.result;
-    document.getElementById('cThumbPreview').style.display = 'block';
-    document.getElementById('cThumbUrl').value = '';
-    document.getElementById('cThumbUrl').placeholder = 'Uploaded: ' + input.files[0].name;
-  };
-  r.readAsDataURL(input.files[0]);
-}
-function clearThumb() {
-  window._pendingThumb = '';
-  document.getElementById('cThumbUrl').value = '';
-  document.getElementById('cThumbUrl').placeholder = 'Paste image URL...';
-  document.getElementById('cThumbPreview').style.display = 'none';
-  document.getElementById('cThumbFile').value = '';
-}
-
-// ── ADMIN PROFILE
-var _apImg = '';
-function openAdminProfile() {
-  var u = netlifyIdentity.currentUser();
-  if (!u) { showNotif('Session not ready yet, please wait a moment.'); return; }
-  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  document.getElementById('apName').value      = m.name      || '';
-  document.getElementById('apRole').value      = m.role      || 'Administrator';
-  document.getElementById('apInstitute').value = m.institute || 'Kulan Institute of Learning';
-  document.getElementById('apBio').value       = m.bio       || '';
-  document.getElementById('apEmailShow').textContent = u.email;
-  _apImg = m.avatar || '';
-  var av = document.getElementById('apAvEl');
-  if (_apImg) {
-    av.innerHTML = '<img src="'+_apImg+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
-  } else {
-    av.innerHTML = u.email.charAt(0).toUpperCase() + '<div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
-  }
-  document.getElementById('apOk').style.display = 'none';
-  document.getElementById('apModal').classList.add('open');
-}
-function closeAdminProfile() {
-  document.getElementById('apModal').classList.remove('open');
-}
-function apAvatarPick(inp) {
-  if (!inp.files || !inp.files[0]) return;
-  var r = new FileReader();
-  r.onload = function(e) {
-    _apImg = e.target.result;
-    document.getElementById('apAvEl').innerHTML = '<img src="'+e.target.result+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
-  };
-  r.readAsDataURL(inp.files[0]);
-}
-function saveAdminProfile() {
-  var name = document.getElementById('apName').value.trim();
-  var m = {
-    name:      name,
-    role:      document.getElementById('apRole').value.trim(),
-    institute: document.getElementById('apInstitute').value.trim(),
-    bio:       document.getElementById('apBio').value.trim(),
-    avatar:    _apImg
-  };
-  localStorage.setItem('ki_admin_profile', JSON.stringify(m));
-  if (name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=name; }
-  if (_apImg) {
-    var av=document.getElementById('avatarInitial');
-    if(av) av.innerHTML='<img src="'+_apImg+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-  }
-  document.getElementById('apOk').style.display = 'block';
-  setTimeout(function(){ document.getElementById('apOk').style.display='none'; closeAdminProfile(); }, 900);
-}
-function loadAdminProfile() {
-  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  if (m.name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=m.name; }
-  if (m.avatar) {
-    var av=document.getElementById('avatarInitial');
-    if(av) av.innerHTML='<img src="'+m.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-  }
-}
-</script>
-
-</body>');
+    var a = document.createElement('a');
+    a.href = mat.url;
+    a.download = mat.fileName || mat.title;
+    a.click();
+    w.close();
   }
 }
 
-</script>
-
-
-<!-- ════ ADMIN PROFILE MODAL ════ -->
-<style>
-#apModal{display:none;position:fixed;inset:0;z-index:700;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
-#apModal.open{display:flex;}
-.ap-box{background:#fff;border-radius:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
-.ap-head{background:linear-gradient(135deg,#0B1F3A,#1A3C6E);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
-.ap-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
-.ap-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;}
-.ap-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.ap-av-wrap{display:flex;justify-content:center;margin-top:-34px;margin-bottom:10px;}
-.ap-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#D4A843,#e8c060);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#0B1F3A;border:4px solid #fff;box-shadow:0 4px 16px rgba(212,168,67,.4);overflow:hidden;cursor:pointer;position:relative;}
-.ap-av:hover .ap-cam{display:flex;}
-.ap-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:16px;border-radius:50%;}
-.ap-ebadge{text-align:center;margin-bottom:16px;font-size:12px;color:#7A94B0;}
-.ap-body{padding:0 22px 22px;}
-.ap-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.ap-g{margin-bottom:13px;}
-.ap-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
-.ap-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
-.ap-i:focus{border-color:#D4A843;box-shadow:0 0 0 3px rgba(212,168,67,.12);}
-.ap-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
-.ap-btns{display:flex;gap:10px;}
-.ap-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
-.ap-save{background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;}
-.ap-save:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(212,168,67,.4);}
-.ap-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
-#apOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
-</style>
-
-<div id="apModal" onclick="if(event.target===this)closeAdminProfile()">
-  <div class="ap-box">
-    <div class="ap-head">
-      <h3>⚙ Admin Profile</h3>
-      <p>Kulan Institute of Learning</p>
-      <button class="ap-x" onclick="closeAdminProfile()">✕</button>
-    </div>
-    <div class="ap-av-wrap">
-      <label>
-        <div class="ap-av" id="apAvEl">A
-          <div class="ap-cam">📷</div>
-          <input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">
-        </div>
-      </label>
-    </div>
-    <div class="ap-ebadge">
-      <span id="apEmailShow"></span>
-      &nbsp;<span style="padding:3px 9px;background:rgba(212,168,67,.12);border-radius:20px;font-size:10px;color:#D4A843;font-weight:700;">🔐 ADMIN</span>
-    </div>
-    <div class="ap-body">
-      <div id="apOk">✓ Profile saved!</div>
-      <div class="ap-row">
-        <div class="ap-g"><label class="ap-l">Full Name</label><input class="ap-i" id="apName" type="text" placeholder="Your name"></div>
-        <div class="ap-g"><label class="ap-l">Role / Title</label><input class="ap-i" id="apRole" type="text" placeholder="e.g. Director"></div>
-      </div>
-      <div class="ap-g"><label class="ap-l">Institute Name</label><input class="ap-i" id="apInstitute" type="text"></div>
-      <div class="ap-g"><label class="ap-l">Short Bio</label><textarea class="ap-i" id="apBio" rows="2" style="resize:vertical" placeholder="Brief description..."></textarea></div>
-      <div class="ap-note"><strong style="color:#1BAECC">🔒 Password Reset:</strong> Go to <strong>Netlify → Identity → Users</strong>, find your account, and click "Send Password Reset Email."</div>
-      <div class="ap-btns">
-        <button class="ap-btn ap-cancel" onclick="closeAdminProfile()">Cancel</button>
-        <button class="ap-btn ap-save" onclick="saveAdminProfile()">Save Changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-// ── THUMBNAIL HELPERS
-var _pendingThumb = '';
-function previewThumbUrl(url) {
-  if (!url) { document.getElementById('cThumbPreview').style.display='none'; return; }
-  var img = document.getElementById('cThumbImg');
-  img.src = url;
-  img.onload  = function(){ document.getElementById('cThumbPreview').style.display='block'; };
-  img.onerror = function(){ document.getElementById('cThumbPreview').style.display='none'; };
-}
-function handleThumbFile(input) {
-  if (!input.files || !input.files[0]) return;
-  var r = new FileReader();
-  r.onload = function(e) {
-    window._pendingThumb = e.target.result;
-    document.getElementById('cThumbImg').src = e.target.result;
-    document.getElementById('cThumbPreview').style.display = 'block';
-    document.getElementById('cThumbUrl').value = '';
-    document.getElementById('cThumbUrl').placeholder = 'Uploaded: ' + input.files[0].name;
-  };
-  r.readAsDataURL(input.files[0]);
-}
-function clearThumb() {
-  window._pendingThumb = '';
-  document.getElementById('cThumbUrl').value = '';
-  document.getElementById('cThumbUrl').placeholder = 'Paste image URL...';
-  document.getElementById('cThumbPreview').style.display = 'none';
-  document.getElementById('cThumbFile').value = '';
-}
-
-// ── ADMIN PROFILE
-var _apImg = '';
-function openAdminProfile() {
-  var u = netlifyIdentity.currentUser();
-  if (!u) { showNotif('Session not ready yet, please wait a moment.'); return; }
-  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  document.getElementById('apName').value      = m.name      || '';
-  document.getElementById('apRole').value      = m.role      || 'Administrator';
-  document.getElementById('apInstitute').value = m.institute || 'Kulan Institute of Learning';
-  document.getElementById('apBio').value       = m.bio       || '';
-  document.getElementById('apEmailShow').textContent = u.email;
-  _apImg = m.avatar || '';
-  var av = document.getElementById('apAvEl');
-  if (_apImg) {
-    av.innerHTML = '<img src="'+_apImg+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
-  } else {
-    av.innerHTML = u.email.charAt(0).toUpperCase() + '<div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
-  }
-  document.getElementById('apOk').style.display = 'none';
-  document.getElementById('apModal').classList.add('open');
-}
-function closeAdminProfile() {
-  document.getElementById('apModal').classList.remove('open');
-}
-function apAvatarPick(inp) {
-  if (!inp.files || !inp.files[0]) return;
-  var r = new FileReader();
-  r.onload = function(e) {
-    _apImg = e.target.result;
-    document.getElementById('apAvEl').innerHTML = '<img src="'+e.target.result+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
-  };
-  r.readAsDataURL(inp.files[0]);
-}
-function saveAdminProfile() {
-  var name = document.getElementById('apName').value.trim();
-  var m = {
-    name:      name,
-    role:      document.getElementById('apRole').value.trim(),
-    institute: document.getElementById('apInstitute').value.trim(),
-    bio:       document.getElementById('apBio').value.trim(),
-    avatar:    _apImg
-  };
-  localStorage.setItem('ki_admin_profile', JSON.stringify(m));
-  if (name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=name; }
-  if (_apImg) {
-    var av=document.getElementById('avatarInitial');
-    if(av) av.innerHTML='<img src="'+_apImg+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-  }
-  document.getElementById('apOk').style.display = 'block';
-  setTimeout(function(){ document.getElementById('apOk').style.display='none'; closeAdminProfile(); }, 900);
-}
-function loadAdminProfile() {
-  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  if (m.name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=m.name; }
-  if (m.avatar) {
-    var av=document.getElementById('avatarInitial');
-    if(av) av.innerHTML='<img src="'+m.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-  }
-}
 </script>
 
 </body>
