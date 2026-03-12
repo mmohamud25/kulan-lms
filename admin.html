@@ -284,10 +284,14 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
   </div>
 
   <div class="sb-footer">
-    <div class="user-info">
-      <div class="user-avatar" id="avatarInitial">A</div>
-      <div class="user-email" id="adminEmail">admin</div>
+    <div class="user-info" onclick="openAdminProfile()" style="cursor:pointer;" title="Edit profile">
+      <div class="user-avatar" id="avatarInitial" style="overflow:hidden;">A</div>
+      <div>
+        <div class="user-email" id="adminEmail">admin</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:1px;">Click to edit profile</div>
+      </div>
     </div>
+    <button onclick="openAdminProfile()" type="button" style="width:100%;padding:9px;margin-bottom:7px;border:1px solid rgba(212,168,67,0.25);border-radius:8px;background:rgba(212,168,67,0.07);color:#D4A843;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;" onmouseover="this.style.background='rgba(212,168,67,0.16)'" onmouseout="this.style.background='rgba(212,168,67,0.07)'">⚙ Profile Settings</button>
     <button class="logout-btn" id="logoutBtn">Sign Out</button>
   </div>
 </div>
@@ -474,6 +478,21 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
       <label class="form-label">Description</label>
       <textarea class="form-textarea" id="cDesc" placeholder="Brief course description..."></textarea>
     </div>
+    <div class="form-group">
+      <label class="form-label">Course Thumbnail <span style="font-size:11px;color:var(--text-light);font-weight:400;">(optional)</span></label>
+      <div id="cThumbPreview" style="display:none;margin-bottom:8px;">
+        <img id="cThumbImg" style="width:100%;height:120px;object-fit:cover;border-radius:10px;border:1px solid rgba(11,31,58,0.1);">
+        <button type="button" onclick="clearThumb()" style="font-size:11px;color:#dc2626;background:none;border:none;cursor:pointer;margin-top:3px;">✕ Remove</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="text" class="form-input" id="cThumbUrl" placeholder="Paste image URL..." oninput="previewThumbUrl(this.value)" style="flex:1;font-size:13px;">
+        <label style="flex-shrink:0;padding:10px 14px;background:rgba(11,31,58,0.05);border:1px solid rgba(11,31,58,0.12);border-radius:9px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text-mid);white-space:nowrap;">
+          📁 Upload
+          <input type="file" id="cThumbFile" accept="image/*" style="display:none;" onchange="handleThumbFile(this)">
+        </label>
+      </div>
+      <div class="form-hint">Shown on the student dashboard. Recommended 1280x720.</div>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal('addCourse')">Cancel</button>
       <button class="btn btn-gold" onclick="addCourse()">Create Course</button>
@@ -641,6 +660,7 @@ function checkAdmin(user) {
     window.location.href = '/admin-login.html';
   });
   init();
+  loadAdminProfile();
 }
 
 // Auth flow
@@ -780,6 +800,7 @@ function renderCourses() {
     var statusBadge = c.status==='active' ? 'badge-green' : c.status==='coming' ? 'badge-blue' : 'badge-gray';
     var statusLabel = c.status==='active' ? 'Active' : c.status==='coming' ? 'Coming Soon' : 'Draft';
     return '<div class="course-card">'
+      + (c.thumb ? '<img src="'+c.thumb+'" style="width:100%;height:110px;object-fit:cover;border-radius:12px 12px 0 0;display:block;" onerror="this.style.display=\'none\'">' : '')
       + '<div class="cc-header">'
       + '<div><div class="cc-title">' + icons[i%icons.length] + ' ' + c.title + '</div>'
       + '<div class="cc-meta">' + (c.modules||'TBA') + ' modules · ' + c.level + ' · ' + c.lang + ' · ' + mats + ' files</div></div>'
@@ -888,6 +909,7 @@ function addCourse() {
     return;
   }
 
+  var thumbUrl = document.getElementById('cThumbUrl') ? document.getElementById('cThumbUrl').value.trim() : '';
   var newCourse = {
     id:      'c' + Date.now(),
     title:   title,
@@ -899,6 +921,7 @@ function addCourse() {
     paid:    document.getElementById('cPaid').checked,
     price:   parseFloat(document.getElementById('cPrice').value) || 0,
     desc:    document.getElementById('cDesc').value.trim(),
+    thumb:   thumbUrl || (window._pendingThumb || ''),
   };
 
   courses.push(newCourse);
@@ -911,6 +934,9 @@ function addCourse() {
   document.getElementById('cPrice').value   = '';
   document.getElementById('cPaid').checked  = false;
   document.getElementById('cPriceWrap').style.display = 'none';
+  if (document.getElementById('cThumbUrl'))  document.getElementById('cThumbUrl').value = '';
+  if (document.getElementById('cThumbPreview')) document.getElementById('cThumbPreview').style.display = 'none';
+  window._pendingThumb = '';
 
   closeModal('addCourse');
   renderAll();
@@ -1202,12 +1228,483 @@ function previewMatFile(matId) {
   var w = window.open('', '_blank');
   if (!w) { showNotif('Popup blocked — please allow popups for this site.'); return; }
   if (mat.type === 'video') {
-    w.document.write('<body style="margin:0;background:#000;"><video src="'+dataUrl+'" controls autoplay style="width:100%;max-height:100vh;display:block;margin:auto;"></video></body>');
+    w.document.write('<body style="margin:0;background:#000;"><video src="'+dataUrl+'" controls autoplay style="width:100%;max-height:100vh;display:block;margin:auto;"></video>
+<!-- ════ ADMIN PROFILE MODAL ════ -->
+<style>
+#apModal{display:none;position:fixed;inset:0;z-index:700;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
+#apModal.open{display:flex;}
+.ap-box{background:#fff;border-radius:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
+.ap-head{background:linear-gradient(135deg,#0B1F3A,#1A3C6E);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
+.ap-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
+.ap-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;}
+.ap-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ap-av-wrap{display:flex;justify-content:center;margin-top:-34px;margin-bottom:10px;}
+.ap-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#D4A843,#e8c060);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#0B1F3A;border:4px solid #fff;box-shadow:0 4px 16px rgba(212,168,67,.4);overflow:hidden;cursor:pointer;position:relative;}
+.ap-av:hover .ap-cam{display:flex;}
+.ap-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:16px;border-radius:50%;}
+.ap-ebadge{text-align:center;margin-bottom:16px;font-size:12px;color:#7A94B0;}
+.ap-body{padding:0 22px 22px;}
+.ap-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ap-g{margin-bottom:13px;}
+.ap-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
+.ap-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
+.ap-i:focus{border-color:#D4A843;box-shadow:0 0 0 3px rgba(212,168,67,.12);}
+.ap-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
+.ap-btns{display:flex;gap:10px;}
+.ap-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
+.ap-save{background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;}
+.ap-save:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(212,168,67,.4);}
+.ap-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
+#apOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
+</style>
+
+<div id="apModal" onclick="if(event.target===this)closeAdminProfile()">
+  <div class="ap-box">
+    <div class="ap-head">
+      <h3>⚙ Admin Profile</h3>
+      <p>Kulan Institute of Learning</p>
+      <button class="ap-x" onclick="closeAdminProfile()">✕</button>
+    </div>
+    <div class="ap-av-wrap">
+      <label>
+        <div class="ap-av" id="apAvEl">A
+          <div class="ap-cam">📷</div>
+          <input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">
+        </div>
+      </label>
+    </div>
+    <div class="ap-ebadge">
+      <span id="apEmailShow"></span>
+      &nbsp;<span style="padding:3px 9px;background:rgba(212,168,67,.12);border-radius:20px;font-size:10px;color:#D4A843;font-weight:700;">🔐 ADMIN</span>
+    </div>
+    <div class="ap-body">
+      <div id="apOk">✓ Profile saved!</div>
+      <div class="ap-row">
+        <div class="ap-g"><label class="ap-l">Full Name</label><input class="ap-i" id="apName" type="text" placeholder="Your name"></div>
+        <div class="ap-g"><label class="ap-l">Role / Title</label><input class="ap-i" id="apRole" type="text" placeholder="e.g. Director"></div>
+      </div>
+      <div class="ap-g"><label class="ap-l">Institute Name</label><input class="ap-i" id="apInstitute" type="text"></div>
+      <div class="ap-g"><label class="ap-l">Short Bio</label><textarea class="ap-i" id="apBio" rows="2" style="resize:vertical" placeholder="Brief description..."></textarea></div>
+      <div class="ap-note"><strong style="color:#1BAECC">🔒 Password Reset:</strong> Go to <strong>Netlify → Identity → Users</strong>, find your account, and click "Send Password Reset Email."</div>
+      <div class="ap-btns">
+        <button class="ap-btn ap-cancel" onclick="closeAdminProfile()">Cancel</button>
+        <button class="ap-btn ap-save" onclick="saveAdminProfile()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── THUMBNAIL HELPERS
+var _pendingThumb = '';
+function previewThumbUrl(url) {
+  if (!url) { document.getElementById('cThumbPreview').style.display='none'; return; }
+  var img = document.getElementById('cThumbImg');
+  img.src = url;
+  img.onload  = function(){ document.getElementById('cThumbPreview').style.display='block'; };
+  img.onerror = function(){ document.getElementById('cThumbPreview').style.display='none'; };
+}
+function handleThumbFile(input) {
+  if (!input.files || !input.files[0]) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    window._pendingThumb = e.target.result;
+    document.getElementById('cThumbImg').src = e.target.result;
+    document.getElementById('cThumbPreview').style.display = 'block';
+    document.getElementById('cThumbUrl').value = '';
+    document.getElementById('cThumbUrl').placeholder = 'Uploaded: ' + input.files[0].name;
+  };
+  r.readAsDataURL(input.files[0]);
+}
+function clearThumb() {
+  window._pendingThumb = '';
+  document.getElementById('cThumbUrl').value = '';
+  document.getElementById('cThumbUrl').placeholder = 'Paste image URL...';
+  document.getElementById('cThumbPreview').style.display = 'none';
+  document.getElementById('cThumbFile').value = '';
+}
+
+// ── ADMIN PROFILE
+var _apImg = '';
+function openAdminProfile() {
+  var u = netlifyIdentity.currentUser();
+  if (!u) { showNotif('Session not ready yet, please wait a moment.'); return; }
+  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
+  document.getElementById('apName').value      = m.name      || '';
+  document.getElementById('apRole').value      = m.role      || 'Administrator';
+  document.getElementById('apInstitute').value = m.institute || 'Kulan Institute of Learning';
+  document.getElementById('apBio').value       = m.bio       || '';
+  document.getElementById('apEmailShow').textContent = u.email;
+  _apImg = m.avatar || '';
+  var av = document.getElementById('apAvEl');
+  if (_apImg) {
+    av.innerHTML = '<img src="'+_apImg+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
   } else {
-    w.document.write('<body style="margin:0;"><iframe src="'+dataUrl+'" style="width:100%;height:100vh;border:none;"></iframe></body>');
+    av.innerHTML = u.email.charAt(0).toUpperCase() + '<div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
+  }
+  document.getElementById('apOk').style.display = 'none';
+  document.getElementById('apModal').classList.add('open');
+}
+function closeAdminProfile() {
+  document.getElementById('apModal').classList.remove('open');
+}
+function apAvatarPick(inp) {
+  if (!inp.files || !inp.files[0]) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    _apImg = e.target.result;
+    document.getElementById('apAvEl').innerHTML = '<img src="'+e.target.result+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
+  };
+  r.readAsDataURL(inp.files[0]);
+}
+function saveAdminProfile() {
+  var name = document.getElementById('apName').value.trim();
+  var m = {
+    name:      name,
+    role:      document.getElementById('apRole').value.trim(),
+    institute: document.getElementById('apInstitute').value.trim(),
+    bio:       document.getElementById('apBio').value.trim(),
+    avatar:    _apImg
+  };
+  localStorage.setItem('ki_admin_profile', JSON.stringify(m));
+  if (name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=name; }
+  if (_apImg) {
+    var av=document.getElementById('avatarInitial');
+    if(av) av.innerHTML='<img src="'+_apImg+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+  }
+  document.getElementById('apOk').style.display = 'block';
+  setTimeout(function(){ document.getElementById('apOk').style.display='none'; closeAdminProfile(); }, 900);
+}
+function loadAdminProfile() {
+  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
+  if (m.name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=m.name; }
+  if (m.avatar) {
+    var av=document.getElementById('avatarInitial');
+    if(av) av.innerHTML='<img src="'+m.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+  }
+}
+</script>
+
+</body>');
+  } else {
+    w.document.write('<body style="margin:0;"><iframe src="'+dataUrl+'" style="width:100%;height:100vh;border:none;"></iframe>
+<!-- ════ ADMIN PROFILE MODAL ════ -->
+<style>
+#apModal{display:none;position:fixed;inset:0;z-index:700;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
+#apModal.open{display:flex;}
+.ap-box{background:#fff;border-radius:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
+.ap-head{background:linear-gradient(135deg,#0B1F3A,#1A3C6E);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
+.ap-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
+.ap-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;}
+.ap-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ap-av-wrap{display:flex;justify-content:center;margin-top:-34px;margin-bottom:10px;}
+.ap-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#D4A843,#e8c060);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#0B1F3A;border:4px solid #fff;box-shadow:0 4px 16px rgba(212,168,67,.4);overflow:hidden;cursor:pointer;position:relative;}
+.ap-av:hover .ap-cam{display:flex;}
+.ap-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:16px;border-radius:50%;}
+.ap-ebadge{text-align:center;margin-bottom:16px;font-size:12px;color:#7A94B0;}
+.ap-body{padding:0 22px 22px;}
+.ap-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ap-g{margin-bottom:13px;}
+.ap-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
+.ap-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
+.ap-i:focus{border-color:#D4A843;box-shadow:0 0 0 3px rgba(212,168,67,.12);}
+.ap-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
+.ap-btns{display:flex;gap:10px;}
+.ap-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
+.ap-save{background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;}
+.ap-save:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(212,168,67,.4);}
+.ap-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
+#apOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
+</style>
+
+<div id="apModal" onclick="if(event.target===this)closeAdminProfile()">
+  <div class="ap-box">
+    <div class="ap-head">
+      <h3>⚙ Admin Profile</h3>
+      <p>Kulan Institute of Learning</p>
+      <button class="ap-x" onclick="closeAdminProfile()">✕</button>
+    </div>
+    <div class="ap-av-wrap">
+      <label>
+        <div class="ap-av" id="apAvEl">A
+          <div class="ap-cam">📷</div>
+          <input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">
+        </div>
+      </label>
+    </div>
+    <div class="ap-ebadge">
+      <span id="apEmailShow"></span>
+      &nbsp;<span style="padding:3px 9px;background:rgba(212,168,67,.12);border-radius:20px;font-size:10px;color:#D4A843;font-weight:700;">🔐 ADMIN</span>
+    </div>
+    <div class="ap-body">
+      <div id="apOk">✓ Profile saved!</div>
+      <div class="ap-row">
+        <div class="ap-g"><label class="ap-l">Full Name</label><input class="ap-i" id="apName" type="text" placeholder="Your name"></div>
+        <div class="ap-g"><label class="ap-l">Role / Title</label><input class="ap-i" id="apRole" type="text" placeholder="e.g. Director"></div>
+      </div>
+      <div class="ap-g"><label class="ap-l">Institute Name</label><input class="ap-i" id="apInstitute" type="text"></div>
+      <div class="ap-g"><label class="ap-l">Short Bio</label><textarea class="ap-i" id="apBio" rows="2" style="resize:vertical" placeholder="Brief description..."></textarea></div>
+      <div class="ap-note"><strong style="color:#1BAECC">🔒 Password Reset:</strong> Go to <strong>Netlify → Identity → Users</strong>, find your account, and click "Send Password Reset Email."</div>
+      <div class="ap-btns">
+        <button class="ap-btn ap-cancel" onclick="closeAdminProfile()">Cancel</button>
+        <button class="ap-btn ap-save" onclick="saveAdminProfile()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── THUMBNAIL HELPERS
+var _pendingThumb = '';
+function previewThumbUrl(url) {
+  if (!url) { document.getElementById('cThumbPreview').style.display='none'; return; }
+  var img = document.getElementById('cThumbImg');
+  img.src = url;
+  img.onload  = function(){ document.getElementById('cThumbPreview').style.display='block'; };
+  img.onerror = function(){ document.getElementById('cThumbPreview').style.display='none'; };
+}
+function handleThumbFile(input) {
+  if (!input.files || !input.files[0]) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    window._pendingThumb = e.target.result;
+    document.getElementById('cThumbImg').src = e.target.result;
+    document.getElementById('cThumbPreview').style.display = 'block';
+    document.getElementById('cThumbUrl').value = '';
+    document.getElementById('cThumbUrl').placeholder = 'Uploaded: ' + input.files[0].name;
+  };
+  r.readAsDataURL(input.files[0]);
+}
+function clearThumb() {
+  window._pendingThumb = '';
+  document.getElementById('cThumbUrl').value = '';
+  document.getElementById('cThumbUrl').placeholder = 'Paste image URL...';
+  document.getElementById('cThumbPreview').style.display = 'none';
+  document.getElementById('cThumbFile').value = '';
+}
+
+// ── ADMIN PROFILE
+var _apImg = '';
+function openAdminProfile() {
+  var u = netlifyIdentity.currentUser();
+  if (!u) { showNotif('Session not ready yet, please wait a moment.'); return; }
+  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
+  document.getElementById('apName').value      = m.name      || '';
+  document.getElementById('apRole').value      = m.role      || 'Administrator';
+  document.getElementById('apInstitute').value = m.institute || 'Kulan Institute of Learning';
+  document.getElementById('apBio').value       = m.bio       || '';
+  document.getElementById('apEmailShow').textContent = u.email;
+  _apImg = m.avatar || '';
+  var av = document.getElementById('apAvEl');
+  if (_apImg) {
+    av.innerHTML = '<img src="'+_apImg+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
+  } else {
+    av.innerHTML = u.email.charAt(0).toUpperCase() + '<div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
+  }
+  document.getElementById('apOk').style.display = 'none';
+  document.getElementById('apModal').classList.add('open');
+}
+function closeAdminProfile() {
+  document.getElementById('apModal').classList.remove('open');
+}
+function apAvatarPick(inp) {
+  if (!inp.files || !inp.files[0]) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    _apImg = e.target.result;
+    document.getElementById('apAvEl').innerHTML = '<img src="'+e.target.result+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
+  };
+  r.readAsDataURL(inp.files[0]);
+}
+function saveAdminProfile() {
+  var name = document.getElementById('apName').value.trim();
+  var m = {
+    name:      name,
+    role:      document.getElementById('apRole').value.trim(),
+    institute: document.getElementById('apInstitute').value.trim(),
+    bio:       document.getElementById('apBio').value.trim(),
+    avatar:    _apImg
+  };
+  localStorage.setItem('ki_admin_profile', JSON.stringify(m));
+  if (name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=name; }
+  if (_apImg) {
+    var av=document.getElementById('avatarInitial');
+    if(av) av.innerHTML='<img src="'+_apImg+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+  }
+  document.getElementById('apOk').style.display = 'block';
+  setTimeout(function(){ document.getElementById('apOk').style.display='none'; closeAdminProfile(); }, 900);
+}
+function loadAdminProfile() {
+  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
+  if (m.name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=m.name; }
+  if (m.avatar) {
+    var av=document.getElementById('avatarInitial');
+    if(av) av.innerHTML='<img src="'+m.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+  }
+}
+</script>
+
+</body>');
   }
 }
 
+</script>
+
+
+<!-- ════ ADMIN PROFILE MODAL ════ -->
+<style>
+#apModal{display:none;position:fixed;inset:0;z-index:700;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
+#apModal.open{display:flex;}
+.ap-box{background:#fff;border-radius:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
+.ap-head{background:linear-gradient(135deg,#0B1F3A,#1A3C6E);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
+.ap-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
+.ap-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;}
+.ap-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ap-av-wrap{display:flex;justify-content:center;margin-top:-34px;margin-bottom:10px;}
+.ap-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#D4A843,#e8c060);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#0B1F3A;border:4px solid #fff;box-shadow:0 4px 16px rgba(212,168,67,.4);overflow:hidden;cursor:pointer;position:relative;}
+.ap-av:hover .ap-cam{display:flex;}
+.ap-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:16px;border-radius:50%;}
+.ap-ebadge{text-align:center;margin-bottom:16px;font-size:12px;color:#7A94B0;}
+.ap-body{padding:0 22px 22px;}
+.ap-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ap-g{margin-bottom:13px;}
+.ap-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
+.ap-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
+.ap-i:focus{border-color:#D4A843;box-shadow:0 0 0 3px rgba(212,168,67,.12);}
+.ap-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
+.ap-btns{display:flex;gap:10px;}
+.ap-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
+.ap-save{background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;}
+.ap-save:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(212,168,67,.4);}
+.ap-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
+#apOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
+</style>
+
+<div id="apModal" onclick="if(event.target===this)closeAdminProfile()">
+  <div class="ap-box">
+    <div class="ap-head">
+      <h3>⚙ Admin Profile</h3>
+      <p>Kulan Institute of Learning</p>
+      <button class="ap-x" onclick="closeAdminProfile()">✕</button>
+    </div>
+    <div class="ap-av-wrap">
+      <label>
+        <div class="ap-av" id="apAvEl">A
+          <div class="ap-cam">📷</div>
+          <input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">
+        </div>
+      </label>
+    </div>
+    <div class="ap-ebadge">
+      <span id="apEmailShow"></span>
+      &nbsp;<span style="padding:3px 9px;background:rgba(212,168,67,.12);border-radius:20px;font-size:10px;color:#D4A843;font-weight:700;">🔐 ADMIN</span>
+    </div>
+    <div class="ap-body">
+      <div id="apOk">✓ Profile saved!</div>
+      <div class="ap-row">
+        <div class="ap-g"><label class="ap-l">Full Name</label><input class="ap-i" id="apName" type="text" placeholder="Your name"></div>
+        <div class="ap-g"><label class="ap-l">Role / Title</label><input class="ap-i" id="apRole" type="text" placeholder="e.g. Director"></div>
+      </div>
+      <div class="ap-g"><label class="ap-l">Institute Name</label><input class="ap-i" id="apInstitute" type="text"></div>
+      <div class="ap-g"><label class="ap-l">Short Bio</label><textarea class="ap-i" id="apBio" rows="2" style="resize:vertical" placeholder="Brief description..."></textarea></div>
+      <div class="ap-note"><strong style="color:#1BAECC">🔒 Password Reset:</strong> Go to <strong>Netlify → Identity → Users</strong>, find your account, and click "Send Password Reset Email."</div>
+      <div class="ap-btns">
+        <button class="ap-btn ap-cancel" onclick="closeAdminProfile()">Cancel</button>
+        <button class="ap-btn ap-save" onclick="saveAdminProfile()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── THUMBNAIL HELPERS
+var _pendingThumb = '';
+function previewThumbUrl(url) {
+  if (!url) { document.getElementById('cThumbPreview').style.display='none'; return; }
+  var img = document.getElementById('cThumbImg');
+  img.src = url;
+  img.onload  = function(){ document.getElementById('cThumbPreview').style.display='block'; };
+  img.onerror = function(){ document.getElementById('cThumbPreview').style.display='none'; };
+}
+function handleThumbFile(input) {
+  if (!input.files || !input.files[0]) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    window._pendingThumb = e.target.result;
+    document.getElementById('cThumbImg').src = e.target.result;
+    document.getElementById('cThumbPreview').style.display = 'block';
+    document.getElementById('cThumbUrl').value = '';
+    document.getElementById('cThumbUrl').placeholder = 'Uploaded: ' + input.files[0].name;
+  };
+  r.readAsDataURL(input.files[0]);
+}
+function clearThumb() {
+  window._pendingThumb = '';
+  document.getElementById('cThumbUrl').value = '';
+  document.getElementById('cThumbUrl').placeholder = 'Paste image URL...';
+  document.getElementById('cThumbPreview').style.display = 'none';
+  document.getElementById('cThumbFile').value = '';
+}
+
+// ── ADMIN PROFILE
+var _apImg = '';
+function openAdminProfile() {
+  var u = netlifyIdentity.currentUser();
+  if (!u) { showNotif('Session not ready yet, please wait a moment.'); return; }
+  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
+  document.getElementById('apName').value      = m.name      || '';
+  document.getElementById('apRole').value      = m.role      || 'Administrator';
+  document.getElementById('apInstitute').value = m.institute || 'Kulan Institute of Learning';
+  document.getElementById('apBio').value       = m.bio       || '';
+  document.getElementById('apEmailShow').textContent = u.email;
+  _apImg = m.avatar || '';
+  var av = document.getElementById('apAvEl');
+  if (_apImg) {
+    av.innerHTML = '<img src="'+_apImg+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
+  } else {
+    av.innerHTML = u.email.charAt(0).toUpperCase() + '<div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
+  }
+  document.getElementById('apOk').style.display = 'none';
+  document.getElementById('apModal').classList.add('open');
+}
+function closeAdminProfile() {
+  document.getElementById('apModal').classList.remove('open');
+}
+function apAvatarPick(inp) {
+  if (!inp.files || !inp.files[0]) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    _apImg = e.target.result;
+    document.getElementById('apAvEl').innerHTML = '<img src="'+e.target.result+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="ap-cam">📷</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
+  };
+  r.readAsDataURL(inp.files[0]);
+}
+function saveAdminProfile() {
+  var name = document.getElementById('apName').value.trim();
+  var m = {
+    name:      name,
+    role:      document.getElementById('apRole').value.trim(),
+    institute: document.getElementById('apInstitute').value.trim(),
+    bio:       document.getElementById('apBio').value.trim(),
+    avatar:    _apImg
+  };
+  localStorage.setItem('ki_admin_profile', JSON.stringify(m));
+  if (name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=name; }
+  if (_apImg) {
+    var av=document.getElementById('avatarInitial');
+    if(av) av.innerHTML='<img src="'+_apImg+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+  }
+  document.getElementById('apOk').style.display = 'block';
+  setTimeout(function(){ document.getElementById('apOk').style.display='none'; closeAdminProfile(); }, 900);
+}
+function loadAdminProfile() {
+  var m = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
+  if (m.name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=m.name; }
+  if (m.avatar) {
+    var av=document.getElementById('avatarInitial');
+    if(av) av.innerHTML='<img src="'+m.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+  }
+}
 </script>
 
 </body>

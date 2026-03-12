@@ -1,0 +1,18 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  X-XSS-Protection: 1; mode=block
+
+/admin.html
+  X-Robots-Tag: noindex, nofollow
+
+/admin-login.html
+  X-Robots-Tag: noindex, nofollow
+
+/teacher.html
+  X-Robots-Tag: noindex, nofollow
+
+/dashboard.html
+  X-Robots-Tag: noindex, nofollow

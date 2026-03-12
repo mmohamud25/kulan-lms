@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<style>
+  :root { --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --gold:#D4A843; --teal:#0E7C7B; --white:#FFFFFF; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family:'DM Sans',sans-serif;
+    background:linear-gradient(160deg,#1a0a2e 0%,#0B1F3A 50%,#1A3C6E 100%);
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+
+  .grid-bg {
+    position:absolute; inset:0;
+    background-image:linear-gradient(rgba(212,168,67,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,67,0.04) 1px,transparent 1px);
+    background-size:60px 60px;
+  }
+
+  .glow {
+    position:absolute; width:500px; height:500px;
+    background:radial-gradient(circle,rgba(212,168,67,0.1) 0%,transparent 70%);
+    right:-100px; top:-100px; border-radius:50%;
+  }
+
+  .card {
+    position:relative; z-index:1;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(212,168,67,0.2);
+    border-radius:24px; padding:52px 48px;
+    width:100%; max-width:440px;
+    backdrop-filter:blur(12px); text-align:center;
+  }
+
+  .logo { display:inline-flex; align-items:center; gap:12px; text-decoration:none; margin-bottom:32px; }
+  .logo-icon {
+    width:48px; height:48px;
+    background:linear-gradient(135deg,var(--gold),#e8c060);
+    border-radius:12px; display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display',serif; font-weight:900; font-size:22px; color:var(--navy);
+  }
+  .logo-text .t1 { font-size:14px; font-weight:600; color:var(--white); text-align:left; }
+  .logo-text .t2 { font-size:11px; color:rgba(212,168,67,0.7); text-align:left; }
+
+  .badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(212,168,67,0.1); border:1px solid rgba(212,168,67,0.25);
+    border-radius:20px; padding:5px 14px; font-size:12px; font-weight:600;
+    color:var(--gold); margin-bottom:20px;
+  }
+
+  h1 { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--white); margin-bottom:8px; }
+  .subtitle { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:36px; line-height:1.6; }
+
+  .login-btn {
+    width:100%;
+    background:linear-gradient(135deg,var(--gold),#e8c060);
+    color:var(--navy); border:none; border-radius:12px;
+    padding:16px; font-size:16px; font-weight:700;
+    cursor:pointer; font-family:'DM Sans',sans-serif;
+    transition:transform 0.2s,box-shadow 0.2s; margin-bottom:20px;
+  }
+  .login-btn:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(212,168,67,0.35); }
+
+  .warning-box {
+    background:rgba(212,168,67,0.07); border:1px solid rgba(212,168,67,0.15);
+    border-radius:12px; padding:16px; font-size:13px;
+    color:rgba(255,255,255,0.5); line-height:1.7; margin-bottom:24px;
+  }
+  .warning-box strong { color:var(--gold); }
+
+  /* Status message shown during/after auth */
+  #statusMsg {
+    display:none; margin-top:16px; padding:14px;
+    border-radius:10px; font-size:13px; line-height:1.6;
+  }
+  #statusMsg.error { background:rgba(255,80,80,0.1); border:1px solid rgba(255,80,80,0.2); color:#ff9999; display:block; }
+  #statusMsg.success { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); color:#86efac; display:block; }
+
+  .divider { text-align:center; color:rgba(255,255,255,0.2); font-size:12px; margin:16px 0; }
+
+  .student-link {
+    display:block; font-size:13px; color:rgba(255,255,255,0.3);
+    text-decoration:none; transition:color 0.2s; margin-top:4px;
+  }
+  .student-link:hover { color:var(--cyan); }
+
+  .back-link {
+    display:inline-block; margin-top:20px; font-size:13px;
+    color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s;
+  }
+  .back-link:hover { color:rgba(255,255,255,0.6); }
+
+  @media (max-width:480px) { .card { padding:36px 24px; margin:16px; } h1 { font-size:24px; } }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="glow"></div>
+
+<div class="card">
+  <a href="index.html" class="logo">
+    <div class="logo-icon">KI</div>
+    <div class="logo-text">
+      <div class="t1">Kulan Institute</div>
+      <div class="t2">of Learning</div>
+    </div>
+  </a>
+
+  <div class="badge">🔐 Admin Portal</div>
+  <h1>Admin Access</h1>
+  <p class="subtitle">Restricted to authorized administrators and teachers only.</p>
+
+  <button class="login-btn" id="loginBtn">🔑 Admin Sign In</button>
+
+  <div class="warning-box">
+    <strong>Restricted Area.</strong> Only authorized Kulan Institute administrators can access this panel. Unauthorized access attempts are logged.
+  </div>
+
+  <div id="statusMsg"></div>
+
+  <div class="divider">──────── or ────────</div>
+  <a href="login.html" class="student-link">🎓 Student Login →</a>
+
+  <br>
+  <a href="index.html" class="back-link">← Back to main site</a>
+</div>
+
+<script>
+  const ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
+
+  function showStatus(msg, type) {
+    const el = document.getElementById('statusMsg');
+    el.textContent = msg;
+    el.className = type; // 'error' or 'success'
+  }
+
+  netlifyIdentity.on('init', user => {
+    if (user) {
+      if (user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim()) {
+        showStatus('✅ Verified — loading admin panel...', 'success');
+        setTimeout(() => { window.location.href = '/admin.html'; }, 800);
+      } else {
+        // Someone else is logged in — sign them out silently
+        netlifyIdentity.logout();
+      }
+    }
+  });
+
+  document.getElementById('loginBtn').addEventListener('click', () => {
+    netlifyIdentity.open();
+  });
+
+  netlifyIdentity.on('login', user => {
+    netlifyIdentity.close();
+    if (user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim()) {
+      showStatus('✅ Verified — loading admin panel...', 'success');
+      setTimeout(() => { window.location.href = '/admin.html'; }, 800);
+    } else {
+      showStatus('⛔ Access denied. This portal is for admins only. You have been signed out.', 'error');
+      setTimeout(() => { netlifyIdentity.logout(); }, 2000);
+    }
+  });
+
+  netlifyIdentity.init();
+</script>
+</body>
+</html>

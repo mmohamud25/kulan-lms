@@ -236,12 +236,12 @@
 
   function loadCourse() {
     const params   = new URLSearchParams(window.location.search);
-    const courseId = parseInt(params.get('course')) || null;
+    const courseId = params.get('course') || null; // keep as string - IDs like 'c1748392847' break with parseInt
 
     const courses   = JSON.parse(localStorage.getItem('ki_courses') || '[]');
     const materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
 
-    const course = courses.find(c => c.id === courseId) || courses[0];
+    const course = courses.find(c => String(c.id) === String(courseId)) || courses[0];
     if (!course) return;
 
     // Update header
@@ -319,28 +319,41 @@
     const frame = document.getElementById('contentFrame');
     frame.style.display = 'block';
 
-    let embedUrl = mat.url;
-
-    if (mat.type === 'pdf') {
-      // Google Drive PDF viewer
-      if (mat.url.includes('drive.google.com')) {
-        embedUrl = mat.url.replace('/view', '/preview');
+    // Resolve ki_file_ references (uploaded files stored in localStorage)
+    let resolvedUrl = mat.url;
+    if (mat.isFile || (mat.url && mat.url.startsWith('ki_file_'))) {
+      const fileData = localStorage.getItem(mat.url.startsWith('ki_file_') ? mat.url : 'ki_file_' + mat.id);
+      if (fileData) {
+        resolvedUrl = fileData;
       } else {
-        // Generic PDF embed via Google Docs viewer
-        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(mat.url)}&embedded=true`;
+        document.getElementById('noContent').style.display = 'block';
+        document.getElementById('noContent').textContent = 'File not found in this browser. Files uploaded in the admin panel are only stored in that browser.';
+        frame.style.display = 'none';
+        return;
+      }
+    }
+
+    let embedUrl = resolvedUrl;
+
+    if (mat.isFile || resolvedUrl.startsWith('data:')) {
+      // Uploaded file - use directly in iframe
+      embedUrl = resolvedUrl;
+    } else if (mat.type === 'pdf') {
+      if (resolvedUrl.includes('drive.google.com')) {
+        embedUrl = resolvedUrl.replace('/view', '/preview');
+      } else {
+        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(resolvedUrl)}&embedded=true`;
       }
     } else if (mat.type === 'video') {
-      // YouTube embed
-      const ytMatch = mat.url.match(/(?:v=|youtu\.be\/)([^&\s]+)/);
+      const ytMatch = resolvedUrl.match(/(?:v=|youtu\.be\/)([^&\s]+)/);
       if (ytMatch) {
         embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}?rel=0`;
       }
     } else if (mat.type === 'ppt') {
-      // Google Drive PPT viewer
-      if (mat.url.includes('drive.google.com')) {
-        embedUrl = mat.url.replace('/view', '/preview');
+      if (resolvedUrl.includes('drive.google.com')) {
+        embedUrl = resolvedUrl.replace('/view', '/preview');
       } else {
-        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(mat.url)}&embedded=true`;
+        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(resolvedUrl)}&embedded=true`;
       }
     }
 

@@ -400,47 +400,82 @@ tr:hover td{background:rgba(11,31,58,0.015);}
         <div class="sec-title">Upload Materials</div>
       </div>
 
-      <div class="tip-box">
-        <strong>How to upload:</strong> Kulan Institute uses links instead of direct file uploads to keep things fast and free.
-        <br>• <strong>PDF or PPT:</strong> Upload to <a href="https://drive.google.com" target="_blank">Google Drive</a> → Right-click → Share → "Anyone with the link can view" → Copy link → Paste below.
-        <br>• <strong>Video:</strong> Upload to <a href="https://youtube.com" target="_blank">YouTube</a> → Set as "Unlisted" → Copy link → Paste below.
-      </div>
-
       <div class="form-card">
         <div class="form-card-title">📤 Add New Material</div>
 
-        <div class="form-group">
-          <label class="form-label">Course</label>
-          <select class="form-select" id="upCourse">
-            <option value="">Select a course...</option>
-          </select>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Course</label>
+            <select class="form-select" id="upCourse">
+              <option value="">Select a course...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Module #</label>
+            <input type="number" class="form-input" id="upModule" placeholder="1" min="1">
+          </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Module Number</label>
-            <input type="number" class="form-input" id="upModule" placeholder="e.g. 1" min="1">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-input" id="upTitle" placeholder="e.g. Module 1: Introduction to AI">
           </div>
           <div class="form-group">
-            <label class="form-label">Material Type</label>
-            <select class="form-select" id="upType" onchange="updateUploadHint()">
-              <option value="pdf">PDF Document</option>
-              <option value="video">Video (YouTube)</option>
-              <option value="ppt">PowerPoint / Slides</option>
+            <label class="form-label">Type</label>
+            <select class="form-select" id="upType">
+              <option value="pdf">PDF</option>
+              <option value="video">Video</option>
+              <option value="ppt">PowerPoint</option>
+              <option value="other">Other</option>
             </select>
           </div>
         </div>
 
+        <!-- SOURCE TABS -->
         <div class="form-group">
-          <label class="form-label">Material Title</label>
-          <input type="text" class="form-input" id="upTitle" placeholder="e.g. Module 1: Introduction to AI">
-        </div>
+          <label class="form-label">Source</label>
+          <div style="display:flex;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;overflow:hidden;margin-bottom:14px;">
+            <button id="upTabUpload" onclick="switchUpTab('upload')" type="button" style="flex:1;padding:11px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">📁 Upload File</button>
+            <button id="upTabLink"   onclick="switchUpTab('link')"   type="button" style="flex:1;padding:11px;border:none;background:rgba(11,31,58,0.04);color:var(--text-mid);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🔗 Paste Link</button>
+          </div>
 
-        <div class="form-group">
-          <label class="form-label">Link / URL</label>
-          <input type="text" class="form-input" id="upUrl" placeholder="Paste Google Drive or YouTube link...">
-          <div class="form-hint" id="upHint">
-            Upload your PDF to Google Drive → Share as "Anyone with the link" → Copy link → Paste above.
+          <!-- UPLOAD PANEL -->
+          <div id="upPanelUpload">
+            <div id="upDropZone" onclick="document.getElementById('upFileInput').click()"
+              ondragover="event.preventDefault();this.style.borderColor='var(--cyan)'"
+              ondragleave="this.style.borderColor='rgba(11,31,58,0.15)'"
+              ondrop="upHandleDrop(event)"
+              style="border:2px dashed rgba(11,31,58,0.15);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;">
+              <div style="font-size:34px;margin-bottom:8px;">📄</div>
+              <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px;">Drag & drop your file here</div>
+              <div style="font-size:12px;color:var(--text-light);margin-bottom:12px;">or click to browse from your computer</div>
+              <span style="padding:8px 18px;background:var(--navy);color:#fff;border-radius:8px;font-size:12px;font-weight:600;">Choose File</span>
+            </div>
+            <input type="file" id="upFileInput" accept=".pdf,.ppt,.pptx,.mp4,.mov,.doc,.docx,.xlsx,.csv,.zip" style="display:none" onchange="upFileSelected(this)">
+            <div id="upFileInfo" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(27,174,204,0.06);border:1px solid rgba(27,174,204,0.2);border-radius:10px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span id="upFileIcon" style="font-size:22px;">📄</span>
+                <div style="flex:1;min-width:0;">
+                  <div id="upFileName" style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+                  <div id="upFileSize" style="font-size:11px;color:var(--text-light);margin-top:2px;"></div>
+                </div>
+                <button type="button" onclick="clearUpFile()" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text-light);">✕</button>
+              </div>
+              <div id="upProgressWrap" style="display:none;margin-top:10px;">
+                <div style="height:4px;background:rgba(11,31,58,0.08);border-radius:4px;overflow:hidden;">
+                  <div id="upProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),var(--teal));transition:width .3s;border-radius:4px;"></div>
+                </div>
+                <div id="upProgressText" style="font-size:11px;color:var(--text-light);margin-top:5px;text-align:center;"></div>
+              </div>
+            </div>
+            <div class="form-hint" style="margin-top:8px;">PDF, PPT, Word, Video, Excel, ZIP. Max ~10MB recommended.</div>
+          </div>
+
+          <!-- LINK PANEL -->
+          <div id="upPanelLink" style="display:none;">
+            <input type="text" class="form-input" id="upUrl" placeholder="Paste any URL — Google Drive, YouTube, website, Dropbox...">
+            <div class="form-hint" style="margin-top:6px;">Any link works. Google Drive and YouTube links are auto-converted to embed format.</div>
           </div>
         </div>
 
@@ -688,11 +723,33 @@ setTimeout(function() { var u = netlifyIdentity.currentUser(); if (u) { clearTim
 var courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
 var materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
 var students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
-function saveCourses()   { localStorage.setItem('ki_courses',   JSON.stringify(courses)); }
-function saveMaterials() { localStorage.setItem('ki_materials', JSON.stringify(materials)); }
+function saveCourses() {
+  try {
+    localStorage.setItem('ki_courses', JSON.stringify(courses));
+  } catch(e) {
+    console.error('saveCourses failed:', e);
+  }
+}
+function saveMaterials() {
+  try {
+    var slim = materials.map(function(m) {
+      if (m.isFile && m.url && m.url.startsWith('data:')) {
+        try { localStorage.setItem('ki_file_' + m.id, m.url); } catch(e) {}
+        var copy = Object.assign({}, m);
+        copy.url = 'ki_file_' + m.id;
+        return copy;
+      }
+      return m;
+    });
+    localStorage.setItem('ki_materials', JSON.stringify(slim));
+  } catch(e) {
+    console.error('saveMaterials failed:', e);
+  }
+}
 function saveStudents()  { localStorage.setItem('ki_students',  JSON.stringify(students)); }
 
 function init() {
+  courses = JSON.parse(localStorage.getItem('ki_courses') || '[]');
   if (courses.length === 0) {
     courses = [
       { id:'c1', title:'AI for Beginners', titleSo:'Xisaabta Macquulka ah ee Bilowga', modules:8, level:'Beginner', status:'active', lang:'EN + SO', paid:false, price:0, desc:'An 8-module bilingual course introducing artificial intelligence.' },
@@ -705,9 +762,11 @@ function init() {
 }
 
 function renderAll() {
-  courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
-  materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
-  students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
+  try {
+    courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
+    materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
+    students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
+  } catch(e) {}
   renderStats();
   renderCourses();
   renderMaterials();
@@ -839,47 +898,118 @@ function updateUploadHint() {
   document.getElementById('upHint').textContent = hints[document.getElementById('upType').value] || '';
 }
 
+// Teacher upload state
+var _upTab = 'upload';
+var _upFileData = null;
+
+function switchUpTab(tab) {
+  _upTab = tab;
+  var isUp = tab === 'upload';
+  document.getElementById('upTabUpload').style.background = isUp ? 'var(--navy)' : 'rgba(11,31,58,0.04)';
+  document.getElementById('upTabUpload').style.color      = isUp ? '#fff' : 'var(--text-mid)';
+  document.getElementById('upTabLink').style.background   = isUp ? 'rgba(11,31,58,0.04)' : 'var(--navy)';
+  document.getElementById('upTabLink').style.color        = isUp ? 'var(--text-mid)' : '#fff';
+  document.getElementById('upPanelUpload').style.display  = isUp ? 'block' : 'none';
+  document.getElementById('upPanelLink').style.display    = isUp ? 'none'  : 'block';
+}
+
+function upHandleDrop(ev) {
+  ev.preventDefault();
+  document.getElementById('upDropZone').style.borderColor = 'rgba(11,31,58,0.15)';
+  if (ev.dataTransfer.files && ev.dataTransfer.files[0]) processUpFile(ev.dataTransfer.files[0]);
+}
+
+function upFileSelected(inp) {
+  if (inp.files && inp.files[0]) processUpFile(inp.files[0]);
+}
+
+function processUpFile(file) {
+  var ext = file.name.split('.').pop().toLowerCase();
+  var icons = {pdf:'📄',mp4:'🎬',mov:'🎬',ppt:'📊',pptx:'📊',doc:'📝',docx:'📝',xlsx:'📊',zip:'📦'};
+  document.getElementById('upFileIcon').textContent = icons[ext] || '📎';
+  document.getElementById('upFileName').textContent = file.name;
+  document.getElementById('upFileSize').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
+  document.getElementById('upFileInfo').style.display = 'block';
+  document.getElementById('upDropZone').style.display = 'none';
+  if (!document.getElementById('upTitle').value.trim()) {
+    document.getElementById('upTitle').value = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g,' ');
+  }
+  if (['mp4','mov','avi'].indexOf(ext) > -1) document.getElementById('upType').value = 'video';
+  else if (['ppt','pptx'].indexOf(ext) > -1)  document.getElementById('upType').value = 'ppt';
+  else if (ext === 'pdf')                       document.getElementById('upType').value = 'pdf';
+  var prog = document.getElementById('upProgressWrap');
+  var bar  = document.getElementById('upProgressBar');
+  var txt  = document.getElementById('upProgressText');
+  prog.style.display = 'block'; txt.textContent = 'Reading file...';
+  var reader = new FileReader();
+  reader.onprogress = function(e) {
+    if (e.lengthComputable) { var p=Math.round(e.loaded/e.total*100); bar.style.width=p+'%'; txt.textContent=p+'% loaded...'; }
+  };
+  reader.onload = function(e) {
+    bar.style.width='100%'; txt.textContent='Ready ✓';
+    _upFileData = { name:file.name, ext:ext, dataUrl:e.target.result };
+  };
+  reader.onerror = function() { showNotif('Could not read file. Try the link tab instead.'); clearUpFile(); };
+  reader.readAsDataURL(file);
+}
+
+function clearUpFile() {
+  _upFileData = null;
+  document.getElementById('upFileInfo').style.display = 'none';
+  document.getElementById('upDropZone').style.display = 'block';
+  document.getElementById('upFileInput').value = '';
+  document.getElementById('upProgressWrap').style.display = 'none';
+  document.getElementById('upProgressBar').style.width = '0%';
+}
+
 function uploadMaterial() {
-  // Always reload from storage first
   materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
   var courseId = document.getElementById('upCourse').value;
   var title    = document.getElementById('upTitle').value.trim();
-  var url      = document.getElementById('upUrl').value.trim();
-  var type     = document.getElementById('upType').value;
-  var module   = parseInt(document.getElementById('upModule').value) || 1;
-
   if (!courseId) { showNotif('Please select a course'); return; }
   if (!title)    { showNotif('Please enter a title'); return; }
-  if (!url)      { showNotif('Please enter a URL link'); return; }
 
-  // Auto-fix Google Drive URL
-  url = url.replace('/view?usp=sharing','').replace('/view?usp=drive_link','').replace('/view','');
-  if (url.includes('drive.google.com') && !url.includes('/preview')) url = url + '/preview';
+  var matId = 'm' + Date.now();
+  var url = '', isFile = false, fileName = '';
 
-  // Auto-fix YouTube URL
-  var yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
-  if (yt) url = 'https://www.youtube.com/embed/' + yt[1];
+  if (_upTab === 'upload') {
+    if (!_upFileData) { showNotif('Please select a file to upload.'); return; }
+    try {
+      localStorage.setItem('ki_file_' + matId, _upFileData.dataUrl);
+    } catch(e) {
+      showNotif('File too large for browser storage. Please use the Link tab instead.');
+      return;
+    }
+    url = 'ki_file_' + matId;
+    isFile = true;
+    fileName = _upFileData.name;
+  } else {
+    url = document.getElementById('upUrl').value.trim();
+    if (!url) { showNotif('Please paste a link.'); return; }
+    url = url.replace('/view?usp=sharing','').replace('/view?usp=drive_link','').replace('/view','');
+    if (url.indexOf('drive.google.com/file') > -1 && url.indexOf('/preview') === -1) url += '/preview';
+    var yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if (yt) url = 'https://www.youtube.com/embed/' + yt[1];
+  }
 
-  var m = {
-    id:       'm' + Date.now(),
-    courseId: courseId,
-    title:    title,
-    type:     type,
-    url:      url,
-    module:   module,
+  var mat = {
+    id: matId, courseId: courseId, title: title,
+    type: document.getElementById('upType').value,
+    url: url, isFile: isFile, fileName: fileName,
+    module:   parseInt(document.getElementById('upModule').value) || 1,
     download: document.getElementById('upDownload').checked,
     notes:    document.getElementById('upNotes').value.trim(),
   };
-  materials.push(m);
+  materials.push(mat);
   saveMaterials();
   renderAll();
 
-  // Reset form
   ['upTitle','upUrl','upModule','upNotes'].forEach(function(id){ document.getElementById(id).value=''; });
   document.getElementById('upDownload').checked = false;
+  clearUpFile();
+  switchUpTab('upload');
 
-  showNotif('Material added to course!');
-  // Switch to materials tab after a moment
+  showNotif('Material "' + title + '" added!');
   setTimeout(function(){ switchTab('materials', document.querySelectorAll('.nav-item')[2]); }, 1200);
 }
 
