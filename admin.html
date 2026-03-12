@@ -288,9 +288,7 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
       <div class="user-avatar" id="avatarInitial">A</div>
       <div class="user-email" id="adminEmail">admin</div>
     </div>
-    <div style="display:flex;gap:8px;margin-bottom:8px;">
-    <button class="logout-btn" style="flex:1;" onclick="openProfile()">⚙️ Profile</button>
-  </div>
+    <button onclick="openAdminProfile()" style="width:100%;margin-bottom:8px;padding:9px;border:1px solid rgba(212,168,67,0.3);border-radius:8px;background:rgba(212,168,67,0.07);color:var(--gold);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='rgba(212,168,67,0.14)'" onmouseout="this.style.background='rgba(212,168,67,0.07)'">⚙️ Profile Settings</button>
   <button class="logout-btn" id="logoutBtn">Sign Out</button>
   </div>
 </div>
@@ -477,6 +475,21 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
       <label class="form-label">Description</label>
       <textarea class="form-textarea" id="cDesc" placeholder="Brief course description..."></textarea>
     </div>
+    <div class="form-group">
+      <label class="form-label">Course Thumbnail</label>
+      <div id="thumbPreviewWrap" style="display:none;margin-bottom:10px;">
+        <img id="thumbImg" style="width:100%;height:150px;object-fit:cover;border-radius:10px;border:1px solid rgba(11,31,58,0.1);">
+        <button type="button" onclick="clearThumb()" style="font-size:11px;color:#dc2626;background:none;border:none;cursor:pointer;margin-top:4px;">Remove image</button>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <input type="text" class="form-input" id="cThumbUrl" placeholder="Paste image URL..." oninput="previewThumbUrl(this.value)" style="flex:1;">
+        <label style="display:inline-flex;align-items:center;gap:6px;padding:11px 16px;background:rgba(11,31,58,0.04);border:1px solid rgba(11,31,58,0.12);border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-mid);white-space:nowrap;flex-shrink:0;">
+          📁 Upload
+          <input type="file" id="cThumbFile" accept="image/*" style="display:none;" onchange="handleThumbFile(this)">
+        </label>
+      </div>
+      <div class="form-hint">Upload a course thumbnail (JPG, PNG). Recommended 1280x720. Shown on student dashboard.</div>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal('addCourse')">Cancel</button>
       <button class="btn btn-gold" onclick="addCourse()">Create Course</button>
@@ -486,35 +499,68 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
 
 <!-- MODAL: Add Material -->
 <div class="modal-overlay" id="modal-addMaterial">
-  <div class="modal">
-    <div class="modal-title">Add Course Material</div>
-    <div class="form-group">
-      <label class="form-label">Course</label>
-      <select class="form-select" id="matCourse"></select>
-    </div>
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-title">📤 Add Course Material</div>
+
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Module Number</label>
-        <input type="number" class="form-input" id="matModule" placeholder="1" min="1">
+        <label class="form-label">Course</label>
+        <select class="form-select" id="matCourse"></select>
       </div>
       <div class="form-group">
-        <label class="form-label">Type</label>
-        <select class="form-select" id="matType" onchange="updateMatHint()">
-          <option value="pdf">PDF</option>
-          <option value="video">Video</option>
-          <option value="ppt">PowerPoint</option>
-        </select>
+        <label class="form-label">Module #</label>
+        <input type="number" class="form-input" id="matModule" placeholder="1" min="1">
       </div>
     </div>
+
     <div class="form-group">
-      <label class="form-label">Title</label>
-      <input type="text" class="form-input" id="matTitle" placeholder="e.g. Module 1: Introduction to AI">
+      <label class="form-label">Material Title</label>
+      <input type="text" class="form-input" id="matTitle" placeholder="e.g. Module 1 — Introduction to AI">
     </div>
+
     <div class="form-group">
-      <label class="form-label">URL / Link</label>
-      <input type="text" class="form-input" id="matUrl" placeholder="Paste Google Drive or YouTube link...">
-      <div class="form-hint" id="matTypeHint">Upload PDF to Google Drive, share as "Anyone can view", paste link here.</div>
+      <label class="form-label">Material Type</label>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;">
+        <label id="typeTab-pdf" onclick="selectMatType('pdf')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;border:2px solid var(--cyan);border-radius:10px;cursor:pointer;background:rgba(27,174,204,0.06);">
+          <span style="font-size:24px;">📄</span>
+          <span style="font-size:12px;font-weight:700;color:var(--cyan);">PDF</span>
+        </label>
+        <label id="typeTab-video" onclick="selectMatType('video')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;border:2px solid rgba(11,31,58,0.1);border-radius:10px;cursor:pointer;">
+          <span style="font-size:24px;">🎬</span>
+          <span style="font-size:12px;font-weight:600;color:var(--text-light);">Video</span>
+        </label>
+        <label id="typeTab-ppt" onclick="selectMatType('ppt')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;border:2px solid rgba(11,31,58,0.1);border-radius:10px;cursor:pointer;">
+          <span style="font-size:24px;">📊</span>
+          <span style="font-size:12px;font-weight:600;color:var(--text-light);">PowerPoint</span>
+        </label>
+      </div>
+      <input type="hidden" id="matType" value="pdf">
     </div>
+
+    <!-- UPLOAD ZONE -->
+    <div class="form-group" id="uploadZoneWrap">
+      <label class="form-label">Upload File</label>
+      <div id="uploadZone" onclick="document.getElementById('matFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--cyan)'" ondragleave="this.style.borderColor='rgba(27,174,204,0.3)'" ondrop="handleFileDrop(event)" style="border:2px dashed rgba(27,174,204,0.3);border-radius:14px;padding:36px 24px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(27,174,204,0.02);">
+        <div style="font-size:40px;margin-bottom:10px;">📁</div>
+        <div style="font-weight:700;font-size:15px;color:var(--navy);margin-bottom:6px;">Drag & drop your file here</div>
+        <div style="font-size:13px;color:var(--text-light);margin-bottom:16px;">or click to browse</div>
+        <div id="uploadZoneHint" style="font-size:12px;color:var(--text-light);line-height:1.7;padding:10px;background:rgba(11,31,58,0.03);border-radius:8px;">
+          Accepts PDF files. File will be converted to a Google Drive link automatically — you'll paste the link below.
+        </div>
+      </div>
+      <input type="file" id="matFileInput" accept=".pdf,.ppt,.pptx,.mp4" style="display:none;" onchange="handleFileSelect(this)">
+      <div id="fileSelectedMsg" style="display:none;margin-top:10px;padding:12px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px;font-size:13px;color:#16a34a;"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" id="matUrlLabel">Or Paste Link (Google Drive / YouTube)</label>
+      <input type="text" class="form-input" id="matUrl" placeholder="https://drive.google.com/file/d/...">
+      <div class="form-hint" id="matHint">
+        <strong>PDF or PPT:</strong> Upload to <a href="https://drive.google.com" target="_blank" style="color:var(--cyan);">Google Drive</a> → Share as "Anyone with the link" → Copy link → Paste above.<br>
+        <strong>Video:</strong> Upload to <a href="https://youtube.com" target="_blank" style="color:var(--cyan);">YouTube</a> as "Unlisted" → Copy URL → Paste above.
+      </div>
+    </div>
+
     <div class="form-group">
       <label class="form-label">Allow Download</label>
       <div class="toggle-wrap">
@@ -525,6 +571,7 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
         <span style="font-size:13px;color:var(--text-mid);">Students can download this material</span>
       </div>
     </div>
+
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal('addMaterial')">Cancel</button>
       <button class="btn btn-gold" onclick="addMaterial()">Add Material</button>
@@ -635,7 +682,8 @@ function saveStudents()  { localStorage.setItem('ki_students',  JSON.stringify(s
 
 function init() {
   // Seed default courses if empty
-  if (courses.length === 0) {
+  var storedCourses = JSON.parse(localStorage.getItem('ki_courses') || '[]');
+  if (storedCourses.length === 0) {
     courses = [
       { id:'c1', title:'AI for Beginners', titleSo:'Xisaabta Macquulka ah ee Bilowga', modules:8, level:'Beginner', status:'active', lang:'EN + SO', paid:false, price:0, desc:'An 8-module bilingual course introducing artificial intelligence.' },
       { id:'c2', title:'Cybersecurity Fundamentals', titleSo:'Aasaaska Amniga Xogta', modules:6, level:'Intermediate', status:'active', lang:'EN + SO', paid:false, price:0, desc:'Core principles of cybersecurity.' },
@@ -647,7 +695,6 @@ function init() {
 }
 
 function renderAll() {
-  // Always reload fresh from storage before rendering
   courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
   materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
   students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
@@ -709,6 +756,7 @@ function renderCourses() {
     var statusBadge = c.status==='active' ? 'badge-green' : c.status==='coming' ? 'badge-blue' : 'badge-gray';
     var statusLabel = c.status==='active' ? 'Active' : c.status==='coming' ? 'Coming Soon' : 'Draft';
     return '<div class="course-card">'
+      + (c.thumb ? '<img src="' + c.thumb + '" style="width:100%;height:130px;object-fit:cover;border-radius:12px 12px 0 0;margin:-0px;display:block;" onerror="this.style.display=\'none\'">' : '')
       + '<div class="cc-header">'
       + '<div><div class="cc-title">' + icons[i%icons.length] + ' ' + c.title + '</div>'
       + '<div class="cc-meta">' + (c.modules||'TBA') + ' modules · ' + c.level + ' · ' + c.lang + ' · ' + mats + ' files</div></div>'
@@ -807,6 +855,8 @@ function addCourse() {
     return;
   }
 
+  var thumbInput = document.getElementById('cThumbUrl');
+  var thumb = (thumbInput && thumbInput.value.trim()) ? thumbInput.value.trim() : (window._pendingThumb || '');
   var newCourse = {
     id:      'c' + Date.now(),
     title:   title,
@@ -818,6 +868,7 @@ function addCourse() {
     paid:    document.getElementById('cPaid').checked,
     price:   parseFloat(document.getElementById('cPrice').value) || 0,
     desc:    document.getElementById('cDesc').value.trim(),
+    thumb:   thumb,
   };
 
   courses.push(newCourse);
@@ -828,17 +879,18 @@ function addCourse() {
   document.getElementById('cModules').value = '';
   document.getElementById('cDesc').value    = '';
   document.getElementById('cPrice').value   = '';
+  document.getElementById('cThumbUrl').value = '';
   document.getElementById('cPaid').checked  = false;
   document.getElementById('cPriceWrap').style.display = 'none';
+  document.getElementById('thumbPreview').style.display = 'none';
+  window._pendingThumb = '';
 
   closeModal('addCourse');
   renderAll();
   showNotif('Course "' + newCourse.title + '" created!');
-  // Switch to Courses tab so user can see new course
-  setTimeout(function() {
-    var navItems = document.querySelectorAll('.nav-item');
-    switchTab('courses', navItems[1]);
-  }, 300);
+  setTimeout(function(){
+    switchTab('courses', document.querySelector('[onclick*="courses"]'));
+  }, 200);
 }
 
 function deleteCourse(id) {
@@ -1013,83 +1065,161 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// PROFILE SETTINGS
-function openProfile() {
+
+// ── THUMBNAIL HELPERS
+function previewThumbUrl(url) {
+  if (!url) { document.getElementById('thumbPreviewWrap').style.display='none'; return; }
+  var img = document.getElementById('thumbImg');
+  img.src = url;
+  img.onload = function(){ document.getElementById('thumbPreviewWrap').style.display='block'; };
+  img.onerror = function(){ document.getElementById('thumbPreviewWrap').style.display='none'; };
+}
+function handleThumbFile(input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    window._pendingThumb = e.target.result;
+    var img = document.getElementById('thumbImg');
+    img.src = e.target.result;
+    document.getElementById('thumbPreviewWrap').style.display = 'block';
+    document.getElementById('cThumbUrl').value = '';
+    document.getElementById('cThumbUrl').placeholder = 'Uploaded: ' + file.name;
+  };
+  reader.readAsDataURL(file);
+}
+function clearThumb() {
+  window._pendingThumb = '';
+  document.getElementById('cThumbUrl').value = '';
+  document.getElementById('thumbPreviewWrap').style.display = 'none';
+  document.getElementById('cThumbFile').value = '';
+}
+
+// ── MATERIAL TYPE SELECTOR
+var _matType = 'pdf';
+function selectMatType(type) {
+  _matType = type;
+  document.getElementById('matType').value = type;
+  ['pdf','video','ppt'].forEach(function(t) {
+    var el = document.getElementById('typeTab-' + t);
+    if (!el) return;
+    if (t === type) {
+      el.style.border = '2px solid var(--cyan)';
+      el.style.background = 'rgba(27,174,204,0.06)';
+      el.querySelector('span:last-child').style.color = 'var(--cyan)';
+    } else {
+      el.style.border = '2px solid rgba(11,31,58,0.1)';
+      el.style.background = 'none';
+      el.querySelector('span:last-child').style.color = 'var(--text-light)';
+    }
+  });
+  var hints = {
+    pdf:   'Accepts PDF files. Upload to Google Drive → Share → Copy link → Paste below.',
+    video: 'Upload to YouTube as "Unlisted" → Copy the video URL → Paste below.',
+    ppt:   'Accepts PowerPoint files. Upload to Google Drive → Share → Copy link → Paste below.',
+  };
+  var hintEl = document.getElementById('uploadZoneHint');
+  if (hintEl) hintEl.textContent = hints[type];
+  var urlLabel = document.getElementById('matUrlLabel');
+  if (urlLabel) {
+    if (type === 'video') urlLabel.textContent = 'Or Paste YouTube Link';
+    else urlLabel.textContent = 'Or Paste Google Drive Link';
+  }
+  var matUrl = document.getElementById('matUrl');
+  if (matUrl) {
+    if (type === 'video') matUrl.placeholder = 'https://youtube.com/watch?v=...';
+    else matUrl.placeholder = 'https://drive.google.com/file/d/...';
+  }
+}
+
+// ── FILE DROP / SELECT (shows instructions — we can't directly upload to Drive from browser)
+function handleFileDrop(event) {
+  event.preventDefault();
+  var files = event.dataTransfer.files;
+  if (files && files[0]) showFileInstructions(files[0]);
+}
+function handleFileSelect(input) {
+  if (input.files && input.files[0]) showFileInstructions(input.files[0]);
+}
+function showFileInstructions(file) {
+  var msg = document.getElementById('fileSelectedMsg');
+  msg.style.display = 'block';
+  var type = file.name.endsWith('.pdf') ? 'PDF' : file.name.endsWith('.pptx')||file.name.endsWith('.ppt') ? 'PPT' : 'file';
+  msg.innerHTML = '<strong>Got it: ' + file.name + '</strong><br>'
+    + 'To add this ' + type + ' to your course:<br>'
+    + '1. Go to <a href="https://drive.google.com" target="_blank" style="color:var(--cyan);">Google Drive</a> and upload this file<br>'
+    + '2. Right-click the file → Share → "Anyone with the link"<br>'
+    + '3. Copy the link and paste it in the field below';
+  document.getElementById('uploadZone').style.borderColor = 'rgba(34,197,94,0.4)';
+}
+
+// ── PROFILE MODAL
+function openAdminProfile() {
   var user = netlifyIdentity.currentUser();
   if (!user) return;
   var meta = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  document.getElementById('profileEmailDisplay').textContent = user.email;
-  document.getElementById('profileEmailInput').value = user.email;
-  document.getElementById('profileAv').textContent = user.email.charAt(0).toUpperCase();
-  document.getElementById('profileName').value = meta.name || (user.user_metadata && user.user_metadata.full_name) || '';
-  document.getElementById('profileInstitute').value = meta.institute || 'Kulan Institute of Learning';
-  document.getElementById('profileRole').value = meta.role || 'Administrator';
-  openModal('profile');
+  document.getElementById('apEmail').textContent = user.email;
+  document.getElementById('apEmailInput').value = user.email;
+  document.getElementById('apName').value = meta.name || (user.user_metadata && user.user_metadata.full_name) || '';
+  document.getElementById('apInstitute').value = meta.institute || 'Kulan Institute of Learning';
+  document.getElementById('apRole').value = meta.role || 'Administrator';
+  document.getElementById('apBio').value = meta.bio || '';
+  // Load avatar
+  var av = meta.avatar || '';
+  var avEl = document.getElementById('apAvatar');
+  if (av) {
+    avEl.innerHTML = '<img src="' + av + '" style="width:72px;height:72px;border-radius:50%;object-fit:cover;">';
+  } else {
+    avEl.textContent = user.email.charAt(0).toUpperCase();
+    avEl.style.fontSize = '28px';
+  }
+  document.getElementById('modal-adminProfile').classList.add('open');
+}
+function saveAdminProfile() {
+  var user = netlifyIdentity.currentUser();
+  if (!user) return;
+  var name = document.getElementById('apName').value.trim();
+  var meta = {
+    name:      name,
+    institute: document.getElementById('apInstitute').value.trim(),
+    role:      document.getElementById('apRole').value.trim(),
+    bio:       document.getElementById('apBio').value.trim(),
+    avatar:    window._adminAvatarData || JSON.parse(localStorage.getItem('ki_admin_profile') || '{}').avatar || '',
+  };
+  localStorage.setItem('ki_admin_profile', JSON.stringify(meta));
+  if (name) { var el = document.getElementById('userName'); if(el) el.textContent = name; }
+  // Update avatar in sidebar
+  if (meta.avatar) {
+    var sbAv = document.getElementById('userAv');
+    if (sbAv) sbAv.innerHTML = '<img src="' + meta.avatar + '" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">';
+  }
+  closeModal('adminProfile');
+  showNotif('Profile updated!');
+}
+function handleAdminAvatar(input) {
+  if (!input.files || !input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    window._adminAvatarData = e.target.result;
+    var avEl = document.getElementById('apAvatar');
+    avEl.innerHTML = '<img src="' + e.target.result + '" style="width:72px;height:72px;border-radius:50%;object-fit:cover;">';
+  };
+  reader.readAsDataURL(input.files[0]);
 }
 
-function saveProfile() {
-  var name      = document.getElementById('profileName').value.trim();
-  var institute = document.getElementById('profileInstitute').value.trim();
-  var role      = document.getElementById('profileRole').value.trim();
-  var meta = { name: name, institute: institute, role: role };
-  localStorage.setItem('ki_admin_profile', JSON.stringify(meta));
-  // Update sidebar display
-  if (name) {
-    var nameEl = document.getElementById('userName');
-    if (nameEl) nameEl.textContent = name;
+// Load profile on init
+function loadAdminProfile() {
+  var user = netlifyIdentity.currentUser();
+  if (!user) return;
+  var meta = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
+  if (meta.name) { var el = document.getElementById('userName'); if(el) el.textContent = meta.name; }
+  if (meta.avatar) {
+    var sbAv = document.getElementById('userAv');
+    if (sbAv) sbAv.innerHTML = '<img src="' + meta.avatar + '" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">';
   }
-  closeModal('profile');
-  showNotif('Profile updated!');
 }
 
 </script>
-
-
-<!-- MODAL: Profile Settings -->
-<div class="modal-overlay" id="modal-profile">
-  <div class="modal" style="max-width:480px;">
-    <div class="modal-title">⚙️ Profile Settings</div>
-
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:rgba(11,31,58,0.04);border-radius:14px;">
-      <div id="profileAv" style="width:56px;height:56px;background:linear-gradient(135deg,#D4A843,#e8c060);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#0B1F3A;flex-shrink:0;">A</div>
-      <div>
-        <div id="profileEmailDisplay" style="font-weight:700;font-size:15px;"></div>
-        <div style="font-size:12px;color:var(--text-light);margin-top:3px;">Administrator</div>
-        <span style="display:inline-block;margin-top:6px;padding:3px 10px;background:rgba(212,168,67,0.12);color:#D4A843;border-radius:20px;font-size:11px;font-weight:600;">Admin</span>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Display Name</label>
-      <input type="text" class="form-input" id="profileName" placeholder="Your full name">
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Email Address</label>
-      <input type="text" class="form-input" id="profileEmailInput" disabled style="opacity:0.5;cursor:not-allowed;">
-      <div class="form-hint">Email cannot be changed here. Contact Netlify Identity to update.</div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Institute Name</label>
-      <input type="text" class="form-input" id="profileInstitute" placeholder="e.g. Kulan Institute of Learning">
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Role / Title</label>
-      <input type="text" class="form-input" id="profileRole" placeholder="e.g. Director, Lead Instructor">
-    </div>
-
-    <div style="margin-top:8px;padding:14px;background:rgba(27,174,204,0.06);border:1px solid rgba(27,174,204,0.15);border-radius:10px;font-size:12px;color:var(--text-mid);line-height:1.7;">
-      <strong style="color:var(--cyan);">Password Reset:</strong> Go to <strong>Netlify → Identity → Users</strong>, find your account and click "Send Password Reset Email" to update your password.
-    </div>
-
-    <div class="modal-actions" style="margin-top:24px;">
-      <button class="btn btn-outline" onclick="closeModal('profile')">Cancel</button>
-      <button class="btn btn-gold" onclick="saveProfile()">Save Changes</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>

@@ -165,7 +165,6 @@
     </a>
     <div class="topbar-right">
       <div class="user-pill">👤 <span id="userEmail">Loading...</span></div>
-      <button onclick="openProfile()" style="background:none;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:rgba(255,255,255,0.6);padding:8px 14px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='none'">⚙️ Profile</button>
       <button class="logout-btn" id="logoutBtn">Sign Out</button>
     </div>
   </div>
@@ -228,6 +227,7 @@
       document.getElementById('logoutBtn').addEventListener('click', () => netlifyIdentity.logout());
       netlifyIdentity.on('logout', () => window.location.href = '/login.html');
       loadDashboard();
+      loadStudentProfile();
     }
   }
 
@@ -236,15 +236,8 @@
   netlifyIdentity.init();
 
   function loadDashboard() {
-    // Always reload fresh from storage
     const courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
     const materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
-    // Load profile name if saved
-    var user = netlifyIdentity.currentUser();
-    if (user) {
-      var meta = JSON.parse(localStorage.getItem('ki_student_profile_' + user.email) || '{}');
-      if (meta.name) document.getElementById('userName').textContent = meta.name;
-    }
 
     const activeCourses = courses.filter(c => c.status === 'active');
     const comingCourses = courses.filter(c => c.status === 'coming');
@@ -295,7 +288,7 @@
 
         html += `
           <div class="course-row">
-            <div class="course-icon" style="background:${bgColors[i % bgColors.length]}">${icons[i % icons.length]}</div>
+            ${c.thumb ? '<img src="' + c.thumb + '" style="width:80px;height:60px;object-fit:cover;border-radius:10px;flex-shrink:0;" onerror="this.style.display='none'">' : '<div class="course-icon" style="background:' + bgColors[i % bgColors.length] + '">' + icons[i % icons.length] + '</div>'}
             <div class="course-info">
               <div class="course-name">
                 ${c.title}
@@ -343,108 +336,169 @@
 
 
 <style>
-.d-modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(11,31,58,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
-.d-modal-overlay.open{display:flex;}
-.d-modal{background:#fff;border-radius:20px;padding:36px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(11,31,58,0.2);}
-.d-modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:24px;color:#0B1F3A;}
-.d-form-group{margin-bottom:18px;}
-.d-form-label{display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#7A94B0;margin-bottom:6px;}
-.d-form-input{width:100%;padding:12px 16px;border:1px solid rgba(11,31,58,0.13);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:#0B1F3A;outline:none;transition:border 0.2s;}
-.d-form-input:focus{border-color:#1BAECC;box-shadow:0 0 0 3px rgba(27,174,204,0.08);}
-.d-modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:28px;}
-.d-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all 0.2s;}
-.d-btn-gold{background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;}
-.d-btn-outline{background:none;border:1px solid rgba(11,31,58,0.15);color:#3D5A80;}
+.p-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(11,31,58,0.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;}
+.p-overlay.open{display:flex;}
+.p-modal{background:#fff;border-radius:24px;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;box-shadow:0 32px 80px rgba(11,31,58,0.25);}
+.p-header{background:linear-gradient(135deg,var(--navy),var(--blue));padding:28px 32px;border-radius:24px 24px 0 0;position:relative;}
+.p-header-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;}
+.p-header-sub{font-size:13px;color:rgba(255,255,255,0.5);}
+.p-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.p-av-wrap{display:flex;justify-content:center;margin-top:-40px;margin-bottom:20px;}
+.p-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#fff;border:4px solid #fff;box-shadow:0 4px 16px rgba(27,174,204,0.3);overflow:hidden;position:relative;cursor:pointer;}
+.p-av-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;font-size:20px;border-radius:50%;}
+.p-av:hover .p-av-overlay{display:flex;}
+.p-body{padding:0 28px 28px;}
+.p-field{margin-bottom:16px;}
+.p-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:5px;}
+.p-input{width:100%;padding:11px 14px;border:1px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:border 0.2s;}
+.p-input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(27,174,204,0.08);}
+.p-input:disabled{opacity:0.4;cursor:not-allowed;background:rgba(11,31,58,0.02);}
+.p-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.p-actions{display:flex;gap:10px;margin-top:24px;}
+.p-btn{flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all 0.2s;}
+.p-btn-save{background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;}
+.p-btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(27,174,204,0.3);}
+.p-btn-cancel{background:rgba(11,31,58,0.06);color:var(--text-mid);}
+.p-notif{text-align:center;padding:10px;border-radius:8px;font-size:13px;font-weight:600;display:none;margin-bottom:12px;}
 </style>
 
-<!-- PROFILE MODAL -->
-<div class="d-modal-overlay" id="profileModal">
-  <div class="d-modal">
-    <div class="d-modal-title">⚙️ My Profile</div>
-
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:rgba(11,31,58,0.03);border-radius:14px;border:1px solid rgba(11,31,58,0.07);">
-      <div id="profileAv" style="width:56px;height:56px;background:linear-gradient(135deg,#1BAECC,#0E7C7B);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0;">S</div>
-      <div>
-        <div id="profileEmailDisplay" style="font-weight:700;font-size:15px;color:#0B1F3A;"></div>
-        <div style="font-size:12px;color:#7A94B0;margin-top:3px;">Student Account</div>
-        <span style="display:inline-block;margin-top:6px;padding:3px 10px;background:rgba(27,174,204,0.1);color:#1BAECC;border-radius:20px;font-size:11px;font-weight:600;">🎓 Student</span>
+<div class="p-overlay" id="studentProfileModal">
+  <div class="p-modal">
+    <div class="p-header">
+      <div class="p-header-title">My Profile</div>
+      <div class="p-header-sub">Update your personal information</div>
+      <button class="p-close" onclick="closeStudentProfile()">✕</button>
+    </div>
+    <div class="p-av-wrap">
+      <label>
+        <div class="p-av" id="spAvatar" title="Click to upload photo">
+          <span id="spAvInit">S</span>
+          <div class="p-av-overlay">📷</div>
+          <input type="file" accept="image/*" style="display:none;" onchange="handleStudentAvatar(this)">
+        </div>
+      </label>
+    </div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <div id="spEmailBadge" style="display:inline-block;padding:4px 14px;background:rgba(27,174,204,0.1);border-radius:20px;font-size:12px;color:var(--cyan);font-weight:600;"></div>
+      <span style="display:inline-block;margin-left:6px;padding:4px 12px;background:rgba(27,174,204,0.08);border-radius:20px;font-size:11px;color:var(--cyan);font-weight:600;">🎓 Student</span>
+    </div>
+    <div class="p-body">
+      <div class="p-notif" id="spNotif"></div>
+      <div class="p-row">
+        <div class="p-field">
+          <label class="p-label">First Name</label>
+          <input type="text" class="p-input" id="spFirst" placeholder="First name">
+        </div>
+        <div class="p-field">
+          <label class="p-label">Last Name</label>
+          <input type="text" class="p-input" id="spLast" placeholder="Last name">
+        </div>
       </div>
-    </div>
-
-    <div class="d-form-group">
-      <label class="d-form-label">Display Name</label>
-      <input type="text" class="d-form-input" id="profileName" placeholder="Your full name">
-    </div>
-
-    <div class="d-form-group">
-      <label class="d-form-label">Email Address</label>
-      <input type="text" class="d-form-input" id="profileEmailInput" disabled style="opacity:0.5;cursor:not-allowed;">
-      <div style="font-size:12px;color:#7A94B0;margin-top:5px;">Email cannot be changed here.</div>
-    </div>
-
-    <div class="d-form-group">
-      <label class="d-form-label">Preferred Language</label>
-      <select class="d-form-input" id="profileLang">
-        <option value="en">English</option>
-        <option value="so">Somali</option>
-        <option value="both">Both (Bilingual)</option>
-      </select>
-    </div>
-
-    <div class="d-form-group">
-      <label class="d-form-label">Goal / Reason for Learning</label>
-      <textarea class="d-form-input" id="profileGoal" rows="3" placeholder="e.g. I want to break into cybersecurity..." style="resize:vertical;"></textarea>
-    </div>
-
-    <div style="padding:14px;background:rgba(27,174,204,0.06);border:1px solid rgba(27,174,204,0.15);border-radius:10px;font-size:12px;color:#3D5A80;line-height:1.7;">
-      <strong style="color:#1BAECC;">Password Reset:</strong> Contact your instructor to receive a password reset email.
-    </div>
-
-    <div class="d-modal-actions">
-      <button class="d-btn d-btn-outline" onclick="closeProfile()">Cancel</button>
-      <button class="d-btn d-btn-gold" onclick="saveProfile()">Save Changes</button>
+      <div class="p-field">
+        <label class="p-label">Email Address</label>
+        <input type="text" class="p-input" id="spEmail" disabled>
+      </div>
+      <div class="p-row">
+        <div class="p-field">
+          <label class="p-label">Preferred Language</label>
+          <select class="p-input" id="spLang">
+            <option value="en">English</option>
+            <option value="so">Somali</option>
+            <option value="both">Both (Bilingual)</option>
+          </select>
+        </div>
+        <div class="p-field">
+          <label class="p-label">Country</label>
+          <input type="text" class="p-input" id="spCountry" placeholder="e.g. USA, Somalia">
+        </div>
+      </div>
+      <div class="p-field">
+        <label class="p-label">Learning Goal</label>
+        <textarea class="p-input" id="spGoal" rows="3" placeholder="e.g. I want to break into cybersecurity..." style="resize:vertical;"></textarea>
+      </div>
+      <div style="padding:12px;background:rgba(27,174,204,0.05);border:1px solid rgba(27,174,204,0.12);border-radius:10px;font-size:12px;color:var(--text-mid);line-height:1.7;margin-bottom:4px;">
+        <strong style="color:var(--cyan);">🔒 Password Reset:</strong> Contact your instructor to receive a password reset email to your registered address.
+      </div>
+      <div class="p-actions">
+        <button class="p-btn p-btn-cancel" onclick="closeStudentProfile()">Cancel</button>
+        <button class="p-btn p-btn-save" onclick="saveStudentProfile()">Save Profile</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-function openProfile() {
+function openStudentProfile() {
+  var user = netlifyIdentity.currentUser();
+  if (!user) return;
+  var key = 'ki_student_profile_' + user.email;
+  var meta = JSON.parse(localStorage.getItem(key) || '{}');
+  var nameParts = (meta.name || '').split(' ');
+  document.getElementById('spFirst').value   = meta.first || nameParts[0] || '';
+  document.getElementById('spLast').value    = meta.last  || nameParts.slice(1).join(' ') || '';
+  document.getElementById('spEmail').value   = user.email;
+  document.getElementById('spEmailBadge').textContent = user.email;
+  document.getElementById('spLang').value    = meta.lang || 'en';
+  document.getElementById('spCountry').value = meta.country || '';
+  document.getElementById('spGoal').value    = meta.goal || '';
+  // Avatar
+  var av = meta.avatar || '';
+  var avEl = document.getElementById('spAvatar');
+  document.getElementById('spAvInit').textContent = user.email.charAt(0).toUpperCase();
+  if (av) {
+    document.getElementById('spAvInit').innerHTML = '<img src="' + av + '" style="width:80px;height:80px;object-fit:cover;border-radius:50%;">';
+  }
+  document.getElementById('studentProfileModal').classList.add('open');
+}
+function closeStudentProfile() {
+  document.getElementById('studentProfileModal').classList.remove('open');
+}
+function handleStudentAvatar(input) {
+  if (!input.files || !input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    window._studentAvatarData = e.target.result;
+    document.getElementById('spAvInit').innerHTML = '<img src="' + e.target.result + '" style="width:80px;height:80px;object-fit:cover;border-radius:50%;">';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function saveStudentProfile() {
+  var user = netlifyIdentity.currentUser();
+  if (!user) return;
+  var first = document.getElementById('spFirst').value.trim();
+  var last  = document.getElementById('spLast').value.trim();
+  var name  = (first + ' ' + last).trim();
+  var key   = 'ki_student_profile_' + user.email;
+  var existing = JSON.parse(localStorage.getItem(key) || '{}');
+  var meta = {
+    first:   first,
+    last:    last,
+    name:    name || existing.name || '',
+    lang:    document.getElementById('spLang').value,
+    country: document.getElementById('spCountry').value.trim(),
+    goal:    document.getElementById('spGoal').value.trim(),
+    avatar:  window._studentAvatarData || existing.avatar || '',
+  };
+  localStorage.setItem(key, JSON.stringify(meta));
+  if (name) document.getElementById('userName').textContent = first || name;
+  // Update topbar avatar if exists
+  var topAvEl = document.getElementById('topbarAvatar');
+  if (topAvEl && meta.avatar) topAvEl.innerHTML = '<img src="' + meta.avatar + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">';
+  var n = document.getElementById('spNotif');
+  n.style.display = 'block';
+  n.style.background = 'rgba(34,197,94,0.1)';
+  n.style.color = '#16a34a';
+  n.textContent = 'Profile saved!';
+  setTimeout(function(){ closeStudentProfile(); n.style.display='none'; }, 1200);
+}
+function loadStudentProfile() {
   var user = netlifyIdentity.currentUser();
   if (!user) return;
   var meta = JSON.parse(localStorage.getItem('ki_student_profile_' + user.email) || '{}');
-  document.getElementById('profileEmailDisplay').textContent = user.email;
-  document.getElementById('profileEmailInput').value = user.email;
-  document.getElementById('profileAv').textContent = user.email.charAt(0).toUpperCase();
-  document.getElementById('profileName').value = meta.name || (user.user_metadata && user.user_metadata.full_name) || '';
-  document.getElementById('profileLang').value = meta.lang || 'en';
-  document.getElementById('profileGoal').value = meta.goal || '';
-  document.getElementById('profileModal').classList.add('open');
+  if (meta.first || meta.name) document.getElementById('userName').textContent = meta.first || meta.name.split(' ')[0];
 }
-
-function closeProfile() {
-  document.getElementById('profileModal').classList.remove('open');
-}
-
-function saveProfile() {
-  var user = netlifyIdentity.currentUser();
-  if (!user) return;
-  var name = document.getElementById('profileName').value.trim();
-  var meta = {
-    name: name,
-    lang: document.getElementById('profileLang').value,
-    goal: document.getElementById('profileGoal').value.trim(),
-  };
-  localStorage.setItem('ki_student_profile_' + user.email, JSON.stringify(meta));
-  // Update welcome name
-  if (name) document.getElementById('userName').textContent = name;
-  closeProfile();
-  // Show brief notif
-  var n = document.getElementById('notif');
-  if (n) { n.textContent = 'Profile updated!'; n.classList.add('show'); setTimeout(function(){ n.classList.remove('show'); }, 3000); }
-}
-
-document.getElementById('profileModal').addEventListener('click', function(e) {
-  if (e.target === this) closeProfile();
+document.getElementById('studentProfileModal').addEventListener('click', function(e){
+  if (e.target === this) closeStudentProfile();
 });
 </script>
 
