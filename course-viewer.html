@@ -236,12 +236,12 @@
 
   function loadCourse() {
     const params   = new URLSearchParams(window.location.search);
-    const courseId = parseInt(params.get('course')) || null;
+    const courseId = params.get('course') || null; // keep as string — IDs are like 'c1234567'
 
     const courses   = JSON.parse(localStorage.getItem('ki_courses') || '[]');
     const materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
 
-    const course = courses.find(c => c.id === courseId) || courses[0];
+    const course = courses.find(function(c){ return String(c.id) === String(courseId); }) || (courses.length ? courses[0] : null);
     if (!course) return;
 
     // Update header

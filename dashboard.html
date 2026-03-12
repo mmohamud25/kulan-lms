@@ -165,6 +165,7 @@
     </a>
     <div class="topbar-right">
       <div class="user-pill">👤 <span id="userEmail">Loading...</span></div>
+      <button onclick="openProfile()" style="background:none;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:rgba(255,255,255,0.6);padding:8px 14px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='none'">⚙️ Profile</button>
       <button class="logout-btn" id="logoutBtn">Sign Out</button>
     </div>
   </div>
@@ -235,8 +236,15 @@
   netlifyIdentity.init();
 
   function loadDashboard() {
+    // Always reload fresh from storage
     const courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
     const materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
+    // Load profile name if saved
+    var user = netlifyIdentity.currentUser();
+    if (user) {
+      var meta = JSON.parse(localStorage.getItem('ki_student_profile_' + user.email) || '{}');
+      if (meta.name) document.getElementById('userName').textContent = meta.name;
+    }
 
     const activeCourses = courses.filter(c => c.status === 'active');
     const comingCourses = courses.filter(c => c.status === 'coming');
@@ -331,6 +339,113 @@
 
     document.getElementById('coursesList').innerHTML = html;
   }
+</script>
+
+
+<style>
+.d-modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(11,31,58,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
+.d-modal-overlay.open{display:flex;}
+.d-modal{background:#fff;border-radius:20px;padding:36px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(11,31,58,0.2);}
+.d-modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:24px;color:#0B1F3A;}
+.d-form-group{margin-bottom:18px;}
+.d-form-label{display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#7A94B0;margin-bottom:6px;}
+.d-form-input{width:100%;padding:12px 16px;border:1px solid rgba(11,31,58,0.13);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:#0B1F3A;outline:none;transition:border 0.2s;}
+.d-form-input:focus{border-color:#1BAECC;box-shadow:0 0 0 3px rgba(27,174,204,0.08);}
+.d-modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:28px;}
+.d-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all 0.2s;}
+.d-btn-gold{background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;}
+.d-btn-outline{background:none;border:1px solid rgba(11,31,58,0.15);color:#3D5A80;}
+</style>
+
+<!-- PROFILE MODAL -->
+<div class="d-modal-overlay" id="profileModal">
+  <div class="d-modal">
+    <div class="d-modal-title">⚙️ My Profile</div>
+
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:rgba(11,31,58,0.03);border-radius:14px;border:1px solid rgba(11,31,58,0.07);">
+      <div id="profileAv" style="width:56px;height:56px;background:linear-gradient(135deg,#1BAECC,#0E7C7B);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0;">S</div>
+      <div>
+        <div id="profileEmailDisplay" style="font-weight:700;font-size:15px;color:#0B1F3A;"></div>
+        <div style="font-size:12px;color:#7A94B0;margin-top:3px;">Student Account</div>
+        <span style="display:inline-block;margin-top:6px;padding:3px 10px;background:rgba(27,174,204,0.1);color:#1BAECC;border-radius:20px;font-size:11px;font-weight:600;">🎓 Student</span>
+      </div>
+    </div>
+
+    <div class="d-form-group">
+      <label class="d-form-label">Display Name</label>
+      <input type="text" class="d-form-input" id="profileName" placeholder="Your full name">
+    </div>
+
+    <div class="d-form-group">
+      <label class="d-form-label">Email Address</label>
+      <input type="text" class="d-form-input" id="profileEmailInput" disabled style="opacity:0.5;cursor:not-allowed;">
+      <div style="font-size:12px;color:#7A94B0;margin-top:5px;">Email cannot be changed here.</div>
+    </div>
+
+    <div class="d-form-group">
+      <label class="d-form-label">Preferred Language</label>
+      <select class="d-form-input" id="profileLang">
+        <option value="en">English</option>
+        <option value="so">Somali</option>
+        <option value="both">Both (Bilingual)</option>
+      </select>
+    </div>
+
+    <div class="d-form-group">
+      <label class="d-form-label">Goal / Reason for Learning</label>
+      <textarea class="d-form-input" id="profileGoal" rows="3" placeholder="e.g. I want to break into cybersecurity..." style="resize:vertical;"></textarea>
+    </div>
+
+    <div style="padding:14px;background:rgba(27,174,204,0.06);border:1px solid rgba(27,174,204,0.15);border-radius:10px;font-size:12px;color:#3D5A80;line-height:1.7;">
+      <strong style="color:#1BAECC;">Password Reset:</strong> Contact your instructor to receive a password reset email.
+    </div>
+
+    <div class="d-modal-actions">
+      <button class="d-btn d-btn-outline" onclick="closeProfile()">Cancel</button>
+      <button class="d-btn d-btn-gold" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openProfile() {
+  var user = netlifyIdentity.currentUser();
+  if (!user) return;
+  var meta = JSON.parse(localStorage.getItem('ki_student_profile_' + user.email) || '{}');
+  document.getElementById('profileEmailDisplay').textContent = user.email;
+  document.getElementById('profileEmailInput').value = user.email;
+  document.getElementById('profileAv').textContent = user.email.charAt(0).toUpperCase();
+  document.getElementById('profileName').value = meta.name || (user.user_metadata && user.user_metadata.full_name) || '';
+  document.getElementById('profileLang').value = meta.lang || 'en';
+  document.getElementById('profileGoal').value = meta.goal || '';
+  document.getElementById('profileModal').classList.add('open');
+}
+
+function closeProfile() {
+  document.getElementById('profileModal').classList.remove('open');
+}
+
+function saveProfile() {
+  var user = netlifyIdentity.currentUser();
+  if (!user) return;
+  var name = document.getElementById('profileName').value.trim();
+  var meta = {
+    name: name,
+    lang: document.getElementById('profileLang').value,
+    goal: document.getElementById('profileGoal').value.trim(),
+  };
+  localStorage.setItem('ki_student_profile_' + user.email, JSON.stringify(meta));
+  // Update welcome name
+  if (name) document.getElementById('userName').textContent = name;
+  closeProfile();
+  // Show brief notif
+  var n = document.getElementById('notif');
+  if (n) { n.textContent = 'Profile updated!'; n.classList.add('show'); setTimeout(function(){ n.classList.remove('show'); }, 3000); }
+}
+
+document.getElementById('profileModal').addEventListener('click', function(e) {
+  if (e.target === this) closeProfile();
+});
 </script>
 
 </body>

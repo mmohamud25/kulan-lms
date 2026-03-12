@@ -288,7 +288,10 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
       <div class="user-avatar" id="avatarInitial">A</div>
       <div class="user-email" id="adminEmail">admin</div>
     </div>
-    <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+    <button class="logout-btn" style="flex:1;" onclick="openProfile()">⚙️ Profile</button>
+  </div>
+  <button class="logout-btn" id="logoutBtn">Sign Out</button>
   </div>
 </div>
 
@@ -644,6 +647,10 @@ function init() {
 }
 
 function renderAll() {
+  // Always reload fresh from storage before rendering
+  courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
+  materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
+  students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
   renderOverview();
   renderCourses();
   renderStudents();
@@ -827,6 +834,11 @@ function addCourse() {
   closeModal('addCourse');
   renderAll();
   showNotif('Course "' + newCourse.title + '" created!');
+  // Switch to Courses tab so user can see new course
+  setTimeout(function() {
+    var navItems = document.querySelectorAll('.nav-item');
+    switchTab('courses', navItems[1]);
+  }, 300);
 }
 
 function deleteCourse(id) {
@@ -1000,7 +1012,84 @@ document.addEventListener('click', function(e) {
     e.target.classList.remove('open');
   }
 });
+
+// PROFILE SETTINGS
+function openProfile() {
+  var user = netlifyIdentity.currentUser();
+  if (!user) return;
+  var meta = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
+  document.getElementById('profileEmailDisplay').textContent = user.email;
+  document.getElementById('profileEmailInput').value = user.email;
+  document.getElementById('profileAv').textContent = user.email.charAt(0).toUpperCase();
+  document.getElementById('profileName').value = meta.name || (user.user_metadata && user.user_metadata.full_name) || '';
+  document.getElementById('profileInstitute').value = meta.institute || 'Kulan Institute of Learning';
+  document.getElementById('profileRole').value = meta.role || 'Administrator';
+  openModal('profile');
+}
+
+function saveProfile() {
+  var name      = document.getElementById('profileName').value.trim();
+  var institute = document.getElementById('profileInstitute').value.trim();
+  var role      = document.getElementById('profileRole').value.trim();
+  var meta = { name: name, institute: institute, role: role };
+  localStorage.setItem('ki_admin_profile', JSON.stringify(meta));
+  // Update sidebar display
+  if (name) {
+    var nameEl = document.getElementById('userName');
+    if (nameEl) nameEl.textContent = name;
+  }
+  closeModal('profile');
+  showNotif('Profile updated!');
+}
+
 </script>
+
+
+<!-- MODAL: Profile Settings -->
+<div class="modal-overlay" id="modal-profile">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-title">⚙️ Profile Settings</div>
+
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px;background:rgba(11,31,58,0.04);border-radius:14px;">
+      <div id="profileAv" style="width:56px;height:56px;background:linear-gradient(135deg,#D4A843,#e8c060);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#0B1F3A;flex-shrink:0;">A</div>
+      <div>
+        <div id="profileEmailDisplay" style="font-weight:700;font-size:15px;"></div>
+        <div style="font-size:12px;color:var(--text-light);margin-top:3px;">Administrator</div>
+        <span style="display:inline-block;margin-top:6px;padding:3px 10px;background:rgba(212,168,67,0.12);color:#D4A843;border-radius:20px;font-size:11px;font-weight:600;">Admin</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Display Name</label>
+      <input type="text" class="form-input" id="profileName" placeholder="Your full name">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="text" class="form-input" id="profileEmailInput" disabled style="opacity:0.5;cursor:not-allowed;">
+      <div class="form-hint">Email cannot be changed here. Contact Netlify Identity to update.</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Institute Name</label>
+      <input type="text" class="form-input" id="profileInstitute" placeholder="e.g. Kulan Institute of Learning">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Role / Title</label>
+      <input type="text" class="form-input" id="profileRole" placeholder="e.g. Director, Lead Instructor">
+    </div>
+
+    <div style="margin-top:8px;padding:14px;background:rgba(27,174,204,0.06);border:1px solid rgba(27,174,204,0.15);border-radius:10px;font-size:12px;color:var(--text-mid);line-height:1.7;">
+      <strong style="color:var(--cyan);">Password Reset:</strong> Go to <strong>Netlify → Identity → Users</strong>, find your account and click "Send Password Reset Email" to update your password.
+    </div>
+
+    <div class="modal-actions" style="margin-top:24px;">
+      <button class="btn btn-outline" onclick="closeModal('profile')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
