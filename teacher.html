@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teacher Portal — Kulan Institute</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
 <style>
 :root {
   --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
@@ -325,13 +330,14 @@ tr:hover td{background:rgba(11,31,58,0.015);}
   </div>
 
   <div class="sb-footer">
-    <div class="user-row">
+    <div class="user-row" onclick="openTeacherProfile()" style="cursor:pointer;" title="Edit profile">
       <div class="user-av" id="userAv">T</div>
       <div class="user-info-text">
         <div class="user-name" id="userName">Teacher</div>
         <div class="user-email-text" id="userEmail">—</div>
       </div>
     </div>
+    <button onclick="openTeacherProfile()" type="button" style="width:100%;padding:9px;margin-bottom:7px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.12);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">&#9881; Profile Settings</button>
     <button class="logout-btn" id="logoutBtn">Sign Out</button>
   </div>
 </div>
@@ -401,14 +407,12 @@ tr:hover td{background:rgba(11,31,58,0.015);}
       </div>
 
       <div class="form-card">
-        <div class="form-card-title">📤 Add New Material</div>
+        <div class="form-card-title">&#128228; Add New Material</div>
 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Course</label>
-            <select class="form-select" id="upCourse">
-              <option value="">Select a course...</option>
-            </select>
+            <select class="form-select" id="upCourse"><option value="">Select a course...</option></select>
           </div>
           <div class="form-group">
             <label class="form-label">Module #</label>
@@ -432,50 +436,45 @@ tr:hover td{background:rgba(11,31,58,0.015);}
           </div>
         </div>
 
-        <!-- SOURCE TABS -->
         <div class="form-group">
           <label class="form-label">Source</label>
           <div style="display:flex;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;overflow:hidden;margin-bottom:14px;">
-            <button id="upTabUpload" onclick="switchUpTab('upload')" type="button" style="flex:1;padding:11px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">📁 Upload File</button>
-            <button id="upTabLink"   onclick="switchUpTab('link')"   type="button" style="flex:1;padding:11px;border:none;background:rgba(11,31,58,0.04);color:var(--text-mid);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🔗 Paste Link</button>
+            <button id="upTabUpload" onclick="switchUpTab('upload')" type="button" style="flex:1;padding:11px;border:none;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">&#128196; Upload File</button>
+            <button id="upTabLink"   onclick="switchUpTab('link')"   type="button" style="flex:1;padding:11px;border:none;background:rgba(11,31,58,0.04);color:#666;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">&#128279; Paste Link</button>
           </div>
-
-          <!-- UPLOAD PANEL -->
           <div id="upPanelUpload">
             <div id="upDropZone" onclick="document.getElementById('upFileInput').click()"
               ondragover="event.preventDefault();this.style.borderColor='var(--cyan)'"
               ondragleave="this.style.borderColor='rgba(11,31,58,0.15)'"
               ondrop="upHandleDrop(event)"
               style="border:2px dashed rgba(11,31,58,0.15);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;">
-              <div style="font-size:34px;margin-bottom:8px;">📄</div>
+              <div style="font-size:34px;margin-bottom:8px;">&#128196;</div>
               <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px;">Drag & drop your file here</div>
-              <div style="font-size:12px;color:var(--text-light);margin-bottom:12px;">or click to browse from your computer</div>
+              <div style="font-size:12px;color:#999;margin-bottom:12px;">or click to browse</div>
               <span style="padding:8px 18px;background:var(--navy);color:#fff;border-radius:8px;font-size:12px;font-weight:600;">Choose File</span>
             </div>
             <input type="file" id="upFileInput" accept=".pdf,.ppt,.pptx,.mp4,.mov,.doc,.docx,.xlsx,.csv,.zip" style="display:none" onchange="upFileSelected(this)">
             <div id="upFileInfo" style="display:none;margin-top:10px;padding:12px 14px;background:rgba(27,174,204,0.06);border:1px solid rgba(27,174,204,0.2);border-radius:10px;">
               <div style="display:flex;align-items:center;gap:10px;">
-                <span id="upFileIcon" style="font-size:22px;">📄</span>
+                <span id="upFileIcon" style="font-size:22px;">&#128196;</span>
                 <div style="flex:1;min-width:0;">
                   <div id="upFileName" style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-                  <div id="upFileSize" style="font-size:11px;color:var(--text-light);margin-top:2px;"></div>
+                  <div id="upFileSize" style="font-size:11px;color:#999;margin-top:2px;"></div>
                 </div>
-                <button type="button" onclick="clearUpFile()" style="background:none;border:none;font-size:16px;cursor:pointer;color:var(--text-light);">✕</button>
+                <button type="button" onclick="clearUpFile()" style="background:none;border:none;font-size:16px;cursor:pointer;color:#999;">&#10005;</button>
               </div>
               <div id="upProgressWrap" style="display:none;margin-top:10px;">
                 <div style="height:4px;background:rgba(11,31,58,0.08);border-radius:4px;overflow:hidden;">
                   <div id="upProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),var(--teal));transition:width .3s;border-radius:4px;"></div>
                 </div>
-                <div id="upProgressText" style="font-size:11px;color:var(--text-light);margin-top:5px;text-align:center;"></div>
+                <div id="upProgressText" style="font-size:11px;color:#999;margin-top:5px;text-align:center;"></div>
               </div>
             </div>
-            <div class="form-hint" style="margin-top:8px;">PDF, PPT, Word, Video, Excel, ZIP. Max ~10MB recommended.</div>
+            <div class="form-hint" style="margin-top:8px;">PDF, PPT, Word, Video, ZIP. Max ~10MB.</div>
           </div>
-
-          <!-- LINK PANEL -->
           <div id="upPanelLink" style="display:none;">
-            <input type="text" class="form-input" id="upUrl" placeholder="Paste any URL — Google Drive, YouTube, website, Dropbox...">
-            <div class="form-hint" style="margin-top:6px;">Any link works. Google Drive and YouTube links are auto-converted to embed format.</div>
+            <input type="text" class="form-input" id="upUrl" placeholder="Paste any URL — Google Drive, YouTube, Dropbox...">
+            <div class="form-hint" style="margin-top:6px;">Google Drive and YouTube links are auto-converted to embed format.</div>
           </div>
         </div>
 
@@ -698,53 +697,48 @@ function checkTeacher(user) {
       '<div style="text-align:center;padding:32px;">'
       + '<div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
       + '<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: ' + user.email + '</div>'
-      + '<button onclick="netlifyIdentity.logout();location.href=\'/#teacher-portal\';" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;font-family:sans-serif;">Sign out and try again</button>'
+      + '<button onclick="_sb.auth.signOut().then(function(){location.href='/#teacher-portal';});" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;font-family:sans-serif;">Sign out and try again</button>'
       + '</div>';
     return;
   }
+  window._teacherUser = user;
   hideLoading();
   document.getElementById('page').style.display = 'block';
   document.getElementById('userEmail').textContent = user.email;
   document.getElementById('userAv').textContent = user.email.charAt(0).toUpperCase();
   var name = (user.user_metadata && user.user_metadata.full_name) ? user.user_metadata.full_name : 'Teacher';
   document.getElementById('userName').textContent = name;
-  document.getElementById('logoutBtn').addEventListener('click', function() { netlifyIdentity.logout(); });
-  netlifyIdentity.on('logout', function() { window.location.href = '/#teacher-portal'; });
+  document.getElementById('logoutBtn').addEventListener('click', function() { _sb.auth.signOut().then(function() { window.location.href = '/#teacher-portal'; }); });
+  loadTeacherProfile();
   init();
 }
 
-var authTimeout = setTimeout(function() { window.location.href = '/#teacher-portal'; }, 5000);
-netlifyIdentity.on('init', function(u) { clearTimeout(authTimeout); checkTeacher(u); });
-netlifyIdentity.on('login', function(u) { clearTimeout(authTimeout); netlifyIdentity.close(); checkTeacher(u); });
-netlifyIdentity.init();
-setTimeout(function() { var u = netlifyIdentity.currentUser(); if (u) { clearTimeout(authTimeout); checkTeacher(u); } }, 600);
+_sb.auth.getSession().then(function(result) {
+  checkTeacher(result.data.session ? result.data.session.user : null);
+});
+_sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_OUT') window.location.href = '/#teacher-portal';
+});
 
 // DATA
 var courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
 var materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
 var students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
 function saveCourses() {
-  try {
-    localStorage.setItem('ki_courses', JSON.stringify(courses));
-  } catch(e) {
-    console.error('saveCourses failed:', e);
-  }
+  try { localStorage.setItem('ki_courses', JSON.stringify(courses)); }
+  catch(e) { showNotif('Storage full.'); }
 }
 function saveMaterials() {
   try {
     var slim = materials.map(function(m) {
       if (m.isFile && m.url && m.url.startsWith('data:')) {
         try { localStorage.setItem('ki_file_' + m.id, m.url); } catch(e) {}
-        var copy = Object.assign({}, m);
-        copy.url = 'ki_file_' + m.id;
-        return copy;
+        var copy = Object.assign({}, m); copy.url = 'ki_file_' + m.id; return copy;
       }
       return m;
     });
     localStorage.setItem('ki_materials', JSON.stringify(slim));
-  } catch(e) {
-    console.error('saveMaterials failed:', e);
-  }
+  } catch(e) { showNotif('Storage full.'); }
 }
 function saveStudents()  { localStorage.setItem('ki_students',  JSON.stringify(students)); }
 
@@ -898,7 +892,7 @@ function updateUploadHint() {
   document.getElementById('upHint').textContent = hints[document.getElementById('upType').value] || '';
 }
 
-// Teacher upload state
+// ── UPLOAD TAB STATE ──
 var _upTab = 'upload';
 var _upFileData = null;
 
@@ -906,23 +900,18 @@ function switchUpTab(tab) {
   _upTab = tab;
   var isUp = tab === 'upload';
   document.getElementById('upTabUpload').style.background = isUp ? 'var(--navy)' : 'rgba(11,31,58,0.04)';
-  document.getElementById('upTabUpload').style.color      = isUp ? '#fff' : 'var(--text-mid)';
+  document.getElementById('upTabUpload').style.color      = isUp ? '#fff' : '#666';
   document.getElementById('upTabLink').style.background   = isUp ? 'rgba(11,31,58,0.04)' : 'var(--navy)';
-  document.getElementById('upTabLink').style.color        = isUp ? 'var(--text-mid)' : '#fff';
+  document.getElementById('upTabLink').style.color        = isUp ? '#666' : '#fff';
   document.getElementById('upPanelUpload').style.display  = isUp ? 'block' : 'none';
   document.getElementById('upPanelLink').style.display    = isUp ? 'none'  : 'block';
 }
-
 function upHandleDrop(ev) {
   ev.preventDefault();
   document.getElementById('upDropZone').style.borderColor = 'rgba(11,31,58,0.15)';
   if (ev.dataTransfer.files && ev.dataTransfer.files[0]) processUpFile(ev.dataTransfer.files[0]);
 }
-
-function upFileSelected(inp) {
-  if (inp.files && inp.files[0]) processUpFile(inp.files[0]);
-}
-
+function upFileSelected(inp) { if (inp.files && inp.files[0]) processUpFile(inp.files[0]); }
 function processUpFile(file) {
   var ext = file.name.split('.').pop().toLowerCase();
   var icons = {pdf:'📄',mp4:'🎬',mov:'🎬',ppt:'📊',pptx:'📊',doc:'📝',docx:'📝',xlsx:'📊',zip:'📦'};
@@ -931,28 +920,25 @@ function processUpFile(file) {
   document.getElementById('upFileSize').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
   document.getElementById('upFileInfo').style.display = 'block';
   document.getElementById('upDropZone').style.display = 'none';
-  if (!document.getElementById('upTitle').value.trim()) {
+  if (!document.getElementById('upTitle').value.trim())
     document.getElementById('upTitle').value = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g,' ');
-  }
   if (['mp4','mov','avi'].indexOf(ext) > -1) document.getElementById('upType').value = 'video';
-  else if (['ppt','pptx'].indexOf(ext) > -1)  document.getElementById('upType').value = 'ppt';
-  else if (ext === 'pdf')                       document.getElementById('upType').value = 'pdf';
-  var prog = document.getElementById('upProgressWrap');
-  var bar  = document.getElementById('upProgressBar');
-  var txt  = document.getElementById('upProgressText');
-  prog.style.display = 'block'; txt.textContent = 'Reading file...';
+  else if (['ppt','pptx'].indexOf(ext) > -1) document.getElementById('upType').value = 'ppt';
+  else if (ext === 'pdf') document.getElementById('upType').value = 'pdf';
+  document.getElementById('upProgressWrap').style.display = 'block';
+  document.getElementById('upProgressText').textContent = 'Reading file...';
   var reader = new FileReader();
   reader.onprogress = function(e) {
-    if (e.lengthComputable) { var p=Math.round(e.loaded/e.total*100); bar.style.width=p+'%'; txt.textContent=p+'% loaded...'; }
+    if (e.lengthComputable) { var p=Math.round(e.loaded/e.total*100); document.getElementById('upProgressBar').style.width=p+'%'; document.getElementById('upProgressText').textContent=p+'% loaded...'; }
   };
   reader.onload = function(e) {
-    bar.style.width='100%'; txt.textContent='Ready ✓';
+    document.getElementById('upProgressBar').style.width='100%';
+    document.getElementById('upProgressText').textContent='Ready ✓';
     _upFileData = { name:file.name, ext:ext, dataUrl:e.target.result };
   };
-  reader.onerror = function() { showNotif('Could not read file. Try the link tab instead.'); clearUpFile(); };
+  reader.onerror = function() { showNotif('Could not read file. Try the link tab.'); clearUpFile(); };
   reader.readAsDataURL(file);
 }
-
 function clearUpFile() {
   _upFileData = null;
   document.getElementById('upFileInfo').style.display = 'none';
@@ -974,15 +960,9 @@ function uploadMaterial() {
 
   if (_upTab === 'upload') {
     if (!_upFileData) { showNotif('Please select a file to upload.'); return; }
-    try {
-      localStorage.setItem('ki_file_' + matId, _upFileData.dataUrl);
-    } catch(e) {
-      showNotif('File too large for browser storage. Please use the Link tab instead.');
-      return;
-    }
-    url = 'ki_file_' + matId;
-    isFile = true;
-    fileName = _upFileData.name;
+    try { localStorage.setItem('ki_file_' + matId, _upFileData.dataUrl); }
+    catch(e) { showNotif('File too large. Use the Link tab instead.'); return; }
+    url = 'ki_file_' + matId; isFile = true; fileName = _upFileData.name;
   } else {
     url = document.getElementById('upUrl').value.trim();
     if (!url) { showNotif('Please paste a link.'); return; }
@@ -993,22 +973,19 @@ function uploadMaterial() {
   }
 
   var mat = {
-    id: matId, courseId: courseId, title: title,
-    type: document.getElementById('upType').value,
-    url: url, isFile: isFile, fileName: fileName,
-    module:   parseInt(document.getElementById('upModule').value) || 1,
-    download: document.getElementById('upDownload').checked,
-    notes:    document.getElementById('upNotes').value.trim(),
+    id:matId, courseId:courseId, title:title,
+    type:document.getElementById('upType').value,
+    url:url, isFile:isFile, fileName:fileName,
+    module:parseInt(document.getElementById('upModule').value)||1,
+    download:document.getElementById('upDownload').checked,
+    notes:document.getElementById('upNotes').value.trim()
   };
   materials.push(mat);
   saveMaterials();
   renderAll();
-
   ['upTitle','upUrl','upModule','upNotes'].forEach(function(id){ document.getElementById(id).value=''; });
   document.getElementById('upDownload').checked = false;
-  clearUpFile();
-  switchUpTab('upload');
-
+  clearUpFile(); switchUpTab('upload');
   showNotif('Material "' + title + '" added!');
   setTimeout(function(){ switchTab('materials', document.querySelectorAll('.nav-item')[2]); }, 1200);
 }
@@ -1183,6 +1160,117 @@ function showNotif(msg) {
 document.addEventListener('click', function(e) {
   if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
 });
+</script>
+
+
+<!-- ════ TEACHER PROFILE MODAL ════ -->
+<style>
+#tpModal{display:none;position:fixed;inset:0;z-index:700;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
+#tpModal.open{display:flex;}
+.tp-box{background:#fff;border-radius:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
+.tp-head{background:linear-gradient(135deg,#0B1F3A,#0E7C7B);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
+.tp-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
+.tp-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;}
+.tp-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.tp-av-wrap{display:flex;justify-content:center;margin-top:-34px;margin-bottom:10px;}
+.tp-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#1BAECC,#0E7C7B);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;border:4px solid #fff;box-shadow:0 4px 16px rgba(14,124,123,.4);overflow:hidden;cursor:pointer;position:relative;}
+.tp-av:hover .tp-cam{display:flex;}
+.tp-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:16px;border-radius:50%;}
+.tp-ebadge{text-align:center;margin-bottom:16px;font-size:12px;color:#7A94B0;}
+.tp-body{padding:0 22px 22px;}
+.tp-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.tp-g{margin-bottom:13px;}
+.tp-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
+.tp-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
+.tp-i:focus{border-color:#1BAECC;box-shadow:0 0 0 3px rgba(27,174,204,.12);}
+.tp-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
+.tp-btns{display:flex;gap:10px;}
+.tp-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
+.tp-save{background:linear-gradient(135deg,#1BAECC,#0E7C7B);color:#fff;}
+.tp-save:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(27,174,204,.4);}
+.tp-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
+#tpOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
+</style>
+
+<div id="tpModal" onclick="if(event.target===this)closeTeacherProfile()">
+  <div class="tp-box">
+    <div class="tp-head">
+      <h3>&#9881; Teacher Profile</h3>
+      <p>Kulan Institute of Learning</p>
+      <button class="tp-x" onclick="closeTeacherProfile()">&#10005;</button>
+    </div>
+    <div class="tp-av-wrap">
+      <label>
+        <div class="tp-av" id="tpAvEl">T
+          <div class="tp-cam">&#128247;</div>
+          <input type="file" accept="image/*" style="display:none" onchange="tpAvatarPick(this)">
+        </div>
+      </label>
+    </div>
+    <div class="tp-ebadge">
+      <span id="tpEmailShow"></span>
+      &nbsp;<span style="padding:3px 9px;background:rgba(27,174,204,.12);border-radius:20px;font-size:10px;color:#1BAECC;font-weight:700;">&#127979; TEACHER</span>
+    </div>
+    <div class="tp-body">
+      <div id="tpOk">&#10003; Profile saved!</div>
+      <div class="tp-row">
+        <div class="tp-g"><label class="tp-l">Full Name</label><input class="tp-i" id="tpName" type="text" placeholder="Your name"></div>
+        <div class="tp-g"><label class="tp-l">Subject / Role</label><input class="tp-i" id="tpRole" type="text" placeholder="e.g. Cybersecurity"></div>
+      </div>
+      <div class="tp-g"><label class="tp-l">Short Bio</label><textarea class="tp-i" id="tpBio" rows="2" style="resize:vertical" placeholder="Brief description..."></textarea></div>
+      <div class="tp-note"><strong style="color:#1BAECC">&#128274; Password Reset:</strong> Go to your <strong>Supabase dashboard &rarr; Authentication &rarr; Users</strong> to reset your password.</div>
+      <div class="tp-btns">
+        <button class="tp-btn tp-cancel" onclick="closeTeacherProfile()">Cancel</button>
+        <button class="tp-btn tp-save" onclick="saveTeacherProfile()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var _tpImg = '';
+function openTeacherProfile() {
+  var u = window._teacherUser;
+  if (!u) { showNotif('Session not ready.'); return; }
+  var saved = JSON.parse(localStorage.getItem('ki_teacher_profile') || '{}');
+  document.getElementById('tpName').value = saved.name || '';
+  document.getElementById('tpRole').value = saved.role || '';
+  document.getElementById('tpBio').value  = saved.bio  || '';
+  document.getElementById('tpEmailShow').textContent = u.email;
+  _tpImg = saved.avatar || '';
+  var av = document.getElementById('tpAvEl');
+  av.innerHTML = (_tpImg
+    ? '<img src="' + _tpImg + '" style="width:68px;height:68px;border-radius:50%;object-fit:cover;">'
+    : u.email.charAt(0).toUpperCase())
+    + '<div class="tp-cam">&#128247;</div><input type="file" accept="image/*" style="display:none" onchange="tpAvatarPick(this)">';
+  document.getElementById('tpOk').style.display = 'none';
+  document.getElementById('tpModal').classList.add('open');
+}
+function closeTeacherProfile() { document.getElementById('tpModal').classList.remove('open'); }
+function tpAvatarPick(inp) {
+  if (!inp.files || !inp.files[0]) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    _tpImg = e.target.result;
+    var av = document.getElementById('tpAvEl');
+    av.innerHTML = '<img src="' + _tpImg + '" style="width:68px;height:68px;border-radius:50%;object-fit:cover;"><div class="tp-cam">&#128247;</div><input type="file" accept="image/*" style="display:none" onchange="tpAvatarPick(this)">';
+  };
+  r.readAsDataURL(inp.files[0]);
+}
+function saveTeacherProfile() {
+  var name = document.getElementById('tpName').value.trim();
+  var data = { name:name, role:document.getElementById('tpRole').value.trim(), bio:document.getElementById('tpBio').value.trim(), avatar:_tpImg };
+  localStorage.setItem('ki_teacher_profile', JSON.stringify(data));
+  if (name) { var el=document.getElementById('userName'); if(el) el.textContent=name; }
+  if (_tpImg) { var av=document.getElementById('userAv'); if(av) av.innerHTML='<img src="'+_tpImg+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">'; }
+  document.getElementById('tpOk').style.display = 'block';
+  setTimeout(function(){ document.getElementById('tpOk').style.display='none'; closeTeacherProfile(); }, 900);
+}
+function loadTeacherProfile() {
+  var saved = JSON.parse(localStorage.getItem('ki_teacher_profile') || '{}');
+  if (saved.name) { var el=document.getElementById('userName'); if(el) el.textContent=saved.name; }
+  if (saved.avatar) { var av=document.getElementById('userAv'); if(av) av.innerHTML='<img src="'+saved.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">'; }
+}
 </script>
 
 </body>

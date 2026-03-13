@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kulan Institute of Learning</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
   :root {
     --navy: #0B1F3A;
@@ -618,12 +617,12 @@
 
       <h1 class="hero-title">
         Knowledge that <span>Opens Doors</span>
-        <div class="so">Aqoon Furta Albaabada</div>
+        <div class="so">Aqoon Furata Albaabada</div>
       </h1>
 
       <p class="hero-desc">
         Empowering learners with world-class education in Artificial Intelligence, Cybersecurity, and digital skills — at your pace, in your language.
-        <span class="so">In ardayda lagu awoodsiiyo waxbarasho heer caalami ah oo ku saabsan AI, Cybersecurity, iyo xirfadaha dijitaalka — luqaddooda iyo xawaarahooda.</span>
+        <span class="so">Waxbarashada heerka adduunka ah ee ku saabsan Xisaabta Macquulka ah, Amniga Xogta, iyo xirfadaha dhijitaalka — luqaddaada, xawaashkaaga.</span>
       </p>
 
       <div class="hero-btns">
@@ -795,7 +794,7 @@
       <div class="c-info">
         <div class="c-info-item">
           <div class="c-icon">📧</div>
-          <div><div class="c-lbl">Email</div><div class="c-val"><a href="/cdn-cgi/l/email-protection#0f666169604f647a636e6166617c7b667b7a7b6a21607d68" style="color:inherit;text-decoration:none;"><span class="__cf_email__" data-cfemail="cba2a5ada48ba0bea7aaa5a2a5b8bfa2bfbebfaee5a4b9ac">[email&#160;protected]</span></a></div></div>
+          <div><div class="c-lbl">Email</div><div class="c-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="adc4c3cbc2edc6d8c1ccc3c4c3ded9c4d9d8d9c883c2dfca">[email&#160;protected]</a></div></div>
         </div>
         <div class="c-info-item">
           <div class="c-icon">🌐</div>
@@ -814,8 +813,8 @@
         <div class="so">Isdiiwaangeli ama Nala Soo Xiriir</div>
       </div>
 
-      <form name="enrollment" method="POST" data-netlify="true">
-        <input type="hidden" name="form-name" value="enrollment">
+      <form action="https://formspree.io/f/mqeybogq" method="POST">
+        <input type="hidden" name="_subject" value="New Enrollment — Kulan Institute">
 
         <div class="f-row">
           <div class="f-group">
@@ -872,10 +871,18 @@
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  const toggle = document.getElementById('langToggle');
-  const btnEN  = document.getElementById('btnEN');
-  const btnSO  = document.getElementById('btnSO');
-  let soOn = false;
-
-  toggle.addEventListener('click', () => {
-   
+  var toggle = document.getElementById('langToggle');
+  var soOn = false;
+  toggle.addEventListener('click', function() {
+    soOn = !soOn;
+    if (soOn) {
+      document.body.classList.add('somali-on');
+      toggle.textContent = 'English';
+    } else {
+      document.body.classList.remove('somali-on');
+      toggle.textContent = '+ Somali';
+    }
+  });
+</script>
+</body>
+</html>

@@ -5,30 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Login — Kulan Institute</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
 <style>
   :root { --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --gold:#D4A843; --teal:#0E7C7B; --white:#FFFFFF; }
   * { margin:0; padding:0; box-sizing:border-box; }
-
   body {
     font-family:'DM Sans',sans-serif;
     background:linear-gradient(160deg,#1a0a2e 0%,#0B1F3A 50%,#1A3C6E 100%);
     min-height:100vh; display:flex; align-items:center; justify-content:center;
     position:relative; overflow:hidden;
   }
-
   .grid-bg {
     position:absolute; inset:0;
     background-image:linear-gradient(rgba(212,168,67,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,67,0.04) 1px,transparent 1px);
     background-size:60px 60px;
   }
-
   .glow {
     position:absolute; width:500px; height:500px;
     background:radial-gradient(circle,rgba(212,168,67,0.1) 0%,transparent 70%);
     right:-100px; top:-100px; border-radius:50%;
   }
-
   .card {
     position:relative; z-index:1;
     background:rgba(255,255,255,0.04);
@@ -37,7 +38,6 @@
     width:100%; max-width:440px;
     backdrop-filter:blur(12px); text-align:center;
   }
-
   .logo { display:inline-flex; align-items:center; gap:12px; text-decoration:none; margin-bottom:32px; }
   .logo-icon {
     width:48px; height:48px;
@@ -47,56 +47,50 @@
   }
   .logo-text .t1 { font-size:14px; font-weight:600; color:var(--white); text-align:left; }
   .logo-text .t2 { font-size:11px; color:rgba(212,168,67,0.7); text-align:left; }
-
   .badge {
     display:inline-flex; align-items:center; gap:6px;
     background:rgba(212,168,67,0.1); border:1px solid rgba(212,168,67,0.25);
     border-radius:20px; padding:5px 14px; font-size:12px; font-weight:600;
     color:var(--gold); margin-bottom:20px;
   }
-
   h1 { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--white); margin-bottom:8px; }
-  .subtitle { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:36px; line-height:1.6; }
-
+  .subtitle { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:24px; line-height:1.6; }
+  .f-input {
+    width:100%; padding:13px 16px; border-radius:10px;
+    border:1.5px solid rgba(212,168,67,0.2);
+    background:rgba(255,255,255,0.05); color:#fff;
+    font-family:'DM Sans',sans-serif; font-size:14px;
+    outline:none; transition:border .2s; margin-bottom:12px;
+  }
+  .f-input:focus { border-color:var(--gold); background:rgba(255,255,255,0.08); }
+  .f-input::placeholder { color:rgba(255,255,255,0.25); }
   .login-btn {
     width:100%;
     background:linear-gradient(135deg,var(--gold),#e8c060);
     color:var(--navy); border:none; border-radius:12px;
     padding:16px; font-size:16px; font-weight:700;
     cursor:pointer; font-family:'DM Sans',sans-serif;
-    transition:transform 0.2s,box-shadow 0.2s; margin-bottom:20px;
+    transition:transform 0.2s,box-shadow 0.2s; margin-bottom:16px; margin-top:4px;
   }
   .login-btn:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(212,168,67,0.35); }
-
+  .login-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
   .warning-box {
     background:rgba(212,168,67,0.07); border:1px solid rgba(212,168,67,0.15);
     border-radius:12px; padding:16px; font-size:13px;
-    color:rgba(255,255,255,0.5); line-height:1.7; margin-bottom:24px;
+    color:rgba(255,255,255,0.5); line-height:1.7; margin-bottom:16px;
   }
   .warning-box strong { color:var(--gold); }
-
-  /* Status message shown during/after auth */
-  #statusMsg {
-    display:none; margin-top:16px; padding:14px;
-    border-radius:10px; font-size:13px; line-height:1.6;
+  .status-msg {
+    font-size:13px; padding:10px 14px; border-radius:8px; margin-bottom:12px;
+    display:none; font-weight:500;
   }
-  #statusMsg.error { background:rgba(255,80,80,0.1); border:1px solid rgba(255,80,80,0.2); color:#ff9999; display:block; }
-  #statusMsg.success { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); color:#86efac; display:block; }
-
+  .status-msg.error   { display:block; background:rgba(239,68,68,0.12); color:#fca5a5; border:1px solid rgba(239,68,68,0.2); }
+  .status-msg.success { display:block; background:rgba(34,197,94,0.12); color:#86efac;  border:1px solid rgba(34,197,94,0.2); }
   .divider { text-align:center; color:rgba(255,255,255,0.2); font-size:12px; margin:16px 0; }
-
-  .student-link {
-    display:block; font-size:13px; color:rgba(255,255,255,0.3);
-    text-decoration:none; transition:color 0.2s; margin-top:4px;
-  }
+  .student-link { display:block; font-size:13px; color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s; }
   .student-link:hover { color:var(--cyan); }
-
-  .back-link {
-    display:inline-block; margin-top:20px; font-size:13px;
-    color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s;
-  }
+  .back-link { display:inline-block; margin-top:20px; font-size:13px; color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s; }
   .back-link:hover { color:rgba(255,255,255,0.6); }
-
   @media (max-width:480px) { .card { padding:36px 24px; margin:16px; } h1 { font-size:24px; } }
 </style>
 </head>
@@ -113,62 +107,68 @@
     </div>
   </a>
 
-  <div class="badge">🔐 Admin Portal</div>
+  <div class="badge">&#128272; Admin Portal</div>
   <h1>Admin Access</h1>
   <p class="subtitle">Restricted to authorized administrators and teachers only.</p>
 
-  <button class="login-btn" id="loginBtn">🔑 Admin Sign In</button>
+  <div id="statusMsg" class="status-msg"></div>
 
   <div class="warning-box">
-    <strong>Restricted Area.</strong> Only authorized Kulan Institute administrators can access this panel. Unauthorized access attempts are logged.
+    <strong>Restricted Area.</strong> Only authorized Kulan Institute administrators can access this panel.
   </div>
 
-  <div id="statusMsg"></div>
+  <input type="email"    id="emailInput" class="f-input" placeholder="Admin email address">
+  <input type="password" id="passInput"  class="f-input" placeholder="Password">
+
+  <button class="login-btn" id="loginBtn">&#128273; Admin Sign In</button>
 
   <div class="divider">──────── or ────────</div>
-  <a href="login.html" class="student-link">🎓 Student Login →</a>
-
+  <a href="login.html" class="student-link">&#127891; Student Login &rarr;</a>
   <br>
-  <a href="index.html" class="back-link">← Back to main site</a>
+  <a href="index.html" class="back-link">&larr; Back to main site</a>
 </div>
 
 <script>
-  const ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
+var ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
 
-  function showStatus(msg, type) {
-    const el = document.getElementById('statusMsg');
-    el.textContent = msg;
-    el.className = type; // 'error' or 'success'
+function showStatus(msg, type) {
+  var el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = 'status-msg ' + type;
+}
+
+// Check if already logged in as admin
+_sb.auth.getSession().then(function(result) {
+  var session = result.data.session;
+  if (session && session.user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+    window.location.href = '/admin.html';
   }
+});
 
-  netlifyIdentity.on('init', user => {
-    if (user) {
-      if (user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim()) {
-        showStatus('✅ Verified — loading admin panel...', 'success');
-        setTimeout(() => { window.location.href = '/admin.html'; }, 800);
-      } else {
-        // Someone else is logged in — sign them out silently
-        netlifyIdentity.logout();
-      }
-    }
-  });
-
-  document.getElementById('loginBtn').addEventListener('click', () => {
-    netlifyIdentity.open();
-  });
-
-  netlifyIdentity.on('login', user => {
-    netlifyIdentity.close();
-    if (user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim()) {
-      showStatus('✅ Verified — loading admin panel...', 'success');
-      setTimeout(() => { window.location.href = '/admin.html'; }, 800);
+document.getElementById('loginBtn').addEventListener('click', function() {
+  var email = document.getElementById('emailInput').value.trim();
+  var pass  = document.getElementById('passInput').value;
+  if (!email || !pass) { showStatus('Please enter your email and password.', 'error'); return; }
+  if (email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+    showStatus('Access denied. This portal is for admins only.', 'error');
+    return;
+  }
+  var btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'Verifying...';
+  _sb.auth.signInWithPassword({ email: email, password: pass }).then(function(result) {
+    if (result.error) {
+      showStatus('Incorrect email or password.', 'error');
+      btn.disabled = false; btn.textContent = '\uD83D\uDD73 Admin Sign In';
     } else {
-      showStatus('⛔ Access denied. This portal is for admins only. You have been signed out.', 'error');
-      setTimeout(() => { netlifyIdentity.logout(); }, 2000);
+      showStatus('Verified — loading admin panel...', 'success');
+      setTimeout(function() { window.location.href = '/admin.html'; }, 700);
     }
   });
+});
 
-  netlifyIdentity.init();
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('loginBtn').click();
+});
 </script>
 </body>
 </html>

@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Course Viewer — Kulan Institute</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
 <style>
   :root {
     --navy: #0B1F3A; --blue: #1A3C6E; --cyan: #1BAECC;
@@ -230,18 +235,22 @@
     }
   }
 
-  const authTimeout = setTimeout(() => { window.location.href = '/login.html'; }, 5000);
-  netlifyIdentity.on('init', user => { clearTimeout(authTimeout); startViewer(user); });
-  netlifyIdentity.init();
+  _sb.auth.getSession().then(function(result) {
+  var session = result.data.session;
+  startViewer(session ? session.user : null);
+});
+_sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_OUT') window.location.href = '/login.html';
+});
 
   function loadCourse() {
     const params   = new URLSearchParams(window.location.search);
-    const courseId = params.get('course') || null; // keep as string - IDs like 'c1748392847' break with parseInt
+    var courseId = params.get('course') || null;
 
     const courses   = JSON.parse(localStorage.getItem('ki_courses') || '[]');
     const materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
 
-    const course = courses.find(c => String(c.id) === String(courseId)) || courses[0];
+    var course = courses.find(function(c){ return String(c.id) === String(courseId); }) || courses[0];
     if (!course) return;
 
     // Update header
@@ -319,41 +328,28 @@
     const frame = document.getElementById('contentFrame');
     frame.style.display = 'block';
 
-    // Resolve ki_file_ references (uploaded files stored in localStorage)
-    let resolvedUrl = mat.url;
-    if (mat.isFile || (mat.url && mat.url.startsWith('ki_file_'))) {
-      const fileData = localStorage.getItem(mat.url.startsWith('ki_file_') ? mat.url : 'ki_file_' + mat.id);
-      if (fileData) {
-        resolvedUrl = fileData;
-      } else {
-        document.getElementById('noContent').style.display = 'block';
-        document.getElementById('noContent').textContent = 'File not found in this browser. Files uploaded in the admin panel are only stored in that browser.';
-        frame.style.display = 'none';
-        return;
-      }
-    }
+    let embedUrl = mat.url;
 
-    let embedUrl = resolvedUrl;
-
-    if (mat.isFile || resolvedUrl.startsWith('data:')) {
-      // Uploaded file - use directly in iframe
-      embedUrl = resolvedUrl;
-    } else if (mat.type === 'pdf') {
-      if (resolvedUrl.includes('drive.google.com')) {
-        embedUrl = resolvedUrl.replace('/view', '/preview');
+    if (mat.type === 'pdf') {
+      // Google Drive PDF viewer
+      if (mat.url.includes('drive.google.com')) {
+        embedUrl = mat.url.replace('/view', '/preview');
       } else {
-        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(resolvedUrl)}&embedded=true`;
+        // Generic PDF embed via Google Docs viewer
+        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(mat.url)}&embedded=true`;
       }
     } else if (mat.type === 'video') {
-      const ytMatch = resolvedUrl.match(/(?:v=|youtu\.be\/)([^&\s]+)/);
+      // YouTube embed
+      const ytMatch = mat.url.match(/(?:v=|youtu\.be\/)([^&\s]+)/);
       if (ytMatch) {
         embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}?rel=0`;
       }
     } else if (mat.type === 'ppt') {
-      if (resolvedUrl.includes('drive.google.com')) {
-        embedUrl = resolvedUrl.replace('/view', '/preview');
+      // Google Drive PPT viewer
+      if (mat.url.includes('drive.google.com')) {
+        embedUrl = mat.url.replace('/view', '/preview');
       } else {
-        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(resolvedUrl)}&embedded=true`;
+        embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(mat.url)}&embedded=true`;
       }
     }
 
