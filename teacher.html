@@ -283,6 +283,9 @@ tr:hover td{background:rgba(11,31,58,0.015);}
 </head>
 <body>
 
+</head>
+<body>
+
 <!-- LOADING -->
 <div id="loadingScreen">
   <div class="ld-icon">KI</div>
@@ -682,504 +685,276 @@ tr:hover td{background:rgba(11,31,58,0.015);}
 </div>
 
 <script>
+
 var TEACHER_EMAIL = 'mohamedmohammud@gmail.com';
 
-function setMsg(msg) { document.getElementById('loadingMsg').textContent = msg; }
-function hideLoading() { document.getElementById('loadingScreen').style.display = 'none'; }
-
-function checkTeacher(user) {
-  if (!user) {
-    window.location.href = '/#teacher-portal';
-    return;
-  }
-  if (user.email.toLowerCase().trim() !== TEACHER_EMAIL.toLowerCase().trim()) {
-    document.getElementById('loadingScreen').innerHTML =
-      '<div style="text-align:center;padding:32px;">'
-      + '<div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
-      + '<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: ' + user.email + '</div>'
-      + '<button onclick="_sb.auth.signOut().then(function(){location.href='/#teacher-portal';});" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;font-family:sans-serif;">Sign out and try again</button>'
-      + '</div>';
-    return;
-  }
-  window._teacherUser = user;
-  hideLoading();
-  document.getElementById('page').style.display = 'block';
-  document.getElementById('userEmail').textContent = user.email;
-  document.getElementById('userAv').textContent = user.email.charAt(0).toUpperCase();
-  var name = (user.user_metadata && user.user_metadata.full_name) ? user.user_metadata.full_name : 'Teacher';
-  document.getElementById('userName').textContent = name;
-  document.getElementById('logoutBtn').addEventListener('click', function() { _sb.auth.signOut().then(function() { window.location.href = '/#teacher-portal'; }); });
-  loadTeacherProfile();
-  init();
+function setMsg(msg){ var el=document.getElementById('loadingMsg'); if(el) el.textContent=msg; }
+function hideLoading(){ var el=document.getElementById('loadingScreen'); if(el) el.style.display='none'; }
+function showNotif(msg){
+  var n=document.getElementById('notif'); if(!n)return;
+  n.textContent=msg; n.classList.add('show');
+  setTimeout(function(){ n.classList.remove('show'); },3000);
 }
 
-var _teacherStarted = false;
-function tryTeacher(user) {
-  if (_teacherStarted) return;
-  if (!user) return;
-  _teacherStarted = true;
-  checkTeacher(user);
-}
-_sb.auth.getSession().then(function(result) {
-  tryTeacher(result.data.session ? result.data.session.user : null);
-  if (!result.data.session) {
-    setTimeout(function() {
-      _sb.auth.getSession().then(function(r) {
-        tryTeacher(r.data.session ? r.data.session.user : null);
-      });
-    }, 1500);
-    setTimeout(function() {
-      if (!_teacherStarted) window.location.href = '/login.html';
-    }, 9000);
-  }
-});
-_sb.auth.onAuthStateChange(function(event, session) {
-  if (event === 'SIGNED_IN') tryTeacher(session ? session.user : null);
-  if (event === 'SIGNED_OUT') window.location.href = '/login.html';
-});
+// ── DATA ──
+var courses=[], materials=[], students=[];
 
-// DATA
-var courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
-var materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
-var students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
-function saveCourses() {
-  try { localStorage.setItem('ki_courses', JSON.stringify(courses)); }
-  catch(e) { showNotif('Storage full.'); }
-}
-function saveMaterials() {
-  try {
-    var slim = materials.map(function(m) {
-      if (m.isFile && m.url && m.url.startsWith('data:')) {
-        try { localStorage.setItem('ki_file_' + m.id, m.url); } catch(e) {}
-        var copy = Object.assign({}, m); copy.url = 'ki_file_' + m.id; return copy;
-      }
-      return m;
-    });
-    localStorage.setItem('ki_materials', JSON.stringify(slim));
-  } catch(e) { showNotif('Storage full.'); }
-}
-function saveStudents()  { localStorage.setItem('ki_students',  JSON.stringify(students)); }
-
-function init() {
-  courses = JSON.parse(localStorage.getItem('ki_courses') || '[]');
-  if (courses.length === 0) {
-    courses = [
-      { id:'c1', title:'AI for Beginners', titleSo:'Xisaabta Macquulka ah ee Bilowga', modules:8, level:'Beginner', status:'active', lang:'EN + SO', paid:false, price:0, desc:'An 8-module bilingual course introducing artificial intelligence.' },
-      { id:'c2', title:'Cybersecurity Fundamentals', titleSo:'Aasaaska Amniga Xogta', modules:6, level:'Intermediate', status:'active', lang:'EN + SO', paid:false, price:0, desc:'Core principles of cybersecurity.' },
-      { id:'c3', title:'Digital Literacy', titleSo:'Aqoonta Dhijitaalka ah', modules:0, level:'All Levels', status:'coming', lang:'SO', paid:false, price:0, desc:'Foundational digital skills.' },
-    ];
-    saveCourses();
-  }
-  renderAll();
-}
+function dbToCourse(r){ return {id:r.id,title:r.title||'',titleSo:r.title_so||'',modules:r.modules||0,level:r.level||'Beginner',status:r.status||'active',lang:r.language||'EN + SO',paid:r.paid||false,price:r.price||0,desc:r.description||'',thumb:r.thumbnail||''}; }
+function dbToMaterial(r){ return {id:r.id,courseId:r.course_id,title:r.title||'',type:r.type||'pdf',url:r.url||'',module:r.module_number||1,download:r.allow_download||false,notes:r.notes||''}; }
+function dbToStudent(r){ return {id:r.id,email:r.user_email||'',courseId:r.course_id,progress:r.progress||0}; }
 
 function renderAll() {
-  try {
-    courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
-    materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
-    students  = JSON.parse(localStorage.getItem('ki_students')  || '[]');
-  } catch(e) {}
-  renderStats();
-  renderCourses();
-  renderMaterials();
-  renderStudents();
-  populateSelects();
+  Promise.all([
+    _sb.from('courses').select('*').order('created_at'),
+    _sb.from('materials').select('*').order('module_number'),
+    _sb.from('enrollments').select('*')
+  ]).then(function(results) {
+    if(results[0].data) courses   = results[0].data.map(dbToCourse);
+    if(results[1].data) materials = results[1].data.map(dbToMaterial);
+    if(results[2].data) students  = results[2].data.map(dbToStudent);
+    renderStats(); renderCourses(); renderMaterials(); renderStudents(); populateSelects();
+  });
 }
 
 function renderStats() {
-  document.getElementById('statCourses').textContent   = courses.filter(function(c){ return c.status==='active'; }).length;
+  var active = courses.filter(function(c){return c.status==='active';}).length;
+  document.getElementById('statCourses').textContent   = active;
   document.getElementById('statMaterials').textContent = materials.length;
   document.getElementById('statStudents').textContent  = students.length;
-  document.getElementById('statComing').textContent    = courses.filter(function(c){ return c.status==='coming'; }).length;
-
-  var tbody = document.getElementById('recentActivity');
-  if (!students.length) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:32px;">No students yet.</td></tr>';
-  } else {
-    var recent = students.slice(-6).reverse();
-    tbody.innerHTML = recent.map(function(s) {
-      var c = courses.find(function(x){ return x.id===s.courseId; });
-      return '<tr><td style="font-weight:600;">' + s.name + '</td><td>' + s.email + '</td><td>' + (c?c.title:'—') + '</td><td><span class="badge badge-green">Active</span></td></tr>';
-    }).join('');
-  }
 }
 
-var courseIcons  = ['🤖','🔐','💻','📊','🌐','🧠','📱','🛡️'];
-var courseBgList = ['rgba(27,174,204,0.1)','rgba(212,168,67,0.1)','rgba(14,124,123,0.1)','rgba(11,31,58,0.07)'];
-
 function renderCourses() {
-  var el = document.getElementById('courseList');
-  if (!courses.length) {
-    el.innerHTML = '<div style="color:var(--text-light);padding:20px;">No courses yet. Click "+ Add Course" to create one.</div>';
-    return;
-  }
-  el.innerHTML = courses.map(function(c, i) {
-    var mats = materials.filter(function(m){ return m.courseId===c.id; }).length;
-    var sb = c.status==='active'?'badge-green':c.status==='coming'?'badge-blue':'badge-gray';
-    var sl = c.status==='active'?'Active':c.status==='coming'?'Coming Soon':'Draft';
-    return '<div class="course-row">'
-      + '<div class="course-row-icon" style="background:' + courseBgList[i%courseBgList.length] + '">' + courseIcons[i%courseIcons.length] + '</div>'
-      + '<div class="course-row-info">'
-      + '<div class="course-row-title">' + c.title + (c.titleSo ? ' <span style="font-size:12px;font-style:italic;color:var(--text-light);">— ' + c.titleSo + '</span>' : '') + '</div>'
-      + '<div class="course-row-meta">' + (c.modules||'TBA') + ' modules · ' + c.level + ' · ' + c.lang + ' · ' + mats + ' material' + (mats!==1?'s':'') + '</div>'
-      + '</div>'
-      + '<span class="badge ' + sb + '">' + sl + '</span>'
-      + '<div class="course-row-actions">'
-      + '<button class="btn btn-outline btn-sm" onclick="viewMatsFor(\'' + c.id + '\')">Materials</button>'
-      + '<button class="btn btn-danger btn-sm" onclick="deleteCourse(\'' + c.id + '\')">Delete</button>'
-      + '</div>'
-      + '</div>';
+  var list = document.getElementById('courseList');
+  if (!list) return;
+  if (courses.length===0) { list.innerHTML='<div style="text-align:center;padding:40px;color:#999;">No courses yet.</div>'; return; }
+  list.innerHTML = courses.map(function(c){
+    var mats = materials.filter(function(m){return m.courseId===c.id;}).length;
+    return '<div style="background:#fff;border:1px solid rgba(11,31,58,0.08);border-radius:14px;padding:20px;margin-bottom:12px;">'
+      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">'
+      +'<div><div style="font-weight:700;font-size:15px;color:var(--navy);">'+c.title+'</div>'
+      +(c.titleSo?'<div style="font-size:12px;color:#999;font-style:italic;">'+c.titleSo+'</div>':'')
+      +'<div style="font-size:12px;color:#888;margin-top:6px;">'+mats+' materials &bull; '+c.level+' &bull; <span style="color:'+(c.status==='active'?'var(--teal)':'var(--gold)')+';">'+c.status+'</span></div></div>'
+      +'<button onclick="openMatsFor(''+c.id+'')" style="background:var(--navy);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;">View Materials</button>'
+      +'</div></div>';
   }).join('');
+}
+
+function openMatsFor(courseId) {
+  switchTab('materials', document.querySelectorAll('.nav-item')[2]);
+  setTimeout(function(){
+    var el = document.getElementById('matFilterCourse');
+    if (el) { el.value=courseId; renderMaterials(); }
+  },100);
 }
 
 function renderMaterials() {
-  var filter = document.getElementById('matFilterCourse');
-  var sel = filter ? filter.value : '';
-  if (filter) {
-    filter.innerHTML = '<option value="">All Courses</option>'
-      + courses.map(function(c){ return '<option value="' + c.id + '"' + (c.id===sel?' selected':'') + '>' + c.title + '</option>'; }).join('');
-  }
-  var list = sel ? materials.filter(function(m){ return m.courseId===sel; }) : materials;
-  list = list.slice().sort(function(a,b){ return (a.module||0)-(b.module||0); });
-
-  var el = document.getElementById('matGrid');
-  if (!list.length) {
-    el.innerHTML = '<div style="color:var(--text-light);padding:20px;grid-column:1/-1;">No materials yet. Go to "Upload Materials" to add content.</div>';
-    return;
-  }
-  var typeIcon = {pdf:'📄',video:'🎬',ppt:'📊'};
-  var typeBg   = {pdf:'rgba(239,68,68,0.1)',video:'rgba(27,174,204,0.1)',ppt:'rgba(212,168,67,0.1)'};
-  el.innerHTML = list.map(function(m) {
-    var c = courses.find(function(x){ return x.id===m.courseId; });
-    return '<div class="mat-card">'
-      + '<div class="mat-card-top">'
-      + '<div class="mat-card-icon" style="background:' + (typeBg[m.type]||'rgba(11,31,58,0.07)') + '">' + (typeIcon[m.type]||'📎') + '</div>'
-      + '<div class="mat-card-info">'
-      + '<div class="mat-card-title">Module ' + (m.module||'?') + ': ' + m.title + '</div>'
-      + '<div class="mat-card-meta">' + (c?c.title:'Unknown') + ' · ' + m.type.toUpperCase() + (m.download?' · Downloadable':'') + '</div>'
-      + '</div></div>'
-      + (m.notes ? '<div style="font-size:12px;color:var(--text-light);margin-bottom:12px;line-height:1.5;">' + m.notes + '</div>' : '')
-      + '<div class="mat-card-actions">'
-      + '<a href="' + m.url + '" target="_blank" class="btn btn-outline btn-sm">Preview</a>'
-      + '<button class="btn btn-danger btn-sm" onclick="deleteMaterial(\'' + m.id + '\')">Delete</button>'
-      + '</div>'
-      + '</div>';
+  var list = document.getElementById('matList');
+  if (!list) return;
+  var filterEl = document.getElementById('matFilterCourse');
+  var filter   = filterEl ? filterEl.value : '';
+  var filtered = filter ? materials.filter(function(m){return m.courseId===filter;}) : materials;
+  if (filtered.length===0) { list.innerHTML='<div style="text-align:center;padding:40px;color:#999;">No materials yet.</div>'; return; }
+  var icons = {pdf:'&#128196;',video:'&#127909;',ppt:'&#128202;',other:'&#128190;'};
+  list.innerHTML = filtered.map(function(m){
+    var course = courses.find(function(c){return c.id===m.courseId;});
+    return '<div style="background:#fff;border:1px solid rgba(11,31,58,0.08);border-radius:12px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;">'
+      +'<div style="font-size:22px;">'+(icons[m.type]||icons.other)+'</div>'
+      +'<div style="flex:1;min-width:0;">'
+      +'<div style="font-weight:700;font-size:14px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+m.title+'</div>'
+      +'<div style="font-size:11px;color:#999;margin-top:3px;">Module '+m.module+' &bull; '+(course?course.title:'Unknown')+' &bull; '+m.type.toUpperCase()+'</div></div>'
+      +(m.url&&!m.url.startsWith('ki_file_')?'<a href="'+m.url+'" target="_blank" style="font-size:12px;color:var(--cyan);text-decoration:none;font-weight:600;white-space:nowrap;">Preview</a>':'')
+      +'<button onclick="deleteMaterialT(''+m.id+'')" style="background:rgba(220,38,38,0.08);color:#dc2626;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">&#128465;</button>'
+      +'</div>';
   }).join('');
 }
 
-function renderStudents() {
-  var q = (document.getElementById('studentSearch')||{}).value || '';
-  var list = students.filter(function(s){
-    return !q || s.name.toLowerCase().includes(q.toLowerCase()) || s.email.toLowerCase().includes(q.toLowerCase());
+function deleteMaterialT(id) {
+  if (!confirm('Delete this material?')) return;
+  _sb.from('materials').delete().eq('id',id).then(function(result){
+    if(result.error){showNotif('Error: '+result.error.message);return;}
+    showNotif('Material deleted'); renderAll();
   });
-  document.getElementById('studentCount').textContent = list.length + ' student' + (list.length!==1?'s':'');
-  var tbody = document.getElementById('studentsTable');
-  if (!list.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:32px;">' + (q?'No results':'No students yet. Invite students using the button above.') + '</td></tr>';
-    return;
-  }
-  tbody.innerHTML = list.map(function(s) {
-    var c = courses.find(function(x){ return x.id===s.courseId; });
-    return '<tr>'
-      + '<td style="font-weight:600;">' + s.name + '</td>'
-      + '<td>' + s.email + '</td>'
-      + '<td>' + (c?c.title:'—') + '</td>'
-      + '<td>' + (s.joined||'—') + '</td>'
-      + '<td><button class="btn btn-danger btn-sm" onclick="removeStudent(\'' + s.id + '\')">Remove</button></td>'
-      + '</tr>';
+}
+
+function renderStudents() {
+  var list = document.getElementById('studentList');
+  if (!list) return;
+  if (students.length===0) { list.innerHTML='<div style="text-align:center;padding:40px;color:#999;">No students enrolled yet.</div>'; return; }
+  list.innerHTML = students.map(function(s){
+    var course = courses.find(function(c){return c.id===s.courseId;});
+    return '<div style="background:#fff;border:1px solid rgba(11,31,58,0.08);border-radius:12px;padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;gap:12px;">'
+      +'<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;flex-shrink:0;">'+(s.email||'?').charAt(0).toUpperCase()+'</div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:13px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+s.email+'</div>'
+      +'<div style="font-size:11px;color:#999;margin-top:2px;">'+(course?course.title:'No course')+' &bull; '+(s.progress||0)+'% complete</div></div>'
+      +'</div>';
   }).join('');
 }
 
 function populateSelects() {
-  var opts = '<option value="">Select a course...</option>'
-    + courses.map(function(c){ return '<option value="' + c.id + '">' + c.title + '</option>'; }).join('');
-  var ids = ['upCourse','inviteCourse'];
-  ids.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.innerHTML = opts;
+  ['upCourse','matFilterCourse'].forEach(function(id){
+    var el = document.getElementById(id); if(!el) return;
+    var cur = el.value;
+    var opts = id==='matFilterCourse' ? '<option value="">All Courses</option>' : '<option value="">Select a course...</option>';
+    opts += courses.map(function(c){return '<option value="'+c.id+'">'+c.title+'</option>';}).join('');
+    el.innerHTML = opts;
+    if(cur) el.value = cur;
   });
 }
 
-// UPLOAD
-function updateUploadHint() {
-  var hints = {
-    pdf:   'Upload your PDF to Google Drive → Share as "Anyone with the link" → Copy link → Paste above.',
-    video: 'Upload your video to YouTube → Set as "Unlisted" (not private) → Copy the video URL → Paste above.',
-    ppt:   'Upload your PPT to Google Drive → Share as "Anyone with the link" → Copy link → Paste above.',
-  };
-  document.getElementById('upHint').textContent = hints[document.getElementById('upType').value] || '';
-}
-
-// ── UPLOAD TAB STATE ──
-var _upTab = 'upload';
-var _upFileData = null;
+// ── UPLOAD MATERIAL ──
+var _upTab='upload', _upFileData=null;
 
 function switchUpTab(tab) {
   _upTab = tab;
-  var isUp = tab === 'upload';
-  document.getElementById('upTabUpload').style.background = isUp ? 'var(--navy)' : 'rgba(11,31,58,0.04)';
-  document.getElementById('upTabUpload').style.color      = isUp ? '#fff' : '#666';
-  document.getElementById('upTabLink').style.background   = isUp ? 'rgba(11,31,58,0.04)' : 'var(--navy)';
-  document.getElementById('upTabLink').style.color        = isUp ? '#666' : '#fff';
-  document.getElementById('upPanelUpload').style.display  = isUp ? 'block' : 'none';
-  document.getElementById('upPanelLink').style.display    = isUp ? 'none'  : 'block';
+  var isUp = tab==='upload';
+  document.getElementById('upTabUpload').style.background = isUp?'var(--navy)':'rgba(11,31,58,0.04)';
+  document.getElementById('upTabUpload').style.color      = isUp?'#fff':'#666';
+  document.getElementById('upTabLink').style.background   = isUp?'rgba(11,31,58,0.04)':'var(--navy)';
+  document.getElementById('upTabLink').style.color        = isUp?'#666':'#fff';
+  document.getElementById('upPanelUpload').style.display  = isUp?'block':'none';
+  document.getElementById('upPanelLink').style.display    = isUp?'none':'block';
 }
 function upHandleDrop(ev) {
   ev.preventDefault();
-  document.getElementById('upDropZone').style.borderColor = 'rgba(11,31,58,0.15)';
-  if (ev.dataTransfer.files && ev.dataTransfer.files[0]) processUpFile(ev.dataTransfer.files[0]);
+  document.getElementById('upDropZone').style.borderColor='rgba(11,31,58,0.15)';
+  if(ev.dataTransfer.files&&ev.dataTransfer.files[0]) processUpFile(ev.dataTransfer.files[0]);
 }
-function upFileSelected(inp) { if (inp.files && inp.files[0]) processUpFile(inp.files[0]); }
+function upFileSelected(inp){ if(inp.files&&inp.files[0]) processUpFile(inp.files[0]); }
 function processUpFile(file) {
-  var ext = file.name.split('.').pop().toLowerCase();
-  var icons = {pdf:'📄',mp4:'🎬',mov:'🎬',ppt:'📊',pptx:'📊',doc:'📝',docx:'📝',xlsx:'📊',zip:'📦'};
-  document.getElementById('upFileIcon').textContent = icons[ext] || '📎';
-  document.getElementById('upFileName').textContent = file.name;
-  document.getElementById('upFileSize').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
-  document.getElementById('upFileInfo').style.display = 'block';
-  document.getElementById('upDropZone').style.display = 'none';
-  if (!document.getElementById('upTitle').value.trim())
-    document.getElementById('upTitle').value = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g,' ');
-  if (['mp4','mov','avi'].indexOf(ext) > -1) document.getElementById('upType').value = 'video';
-  else if (['ppt','pptx'].indexOf(ext) > -1) document.getElementById('upType').value = 'ppt';
-  else if (ext === 'pdf') document.getElementById('upType').value = 'pdf';
-  document.getElementById('upProgressWrap').style.display = 'block';
-  document.getElementById('upProgressText').textContent = 'Reading file...';
-  var reader = new FileReader();
-  reader.onprogress = function(e) {
-    if (e.lengthComputable) { var p=Math.round(e.loaded/e.total*100); document.getElementById('upProgressBar').style.width=p+'%'; document.getElementById('upProgressText').textContent=p+'% loaded...'; }
-  };
-  reader.onload = function(e) {
-    document.getElementById('upProgressBar').style.width='100%';
-    document.getElementById('upProgressText').textContent='Ready ✓';
-    _upFileData = { name:file.name, ext:ext, dataUrl:e.target.result };
-  };
-  reader.onerror = function() { showNotif('Could not read file. Try the link tab.'); clearUpFile(); };
+  var ext=file.name.split('.').pop().toLowerCase();
+  var icons={pdf:'📄',mp4:'🎬',mov:'🎬',ppt:'📊',pptx:'📊',doc:'📝',docx:'📝',xlsx:'📊',zip:'📦'};
+  document.getElementById('upFileIcon').textContent=icons[ext]||'📎';
+  document.getElementById('upFileName').textContent=file.name;
+  document.getElementById('upFileSize').textContent=(file.size/1024/1024).toFixed(2)+' MB';
+  document.getElementById('upFileInfo').style.display='block';
+  document.getElementById('upDropZone').style.display='none';
+  if(!document.getElementById('upTitle').value.trim())
+    document.getElementById('upTitle').value=file.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
+  if(['mp4','mov','avi'].indexOf(ext)>-1) document.getElementById('upType').value='video';
+  else if(['ppt','pptx'].indexOf(ext)>-1) document.getElementById('upType').value='ppt';
+  else if(ext==='pdf') document.getElementById('upType').value='pdf';
+  document.getElementById('upProgressWrap').style.display='block';
+  document.getElementById('upProgressText').textContent='Reading file...';
+  var reader=new FileReader();
+  reader.onprogress=function(e){ if(e.lengthComputable){var p=Math.round(e.loaded/e.total*100);document.getElementById('upProgressBar').style.width=p+'%';document.getElementById('upProgressText').textContent=p+'% loaded...';} };
+  reader.onload=function(e){ document.getElementById('upProgressBar').style.width='100%';document.getElementById('upProgressText').textContent='Ready ✓';_upFileData={name:file.name,ext:ext,dataUrl:e.target.result}; };
+  reader.onerror=function(){ showNotif('Could not read file. Try the link tab.'); clearUpFile(); };
   reader.readAsDataURL(file);
 }
 function clearUpFile() {
-  _upFileData = null;
-  document.getElementById('upFileInfo').style.display = 'none';
-  document.getElementById('upDropZone').style.display = 'block';
-  document.getElementById('upFileInput').value = '';
-  document.getElementById('upProgressWrap').style.display = 'none';
-  document.getElementById('upProgressBar').style.width = '0%';
+  _upFileData=null;
+  document.getElementById('upFileInfo').style.display='none';
+  document.getElementById('upDropZone').style.display='block';
+  document.getElementById('upFileInput').value='';
+  document.getElementById('upProgressWrap').style.display='none';
+  document.getElementById('upProgressBar').style.width='0%';
 }
 
 function uploadMaterial() {
-  materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
+  materials = materials; // already loaded
   var courseId = document.getElementById('upCourse').value;
   var title    = document.getElementById('upTitle').value.trim();
   if (!courseId) { showNotif('Please select a course'); return; }
   if (!title)    { showNotif('Please enter a title'); return; }
 
-  var matId = 'm' + Date.now();
-  var url = '', isFile = false, fileName = '';
+  var matId = 'm'+Date.now();
+  var url='', isFile=false;
 
-  if (_upTab === 'upload') {
-    if (!_upFileData) { showNotif('Please select a file to upload.'); return; }
-    try { localStorage.setItem('ki_file_' + matId, _upFileData.dataUrl); }
+  if (_upTab==='upload') {
+    if (!_upFileData) { showNotif('Please select a file.'); return; }
+    try { localStorage.setItem('ki_file_'+matId, _upFileData.dataUrl); }
     catch(e) { showNotif('File too large. Use the Link tab instead.'); return; }
-    url = 'ki_file_' + matId; isFile = true; fileName = _upFileData.name;
+    url='ki_file_'+matId; isFile=true;
   } else {
     url = document.getElementById('upUrl').value.trim();
     if (!url) { showNotif('Please paste a link.'); return; }
-    url = url.replace('/view?usp=sharing','').replace('/view?usp=drive_link','').replace('/view','');
-    if (url.indexOf('drive.google.com/file') > -1 && url.indexOf('/preview') === -1) url += '/preview';
-    var yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
-    if (yt) url = 'https://www.youtube.com/embed/' + yt[1];
+    url=url.replace('/view?usp=sharing','').replace('/view?usp=drive_link','').replace('/view','');
+    if(url.indexOf('drive.google.com/file')>-1&&url.indexOf('/preview')===-1) url+='/preview';
+    var yt=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if(yt) url='https://www.youtube.com/embed/'+yt[1];
   }
 
-  var mat = {
-    id:matId, courseId:courseId, title:title,
-    type:document.getElementById('upType').value,
-    url:url, isFile:isFile, fileName:fileName,
-    module:parseInt(document.getElementById('upModule').value)||1,
-    download:document.getElementById('upDownload').checked,
-    notes:document.getElementById('upNotes').value.trim()
+  var row = {
+    course_id:      courseId,
+    title:          title,
+    type:           document.getElementById('upType').value,
+    url:            url,
+    module_number:  parseInt(document.getElementById('upModule').value)||1,
+    allow_download: document.getElementById('upDownload').checked,
+    notes:          document.getElementById('upNotes').value.trim()||null
   };
-  materials.push(mat);
-  saveMaterials();
-  renderAll();
-  ['upTitle','upUrl','upModule','upNotes'].forEach(function(id){ document.getElementById(id).value=''; });
-  document.getElementById('upDownload').checked = false;
-  clearUpFile(); switchUpTab('upload');
-  showNotif('Material "' + title + '" added!');
-  setTimeout(function(){ switchTab('materials', document.querySelectorAll('.nav-item')[2]); }, 1200);
-}
-
-// COURSE ACTIONS
-function addCourse() {
-  // Always reload from storage first
-  courses = JSON.parse(localStorage.getItem('ki_courses') || '[]');
-
-  var titleEl = document.getElementById('cTitle');
-  var title = titleEl.value.trim();
-  if (!title) {
-    titleEl.style.borderColor = '#dc2626';
-    titleEl.placeholder = 'Please enter a title!';
-    showNotif('Course title is required');
-    setTimeout(function(){ titleEl.style.borderColor = ''; }, 2000);
-    return;
-  }
-  titleEl.style.borderColor = '';
-
-  var newCourse = {
-    id:       'c' + Date.now(),
-    title:    title,
-    titleSo:  document.getElementById('cTitleSo').value.trim(),
-    modules:  parseInt(document.getElementById('cModules').value) || 0,
-    level:    document.getElementById('cLevel').value,
-    status:   document.getElementById('cStatus').value,
-    lang:     document.getElementById('cLang').value,
-    paid:     document.getElementById('cPaid').checked,
-    price:    parseFloat(document.getElementById('cPrice').value) || 0,
-    desc:     document.getElementById('cDesc').value.trim(),
-  };
-
-  courses.push(newCourse);
-  saveCourses();
-
-  // Reset form
-  document.getElementById('cTitle').value    = '';
-  document.getElementById('cTitleSo').value  = '';
-  document.getElementById('cModules').value  = '';
-  document.getElementById('cDesc').value     = '';
-  document.getElementById('cPrice').value    = '';
-  document.getElementById('cPaid').checked   = false;
-  document.getElementById('cPriceWrap').style.display = 'none';
-  document.getElementById('cLevel').selectedIndex  = 0;
-  document.getElementById('cStatus').selectedIndex = 0;
-  document.getElementById('cLang').selectedIndex   = 0;
-
-  closeModal('addCourse');
-  renderAll();
-  showNotif('Course "' + newCourse.title + '" created!');
-  switchTab('courses', document.querySelectorAll('.nav-item')[3]);
-}
-
-function deleteCourse(id) {
-  if (!confirm('Delete this course and all its materials?')) return;
-  courses   = courses.filter(function(c){ return c.id!==id; });
-  materials = materials.filter(function(m){ return m.courseId!==id; });
-  saveCourses(); saveMaterials();
-  renderAll();
-  showNotif('Course deleted');
-}
-
-function viewMatsFor(courseId) {
-  document.getElementById('matFilterCourse').value = courseId;
-  switchTab('materials', document.querySelectorAll('.nav-item')[2]);
-  renderMaterials();
-}
-
-function deleteMaterial(id) {
-  if (!confirm('Delete this material?')) return;
-  materials = materials.filter(function(m){ return m.id!==id; });
-  saveMaterials();
-  renderAll();
-  showNotif('Material deleted');
-}
-
-function inviteStudent() {
-  // Always reload from storage first
-  students = JSON.parse(localStorage.getItem('ki_students') || '[]');
-
-  var nameEl  = document.getElementById('inviteName');
-  var emailEl = document.getElementById('inviteEmail');
-  var name    = nameEl.value.trim();
-  var email   = emailEl.value.trim();
-  var courseId = document.getElementById('inviteCourse').value;
-
-  if (!email) {
-    emailEl.style.borderColor = '#dc2626';
-    showNotif('Email address is required');
-    setTimeout(function(){ emailEl.style.borderColor = ''; }, 2000);
-    return;
-  }
-  if (!email.includes('@')) {
-    emailEl.style.borderColor = '#dc2626';
-    showNotif('Please enter a valid email address');
-    setTimeout(function(){ emailEl.style.borderColor = ''; }, 2000);
-    return;
-  }
-  // Check for duplicate
-  var exists = students.find(function(s){ return s.email.toLowerCase() === email.toLowerCase(); });
-  if (exists) {
-    emailEl.style.borderColor = '#dc2626';
-    showNotif('This student is already enrolled');
-    setTimeout(function(){ emailEl.style.borderColor = ''; }, 2000);
-    return;
-  }
-
-  students.push({
-    id:       's' + Date.now(),
-    name:     name || email.split('@')[0],
-    email:    email,
-    courseId: courseId,
-    joined:   new Date().toLocaleDateString(),
+  _sb.from('materials').insert([row]).select().then(function(result) {
+    if(result.error){showNotif('Error: '+result.error.message);return;}
+    showNotif('Material "'+title+'" added!');
+    ['upTitle','upUrl','upModule','upNotes'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('upDownload').checked=false;
+    clearUpFile(); switchUpTab('upload');
+    renderAll();
+    setTimeout(function(){switchTab('materials',document.querySelectorAll('.nav-item')[2]);},1200);
   });
-  saveStudents();
-
-  // Reset form
-  nameEl.value  = '';
-  emailEl.value = '';
-  document.getElementById('inviteCourse').selectedIndex = 0;
-
-  closeModal('inviteStudent');
-  renderAll();
-  showNotif('Student saved! Now invite via Supabase: Authentication → Users.');
-  switchTab('students', document.querySelectorAll('.nav-item')[4]);
 }
 
-function removeStudent(id) {
-  if (!confirm('Remove this student?')) return;
-  students = students.filter(function(s){ return s.id!==id; });
-  saveStudents();
-  renderAll();
-  showNotif('Student removed');
-}
-
-function exportCSV() {
-  if (!students.length) { showNotif('No students to export'); return; }
-  var rows = [['Name','Email','Course','Enrolled']];
-  students.forEach(function(s) {
-    var c = courses.find(function(x){ return x.id===s.courseId; });
-    rows.push([s.name, s.email, c?c.title:'Unknown', s.joined||'']);
-  });
-  var csv = rows.map(function(r){ return r.map(function(v){ return '"'+v+'"'; }).join(','); }).join('\n');
-  var a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = 'kulan-students.csv';
-  a.click();
-  showNotif('CSV exported!');
-}
-
-// UI
+// ── UI ──
 function switchTab(tab, el) {
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
-  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
-  document.getElementById('tab-' + tab).classList.add('active');
-  if (el) el.classList.add('active');
-  var titles = {overview:'Overview',upload:'Upload Materials',materials:'My Materials',courses:'Courses',students:'Students'};
-  document.getElementById('pageTitle').textContent = titles[tab]||'';
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  var tabEl = document.getElementById('tab-'+tab);
+  if(tabEl) tabEl.classList.add('active');
+  if(el) el.classList.add('active');
+  var titles={overview:'Overview',upload:'Upload Materials',materials:'My Materials',courses:'Courses',students:'Students'};
+  var pt = document.getElementById('pageTitle');
+  if(pt) pt.textContent=titles[tab]||tab;
 }
 
-function openModal(id) { populateSelects(); document.getElementById('modal-' + id).classList.add('open'); }
-function closeModal(id) { document.getElementById('modal-' + id).classList.remove('open'); }
+function init() { renderAll(); }
 
-function showNotif(msg) {
-  var el = document.getElementById('notif');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(function(){ el.classList.remove('show'); }, 3000);
+// ── CHECK TEACHER ──
+function checkTeacher(user) {
+  if (!user) { window.location.href='/login.html'; return; }
+  var role  = user.user_metadata && user.user_metadata.role;
+  var email = user.email.toLowerCase().trim();
+  if (role!=='admin' && role!=='teacher' && email!==TEACHER_EMAIL.toLowerCase()) {
+    document.getElementById('loadingScreen').innerHTML='<div style="text-align:center;padding:32px;"><div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
+      +'<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: '+user.email+'</div>'
+      +'<button onclick="_sb.auth.signOut().then(function(){location.href='/login.html';})" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign out</button>'
+      +'</div>';
+    return;
+  }
+  window._teacherUser = user;
+  hideLoading();
+  document.getElementById('page').style.display='block';
+  document.getElementById('userEmail').textContent=user.email;
+  document.getElementById('userAv').textContent=user.email.charAt(0).toUpperCase();
+  var name=(user.user_metadata&&user.user_metadata.full_name)||user.email.split('@')[0]||'Teacher';
+  document.getElementById('userName').textContent=name;
+  document.getElementById('logoutBtn').addEventListener('click',function(){
+    _sb.auth.signOut().then(function(){window.location.href='/login.html';});
+  });
+  loadTeacherProfile();
+  init();
 }
 
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
+// ── AUTH ──
+var _teacherStarted=false;
+function tryTeacher(user) {
+  if(_teacherStarted) return;
+  if(!user) return;
+  _teacherStarted=true;
+  checkTeacher(user);
+}
+_sb.auth.getSession().then(function(result) {
+  tryTeacher(result.data.session?result.data.session.user:null);
+  if(!result.data.session){
+    setTimeout(function(){_sb.auth.getSession().then(function(r){tryTeacher(r.data.session?r.data.session.user:null);});},1500);
+    setTimeout(function(){if(!_teacherStarted)window.location.href='/login.html';},9000);
+  }
 });
-</script>
+_sb.auth.onAuthStateChange(function(event,session){
+  if(event==='SIGNED_IN') tryTeacher(session?session.user:null);
+  if(event==='SIGNED_OUT') window.location.href='/login.html';
+});
 
+</script>
 
 <!-- ════ TEACHER PROFILE MODAL ════ -->
 <style>
@@ -1290,6 +1065,5 @@ function loadTeacherProfile() {
   if (saved.avatar) { var av=document.getElementById('userAv'); if(av) av.innerHTML='<img src="'+saved.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">'; }
 }
 </script>
-
 </body>
 </html>

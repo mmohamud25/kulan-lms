@@ -227,6 +227,7 @@ var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       document.getElementById('page').style.display = 'block';
       const email = user.email || '';
       const name  = user.user_metadata?.full_name || email.split('@')[0] || 'Student';
+      window._dashUser = user;
       document.getElementById('userEmail').textContent = email;
       document.getElementById('userName').textContent  = name;
       document.getElementById('logoutBtn').addEventListener('click', function() {
@@ -262,8 +263,66 @@ _sb.auth.onAuthStateChange(function(event, session) {
 });
 
   function loadDashboard() {
-    const courses   = JSON.parse(localStorage.getItem('ki_courses')   || '[]');
-    const materials = JSON.parse(localStorage.getItem('ki_materials') || '[]');
+    var uid = window._dashUser ? window._dashUser.id : null;
+    Promise.all([
+      _sb.from('courses').select('*').order('created_at'),
+      _sb.from('materials').select('*').order('module_number'),
+      uid ? _sb.from('enrollments').select('*').eq('user_id', uid) : Promise.resolve({data:[]})
+    ]).then(function(results) {
+      var courses     = results[0].data || [];
+      var materials   = results[1].data || [];
+      var enrollments = results[2].data || [];
+
+      var activeCourses = courses.filter(function(crs){ return crs.status==='active'; });
+      var comingCourses = courses.filter(function(crs){ return crs.status==='coming'; });
+      var totalMats = materials.length;
+      var totalDone = enrollments.reduce(function(acc,e){ return acc+(e.progress||0); },0);
+      var pct = totalMats>0 ? Math.round((totalDone/totalMats)*100) : 0;
+
+      document.getElementById('totalEnrolled').innerHTML  = activeCourses.length + ' <span>courses</span>';
+      document.getElementById('enrolledSub').textContent  = activeCourses.length>0 ? 'Active learner' : 'No active courses yet';
+      document.getElementById('totalCompleted').innerHTML = totalDone + ' <span>/ ' + totalMats + '</span>';
+      document.getElementById('completedBar').style.width = pct + '%';
+      document.getElementById('overallPct').innerHTML     = pct + ' <span>%</span>';
+      document.getElementById('overallBar').style.width   = pct + '%';
+
+      var icons    = ['&#129302;','&#128272;','&#128187;','&#128202;','&#127758;','&#129504;','&#128241;','&#128737;'];
+      var bgs      = ['rgba(27,174,204,0.12)','rgba(212,168,67,0.12)','rgba(14,124,123,0.12)','rgba(11,31,58,0.08)'];
+      var grid     = document.getElementById('coursesGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      activeCourses.forEach(function(crs, i) {
+        var mats     = materials.filter(function(m){ return m.course_id===crs.id; });
+        var enroll   = enrollments.find(function(e){ return e.course_id===crs.id; });
+        var done     = enroll ? (enroll.progress||0) : 0;
+        var total    = mats.length;
+        var cpct     = total>0 ? Math.round((done/total)*100) : 0;
+        var icon     = icons[i % icons.length];
+        var bg       = bgs[i % bgs.length];
+        var card = '<div class="course-card" style="background:'+bg+';border-radius:16px;padding:20px;margin-bottom:14px;">'
+          + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">'
+          + '<div style="font-size:28px;">'+icon+'</div>'
+          + '<div><div style="font-weight:700;color:var(--navy);font-size:15px;">'+crs.title+'</div>'
+          + '<div style="font-size:12px;color:var(--text-light);">'+total+' materials &bull; '+crs.level+'</div></div></div>'
+          + '<div style="height:6px;background:rgba(11,31,58,0.08);border-radius:4px;margin-bottom:8px;overflow:hidden;">'
+          + '<div style="height:100%;width:'+cpct+'%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:4px;transition:width .5s;"></div></div>'
+          + '<div style="display:flex;justify-content:space-between;align-items:center;">'
+          + '<span style="font-size:12px;color:var(--text-light);">'+cpct+'% complete</span>'
+          + '<a href="/course-viewer.html?course='+crs.id+'" style="font-size:13px;font-weight:700;color:var(--cyan);text-decoration:none;">Continue &rarr;</a>'
+          + '</div></div>';
+        grid.innerHTML += card;
+      });
+
+      if (activeCourses.length===0) {
+        grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light);">'
+          + '<div style="font-size:36px;margin-bottom:12px;">&#127891;</div>'
+          + '<div>No courses available yet. Check back soon!</div></div>';
+      }
+    });
+  }nction loadDashboard() {
+    const courses   = [];
+    const materials = [];
 
     const activeCourses = courses.filter(c => c.status === 'active');
     const comingCourses = courses.filter(c => c.status === 'coming');
@@ -272,7 +331,7 @@ _sb.auth.onAuthStateChange(function(event, session) {
     let totalMats = 0, totalDone = 0;
     activeCourses.forEach(c => {
       const mats      = materials.filter(m => m.courseId === c.id);
-      const completed = JSON.parse(localStorage.getItem('ki_completed_' + c.id) || '[]');
+      const completed = [];
       totalMats += mats.length;
       totalDone += completed.length;
     });
@@ -307,7 +366,7 @@ _sb.auth.onAuthStateChange(function(event, session) {
 
       activeCourses.forEach((c, i) => {
         const mats      = materials.filter(m => m.courseId === c.id);
-        const completed = JSON.parse(localStorage.getItem('ki_completed_' + c.id) || '[]');
+        const completed = [];
         const cpPct     = mats.length > 0 ? Math.round((completed.length / mats.length) * 100) : 0;
         const btnText   = completed.length === 0 ? 'Start →' : (completed.length >= mats.length ? 'Review →' : 'Continue →');
         const hasContent = mats.length > 0;
