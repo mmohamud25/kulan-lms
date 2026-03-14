@@ -165,7 +165,7 @@ function forgotPassword() {
   var btn = document.getElementById('loginBtn');
   btn.disabled = true;
   showStatus('Sending reset email...', 'info');
-  _sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://learn.kulaninstitute.org/login.html' }).then(function(result) {
+  _sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://learn.kulaninstitute.org/reset-password.html' }).then(function(result) {
     btn.disabled = false;
     if (result.error) {
       var msg = result.error.message || '';
