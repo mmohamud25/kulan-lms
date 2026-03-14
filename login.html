@@ -3,97 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student Login — Kulan Institute</title>
+<title>Sign In — Kulan Institute of Learning</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
 var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
 </script>
 <style>
-  :root { --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --gold:#D4A843; --teal:#0E7C7B; --white:#FFFFFF; }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    font-family:'DM Sans',sans-serif;
-    background:linear-gradient(160deg,var(--navy) 0%,var(--blue) 60%,#0E3A5A 100%);
-    min-height:100vh; display:flex; align-items:center; justify-content:center;
-    position:relative; overflow:hidden;
-  }
-  .grid-bg {
-    position:absolute; inset:0;
-    background-image:linear-gradient(rgba(27,174,204,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.06) 1px,transparent 1px);
-    background-size:60px 60px;
-  }
-  .glow {
-    position:absolute; width:500px; height:500px;
-    background:radial-gradient(circle,rgba(27,174,204,0.15) 0%,transparent 70%);
-    left:-100px; bottom:-100px; border-radius:50%;
-  }
-  .card {
-    position:relative; z-index:1;
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.12);
-    border-radius:24px; padding:52px 48px;
-    width:100%; max-width:440px;
-    backdrop-filter:blur(12px); text-align:center;
-  }
-  .logo { display:inline-flex; align-items:center; gap:12px; text-decoration:none; margin-bottom:32px; }
-  .logo-icon {
-    width:48px; height:48px;
-    background:linear-gradient(135deg,var(--gold),#e8c060);
-    border-radius:12px; display:flex; align-items:center; justify-content:center;
-    font-family:'Playfair Display',serif; font-weight:900; font-size:22px; color:var(--navy);
-  }
-  .logo-text .t1 { font-size:14px; font-weight:600; color:var(--white); text-align:left; }
-  .logo-text .t2 { font-size:11px; color:rgba(212,168,67,0.7); text-align:left; }
-  .badge {
-    display:inline-flex; align-items:center; gap:6px;
-    background:rgba(27,174,204,0.12); border:1px solid rgba(27,174,204,0.25);
-    border-radius:20px; padding:5px 14px; font-size:12px; font-weight:600;
-    color:var(--cyan); margin-bottom:20px;
-  }
-  h1 { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--white); margin-bottom:8px; }
-  .subtitle { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:28px; line-height:1.6; }
-  .f-input {
-    width:100%; padding:13px 16px; border-radius:10px;
-    border:1.5px solid rgba(255,255,255,0.15);
-    background:rgba(255,255,255,0.07); color:#fff;
-    font-family:'DM Sans',sans-serif; font-size:14px;
-    outline:none; transition:border .2s; margin-bottom:12px;
-  }
-  .f-input:focus { border-color:var(--cyan); background:rgba(255,255,255,0.1); }
-  .f-input::placeholder { color:rgba(255,255,255,0.3); }
-  .login-btn {
-    width:100%;
-    background:linear-gradient(135deg,var(--cyan),var(--teal));
-    color:var(--white); border:none; border-radius:12px;
-    padding:16px; font-size:16px; font-weight:700;
-    cursor:pointer; font-family:'DM Sans',sans-serif;
-    transition:transform 0.2s,box-shadow 0.2s; margin-bottom:12px; margin-top:4px;
-  }
-  .login-btn:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(27,174,204,0.35); }
-  .login-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-  .status-msg {
-    font-size:13px; padding:10px 14px; border-radius:8px; margin-bottom:12px;
-    display:none; font-weight:500;
-  }
-  .status-msg.error   { display:block; background:rgba(239,68,68,0.12); color:#fca5a5; border:1px solid rgba(239,68,68,0.2); }
-  .status-msg.success { display:block; background:rgba(34,197,94,0.12); color:#86efac;  border:1px solid rgba(34,197,94,0.2); }
-  .status-msg.info    { display:block; background:rgba(27,174,204,0.12); color:var(--cyan); border:1px solid rgba(27,174,204,0.2); }
-  .forgot-link { font-size:12px; color:rgba(255,255,255,0.3); cursor:pointer; display:block; margin-bottom:16px; transition:color .2s; }
-  .forgot-link:hover { color:var(--cyan); }
-  .divider { text-align:center; color:rgba(255,255,255,0.2); font-size:12px; margin:16px 0; }
-  .admin-link { display:block; font-size:13px; color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s; margin-top:4px; }
-  .admin-link:hover { color:var(--gold); }
-  .back-link { display:inline-block; margin-top:20px; font-size:13px; color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s; }
-  .back-link:hover { color:rgba(255,255,255,0.6); }
-  @media (max-width:480px) { .card { padding:36px 24px; margin:16px; } h1 { font-size:24px; } }
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'DM Sans',sans-serif;
+  background:linear-gradient(160deg,var(--navy) 0%,var(--blue) 60%,#0E3A5A 100%);
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+}
+.grid-bg {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(27,174,204,0.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(27,174,204,0.06) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.glow1 {
+  position:absolute; width:500px; height:500px;
+  background:radial-gradient(circle,rgba(27,174,204,0.12) 0%,transparent 70%);
+  left:-120px; bottom:-120px; border-radius:50%; pointer-events:none;
+}
+.glow2 {
+  position:absolute; width:400px; height:400px;
+  background:radial-gradient(circle,rgba(212,168,67,0.07) 0%,transparent 70%);
+  right:-80px; top:-80px; border-radius:50%; pointer-events:none;
+}
+
+.card {
+  position:relative; z-index:1;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:24px; padding:52px 48px;
+  width:100%; max-width:440px;
+  backdrop-filter:blur(12px); text-align:center;
+  box-shadow:0 24px 64px rgba(0,0,0,0.3);
+}
+
+.logo { display:inline-flex;align-items:center;gap:12px;text-decoration:none;margin-bottom:32px; }
+.logo-icon {
+  width:48px; height:48px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border-radius:12px; display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-weight:900; font-size:22px; color:var(--navy);
+}
+.logo-text .t1 { font-size:14px;font-weight:600;color:#fff;text-align:left; }
+.logo-text .t2 { font-size:11px;color:rgba(212,168,67,0.7);text-align:left; }
+
+h1 { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;margin-bottom:8px; }
+.subtitle { font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:32px;line-height:1.6; }
+
+/* Fields */
+.f-group { text-align:left; margin-bottom:16px; }
+.f-label { display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,0.45);margin-bottom:7px; }
+.f-input {
+  width:100%; padding:13px 16px; border-radius:10px;
+  border:1.5px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.07); color:#fff;
+  font-family:'DM Sans',sans-serif; font-size:14px;
+  outline:none; transition:border .2s,box-shadow .2s;
+}
+.f-input::placeholder { color:rgba(255,255,255,0.3); }
+.f-input:focus { border-color:rgba(27,174,204,0.6);box-shadow:0 0 0 3px rgba(27,174,204,0.1); }
+.f-input.error { border-color:rgba(239,68,68,0.6); }
+
+/* Password wrapper */
+.pw-wrap { position:relative; }
+.pw-toggle {
+  position:absolute; right:14px; top:50%; transform:translateY(-50%);
+  background:none; border:none; cursor:pointer;
+  color:rgba(255,255,255,0.35); font-size:16px; padding:4px;
+  transition:color .2s;
+}
+.pw-toggle:hover { color:rgba(255,255,255,0.7); }
+
+/* Status */
+.status-msg {
+  font-size:13px; padding:11px 16px; border-radius:10px;
+  margin-bottom:16px; display:none; text-align:center; line-height:1.5;
+}
+.status-msg.error   { display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#fca5a5; }
+.status-msg.success { display:block;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#86efac; }
+.status-msg.info    { display:block;background:rgba(27,174,204,0.1);border:1px solid rgba(27,174,204,0.25);color:#67e8f9; }
+
+/* Sign in button */
+.signin-btn {
+  width:100%; padding:14px; border-radius:12px;
+  background:linear-gradient(135deg,var(--cyan),var(--teal));
+  border:none; color:#fff; font-family:'DM Sans',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer;
+  transition:all .2s; margin-top:4px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.signin-btn:hover:not(:disabled) { transform:translateY(-1px);box-shadow:0 8px 24px rgba(27,174,204,0.3); }
+.signin-btn:disabled { opacity:.6;cursor:not-allowed;transform:none; }
+
+/* Spinner inside button */
+.btn-spinner {
+  width:16px; height:16px; border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff; border-radius:50%;
+  animation:spin .7s linear infinite; display:none;
+}
+@keyframes spin { to{transform:rotate(360deg);} }
+
+/* Forgot password */
+.forgot-link {
+  display:block; text-align:right; font-size:12px;
+  color:rgba(255,255,255,0.35); text-decoration:none;
+  margin-top:5px; margin-bottom:20px; transition:color .2s;
+}
+.forgot-link:hover { color:var(--gold); }
+
+/* Redirect indicator */
+.redirect-bar {
+  display:none; margin-top:20px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px; padding:16px;
+}
+.redirect-bar.show { display:block; }
+.redirect-role { font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:8px; }
+.redirect-role strong { color:#fff; }
+.redirect-progress { height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden; }
+.redirect-fill { height:100%;background:linear-gradient(90deg,var(--cyan),var(--gold));border-radius:2px;width:0%;transition:width .7s ease; }
+
+/* Links row */
+.links-row { margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:center;gap:20px;flex-wrap:wrap; }
+.links-row a { font-size:12px;color:rgba(255,255,255,0.3);text-decoration:none;transition:color .2s; }
+.links-row a:hover { color:var(--gold); }
+
+@media(max-width:480px) {
+  .card { padding:36px 24px; margin:20px; }
+}
 </style>
 </head>
 <body>
+
 <div class="grid-bg"></div>
-<div class="glow"></div>
+<div class="glow1"></div>
+<div class="glow2"></div>
 
 <div class="card">
   <a href="https://kulaninstitute.org" class="logo">
@@ -104,81 +164,153 @@ var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     </div>
   </a>
 
-  <div class="badge">&#127891; Student Portal</div>
   <h1>Welcome Back</h1>
-  <p class="subtitle">Sign in to access your courses and track your progress.</p>
+  <p class="subtitle">Sign in with your email and password.<br>You will be taken to the right place automatically.</p>
 
   <div id="statusMsg" class="status-msg"></div>
 
-  <input type="email"    id="emailInput" class="f-input" placeholder="Email address">
-  <input type="password" id="passInput"  class="f-input" placeholder="Password">
+  <div class="f-group">
+    <label class="f-label">Email Address</label>
+    <input type="email" class="f-input" id="emailInput" placeholder="you@example.com" autocomplete="email">
+  </div>
 
-  <button class="login-btn" id="loginBtn">&#128273; Sign In</button>
+  <div class="f-group">
+    <label class="f-label">Password</label>
+    <div class="pw-wrap">
+      <input type="password" class="f-input" id="passInput" placeholder="Your password" autocomplete="current-password">
+      <button type="button" class="pw-toggle" id="pwToggle" onclick="togglePw()" aria-label="Show password">&#128065;</button>
+    </div>
+    <a href="/reset-password.html" class="forgot-link">Forgot password?</a>
+  </div>
 
-  <span class="forgot-link" onclick="forgotPassword()">Forgot password?</span>
+  <button class="signin-btn" id="loginBtn">
+    <div class="btn-spinner" id="btnSpinner"></div>
+    <span id="btnText">Sign In</span>
+  </button>
 
-  <div class="divider">──────── or ────────</div>
-  <a href="admin-login.html" class="admin-link">&#128272; Admin / Teacher Login &rarr;</a>
-  <br>
-  <a href="https://kulaninstitute.org" class="back-link">&larr; Back to main site</a>
+  <!-- Redirect indicator -->
+  <div class="redirect-bar" id="redirectBar">
+    <div class="redirect-role" id="redirectRole">Verifying your account...</div>
+    <div class="redirect-progress"><div class="redirect-fill" id="redirectFill"></div></div>
+  </div>
+
+  <div class="links-row">
+    <a href="https://kulaninstitute.org">&#127758; Homepage</a>
+    <a href="https://apply.kulaninstitute.org">&#128221; Apply</a>
+    <a href="https://community.kulaninstitute.org">&#128101; Community</a>
+  </div>
 </div>
 
 <script>
+// ── HELPERS ──────────────────────────────────────────────────────
 function showStatus(msg, type) {
   var el = document.getElementById('statusMsg');
   el.textContent = msg;
   el.className = 'status-msg ' + type;
 }
 
-// Check if already logged in
+function setLoading(loading) {
+  var btn     = document.getElementById('loginBtn');
+  var spinner = document.getElementById('btnSpinner');
+  var text    = document.getElementById('btnText');
+  btn.disabled       = loading;
+  spinner.style.display = loading ? 'block' : 'none';
+  text.textContent   = loading ? 'Signing in...' : 'Sign In';
+}
+
+function togglePw() {
+  var input  = document.getElementById('passInput');
+  var toggle = document.getElementById('pwToggle');
+  if (input.type === 'password') {
+    input.type = 'text';
+    toggle.innerHTML = '&#128683;';
+  } else {
+    input.type = 'password';
+    toggle.innerHTML = '&#128065;';
+  }
+}
+
+function showRedirect(roleLabel, destination) {
+  var bar  = document.getElementById('redirectBar');
+  var role = document.getElementById('redirectRole');
+  var fill = document.getElementById('redirectFill');
+  role.innerHTML = 'Signed in as <strong>' + roleLabel + '</strong> — redirecting...';
+  bar.classList.add('show');
+  setTimeout(function() { fill.style.width = '100%'; }, 50);
+  setTimeout(function() { window.location.href = destination; }, 800);
+}
+
+// ── ROLE REDIRECT ────────────────────────────────────────────────
+function redirectByRole(user) {
+  var meta  = user.user_metadata || {};
+  var role  = meta.role || '';
+  var email = (user.email || '').toLowerCase();
+
+  if (email === ADMIN_EMAIL.toLowerCase() || role === 'admin') {
+    showRedirect('Admin', '/admin.html');
+  } else if (role === 'teacher') {
+    showRedirect('Teacher', '/teacher.html');
+  } else {
+    showRedirect('Student', '/dashboard.html');
+  }
+}
+
+// ── SESSION CHECK ────────────────────────────────────────────────
+// If already signed in, redirect immediately
 _sb.auth.getSession().then(function(result) {
-  if (result.data.session) window.location.href = '/dashboard.html';
+  var session = result.data.session;
+  if (session && session.user) {
+    redirectByRole(session.user);
+  }
 });
 
-document.getElementById('loginBtn').addEventListener('click', function() {
+// ── SIGN IN ──────────────────────────────────────────────────────
+function doLogin() {
   var email = document.getElementById('emailInput').value.trim();
   var pass  = document.getElementById('passInput').value;
-  if (!email || !pass) { showStatus('Please enter your email and password.', 'error'); return; }
-  var btn = document.getElementById('loginBtn');
-  btn.disabled = true;
-  btn.textContent = 'Signing in...';
-  showStatus('', '');
-  _sb.auth.signInWithPassword({ email: email, password: pass }).then(function(result) {
-    if (result.error) {
-      showStatus('Incorrect email or password. Please try again.', 'error');
-      btn.disabled = false;
-      btn.textContent = '\uD83D\uDD73 Sign In';
-    } else {
-      showStatus('Signed in! Redirecting...', 'success');
-      setTimeout(function() { window.location.href = '/dashboard.html'; }, 600);
-    }
-  });
-});
 
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') document.getElementById('loginBtn').click();
-});
+  document.getElementById('emailInput').classList.remove('error');
+  document.getElementById('passInput').classList.remove('error');
 
-function forgotPassword() {
-  var email = document.getElementById('emailInput').value.trim();
-  if (!email) { showStatus('Enter your email address above first.', 'error'); return; }
-  var btn = document.getElementById('loginBtn');
-  btn.disabled = true;
-  showStatus('Sending reset email...', 'info');
-  _sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://learn.kulaninstitute.org/reset-password.html' }).then(function(result) {
-    btn.disabled = false;
-    if (result.error) {
-      var msg = result.error.message || '';
-      if (msg.indexOf('seconds') > -1 || msg.indexOf('rate') > -1) {
-        showStatus('Please wait a moment before requesting another reset email.', 'error');
+  if (!email) {
+    document.getElementById('emailInput').classList.add('error');
+    showStatus('Please enter your email address.', 'error');
+    return;
+  }
+  if (!pass) {
+    document.getElementById('passInput').classList.add('error');
+    showStatus('Please enter your password.', 'error');
+    return;
+  }
+
+  setLoading(true);
+
+  _sb.auth.signInWithPassword({ email: email, password: pass })
+    .then(function(result) {
+      if (result.error) {
+        setLoading(false);
+        var msg = result.error.message || 'Sign in failed.';
+        if (msg.toLowerCase().includes('invalid')) {
+          msg = 'Incorrect email or password. Please try again.';
+        } else if (msg.toLowerCase().includes('confirm')) {
+          msg = 'Please confirm your email address before signing in.';
+        }
+        showStatus(msg, 'error');
       } else {
-        showStatus('Could not send reset email. Make sure the address is correct.', 'error');
+        showStatus('', 'info');
+        redirectByRole(result.data.user);
       }
-    } else {
-      showStatus('Reset email sent! Check your inbox (and spam folder).', 'success');
-    }
-  });
+    })
+    .catch(function(err) {
+      setLoading(false);
+      showStatus('Connection error. Please check your internet and try again.', 'error');
+    });
 }
+
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
 </script>
 </body>
 </html>
