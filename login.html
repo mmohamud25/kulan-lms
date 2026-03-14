@@ -96,7 +96,7 @@ var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 <div class="glow"></div>
 
 <div class="card">
-  <a href="index.html" class="logo">
+  <a href="https://kulaninstitute.org" class="logo">
     <div class="logo-icon">KI</div>
     <div class="logo-text">
       <div class="t1">Kulan Institute</div>
@@ -120,7 +120,7 @@ var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   <div class="divider">──────── or ────────</div>
   <a href="admin-login.html" class="admin-link">&#128272; Admin / Teacher Login &rarr;</a>
   <br>
-  <a href="index.html" class="back-link">&larr; Back to main site</a>
+  <a href="https://kulaninstitute.org" class="back-link">&larr; Back to main site</a>
 </div>
 
 <script>
@@ -162,7 +162,7 @@ document.addEventListener('keydown', function(e) {
 function forgotPassword() {
   var email = document.getElementById('emailInput').value.trim();
   if (!email) { showStatus('Enter your email address above first.', 'error'); return; }
-  _sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login.html' }).then(function(result) {
+  _sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://learn.kulaninstitute.org/login.html' }).then(function(result) {
     if (result.error) { showStatus('Could not send reset email. Check the address.', 'error'); }
     else { showStatus('Password reset email sent! Check your inbox.', 'success'); }
   });
