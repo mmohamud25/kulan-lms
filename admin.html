@@ -450,7 +450,7 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
       <div id="teacherFormMsg" style="display:none;padding:11px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;"></div>
       <div style="display:flex;gap:10px;justify-content:flex-end;">
         <button onclick="closeTeacherForm()" style="padding:11px 22px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.15);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-mid);">Cancel</button>
-        <button onclick="createTeacher()" style="padding:11px 22px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--teal),#0a5c5b);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;" id="createTeacherBtn">Create Teacher Account</button>
+        <button onclick="createTeacher()" style="padding:11px 22px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--teal),#0a5c5b);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;" id="createTeacherBtn">Create Teacher Invite</button>
       </div>
     </div>
 
@@ -704,7 +704,7 @@ function showNotif(msg) {
 // ── AUTH ──────────────────────────────────────────────────────────
 var _adminStarted = false;
 var _adminRedirect = setTimeout(function() {
-  if (!_adminStarted) window.location.href = '/admin-login.html';
+  if (!_adminStarted) window.location.href = '/login.html';
 }, 9000);
 
 function tryAdmin(user) {
@@ -716,7 +716,7 @@ function tryAdmin(user) {
 }
 
 function checkAdmin(user) {
-  if (!user) { window.location.href = '/admin-login.html'; return; }
+  if (!user) { window.location.href = '/login.html'; return; }
   var role = user.user_metadata && user.user_metadata.role;
   var isAdmin = role === 'admin' || user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim();
   if (!isAdmin) {
@@ -725,7 +725,7 @@ function checkAdmin(user) {
       '<div style="text-align:center;padding:32px;">'
       + '<div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
       + '<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: ' + esc(user.email) + '</div>'
-      + '<button onclick="_sb.auth.signOut().then(function(){location.href=\'/admin-login.html\';})" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign out and try again</button>'
+      + '<button onclick="_sb.auth.signOut().then(function(){location.href=\'/login.html\';})" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign out and try again</button>'
       + '</div>';
     return;
   }
@@ -734,7 +734,7 @@ function checkAdmin(user) {
   document.getElementById('adminEmail').textContent = user.email;
   document.getElementById('avatarInitial').textContent = user.email.charAt(0).toUpperCase();
   document.getElementById('logoutBtn').addEventListener('click', function() {
-    _sb.auth.signOut().then(function() { window.location.href = '/admin-login.html'; });
+    _sb.auth.signOut().then(function() { window.location.href = '/login.html'; });
   });
   loadAdminProfile();
   renderAll();
@@ -750,7 +750,7 @@ _sb.auth.getSession().then(function(r) {
 });
 _sb.auth.onAuthStateChange(function(event, session) {
   if (event === 'SIGNED_IN')  tryAdmin(session ? session.user : null);
-  if (event === 'SIGNED_OUT') window.location.href = '/admin-login.html';
+  if (event === 'SIGNED_OUT') window.location.href = '/login.html';
 });
 
 // ── DATA ──────────────────────────────────────────────────────────
@@ -999,23 +999,20 @@ function renderStudents() {
 function inviteStudent() {
   var email    = document.getElementById('inviteEmail').value.trim();
   var courseId = document.getElementById('inviteCourse').value;
-  if (!email) { showNotif('Please enter a student email'); return; }
-  if (!email.includes('@')) { showNotif('Please enter a valid email'); return; }
+  if (!email || !email.includes('@')) { showNotif('Please enter a valid student email.'); return; }
   var btn = document.querySelector('#modal-inviteStudent .btn-gold');
-  if (btn) { btn.disabled=true; btn.textContent='Saving...'; }
-  _sb.from('enrollments').insert([{
-    course_id: courseId || null,
-    progress: 0,
-    completed: false,
-    notes: 'invited:'+email
-  }]).select().then(function(result) {
-    if (btn) { btn.disabled=false; btn.textContent='Save Enrollment'; }
-    if (result.error) { showNotif('Error: '+result.error.message); return; }
-    showNotif('Enrollment saved! Now invite via Supabase: Authentication > Users.');
-    closeModal('inviteStudent');
-    document.getElementById('inviteEmail').value='';
-    renderAll();
-  });
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+
+  // Create a teacher invite token for student (reuse invite system)
+  // For now show instructions since we need backend to send real emails
+  showNotif('Email invitation feature requires Supabase email setup. Use Supabase Dashboard > Authentication > Users > Invite User instead.');
+  if (btn) { btn.disabled = false; btn.textContent = 'Send Invite'; }
+
+  // Close modal
+  setTimeout(function() {
+    var overlay = document.getElementById('modal-inviteStudent');
+    if (overlay) overlay.classList.remove('open');
+  }, 1500);
 }
 
 function removeStudent(id) {
@@ -1125,12 +1122,11 @@ function loadAdminProfile() {
 // TEACHERS TAB
 // ═══════════════════════════════════════════════════════════════
 function loadTeachers() {
-  _sb.from('profiles').select('*').eq('role','teacher')
+  _sb.from('teacher_invites').select('*').order('created_at', { ascending: false })
     .then(function(r) {
       renderTeachersList(r.data || []);
     })
     .catch(function() {
-      // profiles table may not exist yet, show empty state
       renderTeachersList([]);
     });
 }
@@ -1139,22 +1135,37 @@ function renderTeachersList(teachers) {
   var list = document.getElementById('teachersList');
   if (!list) return;
   if (teachers.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-light);"><div style="font-size:40px;margin-bottom:12px;">&#128104;&#8205;&#127979;</div><div style="margin-bottom:8px;font-size:15px;font-weight:600;color:var(--text-mid);">No teachers yet</div><div>Click Create Teacher to add your first instructor.</div></div>';
+    list.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-light);"><div style="font-size:40px;margin-bottom:12px;">&#128104;&#8205;&#127979;</div><div style="font-size:15px;font-weight:600;color:var(--text-mid);margin-bottom:6px;">No teachers yet</div><div>Click Create Teacher to invite your first instructor.</div></div>';
     return;
   }
   var html = '';
   teachers.forEach(function(t) {
+    var isPending = t.status === 'pending';
+    var statusColor = isPending ? 'rgba(212,168,67,0.12);color:#b8860b;' : 'rgba(34,197,94,0.1);color:#16a34a;';
+    var statusLabel = isPending ? 'Invite Pending' : 'Active';
     html += '<div style="background:#fff;border-radius:14px;padding:20px 24px;border:1px solid rgba(11,31,58,0.08);display:flex;align-items:center;gap:16px;">';
-    html += '<div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0E7C7B,#0a5c5b);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;">' + (t.full_name ? t.full_name.charAt(0).toUpperCase() : 'T') + '</div>';
-    html += '<div style="flex:1;">';
-    html += '<div style="font-size:15px;font-weight:700;color:var(--navy);">' + esc(t.full_name || 'Teacher') + '</div>';
-    html += '<div style="font-size:13px;color:var(--text-light);margin-top:2px;">' + esc(t.email || '') + '</div>';
-    if (t.subject) html += '<div style="font-size:12px;color:var(--teal);margin-top:3px;">' + esc(t.subject) + '</div>';
+    html += '<div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0E7C7B,#0a5c5b);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;">';
+    html += esc(t.name ? t.name.charAt(0).toUpperCase() : 'T');
     html += '</div>';
-    html += '<span style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(14,124,123,0.1);color:var(--teal);">Teacher</span>';
+    html += '<div style="flex:1;min-width:0;">';
+    html += '<div style="font-size:15px;font-weight:700;color:#0B1F3A;">' + esc(t.name || 'Teacher') + '</div>';
+    html += '<div style="font-size:13px;color:#8a9bb0;margin-top:2px;">' + esc(t.email || '') + '</div>';
+    if (t.subject) html += '<div style="font-size:12px;color:#0E7C7B;margin-top:3px;">' + esc(t.subject) + '</div>';
+    html += '</div>';
+    html += '<span style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;background:' + statusColor + '">' + statusLabel + '</span>';
+    html += '<button onclick="deleteTeacherInvite(\'' + t.id + '\')" style="padding:7px 14px;border-radius:8px;border:none;background:rgba(239,68,68,0.08);font-size:12px;font-weight:600;cursor:pointer;color:#dc2626;">Remove</button>';
     html += '</div>';
   });
   list.innerHTML = html;
+}
+
+function deleteTeacherInvite(id) {
+  if (!confirm('Remove this teacher invite?')) return;
+  _sb.from('teacher_invites').delete().eq('id', id).then(function(r) {
+    if (r.error) { showNotif('Error: ' + r.error.message); return; }
+    showNotif('Invite removed.');
+    loadTeachers();
+  });
 }
 
 function openCreateTeacher() {
@@ -1169,6 +1180,19 @@ function openCreateTeacher() {
 
 function closeTeacherForm() {
   document.getElementById('teacherForm').style.display = 'none';
+  var ir = document.getElementById('inviteResult');
+  if (ir) ir.style.display = 'none';
+}
+
+function copyInviteUrl() {
+  var inp = document.getElementById('inviteUrl');
+  inp.select();
+  navigator.clipboard.writeText(inp.value).then(function() {
+    showNotif('Invite link copied!');
+  }).catch(function() {
+    document.execCommand('copy');
+    showNotif('Invite link copied!');
+  });
 }
 
 function showTeacherMsg(msg, type) {
@@ -1183,44 +1207,38 @@ function showTeacherMsg(msg, type) {
 function createTeacher() {
   var name    = document.getElementById('tName').value.trim();
   var email   = document.getElementById('tEmail').value.trim();
-  var pass    = document.getElementById('tPass').value;
   var subject = document.getElementById('tSubject').value.trim();
 
-  if (!name || !email || !pass) {
-    showTeacherMsg('Please fill in name, email, and password.', 'error');
+  if (!name || !email) {
+    showTeacherMsg('Please fill in name and email.', 'error');
     return;
   }
-  if (pass.length < 8) {
-    showTeacherMsg('Password must be at least 8 characters.', 'error');
+  if (!email.includes('@')) {
+    showTeacherMsg('Please enter a valid email address.', 'error');
     return;
   }
 
   var btn = document.getElementById('createTeacherBtn');
   btn.disabled = true;
-  btn.textContent = 'Creating...';
+  btn.textContent = 'Creating invite...';
 
-  // Sign up the teacher using Supabase auth
-  _sb.auth.signUp({
+  _sb.from('teacher_invites').insert([{
+    name: name,
     email: email,
-    password: pass,
-    options: {
-      data: {
-        full_name: name,
-        role: 'teacher',
-        subject: subject
-      }
-    }
-  }).then(function(result) {
+    subject: subject || null,
+    status: 'pending'
+  }]).select().then(function(result) {
     btn.disabled = false;
-    btn.textContent = 'Create Teacher Account';
+    btn.textContent = 'Create Teacher Invite';
     if (result.error) {
       showTeacherMsg('Error: ' + result.error.message, 'error');
     } else {
-      showTeacherMsg('Teacher account created! Share these credentials: ' + email + ' / (the password you set)', 'success');
-      setTimeout(function() {
-        closeTeacherForm();
-        loadTeachers();
-      }, 3000);
+      var token   = result.data[0].token;
+      var inviteUrl = window.location.origin + '/teacher-join.html?token=' + token;
+      document.getElementById('inviteResult').style.display = 'block';
+      document.getElementById('inviteUrl').value = inviteUrl;
+      showTeacherMsg('Invite created! Share the link below with ' + name + '.', 'success');
+      loadTeachers();
     }
   });
 }
@@ -1231,39 +1249,44 @@ function createTeacher() {
 var _editingPostId = null;
 
 function loadBlogPosts() {
+  var list = document.getElementById('postsList');
+  if (!list) return;
+  list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-light);">Loading posts...</div>';
+  // Admin sees ALL posts including drafts
   _sb.from('posts').select('*').order('published_at', { ascending: false })
     .then(function(r) {
       var posts = r.data || [];
-      var list  = document.getElementById('postsList');
-      if (!list) return;
+      var html = '';
       if (posts.length === 0) {
-        list.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-light);"><div style="font-size:40px;margin-bottom:12px;">&#128221;</div><div>No posts yet. Click New Post to write your first article.</div></div>';
+        html = '<div style="text-align:center;padding:60px;color:var(--text-light);"><div style="font-size:40px;margin-bottom:12px;">&#128221;</div><div style="font-size:15px;font-weight:600;color:var(--text-mid);margin-bottom:6px;">No posts yet</div><div>Click New Post to write your first article.</div></div>';
+        list.innerHTML = html;
         return;
       }
-      var html = '';
       posts.forEach(function(p) {
         var isPublished = p.status === 'published';
-        var statusStyle = isPublished
-          ? 'background:rgba(34,197,94,0.1);color:#16a34a;'
-          : 'background:rgba(11,31,58,0.07);color:#8a9bb0;';
-        var dateStr = p.published_at ? new Date(p.published_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '';
-        var safeId = p.id;
-        html += '<div style="background:#fff;border-radius:14px;padding:20px 24px;border:1px solid rgba(11,31,58,0.08);display:flex;align-items:center;gap:16px;">';
+        var statusBg    = isPublished ? 'rgba(34,197,94,0.1)' : 'rgba(11,31,58,0.07)';
+        var statusColor = isPublished ? '#16a34a' : '#8a9bb0';
+        var dateStr     = p.published_at ? new Date(p.published_at).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : 'Draft';
+        html += '<div style="background:#fff;border-radius:14px;padding:18px 22px;border:1px solid rgba(11,31,58,0.08);display:flex;align-items:center;gap:14px;">';
         html += '<div style="flex:1;min-width:0;">';
-        html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:5px;">';
-        html += '<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;' + statusStyle + '">' + (isPublished ? 'Published' : 'Draft') + '</span>';
+        html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">';
+        html += '<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:' + statusBg + ';color:' + statusColor + ';">' + (isPublished ? 'Published' : 'Draft') + '</span>';
         html += '<span style="font-size:11px;color:#8a9bb0;">' + esc(p.category || '') + '</span>';
+        html += '<span style="font-size:11px;color:#8a9bb0;">' + dateStr + '</span>';
         html += '</div>';
-        html += '<div style="font-size:16px;font-weight:700;color:#0B1F3A;margin-bottom:4px;">' + esc(p.title) + '</div>';
-        html += '<div style="font-size:12px;color:#8a9bb0;">' + dateStr + ' &bull; ' + (p.read_time || 5) + ' min read</div>';
+        html += '<div style="font-size:15px;font-weight:700;color:#0B1F3A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.title) + '</div>';
+        if (p.excerpt) html += '<div style="font-size:12px;color:#8a9bb0;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.excerpt) + '</div>';
         html += '</div>';
         html += '<div style="display:flex;gap:8px;flex-shrink:0;">';
-        html += '<button onclick="editPostById(\'' + safeId + '\')" style="padding:8px 16px;border-radius:8px;border:1.5px solid rgba(11,31,58,0.12);background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:#4a6080;">Edit</button>';
-        html += '<button onclick="deletePost(\'' + p.id + '\')" style="padding:8px 16px;border-radius:8px;border:none;background:rgba(239,68,68,0.08);font-size:12px;font-weight:600;cursor:pointer;color:#dc2626;">Delete</button>';
+        html += '<button onclick="editPostById(\'' + p.id + '\')" style="padding:8px 14px;border-radius:8px;border:1.5px solid rgba(11,31,58,0.12);background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:#4a6080;">Edit</button>';
+        html += '<button onclick="deletePost(\'' + p.id + '\')" style="padding:8px 14px;border-radius:8px;border:none;background:rgba(239,68,68,0.08);font-size:12px;font-weight:600;cursor:pointer;color:#dc2626;">Delete</button>';
         html += '</div>';
         html += '</div>';
       });
       list.innerHTML = html;
+    })
+    .catch(function(err) {
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:#dc2626;">Error loading posts. Make sure fix_rls_v2.sql has been run in Supabase.</div>';
     });
 }
 
