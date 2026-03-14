@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificate of Completion — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+<style>
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
+  --white:#FFFFFF; --bg:#F4F7FB;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); min-height:100vh; }
+
+/* ── LOADING ── */
+#loadingScreen {
+  position:fixed; inset:0;
+  background:linear-gradient(160deg,#0B1F3A,#1A3C6E);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:9999;
+}
+.ld-logo { width:52px;height:52px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:24px;color:var(--navy); }
+.ld-spin { width:28px;height:28px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg);} }
+.ld-text { color:rgba(255,255,255,0.6);font-size:14px; }
+
+/* ── ERROR STATE ── */
+#errorState {
+  display:none; min-height:100vh;
+  align-items:center; justify-content:center;
+  flex-direction:column; gap:16px; text-align:center; padding:40px;
+  background:linear-gradient(160deg,#0B1F3A,#1A3C6E);
+}
+#errorState.visible { display:flex; }
+#errorState .icon { font-size:52px; }
+#errorState h2 { font-family:'Playfair Display',serif;font-size:24px;color:#fff; }
+#errorState p { font-size:14px;color:rgba(255,255,255,0.5);max-width:400px;line-height:1.7; }
+#errorState a { color:var(--cyan);text-decoration:none;font-weight:600; }
+
+/* ── TOOLBAR (screen only) ── */
+#toolbar {
+  display:none; background:var(--navy); padding:14px 32px;
+  align-items:center; justify-content:space-between;
+  border-bottom:1px solid rgba(212,168,67,0.2); position:sticky; top:0; z-index:10;
+}
+#toolbar.visible { display:flex; }
+.tb-logo { display:flex;align-items:center;gap:10px;text-decoration:none; }
+.tb-icon { width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:15px;color:var(--navy); }
+.tb-name { font-size:13px;font-weight:600;color:#fff; }
+.tb-actions { display:flex;gap:10px; }
+.btn-print {
+  padding:10px 22px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);
+}
+.btn-print:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,168,67,0.35); }
+.btn-back { padding:10px 18px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.7);transition:all .2s; }
+.btn-back:hover { border-color:rgba(255,255,255,0.5);color:#fff; }
+
+/* ── CERT WRAPPER ── */
+#certWrapper {
+  display:none; padding:48px 24px; min-height:calc(100vh - 62px);
+  align-items:center; justify-content:center;
+}
+#certWrapper.visible { display:flex; }
+
+/* ── CERTIFICATE ── */
+.certificate {
+  width:100%; max-width:860px;
+  background:#fff; position:relative; overflow:hidden;
+  box-shadow:0 24px 80px rgba(11,31,58,0.18);
+}
+
+/* Outer border frame */
+.cert-frame {
+  position:absolute; inset:12px;
+  border:2px solid var(--gold); pointer-events:none; z-index:1;
+}
+.cert-frame::before {
+  content:''; position:absolute; inset:6px;
+  border:1px solid rgba(212,168,67,0.3);
+}
+
+/* Corner ornaments */
+.cert-corner {
+  position:absolute; width:48px; height:48px; z-index:2;
+}
+.cert-corner.tl { top:8px; left:8px; border-top:3px solid var(--gold); border-left:3px solid var(--gold); }
+.cert-corner.tr { top:8px; right:8px; border-top:3px solid var(--gold); border-right:3px solid var(--gold); }
+.cert-corner.bl { bottom:8px; left:8px; border-bottom:3px solid var(--gold); border-left:3px solid var(--gold); }
+.cert-corner.br { bottom:8px; right:8px; border-bottom:3px solid var(--gold); border-right:3px solid var(--gold); }
+
+/* Background watermark */
+.cert-watermark {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-size:160px; font-weight:900;
+  color:rgba(11,31,58,0.025); pointer-events:none; z-index:0; letter-spacing:-8px;
+  user-select:none;
+}
+
+/* Certificate content */
+.cert-body { position:relative; z-index:3; padding:60px 72px; text-align:center; }
+
+/* Header */
+.cert-header { margin-bottom:36px; }
+.cert-logo-wrap { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:20px; }
+.cert-logo-icon {
+  width:64px; height:64px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border-radius:16px; display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-weight:900; font-size:28px; color:var(--navy);
+  box-shadow:0 6px 20px rgba(212,168,67,0.3);
+}
+.cert-institute-name { text-align:left; }
+.cert-institute-name .line1 { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy); }
+.cert-institute-name .line2 { font-size:12px;color:var(--teal);font-weight:600;letter-spacing:.8px;text-transform:uppercase; }
+
+.cert-divider {
+  height:2px; margin:0 auto 28px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);
+}
+
+/* Main text */
+.cert-label { font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--text-light);margin-bottom:8px;color:#7A94B0; }
+.cert-title { font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:var(--navy);letter-spacing:-1px;line-height:1.1;margin-bottom:6px; }
+.cert-subtitle { font-size:14px;color:#7A94B0;letter-spacing:.5px;margin-bottom:36px; }
+
+.cert-presented { font-size:14px;color:#3D5A80;margin-bottom:10px; }
+.cert-name { font-family:'Great Vibes',cursive;font-size:64px;color:var(--navy);line-height:1.2;margin-bottom:6px; }
+.cert-name-fallback { font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--navy);line-height:1.2;margin-bottom:6px; }
+
+.cert-course-pre { font-size:14px;color:#3D5A80;margin-bottom:8px;margin-top:20px; }
+.cert-course { font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--blue);margin-bottom:8px; }
+.cert-course-meta { font-size:13px;color:#7A94B0;margin-bottom:32px; }
+
+/* Seal area */
+.cert-seal-row { display:flex;align-items:center;justify-content:space-between;margin-top:40px;padding-top:32px;border-top:1px solid rgba(11,31,58,0.08); }
+
+.cert-sig { text-align:center;flex:1; }
+.cert-sig-name { font-family:'Great Vibes',cursive;font-size:32px;color:var(--navy);margin-bottom:4px; }
+.cert-sig-line { width:160px;height:1px;background:rgba(11,31,58,0.2);margin:8px auto; }
+.cert-sig-label { font-size:11px;color:#7A94B0;text-transform:uppercase;letter-spacing:.8px; }
+
+.cert-seal {
+  width:110px;height:110px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  box-shadow:0 8px 28px rgba(11,31,58,0.25);
+  border:3px solid var(--gold);
+}
+.cert-seal .seal-icon { font-size:28px;margin-bottom:3px; }
+.cert-seal .seal-text { font-size:8px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase; }
+.cert-seal .seal-year { font-size:10px;font-weight:700;color:rgba(255,255,255,0.7); }
+
+/* Footer info */
+.cert-footer { margin-top:28px;padding-top:16px;border-top:1px solid rgba(11,31,58,0.06);display:flex;justify-content:space-between;align-items:center; }
+.cert-id { font-size:10px;color:#aaa;letter-spacing:.5px; }
+.cert-date { font-size:11px;color:#7A94B0; }
+.cert-verify { font-size:10px;color:var(--teal); }
+
+/* ── PRINT ── */
+@media print {
+  body { background:#fff; }
+  #toolbar, #certWrapper { display:block !important; padding:0 !important; }
+  #toolbar { display:none !important; }
+  .certificate { box-shadow:none; max-width:100%; width:100%; }
+  .btn-print, .btn-back { display:none; }
+  @page { margin:0; size:landscape; }
+}
+
+@media(max-width:600px) {
+  .cert-body { padding:40px 28px; }
+  .cert-name { font-size:44px; }
+  .cert-title { font-size:28px; }
+  .cert-seal-row { flex-direction:column; gap:24px; }
+}
+</style>
+</head>
+<body>
+
+<div id="loadingScreen">
+  <div class="ld-logo">KI</div>
+  <div class="ld-spin"></div>
+  <div class="ld-text">Generating your certificate...</div>
+</div>
+
+<div id="errorState">
+  <div class="icon">&#128683;</div>
+  <h2 id="errorTitle">Certificate Not Available</h2>
+  <p id="errorDesc">You need to complete all course materials before your certificate is issued.</p>
+  <a href="/dashboard.html">&larr; Back to Dashboard</a>
+</div>
+
+<div id="toolbar">
+  <a href="/dashboard.html" class="tb-logo">
+    <div class="tb-icon">KI</div>
+    <span class="tb-name">Kulan Institute of Learning</span>
+  </a>
+  <div class="tb-actions">
+    <button class="btn-back" onclick="window.location.href='/dashboard.html'">&larr; Dashboard</button>
+    <button class="btn-print" onclick="window.print()">&#128438; Download / Print</button>
+  </div>
+</div>
+
+<div id="certWrapper">
+  <div class="certificate" id="certificate">
+    <div class="cert-frame"></div>
+    <div class="cert-corner tl"></div>
+    <div class="cert-corner tr"></div>
+    <div class="cert-corner bl"></div>
+    <div class="cert-corner br"></div>
+    <div class="cert-watermark">KI</div>
+
+    <div class="cert-body">
+      <div class="cert-header">
+        <div class="cert-logo-wrap">
+          <div class="cert-logo-icon">KI</div>
+          <div class="cert-institute-name">
+            <div class="line1">Kulan Institute of Learning</div>
+            <div class="line2">learn.kulaninstitute.org</div>
+          </div>
+        </div>
+        <div class="cert-divider" style="width:280px;"></div>
+        <div class="cert-label">Certificate of Completion</div>
+        <h1 class="cert-title">This certifies that</h1>
+        <div class="cert-subtitle">the following individual has successfully completed</div>
+      </div>
+
+      <div class="cert-name" id="certName">Student Name</div>
+
+      <div class="cert-course-pre">has successfully completed</div>
+      <div class="cert-course" id="certCourse">Course Name</div>
+      <div class="cert-course-meta" id="certMeta">Bilingual EN + SO &bull; Kulan Institute of Learning</div>
+
+      <div class="cert-divider" style="width:320px;margin-top:0;margin-bottom:0;"></div>
+
+      <div class="cert-seal-row">
+        <div class="cert-sig">
+          <div class="cert-sig-name">Mohamud Mohamed</div>
+          <div class="cert-sig-line"></div>
+          <div class="cert-sig-label">Founder &amp; Instructor</div>
+          <div class="cert-sig-label" style="margin-top:3px;color:var(--teal);">Kulan Institute of Learning</div>
+        </div>
+
+        <div class="cert-seal">
+          <div class="seal-icon">&#127979;</div>
+          <div class="seal-text">Kulan</div>
+          <div class="seal-text">Institute</div>
+          <div class="seal-year" id="certYear">2026</div>
+        </div>
+
+        <div class="cert-sig">
+          <div class="cert-sig-name" id="certDate" style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;color:var(--navy);">—</div>
+          <div class="cert-sig-line"></div>
+          <div class="cert-sig-label">Date of Completion</div>
+          <div class="cert-sig-label" style="margin-top:3px;color:var(--navy);font-weight:600;" id="certLevel">—</div>
+        </div>
+      </div>
+
+      <div class="cert-footer">
+        <div class="cert-id" id="certId">Certificate ID: —</div>
+        <div class="cert-verify">&#10003; Issued by Kulan Institute of Learning</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var _certUser = null;
+var _started  = false;
+
+// ── AUTH ──────────────────────────────────────────────────────────
+function tryStart(user) {
+  if (_started) return;
+  if (!user) return;
+  _started = true;
+  _certUser = user;
+  loadCertificate();
+}
+
+_sb.auth.getSession().then(function(r) {
+  tryStart(r.data.session ? r.data.session.user : null);
+  if (!r.data.session) {
+    setTimeout(function() {
+      _sb.auth.getSession().then(function(r2) { tryStart(r2.data.session ? r2.data.session.user : null); });
+    }, 1500);
+    setTimeout(function() { if (!_started) window.location.href = '/login.html'; }, 9000);
+  }
+});
+_sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_IN')  tryStart(session ? session.user : null);
+  if (event === 'SIGNED_OUT') window.location.href = '/login.html';
+});
+
+// ── LOAD CERTIFICATE ──────────────────────────────────────────────
+function loadCertificate() {
+  var params   = new URLSearchParams(window.location.search);
+  var courseId = params.get('course');
+  if (!courseId) { showError('No course specified', 'Please access this page from your dashboard.'); return; }
+
+  Promise.all([
+    _sb.from('courses').select('*').eq('id', courseId).single(),
+    _sb.from('materials').select('*').eq('course_id', courseId),
+    _sb.from('enrollments').select('*').eq('user_id', _certUser.id).eq('course_id', courseId).single()
+  ]).then(function(results) {
+    var course     = results[0].data;
+    var materials  = results[1].data || [];
+    var enrollment = results[2].data;
+
+    if (!course) { showError('Course not found', 'This course does not exist.'); return; }
+
+    var totalMats  = materials.length;
+    var done       = enrollment ? (enrollment.progress || 0) : 0;
+    var completed  = enrollment && enrollment.completed_materials ? enrollment.completed_materials : [];
+
+    // Check if fully complete
+    if (totalMats > 0 && completed.length < totalMats) {
+      showError(
+        'Course Not Yet Complete',
+        'You have completed ' + completed.length + ' of ' + totalMats + ' materials. Finish all materials to earn your certificate.'
+      );
+      return;
+    }
+
+    // Generate cert
+    buildCertificate(course, enrollment);
+  }).catch(function(err) {
+    showError('Could not load certificate', 'Please try again or contact support.');
+  });
+}
+
+// ── BUILD CERTIFICATE ─────────────────────────────────────────────
+function buildCertificate(course, enrollment) {
+  // Student name
+  var email    = _certUser.email || '';
+  var meta     = _certUser.user_metadata || {};
+  var fullName = meta.full_name || meta.name || email.split('@')[0] || 'Student';
+  // Capitalize
+  fullName = fullName.split(' ').map(function(w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
+
+  // Date
+  var completedDate = enrollment && enrollment.updated_at
+    ? new Date(enrollment.updated_at)
+    : new Date();
+  var dateStr = completedDate.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  var year    = completedDate.getFullYear();
+
+  // Certificate ID — deterministic from user + course + date
+  var certId = 'KI-' + simpleHash(_certUser.id + course.id + year).toString().substr(0,8).toUpperCase();
+
+  // Populate
+  document.getElementById('certName').textContent    = fullName;
+  document.getElementById('certCourse').textContent  = course.title;
+  document.getElementById('certMeta').textContent    = (course.language || 'EN + SO') + ' \u2022 ' + (course.level || 'All Levels') + ' \u2022 Kulan Institute of Learning';
+  document.getElementById('certDate').textContent    = dateStr;
+  document.getElementById('certLevel').textContent   = course.level || 'All Levels';
+  document.getElementById('certYear').textContent    = year;
+  document.getElementById('certId').textContent      = 'Certificate ID: ' + certId;
+  document.title = 'Certificate — ' + course.title + ' — ' + fullName;
+
+  // Show certificate
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('toolbar').classList.add('visible');
+  document.getElementById('certWrapper').classList.add('visible');
+
+  // Save cert record to Supabase if not already saved
+  saveCertRecord(certId, course.id, fullName, dateStr);
+}
+
+// ── SAVE CERT RECORD ──────────────────────────────────────────────
+function saveCertRecord(certId, courseId, studentName, dateStr) {
+  // Save to enrollments — mark as officially certified
+  _sb.from('enrollments')
+    .update({ completed: true, certificate_id: certId })
+    .eq('user_id', _certUser.id)
+    .eq('course_id', courseId)
+    .then(function() {});
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function simpleHash(str) {
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    var char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+function showError(title, desc) {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('errorTitle').textContent = title;
+  document.getElementById('errorDesc').textContent  = desc;
+  document.getElementById('errorState').classList.add('visible');
+}
+</script>
+</body>
+</html>
