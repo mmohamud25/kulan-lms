@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+<style>
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --teal:#0E7C7B; --white:#FFFFFF;
+  --bg:#F4F7FB; --text:#1a2840; --text-mid:#3D5A80; --text-light:#7A94B0;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* Loading */
+#loadingScreen {
+  position:fixed; inset:0;
+  background:linear-gradient(160deg,#0B1F3A,#1A3C6E);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  z-index:9999; gap:16px;
+}
+.ld-logo {
+  width:48px; height:48px;
+  background:linear-gradient(135deg,var(--gold),#e8c060);
+  border-radius:12px; display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-weight:900; font-size:22px; color:var(--navy);
+}
+.ld-spinner {
+  width:28px; height:28px; border-radius:50%;
+  border:2.5px solid rgba(255,255,255,0.1); border-top-color:var(--cyan);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.ld-text { color:rgba(255,255,255,0.6); font-size:14px; }
+.ld-fallback { font-size:13px; color:rgba(255,255,255,0.3); display:none; }
+.ld-fallback a { color:var(--cyan); }
+
+/* Page */
+#page { display:none; }
+
+/* Topbar */
+.topbar {
+  background:var(--navy); padding:14px 48px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid rgba(212,168,67,0.2);
+  position:sticky; top:0; z-index:10;
+}
+.topbar-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.t-icon {
+  width:36px; height:36px;
+  background:linear-gradient(135deg,var(--gold),#e8c060);
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-weight:900; font-size:16px; color:var(--navy);
+}
+.t-name { font-size:13px; font-weight:600; color:var(--white); }
+.topbar-right { display:flex; align-items:center; gap:14px; }
+.user-pill {
+  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
+  border-radius:20px; padding:7px 16px; font-size:13px; color:rgba(255,255,255,0.8);
+}
+.logout-btn {
+  background:none; border:1px solid rgba(255,255,255,0.2); border-radius:8px;
+  padding:8px 16px; font-size:13px; color:rgba(255,255,255,0.6);
+  cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .2s;
+}
+.logout-btn:hover { color:var(--white); border-color:rgba(255,255,255,0.4); }
+
+/* Main */
+.main { max-width:1100px; margin:0 auto; padding:48px 24px; }
+
+/* Welcome */
+.welcome { margin-bottom:40px; }
+.welcome h1 { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; color:var(--navy); }
+.welcome h1 span { color:var(--gold); }
+.welcome p { font-size:15px; color:var(--text-mid); margin-top:6px; }
+
+/* Progress cards */
+.progress-row { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-bottom:40px; }
+.prog-card { background:var(--white); border-radius:16px; padding:24px; border:1px solid rgba(11,31,58,0.07); }
+.prog-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text-light); margin-bottom:8px; }
+.prog-val { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; color:var(--navy); }
+.prog-val span { font-size:14px; font-weight:400; color:var(--text-light); }
+.prog-sub { font-size:12px; color:var(--text-light); margin-top:4px; }
+.prog-bar-wrap { background:rgba(11,31,58,0.08); border-radius:8px; height:6px; margin-top:12px; }
+.prog-bar { height:6px; border-radius:8px; background:linear-gradient(90deg,var(--cyan),var(--teal)); transition:width .6s ease; }
+
+/* Section */
+.section-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--navy); margin-bottom:20px; }
+
+/* Course rows */
+.courses-list { display:flex; flex-direction:column; gap:16px; margin-bottom:40px; }
+.course-row {
+  background:var(--white); border-radius:16px; padding:24px 28px;
+  border:1px solid rgba(11,31,58,0.07);
+  display:flex; align-items:center; gap:20px; transition:box-shadow .2s;
+}
+.course-row:hover { box-shadow:0 8px 24px rgba(11,31,58,0.08); }
+.course-icon { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; }
+.course-info { flex:1; min-width:0; }
+.course-name { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--navy); }
+.course-name-so { font-size:12px; font-style:italic; color:var(--text-light); margin-top:2px; }
+.course-meta-line { font-size:13px; color:var(--text-light); margin-top:6px; }
+.badge-free { display:inline-block; padding:3px 10px; background:rgba(27,174,204,0.1); color:var(--cyan); border-radius:20px; font-size:11px; font-weight:600; margin-left:8px; }
+.badge-paid { display:inline-block; padding:3px 10px; background:rgba(212,168,67,0.12); color:var(--gold); border-radius:20px; font-size:11px; font-weight:600; margin-left:8px; }
+.course-progress { min-width:180px; }
+.cp-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-light); margin-bottom:6px; }
+.cp-bar-wrap { background:rgba(11,31,58,0.08); border-radius:8px; height:8px; }
+.cp-bar { height:8px; border-radius:8px; transition:width .6s ease; }
+.cp-pct { font-size:12px; color:var(--text-mid); margin-top:5px; font-weight:600; }
+.course-btn {
+  background:linear-gradient(135deg,var(--gold),#e8c060); color:var(--navy);
+  border:none; border-radius:10px; padding:12px 22px;
+  font-size:13px; font-weight:700; cursor:pointer;
+  font-family:'DM Sans',sans-serif; text-decoration:none;
+  white-space:nowrap; flex-shrink:0; transition:transform .2s, box-shadow .2s;
+  display:inline-block;
+}
+.course-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(212,168,67,0.35); }
+.locked-btn {
+  background:rgba(11,31,58,0.06); color:var(--text-light);
+  border:none; border-radius:10px; padding:12px 22px;
+  font-size:13px; font-weight:600; cursor:not-allowed;
+  font-family:'DM Sans',sans-serif; flex-shrink:0;
+}
+
+/* Empty state */
+.empty-state {
+  background:var(--white); border-radius:16px; padding:60px 24px;
+  border:1px solid rgba(11,31,58,0.07); text-align:center; color:var(--text-light);
+}
+.empty-state .e-icon { font-size:44px; margin-bottom:14px; }
+.empty-state .e-title { font-size:18px; font-weight:600; color:var(--text-mid); margin-bottom:8px; }
+.empty-state .e-desc { font-size:14px; line-height:1.7; }
+
+/* Announce */
+.announce {
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  border-radius:16px; padding:28px 32px; color:var(--white);
+  display:flex; align-items:center; gap:20px;
+}
+.announce-icon { font-size:32px; flex-shrink:0; }
+.announce h3 { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; margin-bottom:4px; }
+.announce p { font-size:14px; color:rgba(255,255,255,0.65); line-height:1.6; }
+
+@media(max-width:768px) {
+  .topbar { padding:14px 20px; }
+  .main { padding:32px 16px; }
+  .progress-row { grid-template-columns:1fr; }
+  .course-row { flex-wrap:wrap; }
+  .course-progress { min-width:100%; }
+}
+</style>
+</head>
+<body>
+
+<div id="loadingScreen">
+  <div class="ld-logo">KI</div>
+  <div class="ld-spinner"></div>
+  <div class="ld-text">Loading your dashboard...</div>
+  <div class="ld-fallback" id="ldFallback">
+    Taking too long? <a href="/login.html">Return to login</a>
+  </div>
+</div>
+
+<div id="page">
+  <div class="topbar">
+    <a href="https://kulaninstitute.org" class="topbar-logo">
+      <div class="t-icon">KI</div>
+      <span class="t-name">Kulan Institute of Learning</span>
+    </a>
+    <div class="topbar-right">
+      <div class="user-pill">&#128100; <span id="userEmail">Loading...</span></div>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="welcome">
+      <h1>Welcome back, <span id="userName">Student</span> &#128075;</h1>
+      <p>Here is your learning progress at Kulan Institute.</p>
+    </div>
+
+    <div class="progress-row">
+      <div class="prog-card">
+        <div class="prog-label">Courses Available</div>
+        <div class="prog-val" id="totalEnrolled">0 <span>courses</span></div>
+        <div class="prog-sub" id="enrolledSub">No active courses yet</div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-label">Modules Completed</div>
+        <div class="prog-val" id="totalCompleted">0 <span>/ 0</span></div>
+        <div class="prog-bar-wrap">
+          <div class="prog-bar" id="completedBar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-label">Overall Progress</div>
+        <div class="prog-val" id="overallPct">0 <span>%</span></div>
+        <div class="prog-bar-wrap">
+          <div class="prog-bar" id="overallBar" style="width:0%;background:linear-gradient(90deg,var(--gold),#e8c060)"></div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">My Courses</h2>
+    <div class="courses-list" id="coursesList">
+      <div class="empty-state">
+        <div class="e-icon">&#128218;</div>
+        <div class="e-title">Loading courses...</div>
+      </div>
+    </div>
+
+    <div class="announce">
+      <div class="announce-icon">&#128226;</div>
+      <div>
+        <h3>New modules coming soon!</h3>
+        <p>We are actively building out more course materials. Keep up the great work and check back soon!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var _dashUser    = null;
+var _dashStarted = false;
+
+// ── AUTH ──────────────────────────────────────────────────────────
+function tryDash(user) {
+  if (_dashStarted) return;
+  if (!user) return;
+  _dashStarted = true;
+  _dashUser = user;
+  startDashboard(user);
+}
+
+_sb.auth.getSession().then(function(result) {
+  tryDash(result.data.session ? result.data.session.user : null);
+  if (!result.data.session) {
+    setTimeout(function() {
+      _sb.auth.getSession().then(function(r) {
+        tryDash(r.data.session ? r.data.session.user : null);
+      });
+    }, 1500);
+    // Show fallback link after 5 seconds
+    setTimeout(function() {
+      if (!_dashStarted) {
+        var fb = document.getElementById('ldFallback');
+        if (fb) fb.style.display = 'block';
+      }
+    }, 5000);
+    // Hard redirect after 9 seconds
+    setTimeout(function() {
+      if (!_dashStarted) window.location.href = '/login.html';
+    }, 9000);
+  }
+});
+
+_sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_IN')  tryDash(session ? session.user : null);
+  if (event === 'SIGNED_OUT') window.location.href = '/login.html';
+});
+
+// ── START ─────────────────────────────────────────────────────────
+function startDashboard(user) {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('page').style.display = 'block';
+
+  var email = user.email || '';
+  var name  = (user.user_metadata && user.user_metadata.full_name)
+              || email.split('@')[0]
+              || 'Student';
+
+  document.getElementById('userEmail').textContent = email;
+  document.getElementById('userName').textContent  = name;
+
+  document.getElementById('logoutBtn').addEventListener('click', function() {
+    _sb.auth.signOut().then(function() { window.location.href = '/login.html'; });
+  });
+
+  loadDashboard();
+}
+
+// ── LOAD ──────────────────────────────────────────────────────────
+function loadDashboard() {
+  var uid = _dashUser ? _dashUser.id : null;
+
+  Promise.all([
+    _sb.from('courses').select('*').order('created_at'),
+    _sb.from('materials').select('*').order('module_number'),
+    uid
+      ? _sb.from('enrollments').select('*').eq('user_id', uid)
+      : Promise.resolve({ data: [] })
+  ]).then(function(results) {
+    var courses     = results[0].data || [];
+    var materials   = results[1].data || [];
+    var enrollments = results[2].data || [];
+
+    var activeCourses = courses.filter(function(c) { return c.status === 'active'; });
+    var comingCourses = courses.filter(function(c) { return c.status === 'coming'; });
+
+    // Overall progress
+    var totalMats = materials.length;
+    var totalDone = enrollments.reduce(function(acc, e) { return acc + (e.progress || 0); }, 0);
+    var pct = totalMats > 0 ? Math.round((totalDone / totalMats) * 100) : 0;
+
+    document.getElementById('totalEnrolled').innerHTML  = activeCourses.length + ' <span>courses</span>';
+    document.getElementById('enrolledSub').textContent  = activeCourses.length > 0 ? 'Active learner' : 'No active courses yet';
+    document.getElementById('totalCompleted').innerHTML = totalDone + ' <span>/ ' + totalMats + '</span>';
+    document.getElementById('completedBar').style.width = pct + '%';
+    document.getElementById('overallPct').innerHTML     = pct + ' <span>%</span>';
+    document.getElementById('overallBar').style.width   = pct + '%';
+
+    renderCourseList(activeCourses, comingCourses, materials, enrollments);
+  }).catch(function(err) {
+    document.getElementById('coursesList').innerHTML =
+      '<div class="empty-state"><div class="e-icon">&#9888;</div>'
+      + '<div class="e-title">Could not load courses</div>'
+      + '<div class="e-desc">Please refresh the page. If the problem continues, contact support.</div></div>';
+  });
+}
+
+// ── RENDER COURSES ────────────────────────────────────────────────
+function renderCourseList(activeCourses, comingCourses, materials, enrollments) {
+  var list = document.getElementById('coursesList');
+  var icons    = ['&#129302;','&#128272;','&#128187;','&#128202;','&#127758;','&#129504;','&#128241;','&#128737;'];
+  var bgColors = ['rgba(27,174,204,0.12)','rgba(212,168,67,0.12)','rgba(14,124,123,0.12)','rgba(11,31,58,0.08)'];
+  var barStyles = [
+    'linear-gradient(90deg,var(--cyan),var(--teal))',
+    'linear-gradient(90deg,var(--gold),#e8c060)',
+    'linear-gradient(90deg,var(--teal),#0a5c5b)',
+    'linear-gradient(90deg,var(--blue),var(--navy))'
+  ];
+
+  if (activeCourses.length === 0 && comingCourses.length === 0) {
+    list.innerHTML = '<div class="empty-state">'
+      + '<div class="e-icon">&#128218;</div>'
+      + '<div class="e-title">No courses available yet</div>'
+      + '<div class="e-desc">Your instructor is setting up courses.<br>Check back soon or contact Kulan Institute.</div>'
+      + '</div>';
+    return;
+  }
+
+  var html = '';
+
+  activeCourses.forEach(function(c, i) {
+    var mats       = materials.filter(function(m) { return m.course_id === c.id; });
+    var enroll     = enrollments.find(function(e) { return e.course_id === c.id; });
+    var done       = enroll ? (enroll.progress || 0) : 0;
+    var total      = mats.length;
+    var cpPct      = total > 0 ? Math.round((done / total) * 100) : 0;
+    var hasContent = total > 0;
+    var btnText    = done === 0 ? 'Start &rarr;' : (done >= total && total > 0 ? 'Review &rarr;' : 'Continue &rarr;');
+    var icon       = icons[i % icons.length];
+    var bg         = bgColors[i % bgColors.length];
+    var bar        = barStyles[i % barStyles.length];
+    var priceBadge = c.paid
+      ? '<span class="badge-paid">$' + (c.price || 0) + '</span>'
+      : '<span class="badge-free">Free</span>';
+
+    html += '<div class="course-row">'
+      + '<div class="course-icon" style="background:' + bg + '">' + icon + '</div>'
+      + '<div class="course-info">'
+      + '<div class="course-name">' + esc(c.title) + priceBadge + '</div>'
+      + (c.title_so ? '<div class="course-name-so">' + esc(c.title_so) + '</div>' : '')
+      + '<div class="course-meta-line">'
+      + (c.modules || total || 'TBA') + ' Modules &bull; ' + esc(c.level || 'All Levels')
+      + ' &bull; ' + total + ' material' + (total !== 1 ? 's' : '') + ' available'
+      + '</div>'
+      + '</div>'
+      + '<div class="course-progress">'
+      + '<div class="cp-label">Progress</div>'
+      + '<div class="cp-bar-wrap"><div class="cp-bar" style="width:' + cpPct + '%;background:' + bar + '"></div></div>'
+      + '<div class="cp-pct">' + done + ' of ' + (total || c.modules || '?') + ' complete</div>'
+      + '</div>'
+      + (hasContent
+        ? '<a href="/course-viewer.html?course=' + c.id + '" class="course-btn">' + btnText + '</a>'
+        : '<button class="locked-btn">&#128109; No content yet</button>')
+      + '</div>';
+  });
+
+  comingCourses.forEach(function(c) {
+    html += '<div class="course-row" style="opacity:0.6">'
+      + '<div class="course-icon" style="background:rgba(11,31,58,0.06)">&#128187;</div>'
+      + '<div class="course-info">'
+      + '<div class="course-name">' + esc(c.title) + '</div>'
+      + (c.title_so ? '<div class="course-name-so">' + esc(c.title_so) + '</div>' : '')
+      + '<div class="course-meta-line">Coming Soon &bull; ' + esc(c.level || 'All Levels') + '</div>'
+      + '</div>'
+      + '<div class="course-progress">'
+      + '<div class="cp-label">Status</div>'
+      + '<div class="cp-bar-wrap"><div class="cp-bar" style="width:0%"></div></div>'
+      + '<div class="cp-pct">Not available yet</div>'
+      + '</div>'
+      + '<button class="locked-btn">&#128274; Coming Soon</button>'
+      + '</div>';
+  });
+
+  list.innerHTML = html;
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
