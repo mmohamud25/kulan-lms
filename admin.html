@@ -1122,12 +1122,21 @@ function loadAdminProfile() {
 // TEACHERS TAB
 // ═══════════════════════════════════════════════════════════════
 function loadTeachers() {
-  _sb.from('teacher_invites').select('*').order('created_at', { ascending: false })
+  var list = document.getElementById('teachersList');
+  if (!list) { console.warn('teachersList element not found'); return; }
+  list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-light);">Loading teachers...</div>';
+
+  _sb.from('teacher_invites')
+    .select('*')
+    .order('created_at', { ascending: false })
     .then(function(r) {
+      if (r.error) {
+        list.innerHTML = '<div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:20px 24px;font-size:13px;color:#dc2626;">'
+          + '<strong>Could not load teachers.</strong><br><br>'
+          + 'Run <strong>setup.sql</strong> in Supabase SQL Editor first to create the teacher_invites table.</div>';
+        return;
+      }
       renderTeachersList(r.data || []);
-    })
-    .catch(function() {
-      renderTeachersList([]);
     });
 }
 
@@ -1250,29 +1259,37 @@ var _editingPostId = null;
 
 function loadBlogPosts() {
   var list = document.getElementById('postsList');
-  if (!list) return;
+  if (!list) { console.warn('postsList element not found'); return; }
   list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-light);">Loading posts...</div>';
-  // Admin sees ALL posts including drafts
-  _sb.from('posts').select('*').order('published_at', { ascending: false })
+
+  _sb.from('posts')
+    .select('id, title, excerpt, category, status, published_at, read_time, author')
+    .order('published_at', { ascending: false })
     .then(function(r) {
-      var posts = r.data || [];
-      var html = '';
-      if (posts.length === 0) {
-        html = '<div style="text-align:center;padding:60px;color:var(--text-light);"><div style="font-size:40px;margin-bottom:12px;">&#128221;</div><div style="font-size:15px;font-weight:600;color:var(--text-mid);margin-bottom:6px;">No posts yet</div><div>Click New Post to write your first article.</div></div>';
-        list.innerHTML = html;
+      if (r.error) {
+        list.innerHTML = '<div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:20px 24px;font-size:13px;color:#dc2626;">'
+          + '<strong>Could not load posts.</strong> Error: ' + (r.error.message || 'Unknown error') + '<br><br>'
+          + 'Make sure you have run <strong>setup.sql</strong> in Supabase SQL Editor.</div>';
         return;
       }
+      var posts = r.data || [];
+      if (posts.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-light);"><div style="font-size:40px;margin-bottom:12px;">&#128221;</div><div style="font-size:15px;font-weight:600;color:var(--text-mid);margin-bottom:6px;">No posts yet</div><div>Click New Post to write your first article.</div></div>';
+        return;
+      }
+      var html = '';
       posts.forEach(function(p) {
-        var isPublished = p.status === 'published';
-        var statusBg    = isPublished ? 'rgba(34,197,94,0.1)' : 'rgba(11,31,58,0.07)';
-        var statusColor = isPublished ? '#16a34a' : '#8a9bb0';
-        var dateStr     = p.published_at ? new Date(p.published_at).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : 'Draft';
-        html += '<div style="background:#fff;border-radius:14px;padding:18px 22px;border:1px solid rgba(11,31,58,0.08);display:flex;align-items:center;gap:14px;">';
+        var isPub        = p.status === 'published';
+        var statusBg     = isPub ? 'rgba(34,197,94,0.1)' : 'rgba(11,31,58,0.07)';
+        var statusColor  = isPub ? '#16a34a' : '#8a9bb0';
+        var dateStr      = p.published_at ? new Date(p.published_at).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : 'Draft';
+        html += '<div style="background:#fff;border-radius:14px;padding:18px 22px;border:1px solid rgba(11,31,58,0.08);display:flex;align-items:center;gap:14px;margin-bottom:10px;">';
         html += '<div style="flex:1;min-width:0;">';
         html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">';
-        html += '<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:' + statusBg + ';color:' + statusColor + ';">' + (isPublished ? 'Published' : 'Draft') + '</span>';
+        html += '<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:' + statusBg + ';color:' + statusColor + ';">' + (isPub ? 'Published' : 'Draft') + '</span>';
         html += '<span style="font-size:11px;color:#8a9bb0;">' + esc(p.category || '') + '</span>';
         html += '<span style="font-size:11px;color:#8a9bb0;">' + dateStr + '</span>';
+        html += '<span style="font-size:11px;color:#8a9bb0;">' + (p.read_time || 5) + ' min</span>';
         html += '</div>';
         html += '<div style="font-size:15px;font-weight:700;color:#0B1F3A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.title) + '</div>';
         if (p.excerpt) html += '<div style="font-size:12px;color:#8a9bb0;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.excerpt) + '</div>';
@@ -1280,13 +1297,9 @@ function loadBlogPosts() {
         html += '<div style="display:flex;gap:8px;flex-shrink:0;">';
         html += '<button onclick="editPostById(\'' + p.id + '\')" style="padding:8px 14px;border-radius:8px;border:1.5px solid rgba(11,31,58,0.12);background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:#4a6080;">Edit</button>';
         html += '<button onclick="deletePost(\'' + p.id + '\')" style="padding:8px 14px;border-radius:8px;border:none;background:rgba(239,68,68,0.08);font-size:12px;font-weight:600;cursor:pointer;color:#dc2626;">Delete</button>';
-        html += '</div>';
-        html += '</div>';
+        html += '</div></div>';
       });
       list.innerHTML = html;
-    })
-    .catch(function(err) {
-      list.innerHTML = '<div style="text-align:center;padding:40px;color:#dc2626;">Error loading posts. Make sure fix_rls_v2.sql has been run in Supabase.</div>';
     });
 }
 
