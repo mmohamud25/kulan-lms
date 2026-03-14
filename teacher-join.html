@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join as Teacher — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+<style>
+:root { --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B; }
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'DM Sans',sans-serif;
+  background:linear-gradient(160deg,var(--navy),var(--blue),#0a3a4a);
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+}
+.grid-bg { position:absolute;inset:0;background-image:linear-gradient(rgba(27,174,204,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.05) 1px,transparent 1px);background-size:52px 52px; }
+.glow { position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(14,124,123,0.12),transparent 70%);left:-120px;bottom:-120px;border-radius:50%; }
+
+.card {
+  position:relative;z-index:1;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:24px; padding:52px 48px;
+  width:100%; max-width:460px;
+  backdrop-filter:blur(12px); text-align:center;
+  box-shadow:0 24px 64px rgba(0,0,0,0.3);
+}
+.logo { display:inline-flex;align-items:center;gap:12px;text-decoration:none;margin-bottom:28px; }
+.logo-icon { width:46px;height:46px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:var(--navy); }
+.logo-text .t1 { font-size:13px;font-weight:600;color:#fff;text-align:left; }
+.logo-text .t2 { font-size:10px;color:rgba(212,168,67,0.7);text-align:left; }
+
+.teacher-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(14,124,123,0.15);border:1px solid rgba(14,124,123,0.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:#5eead4;margin-bottom:16px; }
+h1 { font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:8px; }
+.subtitle { font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:28px;line-height:1.6; }
+
+.info-row { background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px 18px;margin-bottom:24px;text-align:left; }
+.info-label { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,0.3);margin-bottom:4px; }
+.info-value { font-size:15px;font-weight:600;color:#fff; }
+
+.f-group { text-align:left;margin-bottom:16px; }
+.f-label { display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,0.4);margin-bottom:7px; }
+.f-input { width:100%;padding:13px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border .2s; }
+.f-input::placeholder { color:rgba(255,255,255,0.25); }
+.f-input:focus { border-color:rgba(14,124,123,0.6);box-shadow:0 0 0 3px rgba(14,124,123,0.1); }
+.f-hint { font-size:11px;color:rgba(255,255,255,0.25);margin-top:5px; }
+
+.strength-bar { height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:8px;overflow:hidden; }
+.strength-fill { height:100%;border-radius:2px;transition:all .3s;width:0%; }
+
+.btn {
+  width:100%;padding:14px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--teal),#0a5c5b);
+  color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:all .2s;margin-top:4px;
+}
+.btn:hover:not(:disabled) { transform:translateY(-1px);box-shadow:0 8px 24px rgba(14,124,123,0.35); }
+.btn:disabled { opacity:.6;cursor:not-allowed;transform:none; }
+
+.status-msg { font-size:13px;padding:11px 16px;border-radius:10px;margin-bottom:16px;display:none;line-height:1.5; }
+.status-msg.error   { display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#fca5a5; }
+.status-msg.success { display:block;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#86efac; }
+
+#loadingState { padding:80px 24px;text-align:center; }
+.ld-spin { width:28px;height:28px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px; }
+@keyframes spin { to{transform:rotate(360deg);} }
+
+#errorState,#successState { display:none;padding:40px 0; }
+#errorState h2,#successState h2 { font-family:'Playfair Display',serif;font-size:24px;color:#fff;margin-bottom:12px; }
+#errorState p,#successState p { font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:20px; }
+.success-icon { font-size:56px;margin-bottom:16px; }
+.go-btn { display:inline-block;padding:13px 28px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-weight:700;font-size:14px;text-decoration:none;transition:all .2s; }
+.go-btn:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,168,67,0.3); }
+
+@media(max-width:480px) { .card { padding:36px 24px;margin:20px; } }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="glow"></div>
+
+<div class="card">
+  <a href="https://kulaninstitute.org" class="logo">
+    <div class="logo-icon">KI</div>
+    <div class="logo-text"><div class="t1">Kulan Institute</div><div class="t2">of Learning</div></div>
+  </a>
+
+  <!-- Loading -->
+  <div id="loadingState">
+    <div class="ld-spin"></div>
+    <div style="color:rgba(255,255,255,0.5);font-size:14px;">Verifying your invite...</div>
+  </div>
+
+  <!-- Error -->
+  <div id="errorState">
+    <h2>Invalid Invite</h2>
+    <p>This invite link is invalid or has already been used. Please contact your administrator for a new link.</p>
+    <a href="https://kulaninstitute.org" class="go-btn">Go to Homepage</a>
+  </div>
+
+  <!-- Form -->
+  <div id="formState" style="display:none;">
+    <div class="teacher-badge">&#128104;&#8205;&#127979; Teacher Invite</div>
+    <h1>Set Up Your Account</h1>
+    <p class="subtitle">You have been invited to join Kulan Institute as an instructor. Set your password to get started.</p>
+
+    <div class="info-row">
+      <div class="info-label">Invited as</div>
+      <div class="info-value" id="inviteName">Loading...</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:3px;" id="inviteEmail"></div>
+    </div>
+
+    <div id="statusMsg" class="status-msg"></div>
+
+    <div class="f-group">
+      <label class="f-label">Password <span style="color:var(--gold);">*</span></label>
+      <input type="password" class="f-input" id="pw1" placeholder="Create a strong password" oninput="checkStrength()">
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+      <div class="f-hint" id="strengthLabel">At least 8 characters</div>
+    </div>
+
+    <div class="f-group">
+      <label class="f-label">Confirm Password <span style="color:var(--gold);">*</span></label>
+      <input type="password" class="f-input" id="pw2" placeholder="Confirm your password">
+    </div>
+
+    <button class="btn" id="joinBtn" onclick="createAccount()">Activate Teacher Account &rarr;</button>
+  </div>
+
+  <!-- Success -->
+  <div id="successState">
+    <div class="success-icon">&#127881;</div>
+    <h2>You are all set!</h2>
+    <p>Your teacher account has been activated. Sign in to access your teacher portal and start uploading course materials.</p>
+    <a href="/login.html" class="go-btn">Sign In Now &rarr;</a>
+  </div>
+</div>
+
+<script>
+var _invite = null;
+
+function showStatus(msg, type) {
+  var el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = 'status-msg ' + type;
+}
+
+function checkStrength() {
+  var pw   = document.getElementById('pw1').value;
+  var fill = document.getElementById('strengthFill');
+  var lbl  = document.getElementById('strengthLabel');
+  var score = 0;
+  if (pw.length >= 8)  score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+
+  var colors = ['#ef4444','#f97316','#eab308','#22c55e','#16a34a'];
+  var labels = ['Too short','Weak','Fair','Strong','Very strong'];
+  fill.style.width    = (score * 20) + '%';
+  fill.style.background = colors[Math.max(0, score-1)];
+  lbl.textContent = score === 0 ? 'At least 8 characters' : labels[Math.min(score-1, 4)];
+}
+
+// ── LOAD INVITE ──────────────────────────────────────────────
+var params = new URLSearchParams(window.location.search);
+var token  = params.get('token');
+
+if (!token) {
+  showError();
+} else {
+  _sb.from('teacher_invites').select('*').eq('token', token).eq('status','pending').single()
+    .then(function(r) {
+      if (!r.data) {
+        showError();
+      } else {
+        _invite = r.data;
+        document.getElementById('inviteName').textContent  = r.data.name || 'Teacher';
+        document.getElementById('inviteEmail').textContent = r.data.email || '';
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('formState').style.display    = 'block';
+      }
+    })
+    .catch(showError);
+}
+
+function showError() {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('errorState').style.display   = 'block';
+}
+
+// ── CREATE ACCOUNT ───────────────────────────────────────────
+function createAccount() {
+  var pw1 = document.getElementById('pw1').value;
+  var pw2 = document.getElementById('pw2').value;
+
+  if (pw1.length < 8) { showStatus('Password must be at least 8 characters.','error'); return; }
+  if (pw1 !== pw2)    { showStatus('Passwords do not match.','error'); return; }
+
+  var btn = document.getElementById('joinBtn');
+  btn.disabled = true; btn.textContent = 'Creating account...';
+
+  _sb.auth.signUp({
+    email:    _invite.email,
+    password: pw1,
+    options:  {
+      data: {
+        full_name: _invite.name,
+        role:      'teacher',
+        subject:   _invite.subject || ''
+      }
+    }
+  }).then(function(result) {
+    if (result.error) {
+      btn.disabled = false; btn.textContent = 'Activate Teacher Account →';
+      showStatus('Error: ' + result.error.message, 'error');
+      return;
+    }
+    // Mark invite as used
+    _sb.from('teacher_invites').update({ status: 'used', used_at: new Date().toISOString() })
+      .eq('id', _invite.id)
+      .then(function() {
+        document.getElementById('formState').style.display   = 'none';
+        document.getElementById('successState').style.display = 'block';
+      });
+  });
+}
+</script>
+</body>
+</html>
