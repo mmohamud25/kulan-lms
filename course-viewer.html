@@ -235,11 +235,28 @@ var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
   }
 
-  _sb.auth.getSession().then(function(result) {
-  var session = result.data.session;
-  startViewer(session ? session.user : null);
+  var _viewerStarted = false;
+function tryViewer(user) {
+  if (_viewerStarted) return;
+  if (!user) return;
+  _viewerStarted = true;
+  startViewer(user);
+}
+_sb.auth.getSession().then(function(result) {
+  tryViewer(result.data.session ? result.data.session.user : null);
+  if (!result.data.session) {
+    setTimeout(function() {
+      _sb.auth.getSession().then(function(r) {
+        tryViewer(r.data.session ? r.data.session.user : null);
+      });
+    }, 1500);
+    setTimeout(function() {
+      if (!_viewerStarted) window.location.href = '/login.html';
+    }, 9000);
+  }
 });
 _sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_IN') tryViewer(session ? session.user : null);
   if (event === 'SIGNED_OUT') window.location.href = '/login.html';
 });
 

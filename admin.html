@@ -551,7 +551,7 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
       <select class="form-select" id="inviteCourse"></select>
     </div>
     <div style="background:rgba(27,174,204,0.07);border:1px solid rgba(27,174,204,0.15);border-radius:10px;padding:14px;font-size:13px;color:var(--text-mid);line-height:1.6;">
-      <strong style="color:var(--cyan);">How it works:</strong> After inviting, go to your Netlify dashboard → Identity → Invite Users and enter the same email. The student will get a link to set their password.
+      <strong style="color:var(--cyan);">How it works:</strong> After adding, go to your Supabase dashboard → Authentication → Users → Invite and enter the same email. The student will get a link to set their password.
     </div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal('inviteStudent')">Cancel</button>
@@ -602,11 +602,29 @@ function checkAdmin(user) {
   init();
 }
 
-// Auth flow — Supabase
+// Auth flow — Supabase with fallback
+var _adminStarted = false;
+function tryAdmin(user) {
+  if (_adminStarted) return;
+  if (!user) return;
+  _adminStarted = true;
+  checkAdmin(user);
+}
 _sb.auth.getSession().then(function(result) {
-  checkAdmin(result.data.session ? result.data.session.user : null);
+  tryAdmin(result.data.session ? result.data.session.user : null);
+  if (!result.data.session) {
+    setTimeout(function() {
+      _sb.auth.getSession().then(function(r) {
+        tryAdmin(r.data.session ? r.data.session.user : null);
+      });
+    }, 1500);
+    setTimeout(function() {
+      if (!_adminStarted) window.location.href = '/admin-login.html';
+    }, 9000);
+  }
 });
 _sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_IN') tryAdmin(session ? session.user : null);
   if (event === 'SIGNED_OUT') window.location.href = '/admin-login.html';
 });
 
@@ -943,7 +961,7 @@ function inviteStudent() {
   emailEl.value = '';
   closeModal('inviteStudent');
   renderAll();
-  showNotif('Student saved! Now invite via Netlify Identity.');
+  showNotif('Student saved! Now invite via Supabase: Authentication → Users.');
 }
 
 function removeStudent(id) {

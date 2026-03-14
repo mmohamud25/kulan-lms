@@ -660,7 +660,7 @@ tr:hover td{background:rgba(11,31,58,0.015);}
   <div class="modal">
     <div class="modal-title">Invite Student</div>
     <div class="tip-box">
-      <strong>Two steps:</strong> Save the student record here, then go to <strong>Netlify → Identity → Invite Users</strong> and enter the same email. The student gets a link to set their password.
+      <strong>Two steps:</strong> Save the student record here, then go to <strong>Supabase → Authentication → Users → Invite</strong> and enter the same email. The student gets a link to set their password.
     </div>
     <div class="form-group">
       <label class="form-label">Student Name</label>
@@ -713,11 +713,29 @@ function checkTeacher(user) {
   init();
 }
 
+var _teacherStarted = false;
+function tryTeacher(user) {
+  if (_teacherStarted) return;
+  if (!user) return;
+  _teacherStarted = true;
+  checkTeacher(user);
+}
 _sb.auth.getSession().then(function(result) {
-  checkTeacher(result.data.session ? result.data.session.user : null);
+  tryTeacher(result.data.session ? result.data.session.user : null);
+  if (!result.data.session) {
+    setTimeout(function() {
+      _sb.auth.getSession().then(function(r) {
+        tryTeacher(r.data.session ? r.data.session.user : null);
+      });
+    }, 1500);
+    setTimeout(function() {
+      if (!_teacherStarted) window.location.href = '/login.html';
+    }, 9000);
+  }
 });
 _sb.auth.onAuthStateChange(function(event, session) {
-  if (event === 'SIGNED_OUT') window.location.href = '/#teacher-portal';
+  if (event === 'SIGNED_IN') tryTeacher(session ? session.user : null);
+  if (event === 'SIGNED_OUT') window.location.href = '/login.html';
 });
 
 // DATA
@@ -1110,7 +1128,7 @@ function inviteStudent() {
 
   closeModal('inviteStudent');
   renderAll();
-  showNotif('Student saved! Now go to Netlify → Identity → Invite: ' + email);
+  showNotif('Student saved! Now invite via Supabase: Authentication → Users.');
   switchTab('students', document.querySelectorAll('.nav-item')[4]);
 }
 
