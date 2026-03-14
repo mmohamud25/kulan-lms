@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kulan Institute of Learning — Empowering Communities Through Education</title>
+<meta name="description" content="Kulan Institute of Learning offers bilingual English and Somali courses in AI, Cybersecurity, and Digital Literacy.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:  #0B1F3A;
+  --blue:  #1A3C6E;
+  --cyan:  #1BAECC;
+  --gold:  #D4A843;
+  --gold2: #e8c060;
+  --teal:  #0E7C7B;
+  --white: #FFFFFF;
+  --text:  #1a2840;
+  --text-mid: #4a6080;
+  --text-light: #8a9bb0;
+  --bg:    #F8F6F1;
+  --bg2:   #EFF0EC;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ── SOMALI-INSPIRED PATTERN ── */
+.pattern-bg {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(212,168,67,0.04) 0, rgba(212,168,67,0.04) 1px, transparent 0, transparent 50%),
+    repeating-linear-gradient(-45deg, rgba(27,174,204,0.03) 0, rgba(27,174,204,0.03) 1px, transparent 0, transparent 50%);
+  background-size: 30px 30px;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 5%;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 72px;
+  transition: all 0.3s;
+}
+nav.scrolled {
+  background: rgba(11,31,58,0.97);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 30px rgba(0,0,0,0.2);
+}
+.nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
+.nav-logo-icon {
+  width:40px; height:40px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-weight:900; font-size:18px; color:var(--navy);
+  flex-shrink:0;
+}
+.nav-logo-text { display:flex; flex-direction:column; }
+.nav-logo-text .t1 { font-size:14px; font-weight:700; color:#fff; line-height:1.2; }
+.nav-logo-text .t2 { font-size:10px; color:rgba(212,168,67,0.7); letter-spacing:.5px; }
+.nav-links { display:flex; align-items:center; gap:32px; }
+.nav-links a {
+  font-size:13px; font-weight:500; color:rgba(255,255,255,0.65);
+  text-decoration:none; transition:color .2s; letter-spacing:.3px;
+}
+.nav-links a:hover { color:var(--gold); }
+.nav-cta {
+  background: linear-gradient(135deg, var(--cyan), var(--teal));
+  color:#fff !important; padding:9px 20px; border-radius:8px;
+  font-weight:700 !important; font-size:13px !important;
+  transition:transform .2s, box-shadow .2s !important;
+}
+.nav-cta:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(27,174,204,0.35); }
+.nav-lang {
+  background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.7) !important; padding:7px 14px; border-radius:20px;
+  font-size:12px !important; cursor:pointer;
+}
+.nav-lang:hover { background:rgba(255,255,255,0.15); color:#fff !important; }
+.nav-mobile-btn {
+  display:none; background:none; border:none; cursor:pointer; padding:8px;
+}
+.nav-mobile-btn span { display:block; width:22px; height:2px; background:#fff; margin:4px 0; border-radius:2px; transition:all .3s; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #060f1e 0%, var(--navy) 45%, #0d2a50 100%);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center;
+  padding: 120px 5% 80px;
+}
+.hero-geo {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(27,174,204,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27,174,204,0.06) 1px, transparent 1px);
+  background-size: 70px 70px;
+}
+.hero-orb1 {
+  position:absolute; width:600px; height:600px;
+  background:radial-gradient(circle, rgba(27,174,204,0.12) 0%, transparent 65%);
+  top:-100px; right:-100px; pointer-events:none;
+}
+.hero-orb2 {
+  position:absolute; width:400px; height:400px;
+  background:radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 65%);
+  bottom:-50px; left:5%; pointer-events:none;
+}
+.hero-inner { max-width:1200px; width:100%; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(212,168,67,0.1); border:1px solid rgba(212,168,67,0.3);
+  border-radius:20px; padding:6px 16px; margin-bottom:28px;
+  font-size:12px; font-weight:600; color:var(--gold); letter-spacing:.5px;
+}
+.hero-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(38px,5vw,62px);
+  font-weight:900; color:#fff; line-height:1.1;
+  margin-bottom:10px;
+}
+.hero-title span { color:var(--gold); font-style:italic; }
+.hero-title-so {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(18px,2.5vw,28px);
+  font-weight:400; font-style:italic;
+  color:rgba(255,255,255,0.35); line-height:1.3;
+  margin-bottom:28px;
+  display:none;
+}
+.hero-sub {
+  font-size:17px; line-height:1.75; color:rgba(255,255,255,0.6);
+  max-width:480px; margin-bottom:44px;
+}
+.hero-sub .so { display:none; }
+.hero-btns { display:flex; gap:16px; flex-wrap:wrap; }
+.btn-primary {
+  display:inline-flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg,var(--cyan),var(--teal));
+  color:#fff; padding:16px 32px; border-radius:12px;
+  font-size:15px; font-weight:700; text-decoration:none;
+  transition:transform .2s, box-shadow .2s;
+  box-shadow:0 8px 24px rgba(27,174,204,0.3);
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 14px 35px rgba(27,174,204,0.4); }
+.btn-secondary {
+  display:inline-flex; align-items:center; gap:10px;
+  background:transparent; color:#fff; padding:16px 32px; border-radius:12px;
+  font-size:15px; font-weight:600; text-decoration:none;
+  border:1.5px solid rgba(255,255,255,0.2);
+  transition:all .2s;
+}
+.btn-secondary:hover { border-color:var(--gold); color:var(--gold); }
+.hero-stats { display:flex; gap:40px; margin-top:52px; }
+.hero-stat { }
+.hero-stat-num { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; color:#fff; }
+.hero-stat-num span { color:var(--gold); }
+.hero-stat-label { font-size:12px; color:rgba(255,255,255,0.4); letter-spacing:.5px; margin-top:2px; }
+.hero-visual {
+  display:flex; align-items:center; justify-content:center; position:relative;
+}
+.hero-card-stack { position:relative; width:340px; height:400px; }
+.hero-card {
+  position:absolute; border-radius:20px; padding:28px;
+  backdrop-filter:blur(12px);
+}
+.hc1 {
+  width:300px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
+  top:0; left:0;
+  animation: float1 4s ease-in-out infinite;
+}
+.hc2 {
+  width:280px; background:rgba(27,174,204,0.12); border:1px solid rgba(27,174,204,0.25);
+  bottom:0; right:0;
+  animation: float2 4s ease-in-out infinite;
+}
+@keyframes float1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+@keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
+.hc-icon { font-size:28px; margin-bottom:14px; }
+.hc-title { font-size:14px; font-weight:700; color:#fff; margin-bottom:6px; }
+.hc-sub { font-size:12px; color:rgba(255,255,255,0.5); }
+.hc-progress { height:4px; background:rgba(255,255,255,0.1); border-radius:4px; margin-top:14px; overflow:hidden; }
+.hc-progress-bar { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--cyan),var(--teal)); }
+.hc-tag {
+  display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; margin-top:12px;
+  background:rgba(212,168,67,0.15); color:var(--gold); border:1px solid rgba(212,168,67,0.3);
+}
+
+/* ── SECTION COMMON ── */
+section { padding:100px 5%; }
+.section-inner { max-width:1200px; margin:0 auto; }
+.section-label {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--cyan); margin-bottom:16px;
+}
+.section-label::before { content:''; width:24px; height:2px; background:var(--cyan); border-radius:2px; }
+h2.section-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(30px,4vw,48px); font-weight:700;
+  color:var(--navy); line-height:1.15; margin-bottom:16px;
+}
+h2.section-title span { color:var(--cyan); }
+h2.section-title .so { display:none; color:var(--text-light); font-style:italic; font-size:0.65em; }
+.section-sub { font-size:17px; color:var(--text-mid); line-height:1.75; max-width:580px; }
+.section-sub .so { display:none; }
+
+/* ── COURSES ── */
+.courses { background:#fff; }
+.courses-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:56px; }
+.course-card {
+  border-radius:20px; overflow:hidden;
+  border:1px solid rgba(11,31,58,0.08);
+  transition:transform .25s, box-shadow .25s;
+  cursor:pointer;
+}
+.course-card:hover { transform:translateY(-6px); box-shadow:0 20px 50px rgba(11,31,58,0.12); }
+.course-thumb {
+  height:180px; display:flex; align-items:center; justify-content:center;
+  font-size:52px; position:relative; overflow:hidden;
+}
+.ct-ai   { background:linear-gradient(135deg,#0B1F3A,#1A3C6E); }
+.ct-cyber{ background:linear-gradient(135deg,#0d2a20,#0E7C7B); }
+.ct-dig  { background:linear-gradient(135deg,#2a1a0d,#8B5E0A); }
+.course-body { padding:24px; }
+.course-tag {
+  display:inline-block; padding:3px 12px; border-radius:20px;
+  font-size:11px; font-weight:700; letter-spacing:.5px; margin-bottom:12px;
+}
+.tag-beginner     { background:rgba(27,174,204,0.1);  color:var(--cyan); }
+.tag-intermediate { background:rgba(14,124,123,0.1);  color:var(--teal); }
+.tag-all          { background:rgba(212,168,67,0.1);  color:var(--gold); }
+.course-name {
+  font-family:'Playfair Display',serif; font-size:20px; font-weight:700;
+  color:var(--navy); margin-bottom:6px; line-height:1.3;
+}
+.course-name-so { font-size:13px; color:var(--text-light); font-style:italic; margin-bottom:10px; display:none; }
+.course-desc { font-size:14px; color:var(--text-mid); line-height:1.65; margin-bottom:18px; }
+.course-meta { display:flex; gap:16px; }
+.course-meta-item { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--text-light); }
+.course-footer { padding:0 24px 24px; }
+.course-btn {
+  display:block; text-align:center; padding:12px;
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  color:#fff; border-radius:10px; text-decoration:none;
+  font-size:13px; font-weight:700; transition:opacity .2s;
+}
+.course-btn:hover { opacity:.85; }
+.course-coming {
+  display:block; text-align:center; padding:12px;
+  background:rgba(11,31,58,0.05);
+  color:var(--text-light); border-radius:10px;
+  font-size:13px; font-weight:600; border:1.5px dashed rgba(11,31,58,0.15);
+}
+
+/* ── ABOUT ── */
+.about { background:var(--bg); }
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.about-visual { position:relative; }
+.about-img-wrap {
+  width:100%; aspect-ratio:4/5; border-radius:24px;
+  background:linear-gradient(160deg, var(--navy), var(--blue));
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.about-geo {
+  position:absolute; inset:0;
+  background-image:
+    repeating-linear-gradient(60deg,rgba(212,168,67,0.06) 0,rgba(212,168,67,0.06) 1px,transparent 0,transparent 30px),
+    repeating-linear-gradient(-60deg,rgba(27,174,204,0.04) 0,rgba(27,174,204,0.04) 1px,transparent 0,transparent 30px);
+}
+.about-icon-big { font-size:80px; position:relative; z-index:1; }
+.about-badge-float {
+  position:absolute; bottom:24px; right:-20px;
+  background:#fff; border-radius:16px; padding:16px 20px;
+  box-shadow:0 12px 40px rgba(11,31,58,0.15);
+  display:flex; align-items:center; gap:12px;
+}
+.about-badge-float .num { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--navy); }
+.about-badge-float .lbl { font-size:12px; color:var(--text-mid); }
+.about-content { }
+.about-pillars { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:36px; }
+.pillar {
+  padding:20px; border-radius:14px;
+  background:#fff; border:1px solid rgba(11,31,58,0.07);
+  transition:border-color .2s, box-shadow .2s;
+}
+.pillar:hover { border-color:var(--cyan); box-shadow:0 6px 20px rgba(27,174,204,0.08); }
+.pillar-icon { font-size:24px; margin-bottom:10px; }
+.pillar-title { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:5px; }
+.pillar-title .so { display:none; font-weight:400; color:var(--text-light); font-style:italic; }
+.pillar-desc { font-size:13px; color:var(--text-mid); line-height:1.6; }
+.pillar-desc .so { display:none; }
+
+/* ── TESTIMONIALS ── */
+.testimonials { background:var(--navy); overflow:hidden; position:relative; }
+.testimonials::before {
+  content:''; position:absolute; inset:0;
+  background-image:linear-gradient(rgba(27,174,204,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.04) 1px,transparent 1px);
+  background-size:50px 50px;
+}
+.testimonials .section-label { color:var(--gold); }
+.testimonials .section-label::before { background:var(--gold); }
+.testimonials h2.section-title { color:#fff; }
+.testimonials h2.section-title span { color:var(--gold); }
+.testimonials .section-sub { color:rgba(255,255,255,0.5); }
+.testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:56px; }
+.testi-card {
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px; padding:32px;
+  transition:border-color .2s, background .2s;
+}
+.testi-card:hover { background:rgba(255,255,255,0.08); border-color:rgba(212,168,67,0.3); }
+.testi-stars { color:var(--gold); font-size:14px; margin-bottom:16px; letter-spacing:2px; }
+.testi-quote {
+  font-family:'Playfair Display',serif; font-size:17px; font-style:italic;
+  color:rgba(255,255,255,0.85); line-height:1.7; margin-bottom:24px;
+}
+.testi-author { display:flex; align-items:center; gap:12px; }
+.testi-av {
+  width:42px; height:42px; border-radius:50%;
+  background:linear-gradient(135deg,var(--cyan),var(--teal));
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:16px; color:#fff; flex-shrink:0;
+}
+.testi-name { font-size:14px; font-weight:700; color:#fff; }
+.testi-role { font-size:12px; color:rgba(255,255,255,0.4); margin-top:2px; }
+
+/* ── BLOG ── */
+.blog { background:#fff; }
+.blog-grid { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:28px; margin-top:56px; }
+.blog-card {
+  border-radius:20px; overflow:hidden;
+  border:1px solid rgba(11,31,58,0.08);
+  transition:transform .25s, box-shadow .25s;
+}
+.blog-card:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(11,31,58,0.1); }
+.blog-thumb {
+  height:200px; display:flex; align-items:flex-end; padding:20px;
+  position:relative; overflow:hidden;
+}
+.blog-card:first-child .blog-thumb { height:260px; }
+.bt1 { background:linear-gradient(160deg,#0B1F3A,#1A3C6E); }
+.bt2 { background:linear-gradient(160deg,#0d2820,#0E7C7B); }
+.bt3 { background:linear-gradient(160deg,#1a0d05,#8B5E0A); }
+.blog-thumb-cat {
+  background:rgba(212,168,67,0.9); color:var(--navy);
+  padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700;
+  position:relative; z-index:1;
+}
+.blog-body { padding:22px; }
+.blog-date { font-size:11px; color:var(--text-light); margin-bottom:8px; letter-spacing:.5px; }
+.blog-title {
+  font-family:'Playfair Display',serif; font-size:18px; font-weight:700;
+  color:var(--navy); line-height:1.35; margin-bottom:10px;
+}
+.blog-card:first-child .blog-title { font-size:22px; }
+.blog-excerpt { font-size:13px; color:var(--text-mid); line-height:1.65; margin-bottom:16px; }
+.blog-read { font-size:13px; font-weight:700; color:var(--cyan); text-decoration:none; }
+.blog-read:hover { text-decoration:underline; }
+
+/* ── CONTACT ── */
+.contact { background:var(--bg); }
+.contact-grid { display:grid; grid-template-columns:1fr 1.3fr; gap:80px; align-items:start; }
+.contact-info { padding-top:8px; }
+.contact-detail { display:flex; align-items:flex-start; gap:14px; margin-top:36px; }
+.contact-detail-icon {
+  width:44px; height:44px; flex-shrink:0;
+  background:#fff; border-radius:12px; border:1px solid rgba(11,31,58,0.1);
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+}
+.contact-detail-text { font-size:14px; color:var(--text-mid); line-height:1.6; }
+.contact-detail-text strong { display:block; color:var(--navy); font-weight:700; margin-bottom:2px; }
+.contact-form-wrap {
+  background:#fff; border-radius:24px; padding:40px;
+  border:1px solid rgba(11,31,58,0.08);
+  box-shadow:0 12px 40px rgba(11,31,58,0.07);
+}
+.form-title {
+  font-family:'Playfair Display',serif; font-size:22px; font-weight:700;
+  color:var(--navy); margin-bottom:6px;
+}
+.form-title .so { display:none; font-style:italic; color:var(--text-light); font-size:15px; }
+.form-sub { font-size:14px; color:var(--text-mid); margin-bottom:28px; }
+.form-sub .so { display:none; }
+.f-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.f-group { margin-bottom:18px; }
+.f-label {
+  display:block; font-size:12px; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; color:var(--text-mid); margin-bottom:8px;
+}
+.f-input, .f-select, .f-area {
+  width:100%; padding:13px 16px;
+  border:1.5px solid rgba(11,31,58,0.12); border-radius:10px;
+  font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text);
+  background:#fff; outline:none; transition:border .2s, box-shadow .2s;
+}
+.f-input:focus, .f-select:focus, .f-area:focus {
+  border-color:var(--cyan); box-shadow:0 0 0 3px rgba(27,174,204,0.1);
+}
+.f-area { resize:vertical; min-height:110px; }
+.f-submit {
+  width:100%; padding:16px;
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  color:#fff; border:none; border-radius:12px;
+  font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700;
+  cursor:pointer; transition:transform .2s, box-shadow .2s; margin-top:4px;
+}
+.f-submit:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(11,31,58,0.25); }
+
+/* ── FOOTER ── */
+footer {
+  background:linear-gradient(160deg,#060f1e,var(--navy));
+  padding:72px 5% 40px; color:rgba(255,255,255,0.6);
+}
+.footer-inner { max-width:1200px; margin:0 auto; }
+.footer-top { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:48px; margin-bottom:56px; }
+.footer-brand .nav-logo { margin-bottom:20px; display:inline-flex; }
+.footer-desc { font-size:14px; line-height:1.75; max-width:260px; }
+.footer-col-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#fff; margin-bottom:18px; }
+.footer-col a { display:block; font-size:14px; color:rgba(255,255,255,0.5); text-decoration:none; margin-bottom:10px; transition:color .2s; }
+.footer-col a:hover { color:var(--gold); }
+.footer-bottom {
+  border-top:1px solid rgba(255,255,255,0.08); padding-top:28px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:13px;
+}
+.footer-bottom a { color:rgba(255,255,255,0.4); text-decoration:none; }
+.footer-bottom a:hover { color:var(--gold); }
+
+/* ── SOMALI TOGGLES ── */
+body.somali-on .so { display:block !important; }
+body.somali-on .en-hide { display:none !important; }
+body.somali-on .so-inline { display:inline !important; }
+
+/* ── SCROLL ANIMATIONS ── */
+.fade-up { opacity:0; transform:translateY(30px); transition:opacity .6s ease, transform .6s ease; }
+.fade-up.visible { opacity:1; transform:translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px) {
+  .hero-inner { grid-template-columns:1fr; }
+  .hero-visual { display:none; }
+  .courses-grid { grid-template-columns:1fr 1fr; }
+  .about-grid { grid-template-columns:1fr; }
+  .about-visual { max-width:400px; }
+  .testi-grid { grid-template-columns:1fr 1fr; }
+  .blog-grid { grid-template-columns:1fr; }
+  .contact-grid { grid-template-columns:1fr; }
+  .footer-top { grid-template-columns:1fr 1fr; gap:32px; }
+}
+@media(max-width:768px) {
+  nav { padding:0 24px; }
+  .nav-links { display:none; }
+  .nav-mobile-btn { display:block; }
+  section { padding:72px 24px; }
+  .hero { padding:100px 24px 60px; }
+  .courses-grid { grid-template-columns:1fr; }
+  .testi-grid { grid-template-columns:1fr; }
+  .hero-stats { gap:24px; }
+  .about-pillars { grid-template-columns:1fr; }
+  .f-row { grid-template-columns:1fr; }
+  .footer-top { grid-template-columns:1fr; gap:32px; }
+  .footer-bottom { flex-direction:column; gap:12px; text-align:center; }
+  .contact-form-wrap { padding:28px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">KI</div>
+    <div class="nav-logo-text">
+      <div class="t1">Kulan Institute</div>
+      <div class="t2">of Learning</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#courses">Courses</a>
+    <a href="#about">About</a>
+    <a href="#blog">Blog</a>
+    <a href="#contact">Contact</a>
+    <a href="#" class="nav-lang" id="langToggle">+ Somali</a>
+    <a href="https://learn.kulaninstitute.org" class="nav-cta">Start Learning &rarr;</a>
+  </div>
+  <button class="nav-mobile-btn" id="mobileBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero pattern-bg" id="hero">
+  <div class="hero-geo"></div>
+  <div class="hero-orb1"></div>
+  <div class="hero-orb2"></div>
+  <div class="hero-inner">
+    <div class="hero-left fade-up">
+      <div class="hero-badge">&#127979; Bilingual Education &bull; EN + SO</div>
+      <h1 class="hero-title">
+        Knowledge Has<br><span>No Borders.</span>
+      </h1>
+      <p class="hero-title-so so">Aqoonta Xudduud Ma Laha.</p>
+      <p class="hero-sub">
+        Kulan Institute of Learning delivers world-class courses in AI, Cybersecurity, and Digital Literacy — fully in English and Somali.
+        <span class="so">Kulan Institute waxay bixisaa koorsooyin heerka aduunka ah oo ku saabsan AI, Amniga Xogta, iyo Aqoonta Dhijitaalka ah.</span>
+      </p>
+      <div class="hero-btns">
+        <a href="https://learn.kulaninstitute.org" class="btn-primary">&#127891; Explore Courses</a>
+        <a href="#about" class="btn-secondary">Our Mission &darr;</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">3<span>+</span></div>
+          <div class="hero-stat-label">COURSES</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">2<span></span></div>
+          <div class="hero-stat-label">LANGUAGES</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">100<span>%</span></div>
+          <div class="hero-stat-label">FREE ACCESS</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual fade-up">
+      <div class="hero-card-stack">
+        <div class="hero-card hc1">
+          <div class="hc-icon">&#129302;</div>
+          <div class="hc-title">AI for Beginners</div>
+          <div class="hc-sub">8 modules &bull; Bilingual EN/SO</div>
+          <div class="hc-progress"><div class="hc-progress-bar" style="width:65%"></div></div>
+          <div class="hc-tag">&#128293; Most Popular</div>
+        </div>
+        <div class="hero-card hc2">
+          <div class="hc-icon">&#128737;</div>
+          <div class="hc-title">Cybersecurity Fundamentals</div>
+          <div class="hc-sub">6 modules &bull; Intermediate</div>
+          <div class="hc-progress"><div class="hc-progress-bar" style="width:40%;background:linear-gradient(90deg,var(--gold),var(--gold2))"></div></div>
+          <div class="hc-tag" style="background:rgba(14,124,123,0.15);color:var(--teal);border-color:rgba(14,124,123,0.3)">&#128274; Security</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COURSES ── -->
+<section class="courses" id="courses">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label">Our Programs</div>
+      <h2 class="section-title">Courses Built for <span>Your Future</span><span class="so"> &mdash; Koorsooyin Mustaqbalkaaga</span></h2>
+      <p class="section-sub">
+        Every course is designed from the ground up to be bilingual, accessible, and practical.
+        <span class="so">Koorso kasta waxaa loo naqshadeeyay inay tahay labo luqadood, la gaari karo, oo waxtar leh.</span>
+      </p>
+    </div>
+    <div class="courses-grid">
+      <div class="course-card fade-up">
+        <div class="course-thumb ct-ai">&#129302;</div>
+        <div class="course-body">
+          <span class="course-tag tag-beginner">Beginner</span>
+          <div class="course-name">AI for Beginners</div>
+          <div class="course-name-so so">Xisaabta Macquulka ah ee Bilowga</div>
+          <p class="course-desc">An 8-module bilingual introduction to artificial intelligence — no prior experience needed.</p>
+          <div class="course-meta">
+            <div class="course-meta-item">&#128218; 8 Modules</div>
+            <div class="course-meta-item">&#127758; EN + SO</div>
+            <div class="course-meta-item">&#128233; Free</div>
+          </div>
+        </div>
+        <div class="course-footer">
+          <a href="https://learn.kulaninstitute.org" class="course-btn">Enroll Now &rarr;</a>
+        </div>
+      </div>
+
+      <div class="course-card fade-up">
+        <div class="course-thumb ct-cyber">&#128737;</div>
+        <div class="course-body">
+          <span class="course-tag tag-intermediate">Intermediate</span>
+          <div class="course-name">Cybersecurity Fundamentals</div>
+          <div class="course-name-so so">Aasaaska Amniga Xogta</div>
+          <p class="course-desc">Core principles of cybersecurity — threats, defenses, and real-world tools used in the field.</p>
+          <div class="course-meta">
+            <div class="course-meta-item">&#128218; 6 Modules</div>
+            <div class="course-meta-item">&#127758; EN + SO</div>
+            <div class="course-meta-item">&#128233; Free</div>
+          </div>
+        </div>
+        <div class="course-footer">
+          <a href="https://learn.kulaninstitute.org" class="course-btn">Enroll Now &rarr;</a>
+        </div>
+      </div>
+
+      <div class="course-card fade-up">
+        <div class="course-thumb ct-dig">&#128187;</div>
+        <div class="course-body">
+          <span class="course-tag tag-all">All Levels</span>
+          <div class="course-name">Digital Literacy</div>
+          <div class="course-name-so so">Aqoonta Dhijitaalka ah</div>
+          <p class="course-desc">Foundational digital skills for navigating the modern world — from email to online safety.</p>
+          <div class="course-meta">
+            <div class="course-meta-item">&#128218; Coming Soon</div>
+            <div class="course-meta-item">&#127758; SO</div>
+          </div>
+        </div>
+        <div class="course-footer">
+          <span class="course-coming">&#8987; Joining Waitlist</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="about" id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-visual fade-up">
+        <div class="about-img-wrap">
+          <div class="about-geo"></div>
+          <div class="about-icon-big">&#127979;</div>
+        </div>
+        <div class="about-badge-float">
+          <div>
+            <div class="num">100%</div>
+            <div class="lbl">Bilingual Content</div>
+          </div>
+          <div style="font-size:28px">&#127758;</div>
+        </div>
+      </div>
+      <div class="about-content fade-up">
+        <div class="section-label">Our Mission</div>
+        <h2 class="section-title">
+          Education That <span>Belongs</span> to Everyone
+          <span class="so"><br>Waxbarashada Dadka Oo Dhan</span>
+        </h2>
+        <p class="section-sub">
+          Kulan Institute was founded on a simple belief: language should never be a barrier to learning technology. We build every course in both English and Somali so our community can grow without leaving their identity at the door.
+          <span class="so">Kulan Institute waxaa lagu aasaasay aaminsanaan fudud: luqaddu waa inayan noqon caqabad barashada teknoolojiyada.</span>
+        </p>
+        <div class="about-pillars">
+          <div class="pillar fade-up">
+            <div class="pillar-icon">&#127758;</div>
+            <div class="pillar-title">Bilingual First<span class="so"> — Labo Luqadood</span></div>
+            <p class="pillar-desc">Every lesson exists in both English and Somali — not translated, built bilingual from day one.</p>
+            <p class="pillar-desc so">Cashar kasta wuxuu ku jiraa labadaba Ingiriisi iyo Soomaali.</p>
+          </div>
+          <div class="pillar fade-up">
+            <div class="pillar-icon">&#128233;</div>
+            <div class="pillar-title">Free Access<span class="so"> — Bilaash</span></div>
+            <p class="pillar-desc">Core courses are free. Quality education should not come with a price tag that excludes anyone.</p>
+            <p class="pillar-desc so">Koorsooyin aasaasiga ah waa bilaash. Waxbarashadu ma ahan wax la iibsado.</p>
+          </div>
+          <div class="pillar fade-up">
+            <div class="pillar-icon">&#128296;</div>
+            <div class="pillar-title">Career Ready<span class="so"> — Shaqo Diyaar</span></div>
+            <p class="pillar-desc">Skills you can use on day one. No filler, no fluff — just practical knowledge that employers want.</p>
+            <p class="pillar-desc so">Xirfado aad isticmaali karto maalinta koowaad.</p>
+          </div>
+          <div class="pillar fade-up">
+            <div class="pillar-icon">&#127775;</div>
+            <div class="pillar-title">Community Built<span class="so"> — Bulshada</span></div>
+            <p class="pillar-desc">Built for and by the Somali community, with courses that reflect our shared values and goals.</p>
+            <p class="pillar-desc so">Waxaa loogu dhisay bulshada Soomaaliyeed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials" id="testimonials">
+  <div class="section-inner">
+    <div class="fade-up" style="position:relative;z-index:1">
+      <div class="section-label">Student Stories</div>
+      <h2 class="section-title">What Our <span>Students Say</span></h2>
+      <p class="section-sub">Real people, real results. Our students come from all backgrounds and leave with real skills.</p>
+    </div>
+    <div class="testi-grid" style="position:relative;z-index:1">
+      <div class="testi-card fade-up">
+        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testi-quote">"For the first time I could study AI in Somali. I didn't have to choose between my language and my career."</p>
+        <div class="testi-author">
+          <div class="testi-av">F</div>
+          <div>
+            <div class="testi-name">Fadumo A.</div>
+            <div class="testi-role">AI for Beginners Graduate &bull; Minneapolis, MN</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-up">
+        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testi-quote">"The cybersecurity course gave me the foundation I needed to pass my Security+ exam. The bilingual notes were a game changer."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)">A</div>
+          <div>
+            <div class="testi-name">Ahmed O.</div>
+            <div class="testi-role">Cybersecurity Student &bull; Columbus, OH</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-up">
+        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testi-quote">"I recommended Kulan to my whole family. My parents could finally understand what I was studying — in our own language."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:linear-gradient(135deg,var(--teal),#0a5a59)">H</div>
+          <div>
+            <div class="testi-name">Hodan M.</div>
+            <div class="testi-role">Digital Literacy Waitlist &bull; Seattle, WA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BLOG ── -->
+<section class="blog" id="blog">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label">Knowledge Hub</div>
+      <h2 class="section-title">Latest from <span>The Institute</span></h2>
+      <p class="section-sub">Insights, guides, and community updates — all bilingual.</p>
+    </div>
+    <div class="blog-grid">
+      <div class="blog-card fade-up">
+        <div class="blog-thumb bt1">
+          <span class="blog-thumb-cat">AI &amp; Technology</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-date">MARCH 2026</div>
+          <div class="blog-title">What Is Artificial Intelligence — And Why Should Somalis Learn It Now?</div>
+          <p class="blog-excerpt">AI is reshaping every industry. Here's a plain-language breakdown of what it means, how it works, and why now is the moment to start learning.</p>
+          <a href="#" class="blog-read">Read Article &rarr;</a>
+        </div>
+      </div>
+      <div class="blog-card fade-up">
+        <div class="blog-thumb bt2">
+          <span class="blog-thumb-cat">Cybersecurity</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-date">FEBRUARY 2026</div>
+          <div class="blog-title">5 Cyber Threats Every Student Should Know About</div>
+          <p class="blog-excerpt">From phishing to ransomware — the threats are real, and knowing them is the first step to staying protected.</p>
+          <a href="#" class="blog-read">Read Article &rarr;</a>
+        </div>
+      </div>
+      <div class="blog-card fade-up">
+        <div class="blog-thumb bt3">
+          <span class="blog-thumb-cat">Community</span>
+        </div>
+        <div class="blog-body">
+          <div class="blog-date">JANUARY 2026</div>
+          <div class="blog-title">Why Bilingual Tech Education Matters for Our Community</div>
+          <p class="blog-excerpt">A reflection on why building courses in Somali isn't just a nice-to-have — it's a necessity for real inclusion in tech.</p>
+          <a href="#" class="blog-read">Read Article &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section class="contact" id="contact">
+  <div class="section-inner">
+    <div class="contact-grid">
+      <div class="contact-info fade-up">
+        <div class="section-label">Get In Touch</div>
+        <h2 class="section-title">
+          Ready to <span>Start Learning?</span>
+          <span class="so"><br>Baridda Bilow</span>
+        </h2>
+        <p class="section-sub">
+          Enroll in a course, ask a question, or just say hello. We respond to every message.
+          <span class="so">Ku diiwaangeli koorsada, su'aal weydii, ama nala soo xiriir.</span>
+        </p>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">&#128233;</div>
+          <div class="contact-detail-text">
+            <strong>Email</strong>
+            info@kulaninstitute.org
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">&#127891;</div>
+          <div class="contact-detail-text">
+            <strong>LMS Platform</strong>
+            learn.kulaninstitute.org
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">&#127758;</div>
+          <div class="contact-detail-text">
+            <strong>Languages</strong>
+            English &amp; Somali
+          </div>
+        </div>
+      </div>
+      <div class="contact-form-wrap fade-up">
+        <div class="form-title">Enroll / Contact<span class="so"> &mdash; Isdiiwaangeli</span></div>
+        <p class="form-sub">Fill out the form and we'll be in touch within 24 hours.<span class="so"> Buuxi foomka waxaannu kula xiriirnaa 24 saacadood gudahood.</span></p>
+        <form action="https://formspree.io/f/mqeybogq" method="POST">
+          <input type="hidden" name="_subject" value="New Enrollment — Kulan Institute">
+          <div class="f-row">
+            <div class="f-group">
+              <label class="f-label">Full Name</label>
+              <input type="text" name="name" class="f-input" placeholder="Your full name" required>
+            </div>
+            <div class="f-group">
+              <label class="f-label">Email</label>
+              <input type="email" name="email" class="f-input" placeholder="you@example.com" required>
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Course of Interest</label>
+            <select name="course" class="f-select" required>
+              <option value="" disabled selected>Select a course</option>
+              <option>AI for Beginners</option>
+              <option>Cybersecurity Fundamentals</option>
+              <option>Digital Literacy (Waitlist)</option>
+              <option>General Inquiry</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Message</label>
+            <textarea name="message" class="f-area" placeholder="Tell us about yourself or ask a question..."></textarea>
+          </div>
+          <button type="submit" class="f-submit">Send Message &amp; Enroll &rarr;</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">
+          <div class="nav-logo-icon">KI</div>
+          <div class="nav-logo-text">
+            <div class="t1">Kulan Institute</div>
+            <div class="t2">of Learning</div>
+          </div>
+        </a>
+        <p class="footer-desc">Empowering communities through bilingual education in technology and digital skills.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Courses</div>
+        <a href="https://learn.kulaninstitute.org">AI for Beginners</a>
+        <a href="https://learn.kulaninstitute.org">Cybersecurity Fundamentals</a>
+        <a href="https://learn.kulaninstitute.org">Digital Literacy</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Institute</div>
+        <a href="#about">About Us</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+        <a href="https://learn.kulaninstitute.org/login.html">Student Login</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Contact</div>
+        <a href="mailto:info@kulaninstitute.org">info@kulaninstitute.org</a>
+        <a href="https://learn.kulaninstitute.org">learn.kulaninstitute.org</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Kulan Institute of Learning. All rights reserved.</span>
+      <span>Built with purpose &bull; <a href="https://learn.kulaninstitute.org">Start Learning &rarr;</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── NAV SCROLL ──
+var nav = document.getElementById('mainNav');
+window.addEventListener('scroll', function() {
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+nav.classList.add('scrolled'); // start scrolled for visibility
+
+// ── LANG TOGGLE ──
+var toggle = document.getElementById('langToggle');
+var soOn = false;
+toggle.addEventListener('click', function(e) {
+  e.preventDefault();
+  soOn = !soOn;
+  document.body.classList.toggle('somali-on', soOn);
+  toggle.textContent = soOn ? 'English' : '+ Somali';
+});
+
+// ── SCROLL FADE ──
+var fadeEls = document.querySelectorAll('.fade-up');
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+fadeEls.forEach(function(el) { observer.observe(el); });
+
+// ── MOBILE MENU (basic) ──
+document.getElementById('mobileBtn').addEventListener('click', function() {
+  var links = document.querySelector('.nav-links');
+  if (links.style.display === 'flex') {
+    links.style.display = '';
+  } else {
+    links.style.cssText = 'display:flex;flex-direction:column;position:fixed;top:72px;left:0;right:0;background:rgba(11,31,58,0.98);padding:24px;gap:20px;backdrop-filter:blur(12px);';
+  }
+});
+</script>
+</body>
+</html>
