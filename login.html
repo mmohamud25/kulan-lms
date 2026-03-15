@@ -198,21 +198,54 @@ function showRedirect(roleLabel, destination) {
 
 function redirectByRole(user) {
   var email = (user.email || '').toLowerCase();
+
+  // Admin shortcut — no table query needed
   if (email === ADMIN_EMAIL.toLowerCase()) {
     showRedirect('Admin', '/admin.html'); return;
   }
+
+  // Also check user_metadata role as quick fallback
+  var metaRole = user.user_metadata && user.user_metadata.role;
+  if (metaRole === 'admin')   { showRedirect('Admin',   '/admin.html');   return; }
+  if (metaRole === 'teacher') { showRedirect('Teacher', '/teacher.html'); return; }
+
+  // Query users table with a timeout fallback
+  var redirected = false;
+  var fallbackTimer = setTimeout(function() {
+    if (!redirected) {
+      redirected = true;
+      // Use metadata role if available, otherwise default to student
+      if (metaRole === 'teacher') showRedirect('Teacher', '/teacher.html');
+      else if (metaRole === 'admin') showRedirect('Admin', '/admin.html');
+      else showRedirect('Student', '/dashboard.html');
+    }
+  }, 4000);
+
   _sb.from('users').select('role').eq('id', user.id).single()
     .then(function(r) {
+      if (redirected) return;
+      clearTimeout(fallbackTimer);
+      redirected = true;
       var role = (r.data && r.data.role) ? r.data.role : 'student';
       if (role === 'admin')        showRedirect('Admin',   '/admin.html');
       else if (role === 'teacher') showRedirect('Teacher', '/teacher.html');
       else                         showRedirect('Student', '/dashboard.html');
     })
-    .catch(function() { showRedirect('Student', '/dashboard.html'); });
+    .catch(function() {
+      if (redirected) return;
+      clearTimeout(fallbackTimer);
+      redirected = true;
+      // Fall back to metadata role or student
+      if (metaRole === 'teacher') showRedirect('Teacher', '/teacher.html');
+      else showRedirect('Student', '/dashboard.html');
+    });
 }
 
 _sb.auth.getSession().then(function(r) {
   if (r.data.session && r.data.session.user) redirectByRole(r.data.session.user);
+});
+_sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_IN' && session && session.user) redirectByRole(session.user);
 });
 
 function doLogin() {

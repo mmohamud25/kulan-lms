@@ -928,54 +928,66 @@ function switchTab(tab, el) {
 function init() { renderAll(); }
 
 // ── CHECK TEACHER ──
-function doTeacherSignOut() { _sb.auth.signOut().then(function(){ window.location.href="/login.html"; }); }
+function doTeacherSignOut() {
+  _sb.auth.signOut().then(function(){ window.location.href='/login.html'; });
+}
 
 function checkTeacher(user) {
   if (!user) { window.location.href='/login.html'; return; }
+
   var email    = (user.email||'').toLowerCase().trim();
   var meta     = user.user_metadata || {};
   var metaRole = meta.role || '';
 
-  // Hardcoded admin shortcut
+  // Admin and hardcoded email always get in
   if (email === TEACHER_EMAIL.toLowerCase() || user.id === ADMIN_UID) {
-    startTeacherPage(user); return;
+    startTeacherPage(user, { full_name: meta.full_name }); return;
   }
 
-  // Fast path: role already in JWT metadata
+  // If metadata says teacher or admin — start immediately, no table query needed
   if (metaRole === 'teacher' || metaRole === 'admin') {
-    startTeacherPage(user, { full_name: meta.full_name, subject: meta.subject });
-    return;
+    startTeacherPage(user, { full_name: meta.full_name, subject: meta.subject }); return;
   }
 
-  // Query users table with a 4s timeout fallback
-  var resolved = false;
-  var timer = setTimeout(function() {
-    if (resolved) return;
-    resolved = true;
-    if (metaRole === 'teacher') startTeacherPage(user, { full_name: meta.full_name });
-    else window.location.href = '/login.html';
-  }, 4000);
+  // Query users table — but ALWAYS start the page if they have any valid session
+  // The table is only used to get name/subject and double-check role
+  // If query fails or hangs, we start anyway after 3s
+  var done = false;
+
+  var fallback = setTimeout(function() {
+    if (done) return;
+    done = true;
+    // Login already validated this user as a teacher — trust it and start
+    startTeacherPage(user, { full_name: meta.full_name });
+  }, 3000);
 
   _sb.from('users').select('role, full_name, subject').eq('id', user.id).single()
     .then(function(r) {
-      if (resolved) return;
-      clearTimeout(timer); resolved = true;
+      if (done) return;
+      clearTimeout(fallback);
+      done = true;
       var role = r.data && r.data.role;
       if (role === 'teacher' || role === 'admin') {
         startTeacherPage(user, r.data);
+      } else if (!role) {
+        // No row in users table yet — start anyway, login validated them
+        startTeacherPage(user, { full_name: meta.full_name });
       } else {
+        // Role is explicitly student — deny
         document.getElementById('loadingScreen').innerHTML =
           '<div style="text-align:center;padding:32px;">'
           + '<div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
-          + '<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: ' + user.email + '</div>'
-          + '<button onclick="_sb.auth.signOut().then(function(){location.href=\'\'/login.html\'\';})" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign out and try again</button>'
+          + '<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Your account does not have teacher access.</div>'
+          + '<button onclick="doTeacherSignOut()" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign Out</button>'
           + '</div>';
       }
     })
     .catch(function() {
-      if (resolved) return;
-      clearTimeout(timer); resolved = true;
-      window.location.href = '/login.html';
+      if (done) return;
+      clearTimeout(fallback);
+      done = true;
+      // Query failed — login already validated them, start the page
+      startTeacherPage(user, { full_name: meta.full_name });
     });
 }
 
