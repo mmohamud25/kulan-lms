@@ -749,7 +749,7 @@ function openMatsFor(courseId) {
 }
 
 function renderMaterials() {
-  var list = document.getElementById('matList');
+  var list = document.getElementById('matGrid');
   if (!list) return;
   var filterEl = document.getElementById('matFilterCourse');
   var filter   = filterEl ? filterEl.value : '';
@@ -889,7 +889,7 @@ function uploadMaterial() {
     document.getElementById('upDownload').checked=false;
     clearUpFile(); switchUpTab('upload');
     renderAll();
-    setTimeout(function(){switchTab('materials',document.querySelectorAll('.nav-item')[2]);},1200);
+    setTimeout(function(){var navItems=document.querySelectorAll('.nav-item');for(var i=0;i<navItems.length;i++){if(navItems[i].textContent.trim().indexOf('Materials')>-1||navItems[i].getAttribute('onclick')&&navItems[i].getAttribute('onclick').indexOf('materials')>-1){switchTab('materials',navItems[i]);break;}}},1200);
   });
 }
 
