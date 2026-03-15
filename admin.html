@@ -275,6 +275,9 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
     <button class="nav-item" onclick="switchTab('materials',this)">
       <span class="nav-icon">&#128196;</span> Materials
     </button>
+    <button class="nav-item" onclick="switchTab('users',this)">
+      <span class="nav-icon">&#128100;</span> Users
+    </button>
     <button class="nav-item" onclick="switchTab('blog',this)">
       <span class="nav-icon">&#128221;</span> Blog
     </button>
@@ -412,6 +415,29 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
 </div>
 </div>
 </div>
+
+  <!-- ═══ USERS TAB ═══ -->
+  <div class="tab" id="tab-users">
+    <div class="section-header">
+      <div class="section-title">User Management</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input id="userSearch" type="text" placeholder="Search by name or email..."
+          oninput="filterUsers()"
+          style="padding:9px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:240px;">
+        <select id="roleFilter" onchange="filterUsers()"
+          style="padding:9px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:#fff;">
+          <option value="">All Roles</option>
+          <option value="admin">Admin</option>
+          <option value="teacher">Teacher</option>
+          <option value="student">Student</option>
+        </select>
+      </div>
+    </div>
+    <div id="usersTable" style="background:#fff;border-radius:16px;border:1px solid rgba(11,31,58,0.07);overflow:hidden;">
+      <div style="text-align:center;padding:40px;color:var(--text-light);">Loading users...</div>
+    </div>
+  </div>
+
 
   <!-- ═══ TEACHERS TAB ═══ -->
   <div class="tab" id="tab-teachers">
@@ -717,19 +743,43 @@ function tryAdmin(user) {
 
 function checkAdmin(user) {
   if (!user) { window.location.href = '/login.html'; return; }
-  var role = user.user_metadata && user.user_metadata.role;
-  var isAdmin = role === 'admin' || user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim();
-  if (!isAdmin) {
-    setLoadingMsg('Access denied for: ' + user.email);
-    document.getElementById('loadingScreen').innerHTML =
-      '<div style="text-align:center;padding:32px;">'
-      + '<div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
-      + '<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: ' + esc(user.email) + '</div>'
-      + '<button onclick="_sb.auth.signOut().then(function(){location.href=\'/login.html\';})" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign out and try again</button>'
-      + '</div>';
+  var email = (user.email || '').toLowerCase().trim();
+
+  // Hardcoded admin shortcut
+  if (email === ADMIN_EMAIL.toLowerCase()) {
+    _adminUser = user;
+    finishAdminLoad(user);
     return;
   }
-  _adminUser = user;
+
+  // Check users table for role
+  _sb.from('users').select('role').eq('id', user.id).single()
+    .then(function(r) {
+      var role = r.data && r.data.role;
+      if (role === 'admin') {
+        _adminUser = user;
+        finishAdminLoad(user);
+      } else {
+        document.getElementById('loadingScreen').innerHTML =
+          '<div style="text-align:center;padding:32px;">'
+          + '<div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
+          + '<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: ' + esc(email) + '</div>'
+          + '<button onclick="_sb.auth.signOut().then(function(){location.href=\'/login.html\';})">Sign out</button>'
+          + '</div>';
+      }
+    })
+    .catch(function() {
+      // Fallback to email check if users table missing
+      if (email === ADMIN_EMAIL.toLowerCase()) {
+        _adminUser = user;
+        finishAdminLoad(user);
+      } else {
+        window.location.href = '/login.html';
+      }
+    });
+}
+
+function finishAdminLoad(user) {
   hideLoading();
   document.getElementById('adminEmail').textContent = user.email;
   document.getElementById('avatarInitial').textContent = user.email.charAt(0).toUpperCase();
@@ -1041,7 +1091,8 @@ function exportCSV() {
 function switchTab(tab, el) {
   document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
-  if (tab === 'blog') { setTimeout(loadBlogPosts, 50); }
+  if (tab === 'blog')     { setTimeout(loadBlogPosts, 50); }
+  if (tab === 'users')    { setTimeout(loadUsersTab, 50); }
   if (tab === 'teachers') { setTimeout(loadTeachers, 50); }
   document.getElementById('tab-'+tab).classList.add('active');
   if (el) el.classList.add('active');
@@ -1118,6 +1169,135 @@ function loadAdminProfile() {
 }
 
 
+
+// ═══════════════════════════════════════════════════════════════
+// USERS TAB
+// ═══════════════════════════════════════════════════════════════
+var _allUsers = [];
+
+function loadUsersTab() {
+  var table = document.getElementById('usersTable');
+  if (!table) return;
+  table.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light);">Loading users...</div>';
+
+  _sb.from('users').select('*').order('created_at', { ascending: false })
+    .then(function(r) {
+      if (r.error) {
+        table.innerHTML = '<div style="padding:24px;color:#dc2626;font-size:13px;">Error: ' + r.error.message + '<br>Make sure users_setup.sql has been run.</div>';
+        return;
+      }
+      _allUsers = r.data || [];
+      renderUsersTable(_allUsers);
+    });
+}
+
+function filterUsers() {
+  var search = (document.getElementById('userSearch').value || '').toLowerCase();
+  var role   = document.getElementById('roleFilter').value;
+  var filtered = _allUsers.filter(function(u) {
+    var matchSearch = !search
+      || (u.email || '').toLowerCase().includes(search)
+      || (u.full_name || '').toLowerCase().includes(search);
+    var matchRole = !role || u.role === role;
+    return matchSearch && matchRole;
+  });
+  renderUsersTable(filtered);
+}
+
+function renderUsersTable(users) {
+  var table = document.getElementById('usersTable');
+  if (!users.length) {
+    table.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-light);">No users found.</div>';
+    return;
+  }
+
+  var html = '<table style="width:100%;border-collapse:collapse;">';
+  html += '<thead><tr style="background:#F8F9FB;">';
+  ['User','Role','Subject','Joined','Actions'].forEach(function(h) {
+    html += '<th style="padding:12px 20px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#8a9bb0;border-bottom:1px solid rgba(11,31,58,0.07);">' + h + '</th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  users.forEach(function(u, i) {
+    var rowBg   = i % 2 === 0 ? '#fff' : '#FAFBFC';
+    var initial = u.full_name ? u.full_name.charAt(0).toUpperCase() : (u.email ? u.email.charAt(0).toUpperCase() : '?');
+    var dateStr = u.created_at ? new Date(u.created_at).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '-';
+    var safeId  = u.id;
+    var safeName = (u.full_name || '').replace(/'/g, '');
+
+    html += '<tr style="background:' + rowBg + ';border-bottom:1px solid rgba(11,31,58,0.05);">';
+
+    // User
+    html += '<td style="padding:14px 20px;">'
+      + '<div style="display:flex;align-items:center;gap:12px;">'
+      + '<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0B1F3A,#1A3C6E);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;">' + initial + '</div>'
+      + '<div>'
+      + '<div style="font-size:14px;font-weight:600;color:#0B1F3A;">' + esc(u.full_name || '-') + '</div>'
+      + '<div style="font-size:12px;color:#8a9bb0;">' + esc(u.email) + '</div>'
+      + '</div></div></td>';
+
+    // Role dropdown
+    var roleOpts = '';
+    ['student','teacher','admin'].forEach(function(r) {
+      roleOpts += '<option value="' + r + '"' + (u.role === r ? ' selected' : '') + '>' + r.charAt(0).toUpperCase() + r.slice(1) + '</option>';
+    });
+    html += '<td style="padding:14px 20px;">'
+      + '<select onchange="changeUserRole(\'' + safeId + '\', this.value)" style="padding:6px 12px;border-radius:8px;border:1.5px solid rgba(11,31,58,0.12);background:#fff;font-size:13px;font-weight:600;cursor:pointer;outline:none;">'
+      + roleOpts
+      + '</select></td>';
+
+    // Subject
+    html += '<td style="padding:14px 20px;font-size:13px;color:#4a6080;">' + esc(u.subject || '-') + '</td>';
+
+    // Joined
+    html += '<td style="padding:14px 20px;font-size:13px;color:#8a9bb0;">' + dateStr + '</td>';
+
+    // Actions
+    var actions = '<button onclick="editUserName(\'' + safeId + '\', \'' + safeName + '\')" style="padding:6px 12px;border-radius:8px;border:1.5px solid rgba(11,31,58,0.12);background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:#4a6080;margin-right:6px;">Edit</button>';
+    if (_adminUser && u.id !== _adminUser.id) {
+      actions += '<button onclick="deactivateUser(\'' + safeId + '\')" style="padding:6px 12px;border-radius:8px;border:none;background:rgba(239,68,68,0.08);font-size:12px;font-weight:600;cursor:pointer;color:#dc2626;">Remove</button>';
+    }
+    html += '<td style="padding:14px 20px;">' + actions + '</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  table.innerHTML = html;
+}
+
+function changeUserRole(userId, newRole) {
+  _sb.from('users').update({ role: newRole, updated_at: new Date().toISOString() })
+    .eq('id', userId)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message); return; }
+      showNotif('Role updated to ' + newRole);
+      // Update local cache
+      var u = _allUsers.find(function(x) { return x.id === userId; });
+      if (u) u.role = newRole;
+    });
+}
+
+function editUserName(userId, currentName) {
+  var newName = prompt('Enter new name:', currentName);
+  if (!newName || newName.trim() === currentName) return;
+  _sb.from('users').update({ full_name: newName.trim(), updated_at: new Date().toISOString() })
+    .eq('id', userId)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message); return; }
+      showNotif('Name updated.');
+      loadUsersTab();
+    });
+}
+
+function deactivateUser(userId) {
+  if (!confirm('Remove this user from the users table? Their auth account will still exist.')) return;
+  _sb.from('users').delete().eq('id', userId)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message); return; }
+      showNotif('User removed.');
+      loadUsersTab();
+    });
+}
 // ═══════════════════════════════════════════════════════════════
 // TEACHERS TAB
 // ═══════════════════════════════════════════════════════════════
