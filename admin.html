@@ -278,10 +278,10 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
     <button class="nav-item" onclick="window.location.href='/users.html'">
       <span class="nav-icon">&#128100;</span> Users
     </button>
-    <button class="nav-item" onclick="switchTab('blog',this)">
+    <button class="nav-item" onclick="window.location.href='/blog-manage.html'">
       <span class="nav-icon">&#128221;</span> Blog
     </button>
-    <button class="nav-item" onclick="switchTab('teachers',this)">
+    <button class="nav-item" onclick="window.location.href='/teachers-manage.html'">
       <span class="nav-icon">&#128104;&#8205;&#127979;</span> Teachers
     </button>
     <div class="nav-label" style="margin-top:12px;">Links</div>
@@ -417,115 +417,11 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
 </div>
 
   <!-- ═══ TEACHERS TAB ═══ -->
-  <div class="tab" id="tab-teachers">
-    <div class="section-header">
-      <div class="section-title">Teachers</div>
-      <button class="btn btn-primary btn-sm" onclick="openCreateTeacher()">&#43; Create Teacher</button>
-    </div>
-
-    <!-- Create Teacher Form -->
-    <div id="teacherForm" style="display:none;background:#fff;border-radius:16px;padding:28px;border:1px solid rgba(11,31,58,0.08);margin-bottom:24px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-        <div style="font-size:18px;font-weight:700;color:var(--navy);">Create Teacher Account</div>
-        <button onclick="closeTeacherForm()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-light);">&#215;</button>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-        <div>
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);display:block;margin-bottom:6px;">Full Name *</label>
-          <input id="tName" type="text" placeholder="Teacher full name" style="width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);display:block;margin-bottom:6px;">Email Address *</label>
-          <input id="tEmail" type="email" placeholder="teacher@example.com" style="width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);display:block;margin-bottom:6px;">Temporary Password *</label>
-          <input id="tPass" type="password" placeholder="Set a temporary password" style="width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);display:block;margin-bottom:6px;">Subject / Role</label>
-          <input id="tSubject" type="text" placeholder="e.g. Cybersecurity Instructor" style="width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;">
-        </div>
-      </div>
-      <div style="background:rgba(27,174,204,0.06);border:1px solid rgba(27,174,204,0.2);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--text-mid);line-height:1.6;">
-        <strong style="color:var(--navy);">&#8505; How it works:</strong> This creates a Supabase account with the teacher role. Share the email and temporary password with the teacher. They can reset their password after first login at <strong>/reset-password.html</strong>.
-      </div>
-      <div id="teacherFormMsg" style="display:none;padding:11px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;"></div>
-      <div style="display:flex;gap:10px;justify-content:flex-end;">
-        <button onclick="closeTeacherForm()" style="padding:11px 22px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.15);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-mid);">Cancel</button>
-        <button onclick="createTeacher()" style="padding:11px 22px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--teal),#0a5c5b);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;" id="createTeacherBtn">Create Teacher Invite</button>
-      </div>
-    </div>
-
-    <!-- Teachers List -->
-    <div id="teachersList" style="display:flex;flex-direction:column;gap:12px;">
-      <div style="text-align:center;padding:40px;color:var(--text-light);">Loading teachers...</div>
-    </div>
-  </div>
+  
 
 
   <!-- ═══ BLOG TAB ═══ -->
-  <div class="tab" id="tab-blog">
-    <div class="section-header">
-      <div class="section-title">Blog Posts</div>
-      <button class="btn btn-primary btn-sm" onclick="openNewPost()">&#43; New Post</button>
-    </div>
-
-    <!-- Post Editor (hidden by default) -->
-    <div id="postEditor" style="display:none;background:#fff;border-radius:16px;padding:28px;border:1px solid rgba(11,31,58,0.08);margin-bottom:24px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy);" id="editorTitle">New Post</div>
-        <button onclick="closeEditor()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-light);">&#215;</button>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-        <div>
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);display:block;margin-bottom:6px;">Title *</label>
-          <input id="postTitle" type="text" placeholder="Article title..." style="width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);display:block;margin-bottom:6px;">Category *</label>
-          <select id="postCategory" style="width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;">
-            <option value="">Select category...</option>
-            <option>AI & Technology</option>
-            <option>Cybersecurity</option>
-            <option>Community</option>
-            <option>Tech Trends</option>
-            <option>Career</option>
-            <option>Updates</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);display:block;margin-bottom:6px;">Read Time (minutes)</label>
-          <input id="postReadTime" type="number" value="5" min="1" max="60" style="width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);display:block;margin-bottom:6px;">Status</label>
-          <select id="postStatus" style="width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff;">
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-          </select>
-        </div>
-      </div>
-      <div style="margin-bottom:16px;">
-        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);display:block;margin-bottom:6px;">Excerpt (1–2 sentences) *</label>
-        <textarea id="postExcerpt" placeholder="Short description shown on blog homepage..." style="width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;resize:vertical;min-height:72px;"></textarea>
-      </div>
-      <div style="margin-bottom:20px;">
-        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);display:block;margin-bottom:6px;">Content (HTML) *</label>
-        <div style="font-size:11px;color:var(--text-light);margin-bottom:8px;">Use HTML tags: &lt;h2&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;&lt;li&gt;, &lt;strong&gt;, &lt;blockquote&gt;, &lt;hr&gt;. For callout boxes use &lt;div class="callout"&gt;&lt;p&gt;...&lt;/p&gt;&lt;/div&gt;</div>
-        <textarea id="postContent" placeholder="Write your article content in HTML..." style="width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:monospace;font-size:13px;outline:none;resize:vertical;min-height:280px;line-height:1.7;"></textarea>
-      </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end;">
-        <button onclick="closeEditor()" style="padding:11px 22px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.15);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-mid);">Cancel</button>
-        <button onclick="savePost()" style="padding:11px 22px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Save Post</button>
-      </div>
-    </div>
-
-    <!-- Posts List -->
-    <div id="postsList" style="display:flex;flex-direction:column;gap:12px;">
-      <div style="text-align:center;padding:40px;color:var(--text-light);">Loading posts...</div>
-    </div>
-  </div>
+  
 
 <div class="notif" id="notif"></div>
 
@@ -1069,7 +965,6 @@ function switchTab(tab, el) {
   document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
   if (tab === 'blog')     { setTimeout(loadBlogPosts, 50); }
-  if (tab === 'teachers') { setTimeout(loadTeachers, 50); }
   document.getElementById('tab-'+tab).classList.add('active');
   if (el) el.classList.add('active');
   var titles = {overview:'Overview',courses:'Courses',students:'Students',materials:'Materials'};
@@ -1158,269 +1053,37 @@ function loadAdminProfile() {
 
 
 
-// ═══════════════════════════════════════════════════════════════
-// TEACHERS TAB
-// ═══════════════════════════════════════════════════════════════
-function loadTeachers() {
-  var list = document.getElementById('teachersList');
-  if (!list) { console.warn('teachersList element not found'); return; }
-  list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-light);">Loading teachers...</div>';
 
-  _sb.from('teacher_invites')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .then(function(r) {
-      if (r.error) {
-        list.innerHTML = '<div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:20px 24px;font-size:13px;color:#dc2626;">'
-          + '<strong>Could not load teachers.</strong><br><br>'
-          + 'Run <strong>setup.sql</strong> in Supabase SQL Editor first to create the teacher_invites table.</div>';
-        return;
-      }
-      renderTeachersList(r.data || []);
-    });
-}
 
-function renderTeachersList(teachers) {
-  var list = document.getElementById('teachersList');
-  if (!list) return;
-  if (teachers.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-light);"><div style="font-size:40px;margin-bottom:12px;">&#128104;&#8205;&#127979;</div><div style="font-size:15px;font-weight:600;color:var(--text-mid);margin-bottom:6px;">No teachers yet</div><div>Click Create Teacher to invite your first instructor.</div></div>';
-    return;
-  }
-  var html = '';
-  teachers.forEach(function(t) {
-    var isPending = t.status === 'pending';
-    var statusColor = isPending ? 'rgba(212,168,67,0.12);color:#b8860b;' : 'rgba(34,197,94,0.1);color:#16a34a;';
-    var statusLabel = isPending ? 'Invite Pending' : 'Active';
-    html += '<div style="background:#fff;border-radius:14px;padding:20px 24px;border:1px solid rgba(11,31,58,0.08);display:flex;align-items:center;gap:16px;">';
-    html += '<div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0E7C7B,#0a5c5b);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;">';
-    html += esc(t.name ? t.name.charAt(0).toUpperCase() : 'T');
-    html += '</div>';
-    html += '<div style="flex:1;min-width:0;">';
-    html += '<div style="font-size:15px;font-weight:700;color:#0B1F3A;">' + esc(t.name || 'Teacher') + '</div>';
-    html += '<div style="font-size:13px;color:#8a9bb0;margin-top:2px;">' + esc(t.email || '') + '</div>';
-    if (t.subject) html += '<div style="font-size:12px;color:#0E7C7B;margin-top:3px;">' + esc(t.subject) + '</div>';
-    html += '</div>';
-    html += '<span style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;background:' + statusColor + '">' + statusLabel + '</span>';
-    html += '<button onclick="deleteTeacherInvite(\'' + t.id + '\')" style="padding:7px 14px;border-radius:8px;border:none;background:rgba(239,68,68,0.08);font-size:12px;font-weight:600;cursor:pointer;color:#dc2626;">Remove</button>';
-    html += '</div>';
-  });
-  list.innerHTML = html;
-}
 
-function deleteTeacherInvite(id) {
-  if (!confirm('Remove this teacher invite?')) return;
-  _sb.from('teacher_invites').delete().eq('id', id).then(function(r) {
-    if (r.error) { showNotif('Error: ' + r.error.message); return; }
-    showNotif('Invite removed.');
-    loadTeachers();
-  });
-}
 
-function openCreateTeacher() {
-  document.getElementById('tName').value    = '';
-  document.getElementById('tEmail').value   = '';
-  document.getElementById('tPass').value    = '';
-  document.getElementById('tSubject').value = '';
-  document.getElementById('teacherFormMsg').style.display = 'none';
-  document.getElementById('teacherForm').style.display = 'block';
-  document.getElementById('teacherForm').scrollIntoView({ behavior: 'smooth' });
-}
 
-function closeTeacherForm() {
-  document.getElementById('teacherForm').style.display = 'none';
-  var ir = document.getElementById('inviteResult');
-  if (ir) ir.style.display = 'none';
-}
 
-function copyInviteUrl() {
-  var inp = document.getElementById('inviteUrl');
-  inp.select();
-  navigator.clipboard.writeText(inp.value).then(function() {
-    showNotif('Invite link copied!');
-  }).catch(function() {
-    document.execCommand('copy');
-    showNotif('Invite link copied!');
-  });
-}
 
-function showTeacherMsg(msg, type) {
-  var el = document.getElementById('teacherFormMsg');
-  el.style.display = 'block';
-  el.textContent = msg;
-  el.style.background = type === 'error' ? 'rgba(239,68,68,0.08)' : 'rgba(34,197,94,0.08)';
-  el.style.border = type === 'error' ? '1px solid rgba(239,68,68,0.2)' : '1px solid rgba(34,197,94,0.2)';
-  el.style.color  = type === 'error' ? '#dc2626' : '#16a34a';
-}
 
-function createTeacher() {
-  var name    = document.getElementById('tName').value.trim();
-  var email   = document.getElementById('tEmail').value.trim();
-  var subject = document.getElementById('tSubject').value.trim();
 
-  if (!name || !email) {
-    showTeacherMsg('Please fill in name and email.', 'error');
-    return;
-  }
-  if (!email.includes('@')) {
-    showTeacherMsg('Please enter a valid email address.', 'error');
-    return;
-  }
 
-  var btn = document.getElementById('createTeacherBtn');
-  btn.disabled = true;
-  btn.textContent = 'Creating invite...';
 
-  _sb.from('teacher_invites').insert([{
-    name: name,
-    email: email,
-    subject: subject || null,
-    status: 'pending'
-  }]).select().then(function(result) {
-    btn.disabled = false;
-    btn.textContent = 'Create Teacher Invite';
-    if (result.error) {
-      showTeacherMsg('Error: ' + result.error.message, 'error');
-    } else {
-      var token   = result.data[0].token;
-      var inviteUrl = window.location.origin + '/teacher-join.html?token=' + token;
-      document.getElementById('inviteResult').style.display = 'block';
-      document.getElementById('inviteUrl').value = inviteUrl;
-      showTeacherMsg('Invite created! Share the link below with ' + name + '.', 'success');
-      loadTeachers();
-    }
-  });
-}
 
-// ═══════════════════════════════════════════════════════════════
-// BLOG TAB
-// ═══════════════════════════════════════════════════════════════
+
+
+
+
 var _editingPostId = null;
 
-function loadBlogPosts() {
-  var list = document.getElementById('postsList');
-  if (!list) { console.warn('postsList element not found'); return; }
-  list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-light);">Loading posts...</div>';
 
-  _sb.from('posts')
-    .select('id, title, excerpt, category, status, published_at, read_time, author')
-    .order('published_at', { ascending: false })
-    .then(function(r) {
-      if (r.error) {
-        list.innerHTML = '<div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:20px 24px;font-size:13px;color:#dc2626;">'
-          + '<strong>Could not load posts.</strong> Error: ' + (r.error.message || 'Unknown error') + '<br><br>'
-          + 'Make sure you have run <strong>setup.sql</strong> in Supabase SQL Editor.</div>';
-        return;
-      }
-      var posts = r.data || [];
-      if (posts.length === 0) {
-        list.innerHTML = '<div style="text-align:center;padding:60px;color:var(--text-light);"><div style="font-size:40px;margin-bottom:12px;">&#128221;</div><div style="font-size:15px;font-weight:600;color:var(--text-mid);margin-bottom:6px;">No posts yet</div><div>Click New Post to write your first article.</div></div>';
-        return;
-      }
-      var html = '';
-      posts.forEach(function(p) {
-        var isPub        = p.status === 'published';
-        var statusBg     = isPub ? 'rgba(34,197,94,0.1)' : 'rgba(11,31,58,0.07)';
-        var statusColor  = isPub ? '#16a34a' : '#8a9bb0';
-        var dateStr      = p.published_at ? new Date(p.published_at).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : 'Draft';
-        html += '<div style="background:#fff;border-radius:14px;padding:18px 22px;border:1px solid rgba(11,31,58,0.08);display:flex;align-items:center;gap:14px;margin-bottom:10px;">';
-        html += '<div style="flex:1;min-width:0;">';
-        html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">';
-        html += '<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:' + statusBg + ';color:' + statusColor + ';">' + (isPub ? 'Published' : 'Draft') + '</span>';
-        html += '<span style="font-size:11px;color:#8a9bb0;">' + esc(p.category || '') + '</span>';
-        html += '<span style="font-size:11px;color:#8a9bb0;">' + dateStr + '</span>';
-        html += '<span style="font-size:11px;color:#8a9bb0;">' + (p.read_time || 5) + ' min</span>';
-        html += '</div>';
-        html += '<div style="font-size:15px;font-weight:700;color:#0B1F3A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.title) + '</div>';
-        if (p.excerpt) html += '<div style="font-size:12px;color:#8a9bb0;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + esc(p.excerpt) + '</div>';
-        html += '</div>';
-        html += '<div style="display:flex;gap:8px;flex-shrink:0;">';
-        html += '<button onclick="editPostById(\'' + p.id + '\')" style="padding:8px 14px;border-radius:8px;border:1.5px solid rgba(11,31,58,0.12);background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:#4a6080;">Edit</button>';
-        html += '<button onclick="deletePost(\'' + p.id + '\')" style="padding:8px 14px;border-radius:8px;border:none;background:rgba(239,68,68,0.08);font-size:12px;font-weight:600;cursor:pointer;color:#dc2626;">Delete</button>';
-        html += '</div></div>';
-      });
-      list.innerHTML = html;
-    });
-}
 
-function openNewPost() {
-  _editingPostId = null;
-  document.getElementById('editorTitle').textContent = 'New Post';
-  document.getElementById('postTitle').value    = '';
-  document.getElementById('postCategory').value = '';
-  document.getElementById('postExcerpt').value  = '';
-  document.getElementById('postContent').value  = '';
-  document.getElementById('postReadTime').value = '5';
-  document.getElementById('postStatus').value   = 'draft';
-  document.getElementById('postEditor').style.display = 'block';
-  document.getElementById('postEditor').scrollIntoView({ behavior: 'smooth' });
-}
 
-function editPost(p) {
-  _editingPostId = p.id;
-  document.getElementById('editorTitle').textContent    = 'Edit Post';
-  document.getElementById('postTitle').value            = p.title || '';
-  document.getElementById('postCategory').value         = p.category || '';
-  document.getElementById('postExcerpt').value          = p.excerpt || '';
-  document.getElementById('postContent').value          = p.content || '';
-  document.getElementById('postReadTime').value         = p.read_time || 5;
-  document.getElementById('postStatus').value           = p.status || 'draft';
-  document.getElementById('postEditor').style.display   = 'block';
-  document.getElementById('postEditor').scrollIntoView({ behavior: 'smooth' });
-}
 
-function editPostById(id) {
-  _sb.from('posts').select('*').eq('id', id).single().then(function(r) {
-    if (r.data) editPost(r.data);
-  });
-}
 
-function closeEditor() {
-  document.getElementById('postEditor').style.display = 'none';
-  _editingPostId = null;
-}
 
-function savePost() {
-  var title    = document.getElementById('postTitle').value.trim();
-  var category = document.getElementById('postCategory').value;
-  var excerpt  = document.getElementById('postExcerpt').value.trim();
-  var content  = document.getElementById('postContent').value.trim();
-  var readTime = parseInt(document.getElementById('postReadTime').value) || 5;
-  var status   = document.getElementById('postStatus').value;
 
-  if (!title || !category || !excerpt || !content) {
-    showNotif('Please fill in all required fields.', 'error'); return;
-  }
 
-  var payload = {
-    title: title, category: category, excerpt: excerpt,
-    content: content, read_time: readTime, status: status,
-    author: 'Mohamud Mohamed', updated_at: new Date().toISOString()
-  };
-  if (status === 'published' && !_editingPostId) {
-    payload.published_at = new Date().toISOString();
-  }
 
-  var op = _editingPostId
-    ? _sb.from('posts').update(payload).eq('id', _editingPostId)
-    : _sb.from('posts').insert(payload);
 
-  op.then(function(r) {
-    if (r.error) { showNotif('Error saving post: ' + r.error.message, 'error'); return; }
-    showNotif(_editingPostId ? 'Post updated!' : 'Post saved!', 'success');
-    closeEditor();
-    loadBlogPosts();
-  });
-}
 
-function deletePost(id) {
-  if (!confirm('Delete this post? This cannot be undone.')) return;
-  _sb.from('posts').delete().eq('id', id).then(function(r) {
-    if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
-    showNotif('Post deleted.', 'success');
-    loadBlogPosts();
-  });
-}
+
+
 
 // Blog posts load via switchTab — see switchTab function above
 
