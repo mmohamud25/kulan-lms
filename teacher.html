@@ -928,18 +928,38 @@ function switchTab(tab, el) {
 function init() { renderAll(); }
 
 // ── CHECK TEACHER ──
+function doTeacherSignOut() { _sb.auth.signOut().then(function(){ window.location.href="/login.html"; }); }
+
 function checkTeacher(user) {
   if (!user) { window.location.href='/login.html'; return; }
-  var email = (user.email||'').toLowerCase().trim();
+  var email    = (user.email||'').toLowerCase().trim();
+  var meta     = user.user_metadata || {};
+  var metaRole = meta.role || '';
 
-  // Admin always gets in
+  // Hardcoded admin shortcut
   if (email === TEACHER_EMAIL.toLowerCase() || user.id === ADMIN_UID) {
     startTeacherPage(user); return;
   }
 
-  // Check users table for role
+  // Fast path: role already in JWT metadata
+  if (metaRole === 'teacher' || metaRole === 'admin') {
+    startTeacherPage(user, { full_name: meta.full_name, subject: meta.subject });
+    return;
+  }
+
+  // Query users table with a 4s timeout fallback
+  var resolved = false;
+  var timer = setTimeout(function() {
+    if (resolved) return;
+    resolved = true;
+    if (metaRole === 'teacher') startTeacherPage(user, { full_name: meta.full_name });
+    else window.location.href = '/login.html';
+  }, 4000);
+
   _sb.from('users').select('role, full_name, subject').eq('id', user.id).single()
     .then(function(r) {
+      if (resolved) return;
+      clearTimeout(timer); resolved = true;
       var role = r.data && r.data.role;
       if (role === 'teacher' || role === 'admin') {
         startTeacherPage(user, r.data);
@@ -948,12 +968,13 @@ function checkTeacher(user) {
           '<div style="text-align:center;padding:32px;">'
           + '<div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
           + '<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: ' + user.email + '</div>'
-          + '<button onclick="_sb.auth.signOut().then(function(){location.href=\'/login.html\';})" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign out</button>'
+          + '<button onclick="_sb.auth.signOut().then(function(){location.href=\'\'/login.html\'\';})" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign out and try again</button>'
           + '</div>';
       }
     })
     .catch(function() {
-      // Fallback
+      if (resolved) return;
+      clearTimeout(timer); resolved = true;
       window.location.href = '/login.html';
     });
 }
