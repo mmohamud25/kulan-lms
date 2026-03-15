@@ -180,6 +180,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   .users-table th:nth-child(4),
   .users-table td:nth-child(4) { display:none; }
 }
+@media(max-width:480px) {
+  .topbar,.main { padding-left:14px !important; padding-right:14px !important; }
+  .stats-row { grid-template-columns:1fr 1fr !important; }
+  .toolbar { flex-direction:column; align-items:stretch; }
+  .search-input { min-width:unset; width:100%; }
+  .tb-user { display:none; }
+}
 </style>
 </head>
 <body>

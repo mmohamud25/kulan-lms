@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel — Kulan Institute</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
@@ -237,8 +237,30 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
 #apOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
 
 @media(max-width:1024px){.stats-grid{grid-template-columns:1fr 1fr;}.courses-grid{grid-template-columns:1fr 1fr;}}
-@media(max-width:900px){.sidebar{position:fixed;left:-240px;top:0;bottom:0;z-index:200;transition:left .3s;}.sidebar.open{left:0;}.main{width:100%;}.stats-grid{grid-template-columns:1fr 1fr;}.courses-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
+@media(max-width:900px){.sidebar{position:fixed;left:-240px;top:0;bottom:0;z-index:200;transition:left .3s;}.sidebar.open{left:0 !important;}.main{width:100%;}.stats-grid{grid-template-columns:1fr 1fr;}.courses-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
 @media(max-width:600px){.stats-grid{grid-template-columns:1fr;}}
+
+/* ── MOBILE ADDITIONS ── */
+.menu-toggle {
+  display:none; background:none; border:none; cursor:pointer;
+  color:rgba(255,255,255,0.7); font-size:22px; padding:8px;
+  margin-right:8px; line-height:1;
+}
+.sidebar-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:150;
+}
+.sidebar-overlay.show { display:block; }
+@media(max-width:900px) {
+  .menu-toggle { display:block; }
+  .topbar { padding:0 16px; }
+  .notif  { left:16px; right:16px; bottom:16px; }
+}
+@media(max-width:600px) {
+  .main { padding:20px 14px 60px; }
+  .section-header { flex-direction:column; align-items:flex-start; gap:10px; }
+  .table-wrap { overflow-x:auto; }
+}
+
 </style>
 </head>
 <body>
@@ -304,9 +326,10 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
     <button class="logout-btn" id="logoutBtn">Sign Out</button>
   </div>
 </div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <div class="main">
-  <div class="topbar">
+  <div class="topbar"><button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">&#9776;</button>
     <div class="topbar-title" id="pageTitle">Overview</div>
     <div class="topbar-actions">
       <button class="btn btn-outline btn-sm" onclick="openModal('addCourse')">+ Add Course</button>
@@ -579,7 +602,17 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
   </div>
 </div>
 
+
 <script>
+
+function toggleSidebar() {
+  var sb  = document.getElementById('sidebar');
+  var ov  = document.getElementById('sidebarOverlay');
+  var isOpen = sb.classList.contains('open');
+  sb.classList.toggle('open', !isOpen);
+  if (ov) ov.classList.toggle('show', !isOpen);
+}
+
 var ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
 var _adminUser  = null;
 var courses     = [];
@@ -1089,6 +1122,7 @@ var _editingPostId = null;
 
 
 // Blog posts load via switchTab — see switchTab function above
+
 
 </script>
 </body>

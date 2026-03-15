@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Course Viewer — Kulan Institute</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
@@ -14,188 +14,183 @@ var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 <style>
 :root {
   --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
-  --gold:#D4A843; --teal:#0E7C7B; --white:#FFFFFF;
-  --text:#1a2840; --text-mid:#4a6080; --text-light:#8a9bb0;
-  --bg:#F8F6F1;
+  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
+  --bg:#0d1624; --sidebar-w:280px;
 }
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
-html,body { height:100%; overflow:hidden; font-family:'DM Sans',sans-serif; background:var(--navy); }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; height:100vh; overflow:hidden; display:flex; flex-direction:column; }
 
-/* Loading */
-#loadingScreen {
-  position:fixed; inset:0; background:var(--navy);
-  display:flex; align-items:center; justify-content:center; z-index:9999;
-  flex-direction:column; gap:14px;
-}
-.spinner {
-  width:36px; height:36px; border-radius:50%;
-  border:3px solid rgba(255,255,255,0.1); border-top-color:var(--cyan);
-  animation:spin .8s linear infinite;
-}
-@keyframes spin { to { transform:rotate(360deg); } }
-#loadingScreen p { color:rgba(255,255,255,0.5); font-size:14px; }
+/* LOADING */
+#loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B1F3A,#1A3C6E);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
+.ld-logo { width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy); }
+.ld-spin { width:26px;height:26px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg);} }
+.ld-text { font-size:14px;color:rgba(255,255,255,0.5); }
 
-/* Page layout */
-#page { display:none; height:100vh; flex-direction:column; }
-#page.visible { display:flex; }
+#page { display:flex;flex-direction:column;height:100vh;opacity:0;transition:opacity .3s; }
+#page.visible { opacity:1; }
 
-/* Topbar */
-.topbar {
-  height:58px; flex-shrink:0;
-  background:var(--navy); border-bottom:1px solid rgba(255,255,255,0.08);
-  display:flex; align-items:center; justify-content:space-between; padding:0 20px;
+/* TOP NAV */
+.topnav {
+  background:#0a1420; padding:0 20px; height:54px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  flex-shrink:0; position:relative; z-index:30;
 }
-.topbar-left { display:flex; align-items:center; gap:14px; }
-.back-btn {
-  color:rgba(255,255,255,0.5); text-decoration:none; font-size:13px;
-  font-weight:500; transition:color .2s; display:flex; align-items:center; gap:6px;
-}
-.back-btn:hover { color:var(--cyan); }
-.course-badge {
-  background:rgba(27,174,204,0.12); border:1px solid rgba(27,174,204,0.2);
-  border-radius:20px; padding:5px 14px; font-size:12px; font-weight:600; color:var(--cyan);
-}
-.topbar-right { display:flex; align-items:center; gap:12px; }
-#progressLabel { font-size:12px; color:rgba(255,255,255,0.4); }
-.download-btn {
-  padding:7px 14px; border-radius:8px; font-size:12px; font-weight:600;
-  background:rgba(212,168,67,0.12); border:1px solid rgba(212,168,67,0.25);
-  color:var(--gold); text-decoration:none; transition:all .2s;
-}
-.download-btn:hover { background:rgba(212,168,67,0.2); }
-.download-btn.hidden { display:none; }
+.tn-left { display:flex;align-items:center;gap:14px; }
+.tn-back { display:flex;align-items:center;gap:5px;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;padding:6px 11px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);transition:all .2s;white-space:nowrap; }
+.tn-back:hover { color:var(--gold);border-color:rgba(212,168,67,0.3); }
+.course-badge { display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.8); }
+.course-badge span { color:rgba(255,255,255,0.4); }
+.tn-right { display:flex;align-items:center;gap:12px; }
+.progress-wrap { display:flex;align-items:center;gap:10px; }
+.progress-track { width:120px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden; }
+.progress-fill { height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:3px;transition:width .5s; }
+.progress-txt { font-size:11px;color:rgba(255,255,255,0.4);white-space:nowrap; }
+.sidebar-toggle { background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.5);font-size:20px;padding:4px;display:none; }
 
-/* Progress bar */
-.progress-bar-wrap { height:3px; background:rgba(255,255,255,0.06); flex-shrink:0; }
-.progress-bar { height:100%; background:linear-gradient(90deg,var(--cyan),var(--teal)); transition:width .4s; }
+/* LAYOUT */
+.viewer-body { display:flex;flex:1;overflow:hidden; }
 
-/* Main layout */
-.layout { flex:1; display:flex; overflow:hidden; }
-
-/* Sidebar */
+/* SIDEBAR */
 .sidebar {
-  width:300px; flex-shrink:0;
-  background:rgba(255,255,255,0.03); border-right:1px solid rgba(255,255,255,0.08);
-  display:flex; flex-direction:column; overflow:hidden;
+  width:var(--sidebar-w);flex-shrink:0;
+  background:#060e1a;border-right:1px solid rgba(255,255,255,0.06);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:transform .3s;
 }
-.sidebar-header { padding:20px; border-bottom:1px solid rgba(255,255,255,0.06); }
-.sidebar-title { font-family:'Playfair Display',serif; font-size:16px; font-weight:700; color:#fff; margin-bottom:4px; }
-.sidebar-sub { font-size:12px; color:rgba(255,255,255,0.35); }
-.module-list { flex:1; overflow-y:auto; padding:12px; }
+.sidebar.hidden { transform:translateX(-100%); }
+.sb-header { padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0; }
+.sb-course-title { font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.3; }
+.sb-course-sub { font-size:12px;color:rgba(255,255,255,0.35); }
+.module-list { flex:1;overflow-y:auto;padding:10px 0; }
 .module-list::-webkit-scrollbar { width:4px; }
-.module-list::-webkit-scrollbar-track { background:transparent; }
-.module-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:4px; }
+.module-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1);border-radius:2px; }
 
+/* Module items */
 .mod-item {
-  padding:13px 14px; border-radius:12px; cursor:pointer;
-  margin-bottom:6px; transition:all .2s;
-  border:1.5px solid transparent;
-  display:flex; align-items:center; gap:12px;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;cursor:pointer;
+  border-left:3px solid transparent;
+  transition:all .15s;
 }
-.mod-item:hover { background:rgba(255,255,255,0.06); }
-.mod-item.active { background:rgba(27,174,204,0.1); border-color:rgba(27,174,204,0.25); }
-.mod-item.done { background:rgba(34,197,94,0.06); border-color:rgba(34,197,94,0.15); }
-.mod-icon { font-size:18px; flex-shrink:0; width:24px; text-align:center; }
-.mod-info { flex:1; min-width:0; }
-.mod-name { font-size:13px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.mod-meta { font-size:11px; color:rgba(255,255,255,0.35); margin-top:2px; text-transform:uppercase; letter-spacing:.4px; }
+.mod-item:hover { background:rgba(255,255,255,0.04); }
+.mod-item.active { background:rgba(27,174,204,0.08);border-left-color:var(--cyan); }
+.mod-item.done .mod-icon { color:var(--teal); }
+.mod-icon { font-size:16px;flex-shrink:0;width:20px;text-align:center; }
+.mod-info { flex:1;min-width:0; }
+.mod-name { font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.mod-meta { font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px; }
+.mod-item.done .mod-name { color:rgba(255,255,255,0.5); }
 
-/* Viewer */
-.viewer { flex:1; display:flex; flex-direction:column; overflow:hidden; background:#0d1929; }
-.viewer-header {
-  padding:14px 20px; border-bottom:1px solid rgba(255,255,255,0.06);
-  display:none;
-}
-.viewer-title { font-size:15px; font-weight:700; color:#fff; }
-.viewer-meta { font-size:12px; color:rgba(255,255,255,0.4); margin-top:3px; }
-.viewer-frame { flex:1; position:relative; overflow:hidden; }
+/* CONTENT AREA */
+.content-area { flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative; }
 
-.no-content {
-  position:absolute; inset:0; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:14px; text-align:center; padding:40px;
-}
-.no-content .icon { font-size:52px; }
-.no-content h3 { font-family:'Playfair Display',serif; font-size:20px; color:rgba(255,255,255,0.7); }
-.no-content p { font-size:14px; color:rgba(255,255,255,0.35); line-height:1.7; }
+#viewerHeader { padding:14px 20px;background:#0a1420;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;display:none; }
+.vh-title { font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:3px; }
+.vh-meta { font-size:12px;color:rgba(255,255,255,0.35); }
+.vh-actions { display:flex;align-items:center;gap:10px;margin-top:8px; }
+.btn-dl { padding:6px 14px;border-radius:8px;border:1px solid rgba(27,174,204,0.3);background:rgba(27,174,204,0.08);color:var(--cyan);font-size:12px;font-weight:600;text-decoration:none;transition:all .2s; }
+.btn-dl:hover { background:rgba(27,174,204,0.15); }
+.btn-dl.hidden { display:none; }
 
-#contentFrame { width:100%; height:100%; border:none; display:none; }
+#noContent { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,0.25);text-align:center;padding:32px; }
+#noContent .nc-icon { font-size:48px;margin-bottom:14px; }
+#noContent .nc-title { font-size:16px;font-weight:600;margin-bottom:6px;color:rgba(255,255,255,0.45); }
+#noContent .nc-sub { font-size:13px;line-height:1.7; }
 
+#contentFrame { flex:1;width:100%;border:none;background:#fff;display:none; }
+
+/* MOBILE OVERLAY */
+.sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:19; }
+.sidebar-overlay.show { display:block; }
+
+/* ── RESPONSIVE ── */
 @media(max-width:768px) {
-  .layout { flex-direction:column; }
-  .sidebar { width:100%; height:220px; border-right:none; border-bottom:1px solid rgba(255,255,255,0.08); }
-  .module-list { display:flex; gap:8px; padding:10px; overflow-x:auto; overflow-y:hidden; }
-  .mod-item { flex-shrink:0; width:200px; }
+  :root { --sidebar-w:300px; }
+  .sidebar { position:fixed;top:0;bottom:0;left:0;z-index:20;transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+  .sidebar-toggle { display:block; }
+  .progress-wrap { display:none; }
+  .tn-back span:not(:first-child) { display:none; }
+  .course-badge { display:none; }
+}
+@media(max-width:420px) {
+  .topnav { padding:0 12px; height:50px; }
+  :root { --sidebar-w:85vw; }
 }
 </style>
 </head>
 <body>
 
 <div id="loadingScreen">
-  <div class="spinner"></div>
-  <p>Loading course...</p>
+  <div class="ld-logo">KI</div>
+  <div class="ld-spin"></div>
+  <div class="ld-text">Loading course...</div>
 </div>
 
 <div id="page">
-  <div class="topbar">
-    <div class="topbar-left">
-      <a href="/dashboard.html" class="back-btn">&#8592; Dashboard</a>
-      <div class="course-badge" id="courseBadge">Loading...</div>
+  <!-- Top nav -->
+  <div class="topnav">
+    <div class="tn-left">
+      <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">&#9776;</button>
+      <a href="/dashboard.html" class="tn-back">&larr; <span>Dashboard</span></a>
+      <div class="course-badge" id="courseBadge"><span>Loading...</span></div>
     </div>
-    <div class="topbar-right">
-      <div id="progressLabel"></div>
-      <a href="#" class="download-btn hidden" id="downloadBtn" target="_blank">&#11015; Download</a>
+    <div class="tn-right">
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+        <div class="progress-txt" id="progressLabel">0/0 completed</div>
+      </div>
     </div>
   </div>
 
-  <div class="progress-bar-wrap">
-    <div class="progress-bar" id="progressBar" style="width:0%"></div>
-  </div>
-
-  <div class="layout">
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-title" id="sidebarTitle">Course Materials</div>
-        <div class="sidebar-sub" id="sidebarSub">Select a module to begin</div>
+  <!-- Body -->
+  <div class="viewer-body">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sb-header">
+        <div class="sb-course-title" id="sidebarTitle">Loading...</div>
+        <div class="sb-course-sub" id="sidebarSub">0 modules</div>
       </div>
       <div class="module-list" id="moduleList">
-        <div style="text-align:center;padding:32px 16px;color:rgba(255,255,255,0.3);">
-          <div style="font-size:28px;margin-bottom:8px;">&#128109;</div>
-          <div style="font-size:13px;">No materials added yet.</div>
-        </div>
+        <div style="text-align:center;padding:32px;color:rgba(255,255,255,0.25);font-size:13px;">Loading modules...</div>
       </div>
     </div>
 
-    <div class="viewer">
-      <div class="viewer-header" id="viewerHeader">
-        <div class="viewer-title" id="viewerTitle"></div>
-        <div class="viewer-meta" id="viewerMeta"></div>
-      </div>
-      <div class="viewer-frame">
-        <div class="no-content" id="noContent">
-          <div class="icon">&#127891;</div>
-          <h3>Select a module to start learning</h3>
-          <p>Choose a lesson from the sidebar<br>to view your course materials.</p>
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Content -->
+    <div class="content-area">
+      <div id="viewerHeader">
+        <div class="vh-title" id="viewerTitle"></div>
+        <div class="vh-meta" id="viewerMeta"></div>
+        <div class="vh-actions">
+          <a href="#" class="btn-dl hidden" id="downloadBtn" target="_blank" download>&#8659; Download</a>
         </div>
-        <iframe id="contentFrame" allow="fullscreen"></iframe>
       </div>
+      <div id="noContent">
+        <div class="nc-icon">&#127891;</div>
+        <div class="nc-title">Select a module to begin</div>
+        <div class="nc-sub">Choose a module from the sidebar on the left to start learning.</div>
+      </div>
+      <iframe id="contentFrame" allowfullscreen></iframe>
     </div>
   </div>
 </div>
 
 <script>
-var _viewerUser  = null;
-var _courseId    = null;
-var _completed   = [];
-var _allMats     = [];
-var _enrollment  = null;
+var _viewerUser = null;
+var _courseId   = null;
+var _completed  = [];
+var _allMats    = [];
+var _enrollment = null;
+var _started    = false;
 
-// ── AUTH ──────────────────────────────────────────────────────────
-var _started = false;
 function tryStart(user) {
-  if (_started) return;
-  if (!user) return;
-  _started = true;
-  _viewerUser = user;
+  if (_started||!user) return;
+  _started = true; _viewerUser = user;
   document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('page').classList.add('visible');
   loadCourse();
@@ -204,22 +199,18 @@ function tryStart(user) {
 _sb.auth.getSession().then(function(r) {
   tryStart(r.data.session ? r.data.session.user : null);
   if (!r.data.session) {
-    setTimeout(function() {
-      _sb.auth.getSession().then(function(r2) { tryStart(r2.data.session ? r2.data.session.user : null); });
-    }, 1500);
-    setTimeout(function() { if (!_started) window.location.href = '/login.html'; }, 9000);
+    setTimeout(function(){ _sb.auth.getSession().then(function(r2){ tryStart(r2.data.session?r2.data.session.user:null); }); }, 1500);
+    setTimeout(function(){ if(!_started) window.location.href='/login.html'; }, 9000);
   }
 });
 _sb.auth.onAuthStateChange(function(event, session) {
-  if (event === 'SIGNED_IN')  tryStart(session ? session.user : null);
-  if (event === 'SIGNED_OUT') window.location.href = '/login.html';
+  if (event==='SIGNED_IN') tryStart(session?session.user:null);
+  if (event==='SIGNED_OUT') window.location.href='/login.html';
 });
 
-// ── LOAD COURSE ───────────────────────────────────────────────────
 function loadCourse() {
   var params = new URLSearchParams(window.location.search);
   _courseId  = params.get('course') || null;
-
   Promise.all([
     _sb.from('courses').select('*'),
     _sb.from('materials').select('*').order('module_number')
@@ -227,32 +218,19 @@ function loadCourse() {
     var courses   = results[0].data || [];
     var materials = results[1].data || [];
     _allMats = materials;
-
-    var course = courses.find(function(c) { return String(c.id) === String(_courseId); })
-              || courses[0];
+    var course = courses.find(function(c){ return String(c.id)===String(_courseId); }) || courses[0];
     if (!course) {
-      document.getElementById('moduleList').innerHTML =
-        '<div style="padding:20px;color:rgba(255,255,255,0.4);font-size:13px;">Course not found.</div>';
+      document.getElementById('moduleList').innerHTML = '<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:13px;">Course not found.</div>';
       return;
     }
     _courseId = course.id;
-
     document.getElementById('courseBadge').innerHTML = '<span>' + esc(course.title) + '</span>';
     document.getElementById('sidebarTitle').textContent = course.title;
-
-    var courseMats = materials
-      .filter(function(m) { return m.course_id === course.id; })
-      .sort(function(a, b) { return (a.module_number || 0) - (b.module_number || 0); });
-
-    document.getElementById('sidebarSub').textContent =
-      courseMats.length + ' module' + (courseMats.length !== 1 ? 's' : '');
-
-    // Load enrollment / progress
-    _sb.from('enrollments')
-      .select('*')
-      .eq('user_id', _viewerUser.id)
-      .eq('course_id', course.id)
-      .maybeSingle()
+    document.title = course.title + ' — Kulan Institute';
+    var courseMats = materials.filter(function(m){ return m.course_id===course.id; })
+      .sort(function(a,b){ return (a.module_number||0)-(b.module_number||0); });
+    document.getElementById('sidebarSub').textContent = courseMats.length + ' module' + (courseMats.length!==1?'s':'');
+    _sb.from('enrollments').select('*').eq('user_id',_viewerUser.id).eq('course_id',course.id).maybeSingle()
       .then(function(enResult) {
         _enrollment  = enResult.data;
         _completed   = (_enrollment && _enrollment.completed_materials) ? _enrollment.completed_materials : [];
@@ -262,68 +240,51 @@ function loadCourse() {
   });
 }
 
-// ── RENDER MODULE LIST ────────────────────────────────────────────
 function renderModuleList(mats) {
   var list = document.getElementById('moduleList');
-  if (mats.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:32px;color:rgba(255,255,255,0.3);"><div style="font-size:28px;margin-bottom:8px;">&#128109;</div><div style="font-size:13px;">No materials yet.<br>Check back soon!</div></div>';
+  if (!mats.length) {
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:rgba(255,255,255,0.25);"><div style="font-size:28px;margin-bottom:8px;">&#128109;</div><div style="font-size:13px;">No materials yet.<br>Check back soon!</div></div>';
     return;
   }
   list.innerHTML = '';
-  var icons  = { pdf:'&#128196;', video:'&#127909;', ppt:'&#128202;', other:'&#128190;' };
+  var icons = { pdf:'&#128196;', video:'&#127909;', ppt:'&#128202;', other:'&#128190;' };
   mats.forEach(function(mat) {
-    var done  = _completed.indexOf(mat.id) > -1;
-    var icon  = icons[mat.type] || icons.other;
-    var el    = document.createElement('div');
-    el.className = 'mod-item' + (done ? ' done' : '');
+    var done = _completed.indexOf(mat.id) > -1;
+    var el   = document.createElement('div');
+    el.className = 'mod-item' + (done?' done':'');
     el.id = 'mod-' + mat.id;
     el.innerHTML =
-      '<div class="mod-icon">' + (done ? '&#9989;' : icon) + '</div>'
-      + '<div class="mod-info">'
-      + '<div class="mod-name">M' + mat.module_number + ': ' + esc(mat.title) + '</div>'
-      + '<div class="mod-meta">' + (mat.type || 'file').toUpperCase() + '</div>'
-      + '</div>';
-    el.addEventListener('click', function() { openMaterial(mat, mats.length); });
+      '<div class="mod-icon">' + (done?'&#9989;':(icons[mat.type]||icons.other)) + '</div>'
+      + '<div class="mod-info"><div class="mod-name">M'+mat.module_number+': '+esc(mat.title)+'</div>'
+      + '<div class="mod-meta">'+(mat.type||'file').toUpperCase()+'</div></div>';
+    el.addEventListener('click', function() {
+      openMaterial(mat, mats.length);
+      // Close sidebar on mobile after selection
+      if (window.innerWidth <= 768) toggleSidebar(false);
+    });
     list.appendChild(el);
   });
 }
 
-// ── OPEN MATERIAL ─────────────────────────────────────────────────
 function openMaterial(mat, totalMats) {
-  // Update active state
-  document.querySelectorAll('.mod-item').forEach(function(el) { el.classList.remove('active'); });
-  var modEl = document.getElementById('mod-' + mat.id);
+  document.querySelectorAll('.mod-item').forEach(function(el){ el.classList.remove('active'); });
+  var modEl = document.getElementById('mod-'+mat.id);
   if (modEl) modEl.classList.add('active');
-
-  // Show viewer header
   document.getElementById('viewerHeader').style.display = 'block';
   document.getElementById('viewerTitle').textContent = mat.title;
-  document.getElementById('viewerMeta').textContent = 'Module ' + mat.module_number + ' · ' + (mat.type || 'file').toUpperCase();
-
-  // Resolve URL
+  document.getElementById('viewerMeta').textContent = 'Module '+mat.module_number+' · '+(mat.type||'file').toUpperCase();
   var url = mat.url || '';
   if (url.startsWith('ki_file_')) {
     var stored = localStorage.getItem(url);
     if (stored) url = stored;
-    else { alert('File not found in this browser. It may have been uploaded on another device.'); return; }
+    else { alert('File not available. It may have been uploaded on another device.'); return; }
   }
-
-  // Show content
   document.getElementById('noContent').style.display = 'none';
   var frame = document.getElementById('contentFrame');
-  frame.style.display = 'block';
-  frame.src = url;
-
-  // Download button
+  frame.style.display = 'block'; frame.src = url;
   var dlBtn = document.getElementById('downloadBtn');
-  if (mat.allow_download && url) {
-    dlBtn.href = url;
-    dlBtn.classList.remove('hidden');
-  } else {
-    dlBtn.classList.add('hidden');
-  }
-
-  // Mark complete
+  if (mat.allow_download && url) { dlBtn.href=url; dlBtn.classList.remove('hidden'); }
+  else dlBtn.classList.add('hidden');
   if (_completed.indexOf(mat.id) === -1) {
     _completed.push(mat.id);
     updateProgressBar(totalMats);
@@ -332,15 +293,14 @@ function openMaterial(mat, totalMats) {
   }
 }
 
-// ── PROGRESS ──────────────────────────────────────────────────────
 function updateProgressBar(total) {
-  var pct = total > 0 ? Math.round((_completed.length / total) * 100) : 0;
-  document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = _completed.length + '/' + total + ' completed';
+  var pct = total>0 ? Math.round((_completed.length/total)*100) : 0;
+  document.getElementById('progressBar').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = _completed.length+'/'+total+' completed';
 }
 
 function updateModuleState(matId) {
-  var el = document.getElementById('mod-' + matId);
+  var el = document.getElementById('mod-'+matId);
   if (!el) return;
   el.classList.add('done');
   var icon = el.querySelector('.mod-icon');
@@ -348,19 +308,23 @@ function updateModuleState(matId) {
 }
 
 function saveProgress() {
-  if (!_viewerUser || !_courseId) return;
+  if (!_viewerUser||!_courseId) return;
   _sb.from('enrollments').upsert({
-    user_id:              _viewerUser.id,
-    course_id:            _courseId,
-    completed_materials:  _completed,
-    progress:             _completed.length
-  }, { onConflict: 'user_id,course_id' }).then(function() {});
+    user_id:_viewerUser.id, course_id:_courseId,
+    completed_materials:_completed, progress:_completed.length
+  }, { onConflict:'user_id,course_id' }).then(function(){});
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────
-function esc(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function toggleSidebar(forceOpen) {
+  var sb  = document.getElementById('sidebar');
+  var ov  = document.getElementById('sidebarOverlay');
+  var isOpen = sb.classList.contains('open');
+  var open = forceOpen !== undefined ? forceOpen : !isOpen;
+  sb.classList.toggle('open', open);
+  ov.classList.toggle('show', open);
 }
+
+function esc(str) { return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 </body>
 </html>

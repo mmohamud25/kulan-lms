@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign In — Kulan Institute of Learning</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Sign In — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
 var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 var ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
+var ADMIN_UID   = '34e4009e-21de-4a55-ab9d-e8c767dfe898';
 </script>
 <style>
 :root {
@@ -20,140 +21,101 @@ var ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
 body {
   font-family:'DM Sans',sans-serif;
-  background:linear-gradient(160deg,var(--navy) 0%,var(--blue) 60%,#0E3A5A 100%);
   min-height:100vh; display:flex; align-items:center; justify-content:center;
-  position:relative; overflow:hidden;
+  background:linear-gradient(160deg,#060f1e 0%,var(--navy) 55%,#0d2a50 100%);
+  position:relative; overflow:hidden; padding:20px;
 }
-.grid-bg {
+.bg-grid {
   position:absolute; inset:0;
-  background-image:
-    linear-gradient(rgba(27,174,204,0.06) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(27,174,204,0.06) 1px,transparent 1px);
-  background-size:60px 60px;
+  background-image:linear-gradient(rgba(27,174,204,0.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(27,174,204,0.05) 1px,transparent 1px);
+  background-size:56px 56px; pointer-events:none;
 }
-.glow1 {
-  position:absolute; width:500px; height:500px;
-  background:radial-gradient(circle,rgba(27,174,204,0.12) 0%,transparent 70%);
-  left:-120px; bottom:-120px; border-radius:50%; pointer-events:none;
-}
-.glow2 {
-  position:absolute; width:400px; height:400px;
-  background:radial-gradient(circle,rgba(212,168,67,0.07) 0%,transparent 70%);
-  right:-80px; top:-80px; border-radius:50%; pointer-events:none;
-}
+.bg-orb1 { position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(27,174,204,0.1),transparent 70%);left:-160px;bottom:-160px;pointer-events:none; }
+.bg-orb2 { position:absolute;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,67,0.06),transparent 70%);right:-80px;top:-80px;pointer-events:none; }
 
 .card {
   position:relative; z-index:1;
   background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:24px; padding:52px 48px;
-  width:100%; max-width:440px;
-  backdrop-filter:blur(12px); text-align:center;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:22px; padding:44px 40px;
+  width:100%; max-width:420px;
+  backdrop-filter:blur(14px);
   box-shadow:0 24px 64px rgba(0,0,0,0.3);
 }
 
-.logo { display:inline-flex;align-items:center;gap:12px;text-decoration:none;margin-bottom:32px; }
-.logo-icon {
-  width:48px; height:48px;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  border-radius:12px; display:flex; align-items:center; justify-content:center;
-  font-family:'Playfair Display',serif; font-weight:900; font-size:22px; color:var(--navy);
-}
-.logo-text .t1 { font-size:14px;font-weight:600;color:#fff;text-align:left; }
-.logo-text .t2 { font-size:11px;color:rgba(212,168,67,0.7);text-align:left; }
+/* Logo */
+.logo { display:flex;align-items:center;gap:12px;text-decoration:none;margin-bottom:30px;justify-content:center; }
+.logo-icon { width:46px;height:46px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:21px;color:var(--navy);flex-shrink:0; }
+.logo-text .t1 { font-size:14px;font-weight:700;color:#fff; }
+.logo-text .t2 { font-size:10px;color:rgba(212,168,67,0.65); }
 
-h1 { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#fff;margin-bottom:8px; }
-.subtitle { font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:32px;line-height:1.6; }
+h1 { font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:6px;text-align:center; }
+.subtitle { font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:28px;text-align:center;line-height:1.6; }
 
-/* Fields */
-.f-group { text-align:left; margin-bottom:16px; }
-.f-label { display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,0.45);margin-bottom:7px; }
+/* Form fields */
+.f-group { margin-bottom:14px; }
+.f-label { display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,0.4);margin-bottom:7px; }
 .f-input {
-  width:100%; padding:13px 16px; border-radius:10px;
-  border:1.5px solid rgba(255,255,255,0.15);
-  background:rgba(255,255,255,0.07); color:#fff;
+  width:100%; padding:12px 15px; border-radius:10px;
+  border:1.5px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.06); color:#fff;
   font-family:'DM Sans',sans-serif; font-size:14px;
-  outline:none; transition:border .2s,box-shadow .2s;
+  outline:none; transition:border .2s, box-shadow .2s;
 }
-.f-input::placeholder { color:rgba(255,255,255,0.3); }
-.f-input:focus { border-color:rgba(27,174,204,0.6);box-shadow:0 0 0 3px rgba(27,174,204,0.1); }
-.f-input.error { border-color:rgba(239,68,68,0.6); }
+.f-input::placeholder { color:rgba(255,255,255,0.25); }
+.f-input:focus { border-color:rgba(27,174,204,0.5);box-shadow:0 0 0 3px rgba(27,174,204,0.08); }
 
-/* Password wrapper */
 .pw-wrap { position:relative; }
-.pw-toggle {
-  position:absolute; right:14px; top:50%; transform:translateY(-50%);
-  background:none; border:none; cursor:pointer;
-  color:rgba(255,255,255,0.35); font-size:16px; padding:4px;
-  transition:color .2s;
-}
-.pw-toggle:hover { color:rgba(255,255,255,0.7); }
+.pw-eye { position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.3);font-size:16px;padding:4px;transition:color .2s;line-height:1; }
+.pw-eye:hover { color:rgba(255,255,255,0.6); }
+
+.forgot { display:block;text-align:right;font-size:12px;color:rgba(255,255,255,0.3);text-decoration:none;margin-top:6px;margin-bottom:18px;transition:color .2s; }
+.forgot:hover { color:var(--gold); }
 
 /* Status */
-.status-msg {
-  font-size:13px; padding:11px 16px; border-radius:10px;
-  margin-bottom:16px; display:none; text-align:center; line-height:1.5;
-}
-.status-msg.error   { display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#fca5a5; }
-.status-msg.success { display:block;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#86efac; }
-.status-msg.info    { display:block;background:rgba(27,174,204,0.1);border:1px solid rgba(27,174,204,0.25);color:#67e8f9; }
+.status-msg { font-size:13px;padding:11px 15px;border-radius:10px;margin-bottom:14px;display:none;line-height:1.5;text-align:center; }
+.status-msg.error   { display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#fca5a5; }
+.status-msg.success { display:block;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#86efac; }
+.status-msg.info    { display:block;background:rgba(27,174,204,0.08);border:1px solid rgba(27,174,204,0.2);color:#67e8f9; }
 
 /* Sign in button */
-.signin-btn {
-  width:100%; padding:14px; border-radius:12px;
+.btn-signin {
+  width:100%; padding:13px; border-radius:11px;
   background:linear-gradient(135deg,var(--cyan),var(--teal));
   border:none; color:#fff; font-family:'DM Sans',sans-serif;
   font-size:15px; font-weight:700; cursor:pointer;
-  transition:all .2s; margin-top:4px;
   display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:all .2s;
 }
-.signin-btn:hover:not(:disabled) { transform:translateY(-1px);box-shadow:0 8px 24px rgba(27,174,204,0.3); }
-.signin-btn:disabled { opacity:.6;cursor:not-allowed;transform:none; }
-
-/* Spinner inside button */
-.btn-spinner {
-  width:16px; height:16px; border:2px solid rgba(255,255,255,0.3);
-  border-top-color:#fff; border-radius:50%;
-  animation:spin .7s linear infinite; display:none;
-}
+.btn-signin:hover:not(:disabled) { transform:translateY(-1px);box-shadow:0 8px 24px rgba(27,174,204,0.28); }
+.btn-signin:disabled { opacity:.6;cursor:not-allowed;transform:none; }
+.btn-spin { width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none; }
 @keyframes spin { to{transform:rotate(360deg);} }
 
-/* Forgot password */
-.forgot-link {
-  display:block; text-align:right; font-size:12px;
-  color:rgba(255,255,255,0.35); text-decoration:none;
-  margin-top:5px; margin-bottom:20px; transition:color .2s;
-}
-.forgot-link:hover { color:var(--gold); }
-
-/* Redirect indicator */
-.redirect-bar {
-  display:none; margin-top:20px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:12px; padding:16px;
-}
+/* Redirect bar */
+.redirect-bar { display:none;margin-top:18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:11px;padding:14px 16px; }
 .redirect-bar.show { display:block; }
 .redirect-role { font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:8px; }
 .redirect-role strong { color:#fff; }
-.redirect-progress { height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden; }
+.redirect-track { height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden; }
 .redirect-fill { height:100%;background:linear-gradient(90deg,var(--cyan),var(--gold));border-radius:2px;width:0%;transition:width .7s ease; }
 
 /* Links row */
-.links-row { margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:center;gap:20px;flex-wrap:wrap; }
-.links-row a { font-size:12px;color:rgba(255,255,255,0.3);text-decoration:none;transition:color .2s; }
+.links-row { margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.07);display:flex;justify-content:center;gap:18px;flex-wrap:wrap; }
+.links-row a { font-size:12px;color:rgba(255,255,255,0.28);text-decoration:none;transition:color .2s; }
 .links-row a:hover { color:var(--gold); }
 
 @media(max-width:480px) {
-  .card { padding:36px 24px; margin:20px; }
+  .card { padding:32px 22px; }
+  h1 { font-size:22px; }
 }
 </style>
 </head>
 <body>
-
-<div class="grid-bg"></div>
-<div class="glow1"></div>
-<div class="glow2"></div>
+<div class="bg-grid"></div>
+<div class="bg-orb1"></div>
+<div class="bg-orb2"></div>
 
 <div class="card">
   <a href="https://kulaninstitute.org" class="logo">
@@ -165,7 +127,7 @@ h1 { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#
   </a>
 
   <h1>Welcome Back</h1>
-  <p class="subtitle">Sign in with your email and password.<br>You will be taken to the right place automatically.</p>
+  <p class="subtitle">Sign in — you will be taken to the right place automatically.</p>
 
   <div id="statusMsg" class="status-msg"></div>
 
@@ -178,20 +140,20 @@ h1 { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#
     <label class="f-label">Password</label>
     <div class="pw-wrap">
       <input type="password" class="f-input" id="passInput" placeholder="Your password" autocomplete="current-password">
-      <button type="button" class="pw-toggle" id="pwToggle" onclick="togglePw()" aria-label="Show password">&#128065;</button>
+      <button type="button" class="pw-eye" id="pwEye" onclick="togglePw()">&#128065;</button>
     </div>
-    <a href="/reset-password.html" class="forgot-link">Forgot password?</a>
   </div>
 
-  <button class="signin-btn" id="loginBtn">
-    <div class="btn-spinner" id="btnSpinner"></div>
+  <a href="/reset-password.html" class="forgot">Forgot password?</a>
+
+  <button class="btn-signin" id="loginBtn">
+    <div class="btn-spin" id="btnSpinner"></div>
     <span id="btnText">Sign In</span>
   </button>
 
-  <!-- Redirect indicator -->
   <div class="redirect-bar" id="redirectBar">
-    <div class="redirect-role" id="redirectRole">Verifying your account...</div>
-    <div class="redirect-progress"><div class="redirect-fill" id="redirectFill"></div></div>
+    <div class="redirect-role" id="redirectRole">Signing you in...</div>
+    <div class="redirect-track"><div class="redirect-fill" id="redirectFill"></div></div>
   </div>
 
   <div class="links-row">
@@ -202,7 +164,6 @@ h1 { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#
 </div>
 
 <script>
-// ── HELPERS ──────────────────────────────────────────────────────
 function showStatus(msg, type) {
   var el = document.getElementById('statusMsg');
   el.textContent = msg;
@@ -210,24 +171,19 @@ function showStatus(msg, type) {
 }
 
 function setLoading(loading) {
-  var btn     = document.getElementById('loginBtn');
+  var btn = document.getElementById('loginBtn');
   var spinner = document.getElementById('btnSpinner');
-  var text    = document.getElementById('btnText');
-  btn.disabled       = loading;
+  var text = document.getElementById('btnText');
+  btn.disabled = loading;
   spinner.style.display = loading ? 'block' : 'none';
-  text.textContent   = loading ? 'Signing in...' : 'Sign In';
+  text.textContent = loading ? 'Signing in...' : 'Sign In';
 }
 
 function togglePw() {
-  var input  = document.getElementById('passInput');
-  var toggle = document.getElementById('pwToggle');
-  if (input.type === 'password') {
-    input.type = 'text';
-    toggle.innerHTML = '&#128683;';
-  } else {
-    input.type = 'password';
-    toggle.innerHTML = '&#128065;';
-  }
+  var inp = document.getElementById('passInput');
+  var eye = document.getElementById('pwEye');
+  if (inp.type === 'password') { inp.type = 'text'; eye.innerHTML = '&#128683;'; }
+  else { inp.type = 'password'; eye.innerHTML = '&#128065;'; }
 }
 
 function showRedirect(roleLabel, destination) {
@@ -240,90 +196,51 @@ function showRedirect(roleLabel, destination) {
   setTimeout(function() { window.location.href = destination; }, 800);
 }
 
-// ── ROLE REDIRECT ────────────────────────────────────────────────
 function redirectByRole(user) {
   var email = (user.email || '').toLowerCase();
-
-  // Hardcoded admin shortcut — works even before users table exists
   if (email === ADMIN_EMAIL.toLowerCase()) {
-    showRedirect('Admin', '/admin.html');
-    return;
+    showRedirect('Admin', '/admin.html'); return;
   }
-
-  // Read role from users table
   _sb.from('users').select('role').eq('id', user.id).single()
     .then(function(r) {
       var role = (r.data && r.data.role) ? r.data.role : 'student';
-      if (role === 'admin') {
-        showRedirect('Admin', '/admin.html');
-      } else if (role === 'teacher') {
-        showRedirect('Teacher', '/teacher.html');
-      } else {
-        showRedirect('Student', '/dashboard.html');
-      }
+      if (role === 'admin')        showRedirect('Admin',   '/admin.html');
+      else if (role === 'teacher') showRedirect('Teacher', '/teacher.html');
+      else                         showRedirect('Student', '/dashboard.html');
     })
-    .catch(function() {
-      // Fallback if users table not yet created
-      showRedirect('Student', '/dashboard.html');
-    });
+    .catch(function() { showRedirect('Student', '/dashboard.html'); });
 }
 
-// ── SESSION CHECK ────────────────────────────────────────────────
-// If already signed in, redirect immediately
-_sb.auth.getSession().then(function(result) {
-  var session = result.data.session;
-  if (session && session.user) {
-    redirectByRole(session.user);
-  }
+_sb.auth.getSession().then(function(r) {
+  if (r.data.session && r.data.session.user) redirectByRole(r.data.session.user);
 });
 
-// ── SIGN IN ──────────────────────────────────────────────────────
 function doLogin() {
   var email = document.getElementById('emailInput').value.trim();
   var pass  = document.getElementById('passInput').value;
-
-  document.getElementById('emailInput').classList.remove('error');
-  document.getElementById('passInput').classList.remove('error');
-
-  if (!email) {
-    document.getElementById('emailInput').classList.add('error');
-    showStatus('Please enter your email address.', 'error');
-    return;
-  }
-  if (!pass) {
-    document.getElementById('passInput').classList.add('error');
-    showStatus('Please enter your password.', 'error');
-    return;
-  }
-
+  document.getElementById('emailInput').style.borderColor = '';
+  document.getElementById('passInput').style.borderColor  = '';
+  if (!email) { document.getElementById('emailInput').style.borderColor='rgba(239,68,68,0.5)'; showStatus('Please enter your email address.','error'); return; }
+  if (!pass)  { document.getElementById('passInput').style.borderColor='rgba(239,68,68,0.5)';  showStatus('Please enter your password.','error'); return; }
   setLoading(true);
-
-  _sb.auth.signInWithPassword({ email: email, password: pass })
+  _sb.auth.signInWithPassword({ email:email, password:pass })
     .then(function(result) {
       if (result.error) {
         setLoading(false);
         var msg = result.error.message || 'Sign in failed.';
-        if (msg.toLowerCase().includes('invalid')) {
-          msg = 'Incorrect email or password. Please try again.';
-        } else if (msg.toLowerCase().includes('confirm')) {
-          msg = 'Please confirm your email address before signing in.';
-        }
+        if (msg.toLowerCase().includes('invalid')) msg = 'Incorrect email or password.';
+        else if (msg.toLowerCase().includes('confirm')) msg = 'Please confirm your email before signing in.';
         showStatus(msg, 'error');
       } else {
-        showStatus('', 'info');
+        showStatus('', '');
         redirectByRole(result.data.user);
       }
     })
-    .catch(function(err) {
-      setLoading(false);
-      showStatus('Connection error. Please check your internet and try again.', 'error');
-    });
+    .catch(function() { setLoading(false); showStatus('Connection error. Please try again.', 'error'); });
 }
 
 document.getElementById('loginBtn').addEventListener('click', doLogin);
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') doLogin();
-});
+document.addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
 </script>
 </body>
 </html>
