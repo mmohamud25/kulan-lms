@@ -242,17 +242,30 @@ function showRedirect(roleLabel, destination) {
 
 // ── ROLE REDIRECT ────────────────────────────────────────────────
 function redirectByRole(user) {
-  var meta  = user.user_metadata || {};
-  var role  = meta.role || '';
   var email = (user.email || '').toLowerCase();
 
-  if (email === ADMIN_EMAIL.toLowerCase() || role === 'admin') {
+  // Hardcoded admin shortcut — works even before users table exists
+  if (email === ADMIN_EMAIL.toLowerCase()) {
     showRedirect('Admin', '/admin.html');
-  } else if (role === 'teacher') {
-    showRedirect('Teacher', '/teacher.html');
-  } else {
-    showRedirect('Student', '/dashboard.html');
+    return;
   }
+
+  // Read role from users table
+  _sb.from('users').select('role').eq('id', user.id).single()
+    .then(function(r) {
+      var role = (r.data && r.data.role) ? r.data.role : 'student';
+      if (role === 'admin') {
+        showRedirect('Admin', '/admin.html');
+      } else if (role === 'teacher') {
+        showRedirect('Teacher', '/teacher.html');
+      } else {
+        showRedirect('Student', '/dashboard.html');
+      }
+    })
+    .catch(function() {
+      // Fallback if users table not yet created
+      showRedirect('Student', '/dashboard.html');
+    });
 }
 
 // ── SESSION CHECK ────────────────────────────────────────────────
