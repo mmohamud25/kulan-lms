@@ -687,6 +687,7 @@ tr:hover td{background:rgba(11,31,58,0.015);}
 <script>
 
 var TEACHER_EMAIL = 'mohamedmohammud@gmail.com';
+var ADMIN_UID     = '34e4009e-21de-4a55-ab9d-e8c767dfe898';
 
 function setMsg(msg){ var el=document.getElementById('loadingMsg'); if(el) el.textContent=msg; }
 function hideLoading(){ var el=document.getElementById('loadingScreen'); if(el) el.style.display='none'; }
@@ -734,7 +735,7 @@ function renderCourses() {
       +'<div><div style="font-weight:700;font-size:15px;color:var(--navy);">'+c.title+'</div>'
       +(c.titleSo?'<div style="font-size:12px;color:#999;font-style:italic;">'+c.titleSo+'</div>':'')
       +'<div style="font-size:12px;color:#888;margin-top:6px;">'+mats+' materials &bull; '+c.level+' &bull; <span style="color:'+(c.status==='active'?'var(--teal)':'var(--gold)')+';">'+c.status+'</span></div></div>'
-      +'<button onclick="openMatsFor(''+c.id+'')" style="background:var(--navy);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;">View Materials</button>'
+      +'<button onclick="openMatsFor(\'' + c.id + '\')" style="background:var(--navy);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">View Materials</button>'
       +'</div></div>';
   }).join('');
 }
@@ -763,7 +764,7 @@ function renderMaterials() {
       +'<div style="font-weight:700;font-size:14px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+m.title+'</div>'
       +'<div style="font-size:11px;color:#999;margin-top:3px;">Module '+m.module+' &bull; '+(course?course.title:'Unknown')+' &bull; '+m.type.toUpperCase()+'</div></div>'
       +(m.url&&!m.url.startsWith('ki_file_')?'<a href="'+m.url+'" target="_blank" style="font-size:12px;color:var(--cyan);text-decoration:none;font-weight:600;white-space:nowrap;">Preview</a>':'')
-      +'<button onclick="deleteMaterialT(''+m.id+'')" style="background:rgba(220,38,38,0.08);color:#dc2626;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">&#128465;</button>'
+      +'<button onclick="deleteMaterialT(\'' + m.id + '\')" style="background:rgba(220,38,38,0.08);color:#dc2626;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;">&#128465;</button>'
       +'</div>';
   }).join('');
 }
@@ -821,25 +822,23 @@ function upHandleDrop(ev) {
 }
 function upFileSelected(inp){ if(inp.files&&inp.files[0]) processUpFile(inp.files[0]); }
 function processUpFile(file) {
-  var ext=file.name.split('.').pop().toLowerCase();
-  var icons={pdf:'📄',mp4:'🎬',mov:'🎬',ppt:'📊',pptx:'📊',doc:'📝',docx:'📝',xlsx:'📊',zip:'📦'};
-  document.getElementById('upFileIcon').textContent=icons[ext]||'📎';
-  document.getElementById('upFileName').textContent=file.name;
-  document.getElementById('upFileSize').textContent=(file.size/1024/1024).toFixed(2)+' MB';
-  document.getElementById('upFileInfo').style.display='block';
-  document.getElementById('upDropZone').style.display='none';
-  if(!document.getElementById('upTitle').value.trim())
-    document.getElementById('upTitle').value=file.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
-  if(['mp4','mov','avi'].indexOf(ext)>-1) document.getElementById('upType').value='video';
-  else if(['ppt','pptx'].indexOf(ext)>-1) document.getElementById('upType').value='ppt';
-  else if(ext==='pdf') document.getElementById('upType').value='pdf';
-  document.getElementById('upProgressWrap').style.display='block';
-  document.getElementById('upProgressText').textContent='Reading file...';
-  var reader=new FileReader();
-  reader.onprogress=function(e){ if(e.lengthComputable){var p=Math.round(e.loaded/e.total*100);document.getElementById('upProgressBar').style.width=p+'%';document.getElementById('upProgressText').textContent=p+'% loaded...';} };
-  reader.onload=function(e){ document.getElementById('upProgressBar').style.width='100%';document.getElementById('upProgressText').textContent='Ready ✓';_upFileData={name:file.name,ext:ext,dataUrl:e.target.result}; };
-  reader.onerror=function(){ showNotif('Could not read file. Try the link tab.'); clearUpFile(); };
-  reader.readAsDataURL(file);
+  var ext   = file.name.split('.').pop().toLowerCase();
+  var icons = {pdf:'📄',mp4:'🎬',mov:'🎬',ppt:'📊',pptx:'📊',doc:'📝',docx:'📝',xlsx:'📊',zip:'📦'};
+  document.getElementById('upFileIcon').textContent = icons[ext] || '📎';
+  document.getElementById('upFileName').textContent = file.name;
+  document.getElementById('upFileSize').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
+  document.getElementById('upFileInfo').style.display = 'block';
+  document.getElementById('upDropZone').style.display = 'none';
+  if (!document.getElementById('upTitle').value.trim())
+    document.getElementById('upTitle').value = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+  if (['mp4','mov','avi'].indexOf(ext) > -1)   document.getElementById('upType').value = 'video';
+  else if (['ppt','pptx'].indexOf(ext) > -1)   document.getElementById('upType').value = 'ppt';
+  else if (ext === 'pdf')                       document.getElementById('upType').value = 'pdf';
+  // Store the actual File object for Supabase Storage upload
+  _upFileData = { name: file.name, ext: ext, file: file };
+  document.getElementById('upProgressWrap').style.display = 'block';
+  document.getElementById('upProgressText').textContent = 'File ready ✓';
+  document.getElementById('upProgressBar').style.width = '100%';
 }
 function clearUpFile() {
   _upFileData=null;
@@ -911,24 +910,46 @@ function init() { renderAll(); }
 // ── CHECK TEACHER ──
 function checkTeacher(user) {
   if (!user) { window.location.href='/login.html'; return; }
-  var role  = user.user_metadata && user.user_metadata.role;
-  var email = user.email.toLowerCase().trim();
-  if (role!=='admin' && role!=='teacher' && email!==TEACHER_EMAIL.toLowerCase()) {
-    document.getElementById('loadingScreen').innerHTML='<div style="text-align:center;padding:32px;"><div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
-      +'<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: '+user.email+'</div>'
-      +'<button onclick="_sb.auth.signOut().then(function(){location.href='/login.html';})" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign out</button>'
-      +'</div>';
-    return;
+  var email = (user.email||'').toLowerCase().trim();
+
+  // Admin always gets in
+  if (email === TEACHER_EMAIL.toLowerCase() || user.id === ADMIN_UID) {
+    startTeacherPage(user); return;
   }
+
+  // Check users table for role
+  _sb.from('users').select('role, full_name, subject').eq('id', user.id).single()
+    .then(function(r) {
+      var role = r.data && r.data.role;
+      if (role === 'teacher' || role === 'admin') {
+        startTeacherPage(user, r.data);
+      } else {
+        document.getElementById('loadingScreen').innerHTML =
+          '<div style="text-align:center;padding:32px;">'
+          + '<div style="color:#ff6b6b;font-size:20px;font-weight:700;margin-bottom:12px;">Access Denied</div>'
+          + '<div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">Signed in as: ' + user.email + '</div>'
+          + '<button onclick="_sb.auth.signOut().then(function(){location.href=\'/login.html\';})" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:12px 24px;font-size:14px;cursor:pointer;">Sign out</button>'
+          + '</div>';
+      }
+    })
+    .catch(function() {
+      // Fallback
+      window.location.href = '/login.html';
+    });
+}
+
+function startTeacherPage(user, userData) {
   window._teacherUser = user;
   hideLoading();
-  document.getElementById('page').style.display='block';
-  document.getElementById('userEmail').textContent=user.email;
-  document.getElementById('userAv').textContent=user.email.charAt(0).toUpperCase();
-  var name=(user.user_metadata&&user.user_metadata.full_name)||user.email.split('@')[0]||'Teacher';
-  document.getElementById('userName').textContent=name;
-  document.getElementById('logoutBtn').addEventListener('click',function(){
-    _sb.auth.signOut().then(function(){window.location.href='/login.html';});
+  document.getElementById('page').style.display = 'block';
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('userAv').textContent    = user.email.charAt(0).toUpperCase();
+  var name = (userData && userData.full_name)
+    || (user.user_metadata && user.user_metadata.full_name)
+    || user.email.split('@')[0] || 'Teacher';
+  document.getElementById('userName').textContent = name;
+  document.getElementById('logoutBtn').addEventListener('click', function() {
+    _sb.auth.signOut().then(function() { window.location.href = '/login.html'; });
   });
   loadTeacherProfile();
   init();
@@ -1051,18 +1072,44 @@ function tpAvatarPick(inp) {
   r.readAsDataURL(inp.files[0]);
 }
 function saveTeacherProfile() {
-  var name = document.getElementById('tpName').value.trim();
-  var data = { name:name, role:document.getElementById('tpRole').value.trim(), bio:document.getElementById('tpBio').value.trim(), avatar:_tpImg };
-  localStorage.setItem('ki_teacher_profile', JSON.stringify(data));
-  if (name) { var el=document.getElementById('userName'); if(el) el.textContent=name; }
-  if (_tpImg) { var av=document.getElementById('userAv'); if(av) av.innerHTML='<img src="'+_tpImg+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">'; }
-  document.getElementById('tpOk').style.display = 'block';
-  setTimeout(function(){ document.getElementById('tpOk').style.display='none'; closeTeacherProfile(); }, 900);
+  if (!window._teacherUser) return;
+  var name    = document.getElementById('tpName').value.trim();
+  var subject = document.getElementById('tpSubject').value.trim();
+  if (!name) { showNotif('Please enter your name'); return; }
+
+  _sb.from('users').update({
+    full_name:  name,
+    subject:    subject || null,
+    updated_at: new Date().toISOString()
+  }).eq('id', window._teacherUser.id)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message); return; }
+      document.getElementById('userName').textContent = name;
+      showNotif('Profile saved!');
+      closeTeacherProfile();
+    });
 }
 function loadTeacherProfile() {
-  var saved = JSON.parse(localStorage.getItem('ki_teacher_profile') || '{}');
-  if (saved.name) { var el=document.getElementById('userName'); if(el) el.textContent=saved.name; }
-  if (saved.avatar) { var av=document.getElementById('userAv'); if(av) av.innerHTML='<img src="'+saved.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">'; }
+  if (!window._teacherUser) return;
+  _sb.from('users').select('full_name, subject, avatar_url').eq('id', window._teacherUser.id).single()
+    .then(function(r) {
+      if (!r.data) return;
+      var d = r.data;
+      if (d.full_name) {
+        document.getElementById('userName').textContent = d.full_name;
+        var tp = document.getElementById('tpName');
+        if (tp) tp.value = d.full_name;
+      }
+      if (d.subject) {
+        var ts = document.getElementById('tpSubject');
+        if (ts) ts.value = d.subject;
+      }
+      if (d.avatar_url) {
+        var av = document.getElementById('userAv');
+        if (av) { av.style.backgroundImage = 'url('+d.avatar_url+')'; av.style.backgroundSize='cover'; av.textContent=''; }
+      }
+    })
+    .catch(function() {});
 }
 </script>
 </body>
