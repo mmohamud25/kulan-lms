@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Your Account — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+<style>
+:root { --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B; }
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'DM Sans',sans-serif;
+  background:linear-gradient(160deg,var(--navy),var(--blue),#0a3a5a);
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden; padding:20px;
+}
+.grid-bg { position:absolute;inset:0;background-image:linear-gradient(rgba(27,174,204,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.05) 1px,transparent 1px);background-size:52px 52px; }
+.glow { position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(27,174,204,0.1),transparent 70%);left:-100px;bottom:-100px;border-radius:50%; }
+
+.card {
+  position:relative;z-index:1;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:24px; padding:48px 44px;
+  width:100%; max-width:460px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 24px 64px rgba(0,0,0,0.3);
+}
+
+.logo { display:flex;align-items:center;gap:12px;text-decoration:none;margin-bottom:28px; }
+.logo-icon { width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:var(--navy); }
+.logo-text .t1 { font-size:13px;font-weight:700;color:#fff; }
+.logo-text .t2 { font-size:10px;color:rgba(212,168,67,0.7); }
+
+.welcome-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(27,174,204,0.12);border:1px solid rgba(27,174,204,0.25);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--cyan);margin-bottom:16px; }
+h1 { font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:8px; }
+.subtitle { font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:28px;line-height:1.6; }
+
+/* Info row */
+.info-row { background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px 18px;margin-bottom:24px; }
+.info-label { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,0.3);margin-bottom:3px; }
+.info-value { font-size:15px;font-weight:600;color:#fff; }
+.info-sub   { font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px; }
+
+/* Form */
+.f-group { margin-bottom:16px; }
+.f-label { display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,0.4);margin-bottom:7px; }
+.f-input { width:100%;padding:13px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border .2s; }
+.f-input::placeholder { color:rgba(255,255,255,0.25); }
+.f-input:focus { border-color:rgba(27,174,204,0.5);box-shadow:0 0 0 3px rgba(27,174,204,0.08); }
+.f-input[readonly] { opacity:.6;cursor:not-allowed; }
+
+/* Password strength */
+.strength-bar { height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:8px;overflow:hidden; }
+.strength-fill { height:100%;border-radius:2px;transition:all .3s;width:0%; }
+.strength-label { font-size:11px;color:rgba(255,255,255,0.3);margin-top:5px; }
+
+.btn-create { width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px; }
+.btn-create:hover:not(:disabled) { transform:translateY(-1px);box-shadow:0 8px 24px rgba(27,174,204,0.3); }
+.btn-create:disabled { opacity:.6;cursor:not-allowed;transform:none; }
+
+.status-msg { font-size:13px;padding:11px 16px;border-radius:10px;margin-bottom:16px;display:none;line-height:1.5; }
+.status-msg.error   { display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#fca5a5; }
+.status-msg.success { display:block;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#86efac; }
+
+/* States */
+#invalidState,#successState { display:none;text-align:center;padding:20px 0; }
+#invalidState h2,#successState h2 { font-family:'Playfair Display',serif;font-size:24px;color:#fff;margin-bottom:12px; }
+#invalidState p,#successState p { font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:20px; }
+.success-icon { font-size:56px;margin-bottom:16px; }
+.go-btn { display:inline-block;padding:13px 28px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-weight:700;font-size:14px;text-decoration:none;transition:all .2s; }
+.go-btn:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,168,67,0.3); }
+
+@media(max-width:480px) { .card { padding:36px 24px; } }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="glow"></div>
+
+<div class="card">
+  <a href="https://kulaninstitute.org" class="logo">
+    <div class="logo-icon">KI</div>
+    <div class="logo-text"><div class="t1">Kulan Institute</div><div class="t2">of Learning</div></div>
+  </a>
+
+  <!-- Invalid link state -->
+  <div id="invalidState">
+    <h2>Invalid Link</h2>
+    <p>This signup link is invalid or has expired. Please contact Kulan Institute for a new invite.</p>
+    <a href="https://kulaninstitute.org" class="go-btn">Go to Homepage</a>
+  </div>
+
+  <!-- Signup form -->
+  <div id="formState">
+    <div class="welcome-badge">&#127891; You have been accepted</div>
+    <h1>Create Your Account</h1>
+    <p class="subtitle">Your application was approved. Set up your account to start learning.</p>
+
+    <div class="info-row">
+      <div class="info-label">Enrolled as</div>
+      <div class="info-value" id="displayName">Loading...</div>
+      <div class="info-sub" id="displayCourse"></div>
+    </div>
+
+    <div id="statusMsg" class="status-msg"></div>
+
+    <div class="f-group">
+      <label class="f-label">Email Address</label>
+      <input type="email" class="f-input" id="emailInput" readonly>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Full Name <span style="color:var(--gold)">*</span></label>
+      <input type="text" class="f-input" id="nameInput" placeholder="Your full name">
+    </div>
+    <div class="f-group">
+      <label class="f-label">Password <span style="color:var(--gold)">*</span></label>
+      <input type="password" class="f-input" id="pw1" placeholder="Create a strong password" oninput="checkStrength()">
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+      <div class="strength-label" id="strengthLabel">At least 8 characters</div>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Confirm Password <span style="color:var(--gold)">*</span></label>
+      <input type="password" class="f-input" id="pw2" placeholder="Confirm your password">
+    </div>
+
+    <button class="btn-create" id="createBtn" onclick="createAccount()">
+      Create Account &amp; Start Learning &rarr;
+    </button>
+  </div>
+
+  <!-- Success state -->
+  <div id="successState">
+    <div class="success-icon">&#127881;</div>
+    <h2>Account Created!</h2>
+    <p>Welcome to Kulan Institute. Your account is ready. Sign in to access your courses.</p>
+    <a href="/login.html" class="go-btn">Sign In Now &rarr;</a>
+  </div>
+</div>
+
+<script>
+var params   = new URLSearchParams(window.location.search);
+var token    = params.get('token');
+var email    = params.get('email') || '';
+var name     = params.get('name')  || '';
+var course   = params.get('course')|| '';
+
+function showStatus(msg, type) {
+  var el = document.getElementById('statusMsg');
+  el.textContent = msg; el.className = 'status-msg ' + type;
+}
+
+function checkStrength() {
+  var pw   = document.getElementById('pw1').value;
+  var fill = document.getElementById('strengthFill');
+  var lbl  = document.getElementById('strengthLabel');
+  var score = 0;
+  if (pw.length >= 8)  score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+  var colors = ['#ef4444','#f97316','#eab308','#22c55e','#16a34a'];
+  var labels = ['Too short','Weak','Fair','Strong','Very strong'];
+  fill.style.width = (score * 20) + '%';
+  fill.style.background = colors[Math.max(0, score-1)];
+  lbl.textContent = score === 0 ? 'At least 8 characters' : labels[Math.min(score-1, 4)];
+}
+
+// Validate link
+if (!token || !email) {
+  document.getElementById('formState').style.display   = 'none';
+  document.getElementById('invalidState').style.display = 'block';
+} else {
+  document.getElementById('emailInput').value        = decodeURIComponent(email);
+  document.getElementById('nameInput').value         = decodeURIComponent(name);
+  document.getElementById('displayName').textContent = decodeURIComponent(name) || 'New Student';
+  document.getElementById('displayCourse').textContent = course ? 'Enrolled in: ' + decodeURIComponent(course) : 'Kulan Institute of Learning';
+}
+
+function createAccount() {
+  var emailVal = document.getElementById('emailInput').value.trim();
+  var nameVal  = document.getElementById('nameInput').value.trim();
+  var pw1Val   = document.getElementById('pw1').value;
+  var pw2Val   = document.getElementById('pw2').value;
+
+  if (!nameVal)        { showStatus('Please enter your full name.','error'); return; }
+  if (pw1Val.length < 8) { showStatus('Password must be at least 8 characters.','error'); return; }
+  if (pw1Val !== pw2Val) { showStatus('Passwords do not match.','error'); return; }
+
+  var btn = document.getElementById('createBtn');
+  btn.disabled = true; btn.textContent = 'Creating account...';
+
+  _sb.auth.signUp({
+    email:    emailVal,
+    password: pw1Val,
+    options: {
+      data: {
+        full_name: nameVal,
+        role:      'student',
+        course:    decodeURIComponent(course)
+      }
+    }
+  }).then(function(result) {
+    if (result.error) {
+      btn.disabled = false;
+      btn.textContent = 'Create Account & Start Learning →';
+      // If user already exists, let them just sign in
+      if (result.error.message.toLowerCase().includes('already')) {
+        showStatus('An account with this email already exists. Please sign in instead.','error');
+      } else {
+        showStatus('Error: ' + result.error.message,'error');
+      }
+      return;
+    }
+    // Success
+    document.getElementById('formState').style.display   = 'none';
+    document.getElementById('successState').style.display = 'block';
+  });
+}
+</script>
+</body>
+</html>

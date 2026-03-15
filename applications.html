@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applications — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
+var ADMIN_UID   = '34e4009e-21de-4a55-ab9d-e8c767dfe898';
+</script>
+<style>
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
+  --bg:#F4F7FB; --text:#1a2840; --text-mid:#4a6080; --text-light:#8a9bb0;
+  --success:#22c55e; --error:#ef4444; --warning:#f59e0b;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+#loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B1F3A,#1A3C6E);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
+.ld-logo { width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy); }
+.ld-spin { width:26px;height:26px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg);} }
+.ld-text { font-size:14px;color:rgba(255,255,255,0.5); }
+#page { display:none; }
+
+/* TOPBAR */
+.topbar { background:var(--navy);padding:0 32px;height:62px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(212,168,67,0.2);position:sticky;top:0;z-index:10; }
+.tb-left { display:flex;align-items:center;gap:16px; }
+.tb-back { display:flex;align-items:center;gap:6px;font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);transition:all .2s; }
+.tb-back:hover { color:var(--gold);border-color:rgba(212,168,67,0.3); }
+.tb-title { font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff; }
+.tb-right { display:flex;align-items:center;gap:12px; }
+.tb-user { font-size:13px;color:rgba(255,255,255,0.45); }
+.tb-logout { background:none;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:7px 14px;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s; }
+.tb-logout:hover { color:#fff;border-color:rgba(255,255,255,0.35); }
+
+/* MAIN */
+.main { max-width:1200px;margin:0 auto;padding:36px 24px 80px; }
+
+/* STATS */
+.stats-row { display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:28px; }
+.stat-card { background:#fff;border-radius:14px;padding:18px 20px;border:1px solid rgba(11,31,58,0.07); }
+.stat-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);margin-bottom:6px; }
+.stat-num { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--navy); }
+
+/* TOOLBAR */
+.toolbar { background:#fff;border-radius:14px;padding:14px 18px;border:1px solid rgba(11,31,58,0.07);margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap; }
+.search-input { flex:1;min-width:200px;padding:10px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border .2s; }
+.search-input:focus { border-color:var(--cyan); }
+.filter-select { padding:10px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:#fff;cursor:pointer; }
+.tb-count { font-size:13px;color:var(--text-light);margin-left:auto;white-space:nowrap; }
+
+/* TABLE */
+.table-wrap { background:#fff;border-radius:16px;border:1px solid rgba(11,31,58,0.07);overflow:hidden; }
+.app-table { width:100%;border-collapse:collapse; }
+.app-table thead tr { background:#F8F9FB; }
+.app-table th { padding:12px 18px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);border-bottom:1px solid rgba(11,31,58,0.07);white-space:nowrap; }
+.app-table tbody tr { border-bottom:1px solid rgba(11,31,58,0.05);transition:background .15s;cursor:pointer; }
+.app-table tbody tr:hover { background:#FAFBFC; }
+.app-table tbody tr:last-child { border-bottom:none; }
+.app-table td { padding:14px 18px;font-size:13px; }
+
+/* Status badges */
+.badge { display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600; }
+.badge-pending  { background:rgba(245,158,11,0.1);color:#b45309; }
+.badge-approved { background:rgba(34,197,94,0.1);color:#16a34a; }
+.badge-rejected { background:rgba(239,68,68,0.1);color:#dc2626; }
+.badge-invited  { background:rgba(27,174,204,0.1);color:var(--cyan); }
+
+/* Applicant cell */
+.app-name { font-size:14px;font-weight:600;color:var(--navy); }
+.app-email { font-size:12px;color:var(--text-light);margin-top:1px; }
+.app-location { font-size:12px;color:var(--text-light); }
+
+/* Action buttons */
+.btn-approve { padding:7px 14px;border-radius:8px;border:none;background:rgba(34,197,94,0.1);font-size:12px;font-weight:600;cursor:pointer;color:#16a34a;transition:all .2s;margin-right:4px; }
+.btn-approve:hover { background:rgba(34,197,94,0.2); }
+.btn-reject  { padding:7px 14px;border-radius:8px;border:none;background:rgba(239,68,68,0.08);font-size:12px;font-weight:600;cursor:pointer;color:#dc2626;transition:all .2s;margin-right:4px; }
+.btn-reject:hover { background:rgba(239,68,68,0.15); }
+.btn-view    { padding:7px 14px;border-radius:8px;border:1.5px solid rgba(11,31,58,0.12);background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:var(--text-mid);transition:all .2s; }
+.btn-view:hover { border-color:var(--navy);color:var(--navy); }
+
+/* DETAIL MODAL */
+.modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:flex-start;justify-content:center;z-index:100;backdrop-filter:blur(4px);padding:32px 20px;overflow-y:auto; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff;border-radius:20px;width:100%;max-width:680px;box-shadow:0 24px 64px rgba(0,0,0,0.2);margin:auto; }
+.modal-header { padding:28px 32px 20px;border-bottom:1px solid rgba(11,31,58,0.07);display:flex;justify-content:space-between;align-items:flex-start; }
+.modal-title { font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy); }
+.modal-subtitle { font-size:13px;color:var(--text-light);margin-top:3px; }
+.modal-close { background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-light);transition:color .2s;padding:4px; }
+.modal-close:hover { color:var(--navy); }
+.modal-body { padding:24px 32px; }
+.modal-footer { padding:20px 32px;border-top:1px solid rgba(11,31,58,0.07);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap; }
+
+/* Application detail sections */
+.detail-section { margin-bottom:24px; }
+.detail-section-title { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);margin-bottom:12px;display:flex;align-items:center;gap:7px; }
+.detail-section-title::before { content:'';width:16px;height:2px;background:var(--cyan);border-radius:2px; }
+.detail-grid { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+.detail-field { }
+.detail-label { font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-light);margin-bottom:3px; }
+.detail-value { font-size:14px;color:var(--navy);font-weight:500; }
+.detail-full { grid-column:1/-1; }
+.detail-text { font-size:14px;color:var(--text-mid);line-height:1.75;background:#F8F9FB;border-radius:10px;padding:14px 16px;margin-top:4px; }
+
+/* Notes */
+.notes-input { width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;resize:vertical;min-height:80px;transition:border .2s; }
+.notes-input:focus { border-color:var(--cyan); }
+
+/* Action buttons in modal footer */
+.btn-modal-approve { padding:11px 24px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--success),#16a34a);color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s; }
+.btn-modal-approve:hover { transform:translateY(-1px);box-shadow:0 6px 18px rgba(34,197,94,0.3); }
+.btn-modal-reject  { padding:11px 20px;border-radius:10px;border:none;background:rgba(239,68,68,0.1);color:#dc2626;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer; }
+.btn-modal-invite  { padding:11px 24px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s; }
+.btn-modal-invite:hover { transform:translateY(-1px);box-shadow:0 6px 18px rgba(27,174,204,0.3); }
+.btn-modal-cancel  { padding:11px 20px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.12);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;color:var(--text-mid); }
+
+/* Invite result inside modal */
+.invite-box { background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:14px 16px;margin-top:12px;display:none; }
+.invite-box.show { display:block; }
+.invite-box-label { font-size:12px;font-weight:700;color:#16a34a;margin-bottom:8px; }
+.invite-url-row { display:flex;gap:8px; }
+.invite-url-input { flex:1;padding:9px 12px;border:1.5px solid rgba(34,197,94,0.3);border-radius:8px;font-size:12px;font-family:monospace;background:#fff;outline:none; }
+.btn-copy-invite { padding:9px 14px;border-radius:8px;border:none;background:#16a34a;color:#fff;font-size:12px;font-weight:700;cursor:pointer; }
+
+/* Empty state */
+.empty-state { text-align:center;padding:72px 24px;color:var(--text-light); }
+.empty-state .e-icon { font-size:52px;margin-bottom:16px; }
+.empty-state h3 { font-size:18px;font-weight:600;color:var(--text-mid);margin-bottom:8px; }
+.empty-state p { font-size:14px;line-height:1.7; }
+
+/* NOTIF */
+.notif { position:fixed;bottom:24px;right:24px;padding:13px 20px;border-radius:12px;background:var(--navy);color:#fff;font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(11,31,58,0.3);transform:translateY(80px);opacity:0;transition:all .3s;z-index:999;max-width:320px; }
+.notif.show { transform:translateY(0);opacity:1; }
+.notif.success { background:#16a34a; }
+.notif.error   { background:#dc2626; }
+
+@media(max-width:768px) {
+  .topbar { padding:0 16px; }
+  .main { padding:24px 16px 60px; }
+  .stats-row { grid-template-columns:repeat(3,1fr); }
+  .app-table th:nth-child(4),
+  .app-table td:nth-child(4),
+  .app-table th:nth-child(5),
+  .app-table td:nth-child(5) { display:none; }
+  .detail-grid { grid-template-columns:1fr; }
+  .detail-full { grid-column:1; }
+  .modal { margin:16px; }
+}
+</style>
+</head>
+<body>
+
+<div id="loadingScreen">
+  <div class="ld-logo">KI</div>
+  <div class="ld-spin"></div>
+  <div class="ld-text">Loading applications...</div>
+</div>
+
+<div id="page">
+  <div class="topbar">
+    <div class="tb-left">
+      <a href="/admin.html" class="tb-back">&larr; Admin Panel</a>
+      <div class="tb-title">Applications</div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-user" id="adminEmail"></span>
+      <button class="tb-logout" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total</div>
+        <div class="stat-num" id="statTotal">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-num" id="statPending" style="color:var(--warning);">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Approved</div>
+        <div class="stat-num" id="statApproved" style="color:var(--success);">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Invited</div>
+        <div class="stat-num" id="statInvited" style="color:var(--cyan);">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-num" id="statRejected" style="color:var(--error);">—</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input type="text" class="search-input" id="searchInput"
+        placeholder="&#128269; Search by name, email, or course..." oninput="filterApps()">
+      <select class="filter-select" id="statusFilter" onchange="filterApps()">
+        <option value="">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="invited">Invited</option>
+        <option value="rejected">Rejected</option>
+      </select>
+      <select class="filter-select" id="courseFilter" onchange="filterApps()">
+        <option value="">All Courses</option>
+        <option>AI for Beginners</option>
+        <option>Cybersecurity Fundamentals</option>
+        <option>Digital Literacy</option>
+      </select>
+      <span class="tb-count" id="appCount"></span>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <div id="tableContainer">
+        <div class="empty-state">
+          <div class="e-icon">&#9203;</div>
+          <h3>Loading applications...</h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalName">Applicant Name</div>
+        <div class="modal-subtitle" id="modalMeta">Applied for — Course</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">&#215;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+var _allApps = [];
+var _currentApp = null;
+var _notifTimer;
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showNotif(msg, type) {
+  var el = document.getElementById('notif');
+  el.textContent = msg; el.className = 'notif show' + (type ? ' '+type : '');
+  clearTimeout(_notifTimer); _notifTimer = setTimeout(function(){ el.classList.remove('show'); }, 3500);
+}
+function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—'; }
+function formatDateShort(d) { return d ? new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '—'; }
+
+// ── AUTH ─────────────────────────────────────────────────────
+var _started = false;
+function tryStart(user) { if(_started||!user) return; _started=true; checkAccess(user); }
+_sb.auth.getSession().then(function(r) {
+  tryStart(r.data.session ? r.data.session.user : null);
+  if (!r.data.session) {
+    setTimeout(function(){ _sb.auth.getSession().then(function(r2){ tryStart(r2.data.session?r2.data.session.user:null); }); }, 1500);
+    setTimeout(function(){ if(!_started) window.location.href='/login.html'; }, 9000);
+  }
+});
+_sb.auth.onAuthStateChange(function(e,s){ if(e==='SIGNED_IN') tryStart(s?s.user:null); if(e==='SIGNED_OUT') window.location.href='/login.html'; });
+
+function checkAccess(user) {
+  var email = (user.email||'').toLowerCase();
+  if (email===ADMIN_EMAIL.toLowerCase()||user.id===ADMIN_UID) { startPage(user); return; }
+  _sb.from('users').select('role').eq('id',user.id).single()
+    .then(function(r){ (r.data&&r.data.role==='admin') ? startPage(user) : window.location.href='/login.html'; })
+    .catch(function(){ email===ADMIN_EMAIL.toLowerCase() ? startPage(user) : window.location.href='/login.html'; });
+}
+
+function startPage(user) {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('page').style.display = 'block';
+  document.getElementById('adminEmail').textContent = user.email;
+  document.getElementById('logoutBtn').addEventListener('click', function(){
+    _sb.auth.signOut().then(function(){ window.location.href='/login.html'; });
+  });
+  loadApplications();
+}
+
+// ── LOAD ─────────────────────────────────────────────────────
+function loadApplications() {
+  _sb.from('applications').select('*').order('created_at', { ascending: false })
+    .then(function(r) {
+      if (r.error) {
+        document.getElementById('tableContainer').innerHTML =
+          '<div class="empty-state"><div class="e-icon">&#9888;</div><h3>Could not load applications</h3>'
+          + '<p>' + esc(r.error.message) + '<br>Make sure users_setup_v2.sql has been run.</p></div>';
+        return;
+      }
+      _allApps = r.data || [];
+      updateStats(_allApps);
+      renderTable(_allApps);
+    });
+}
+
+function updateStats(apps) {
+  document.getElementById('statTotal').textContent    = apps.length;
+  document.getElementById('statPending').textContent  = apps.filter(function(a){ return a.status==='pending'; }).length;
+  document.getElementById('statApproved').textContent = apps.filter(function(a){ return a.status==='approved'; }).length;
+  document.getElementById('statInvited').textContent  = apps.filter(function(a){ return a.status==='invited'; }).length;
+  document.getElementById('statRejected').textContent = apps.filter(function(a){ return a.status==='rejected'; }).length;
+}
+
+// ── FILTER ────────────────────────────────────────────────────
+function filterApps() {
+  var search = document.getElementById('searchInput').value.toLowerCase();
+  var status = document.getElementById('statusFilter').value;
+  var course = document.getElementById('courseFilter').value;
+  var filtered = _allApps.filter(function(a) {
+    var ms = !search
+      || (a.full_name||'').toLowerCase().includes(search)
+      || (a.email||'').toLowerCase().includes(search)
+      || (a.course||'').toLowerCase().includes(search);
+    var mv = !status || a.status === status;
+    var mc = !course || a.course === course;
+    return ms && mv && mc;
+  });
+  document.getElementById('appCount').textContent = filtered.length + ' application' + (filtered.length!==1?'s':'');
+  renderTable(filtered);
+}
+
+// ── RENDER TABLE ──────────────────────────────────────────────
+function renderTable(apps) {
+  var container = document.getElementById('tableContainer');
+  document.getElementById('appCount').textContent = apps.length + ' application' + (apps.length!==1?'s':'');
+
+  if (!apps.length) {
+    container.innerHTML = '<div class="empty-state"><div class="e-icon">&#128221;</div>'
+      + '<h3>No applications yet</h3>'
+      + '<p>Applications submitted at apply.kulaninstitute.org will appear here.</p></div>';
+    return;
+  }
+
+  var html = '<table class="app-table"><thead><tr>'
+    + '<th>Applicant</th><th>Course</th><th>Location</th><th>English</th><th>Applied</th><th>Status</th><th>Actions</th>'
+    + '</tr></thead><tbody>';
+
+  apps.forEach(function(a) {
+    var statusClass = 'badge-' + (a.status || 'pending');
+    var statusLabel = (a.status || 'pending').charAt(0).toUpperCase() + (a.status || 'pending').slice(1);
+    html += '<tr onclick="viewApp(\'' + a.id + '\')">';
+    html += '<td><div class="app-name">' + esc(a.full_name || '—') + '</div><div class="app-email">' + esc(a.email) + '</div></td>';
+    html += '<td style="font-size:13px;color:var(--text-mid);">' + esc(a.course || '—') + '</td>';
+    html += '<td class="app-location">' + esc([a.city, a.country].filter(Boolean).join(', ') || '—') + '</td>';
+    html += '<td style="font-size:13px;color:var(--text-mid);">' + esc(a.english || '—') + '</td>';
+    html += '<td style="font-size:12px;color:var(--text-light);">' + formatDateShort(a.created_at) + '</td>';
+    html += '<td><span class="badge ' + statusClass + '">' + statusLabel + '</span></td>';
+    html += '<td onclick="event.stopPropagation()">';
+    if (a.status === 'pending') {
+      html += '<button class="btn-approve" onclick="quickApprove(\'' + a.id + '\')">Approve</button>';
+      html += '<button class="btn-reject"  onclick="quickReject(\'' + a.id + '\')">Reject</button>';
+    }
+    html += '<button class="btn-view" onclick="viewApp(\'' + a.id + '\')">View</button>';
+    html += '</td></tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+// ── VIEW APPLICATION ──────────────────────────────────────────
+function viewApp(id) {
+  var a = _allApps.find(function(x){ return x.id===id; });
+  if (!a) return;
+  _currentApp = a;
+
+  document.getElementById('modalName').textContent  = a.full_name || 'Unknown Applicant';
+  document.getElementById('modalMeta').textContent  = 'Applied for ' + (a.course||'—') + ' — ' + formatDateShort(a.created_at);
+
+  var body = '';
+
+  // Personal info
+  body += '<div class="detail-section">';
+  body += '<div class="detail-section-title">Personal Information</div>';
+  body += '<div class="detail-grid">';
+  body += field('Full Name',   a.full_name);
+  body += field('Email',       a.email);
+  body += field('Phone',       a.phone);
+  body += field('Location',    [a.city, a.country].filter(Boolean).join(', '));
+  body += field('Somali Speaker', a.somali);
+  body += field('English Level',  a.english);
+  body += '</div></div>';
+
+  // Course selection
+  body += '<div class="detail-section">';
+  body += '<div class="detail-section-title">Course Selection</div>';
+  body += '<div class="detail-grid">';
+  body += field('Course Applied',    a.course);
+  body += field('Start Preference',  a.start_date);
+  body += field('Weekly Hours',      a.hours);
+  body += '</div></div>';
+
+  // Background
+  body += '<div class="detail-section">';
+  body += '<div class="detail-section-title">Background</div>';
+  body += '<div class="detail-grid">';
+  body += field('Education',   a.education);
+  body += field('Employment',  a.employment);
+  body += field('Tech Experience', a.tech_exp);
+  body += field('Heard About Us',  a.heard);
+  body += '</div>';
+
+  if (a.why_join) {
+    body += '<div class="detail-field detail-full" style="margin-top:12px;">';
+    body += '<div class="detail-label">Why do they want to join?</div>';
+    body += '<div class="detail-text">' + esc(a.why_join) + '</div>';
+    body += '</div>';
+  }
+  if (a.career_goal) {
+    body += '<div class="detail-field detail-full" style="margin-top:12px;">';
+    body += '<div class="detail-label">Career Goal</div>';
+    body += '<div class="detail-text">' + esc(a.career_goal) + '</div>';
+    body += '</div>';
+  }
+  body += '</div>';
+
+  // Admin notes
+  body += '<div class="detail-section">';
+  body += '<div class="detail-section-title">Admin Notes</div>';
+  body += '<textarea class="notes-input" id="adminNotes" placeholder="Add private notes about this applicant...">' + esc(a.notes||'') + '</textarea>';
+  body += '</div>';
+
+  // Invite result box
+  body += '<div class="invite-box" id="inviteBox">';
+  body += '<div class="invite-box-label">&#10003; Invite link ready — copy and send to the applicant:</div>';
+  body += '<div class="invite-url-row"><input type="text" class="invite-url-input" id="inviteUrlDisplay" readonly><button class="btn-copy-invite" onclick="copyInviteUrl()">Copy</button></div>';
+  body += '</div>';
+
+  document.getElementById('modalBody').innerHTML = body;
+
+  // Footer buttons based on status
+  var footer = '';
+  var status = a.status || 'pending';
+
+  footer += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+  if (status === 'pending') {
+    footer += '<button class="btn-modal-reject" onclick="rejectApp()">Reject</button>';
+  }
+  if (status === 'pending' || status === 'approved') {
+    footer += '<button class="btn-modal-approve" onclick="approveApp()">&#10003; Approve</button>';
+    footer += '<button class="btn-modal-invite" onclick="approveAndInvite()">&#128233; Approve &amp; Send Invite</button>';
+  }
+  if (status === 'approved') {
+    footer += '<button class="btn-modal-invite" onclick="sendInvite()">&#128233; Send Signup Invite</button>';
+  }
+  footer += '</div>';
+  footer += '<button class="btn-modal-cancel" onclick="saveNotesAndClose()">Save &amp; Close</button>';
+
+  document.getElementById('modalFooter').innerHTML = footer;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function field(label, value) {
+  return '<div class="detail-field">'
+    + '<div class="detail-label">' + label + '</div>'
+    + '<div class="detail-value">' + esc(value || '—') + '</div>'
+    + '</div>';
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('open');
+  _currentApp = null;
+}
+
+function saveNotesAndClose() {
+  if (_currentApp) {
+    var notes = document.getElementById('adminNotes').value.trim();
+    _sb.from('applications').update({ notes: notes }).eq('id', _currentApp.id).then(function(){});
+  }
+  closeModal();
+}
+
+// ── STATUS CHANGES ────────────────────────────────────────────
+function updateStatus(id, status, callback) {
+  var notes = document.getElementById('adminNotes') ? document.getElementById('adminNotes').value.trim() : null;
+  var update = { status: status };
+  if (notes !== null) update.notes = notes;
+  _sb.from('applications').update(update).eq('id', id)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+      var a = _allApps.find(function(x){ return x.id===id; });
+      if (a) { a.status = status; if (notes!==null) a.notes = notes; }
+      updateStats(_allApps);
+      if (callback) callback();
+    });
+}
+
+function quickApprove(id) {
+  updateStatus(id, 'approved', function() {
+    showNotif('Application approved.', 'success');
+    filterApps();
+  });
+}
+
+function quickReject(id) {
+  if (!confirm('Reject this application?')) return;
+  updateStatus(id, 'rejected', function() {
+    showNotif('Application rejected.', '');
+    filterApps();
+  });
+}
+
+function approveApp() {
+  if (!_currentApp) return;
+  updateStatus(_currentApp.id, 'approved', function() {
+    showNotif('Application approved.', 'success');
+    _currentApp.status = 'approved';
+    filterApps();
+    closeModal();
+  });
+}
+
+function rejectApp() {
+  if (!_currentApp) return;
+  if (!confirm('Reject this application?')) return;
+  updateStatus(_currentApp.id, 'rejected', function() {
+    showNotif('Application rejected.');
+    filterApps();
+    closeModal();
+  });
+}
+
+function approveAndInvite() {
+  if (!_currentApp) return;
+  updateStatus(_currentApp.id, 'approved', function() {
+    sendInvite();
+  });
+}
+
+// ── SEND SIGNUP INVITE ────────────────────────────────────────
+function sendInvite() {
+  if (!_currentApp) return;
+  var a = _currentApp;
+
+  // Create a signup token in teacher_invites repurposed for students
+  // OR use a simple pending_signups table. For now use Supabase admin invite.
+  // We'll store the invite token in applications table for tracking.
+
+  // Generate a unique token
+  var token = btoa(a.id + ':' + a.email + ':' + Date.now()).replace(/[^a-zA-Z0-9]/g,'').substr(0,32);
+  var signupUrl = window.location.origin + '/signup.html?token=' + token + '&email=' + encodeURIComponent(a.email) + '&name=' + encodeURIComponent(a.full_name||'') + '&course=' + encodeURIComponent(a.course||'');
+
+  // Update application to invited + store token
+  _sb.from('applications').update({
+    status: 'invited',
+    notes: (document.getElementById('adminNotes') ? document.getElementById('adminNotes').value.trim() : (a.notes||'')) + '\nInvite sent: ' + new Date().toLocaleDateString()
+  }).eq('id', a.id).then(function(r) {
+    if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+    a.status = 'invited';
+    updateStats(_allApps);
+    filterApps();
+
+    // Show invite link
+    document.getElementById('inviteUrlDisplay').value = signupUrl;
+    document.getElementById('inviteBox').classList.add('show');
+    showNotif('Invite link generated! Copy and send to ' + (a.full_name||'applicant') + '.', 'success');
+
+    // Update footer
+    document.getElementById('modalFooter').innerHTML =
+      '<div style="font-size:13px;color:var(--success);">&#10003; Marked as Invited</div>'
+      + '<button class="btn-modal-cancel" onclick="closeModal()">Close</button>';
+  });
+}
+
+function copyInviteUrl() {
+  var inp = document.getElementById('inviteUrlDisplay');
+  navigator.clipboard.writeText(inp.value)
+    .then(function(){ showNotif('Invite link copied!', 'success'); })
+    .catch(function(){ inp.select(); document.execCommand('copy'); showNotif('Copied!', 'success'); });
+}
+
+// ── QUICK ACTIONS ─────────────────────────────────────────────
+document.getElementById('detailModal').addEventListener('click', function(e) {
+  if (e.target === this) saveNotesAndClose();
+});
+</script>
+</body>
+</html>
