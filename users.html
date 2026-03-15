@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Management — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var ADMIN_EMAIL = 'mohamedmohammud@gmail.com';
+var ADMIN_UID   = '34e4009e-21de-4a55-ab9d-e8c767dfe898';
+</script>
+<style>
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
+  --white:#fff; --bg:#F4F7FB;
+  --text:#1a2840; --text-mid:#4a6080; --text-light:#8a9bb0;
+  --error:#ef4444; --success:#22c55e;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ── LOADING ── */
+#loadingScreen {
+  position:fixed; inset:0;
+  background:linear-gradient(160deg,#0B1F3A,#1A3C6E);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:9999;
+}
+.ld-logo { width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy); }
+.ld-spin { width:26px;height:26px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg);} }
+.ld-text { font-size:14px;color:rgba(255,255,255,0.5); }
+
+/* ── PAGE ── */
+#page { display:none; }
+
+/* ── TOPBAR ── */
+.topbar {
+  background:var(--navy); padding:0 32px; height:62px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid rgba(212,168,67,0.2);
+  position:sticky; top:0; z-index:10;
+}
+.tb-left { display:flex;align-items:center;gap:16px; }
+.tb-back { display:flex;align-items:center;gap:6px;font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .2s;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1); }
+.tb-back:hover { color:var(--gold);border-color:rgba(212,168,67,0.3); }
+.tb-title { font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff; }
+.tb-right { display:flex;align-items:center;gap:12px; }
+.tb-user { font-size:13px;color:rgba(255,255,255,0.45); }
+.tb-logout { background:none;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:7px 14px;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s; }
+.tb-logout:hover { color:#fff;border-color:rgba(255,255,255,0.35); }
+
+/* ── MAIN ── */
+.main { max-width:1200px;margin:0 auto;padding:36px 24px 80px; }
+
+/* ── STATS ROW ── */
+.stats-row { display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px; }
+.stat-card { background:#fff;border-radius:14px;padding:20px 22px;border:1px solid rgba(11,31,58,0.07); }
+.stat-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);margin-bottom:6px; }
+.stat-num { font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--navy); }
+.stat-sub { font-size:12px;color:var(--text-light);margin-top:2px; }
+
+/* ── TOOLBAR ── */
+.toolbar { background:#fff;border-radius:14px;padding:16px 20px;border:1px solid rgba(11,31,58,0.07);margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap; }
+.search-input {
+  flex:1;min-width:200px;padding:10px 14px;border:1.5px solid rgba(11,31,58,0.12);
+  border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;
+  transition:border .2s;
+}
+.search-input:focus { border-color:var(--cyan); }
+.role-select {
+  padding:10px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:#fff;cursor:pointer;
+}
+.tb-count { font-size:13px;color:var(--text-light);margin-left:auto; }
+
+/* ── TABLE ── */
+.table-wrap { background:#fff;border-radius:16px;border:1px solid rgba(11,31,58,0.07);overflow:hidden; }
+.users-table { width:100%;border-collapse:collapse; }
+.users-table thead tr { background:#F8F9FB; }
+.users-table th {
+  padding:13px 20px;text-align:left;
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--text-light);border-bottom:1px solid rgba(11,31,58,0.07);
+  white-space:nowrap;
+}
+.users-table tbody tr { border-bottom:1px solid rgba(11,31,58,0.05);transition:background .15s; }
+.users-table tbody tr:hover { background:#FAFBFC; }
+.users-table tbody tr:last-child { border-bottom:none; }
+.users-table td { padding:14px 20px;font-size:13px;color:var(--text); }
+
+/* Avatar */
+.user-av {
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:#fff;flex-shrink:0;
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+}
+.user-info-wrap { display:flex;align-items:center;gap:12px; }
+.user-name { font-size:14px;font-weight:600;color:var(--navy); }
+.user-email { font-size:12px;color:var(--text-light);margin-top:1px; }
+
+/* Role badge + select */
+.role-badge {
+  display:inline-block;padding:4px 12px;border-radius:20px;
+  font-size:11px;font-weight:700;letter-spacing:.3px;
+}
+.role-admin   { background:rgba(212,168,67,0.12);color:#b8860b; }
+.role-teacher { background:rgba(14,124,123,0.12);color:var(--teal); }
+.role-student { background:rgba(27,174,204,0.1);color:var(--cyan); }
+
+.role-dropdown {
+  padding:7px 12px;border:1.5px solid rgba(11,31,58,0.12);border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  background:#fff;cursor:pointer;outline:none;transition:border .2s;
+}
+.role-dropdown:focus { border-color:var(--cyan); }
+
+/* Action buttons */
+.btn-edit {
+  padding:6px 14px;border-radius:8px;border:1.5px solid rgba(11,31,58,0.12);
+  background:transparent;font-size:12px;font-weight:600;cursor:pointer;
+  color:var(--text-mid);transition:all .2s;margin-right:6px;
+}
+.btn-edit:hover { border-color:var(--navy);color:var(--navy); }
+.btn-remove {
+  padding:6px 14px;border-radius:8px;border:none;
+  background:rgba(239,68,68,0.08);font-size:12px;font-weight:600;
+  cursor:pointer;color:var(--error);transition:all .2s;
+}
+.btn-remove:hover { background:rgba(239,68,68,0.15); }
+
+/* Empty / loading state */
+.table-state { padding:60px 24px;text-align:center;color:var(--text-light); }
+.state-icon { font-size:44px;margin-bottom:14px; }
+.state-title { font-size:17px;font-weight:600;color:var(--text-mid);margin-bottom:8px; }
+.state-desc { font-size:14px;line-height:1.7; }
+.state-desc a { color:var(--cyan);font-weight:600;text-decoration:none; }
+
+/* Notif */
+.notif {
+  position:fixed;bottom:24px;right:24px;
+  padding:13px 20px;border-radius:12px;
+  background:var(--navy);color:#fff;font-size:13px;font-weight:600;
+  box-shadow:0 8px 28px rgba(11,31,58,0.3);
+  transform:translateY(80px);opacity:0;transition:all .3s;z-index:999;
+}
+.notif.show { transform:translateY(0);opacity:1; }
+.notif.success { background:#16a34a; }
+.notif.error   { background:var(--error); }
+
+/* Edit modal */
+.modal-overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  display:none;align-items:center;justify-content:center;z-index:100;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background:#fff;border-radius:20px;padding:36px;
+  width:100%;max-width:440px;box-shadow:0 24px 64px rgba(0,0,0,0.2);
+}
+.modal-title { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy);margin-bottom:20px; }
+.modal-field { margin-bottom:16px; }
+.modal-label { display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);margin-bottom:7px; }
+.modal-input { width:100%;padding:12px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border .2s; }
+.modal-input:focus { border-color:var(--cyan); }
+.modal-actions { display:flex;gap:10px;justify-content:flex-end;margin-top:20px; }
+.btn-cancel { padding:11px 22px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.12);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-mid); }
+.btn-save   { padding:11px 22px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer; }
+
+@media(max-width:768px) {
+  .topbar { padding:0 16px; }
+  .main { padding:24px 16px 60px; }
+  .stats-row { grid-template-columns:repeat(2,1fr); }
+  .users-table th:nth-child(4),
+  .users-table td:nth-child(4) { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loadingScreen">
+  <div class="ld-logo">KI</div>
+  <div class="ld-spin"></div>
+  <div class="ld-text">Loading user management...</div>
+</div>
+
+<div id="page">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="tb-left">
+      <a href="/admin.html" class="tb-back">&larr; Admin Panel</a>
+      <div class="tb-title">User Management</div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-user" id="adminEmail"></span>
+      <button class="tb-logout" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-num" id="statTotal">—</div>
+        <div class="stat-sub">All accounts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Students</div>
+        <div class="stat-num" id="statStudents">—</div>
+        <div class="stat-sub">Learners</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Teachers</div>
+        <div class="stat-num" id="statTeachers">—</div>
+        <div class="stat-sub">Instructors</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Admins</div>
+        <div class="stat-num" id="statAdmins">—</div>
+        <div class="stat-sub">Administrators</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input type="text" class="search-input" id="searchInput"
+        placeholder="&#128269; Search by name or email..." oninput="filterUsers()">
+      <select class="role-select" id="roleFilter" onchange="filterUsers()">
+        <option value="">All Roles</option>
+        <option value="admin">Admin</option>
+        <option value="teacher">Teacher</option>
+        <option value="student">Student</option>
+      </select>
+      <span class="tb-count" id="userCount"></span>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <div id="tableContainer">
+        <div class="table-state">
+          <div class="state-icon">&#9203;</div>
+          <div class="state-title">Loading users...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-title">Edit User</div>
+    <input type="hidden" id="editUserId">
+    <div class="modal-field">
+      <label class="modal-label">Full Name</label>
+      <input type="text" class="modal-input" id="editName" placeholder="User's full name">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Subject / Title</label>
+      <input type="text" class="modal-input" id="editSubject" placeholder="e.g. Cybersecurity Instructor">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Role</label>
+      <select class="modal-input" id="editRole">
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveUserEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+var _user    = null;
+var _allUsers = [];
+var _notifTimer;
+
+// ── HELPERS ──────────────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showNotif(msg, type) {
+  var el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = 'notif show' + (type ? ' ' + type : '');
+  clearTimeout(_notifTimer);
+  _notifTimer = setTimeout(function() { el.classList.remove('show'); }, 3000);
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+}
+
+// ── AUTH ─────────────────────────────────────────────────────
+var _started = false;
+
+function tryStart(user) {
+  if (_started) return;
+  if (!user) return;
+  _started = true;
+  checkAccess(user);
+}
+
+_sb.auth.getSession().then(function(r) {
+  tryStart(r.data.session ? r.data.session.user : null);
+  if (!r.data.session) {
+    setTimeout(function() {
+      _sb.auth.getSession().then(function(r2) {
+        tryStart(r2.data.session ? r2.data.session.user : null);
+      });
+    }, 1500);
+    setTimeout(function() { if (!_started) window.location.href = '/login.html'; }, 9000);
+  }
+});
+_sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_IN')  tryStart(session ? session.user : null);
+  if (event === 'SIGNED_OUT') window.location.href = '/login.html';
+});
+
+function checkAccess(user) {
+  _user = user;
+  var email = (user.email || '').toLowerCase();
+
+  // Hardcoded admin shortcut
+  if (email === ADMIN_EMAIL.toLowerCase() || user.id === ADMIN_UID) {
+    startPage(user);
+    return;
+  }
+
+  // Check users table
+  _sb.from('users').select('role').eq('id', user.id).single()
+    .then(function(r) {
+      if (r.data && r.data.role === 'admin') {
+        startPage(user);
+      } else {
+        window.location.href = '/login.html';
+      }
+    })
+    .catch(function() {
+      // Fallback to email
+      if (email === ADMIN_EMAIL.toLowerCase()) {
+        startPage(user);
+      } else {
+        window.location.href = '/login.html';
+      }
+    });
+}
+
+function startPage(user) {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('page').style.display = 'block';
+  document.getElementById('adminEmail').textContent = user.email;
+  document.getElementById('logoutBtn').addEventListener('click', function() {
+    _sb.auth.signOut().then(function() { window.location.href = '/login.html'; });
+  });
+  loadUsers();
+}
+
+// ── LOAD USERS ────────────────────────────────────────────────
+function loadUsers() {
+  _sb.from('users').select('*').order('created_at', { ascending: false })
+    .then(function(r) {
+      if (r.error) {
+        document.getElementById('tableContainer').innerHTML =
+          '<div class="table-state"><div class="state-icon">&#9888;</div>'
+          + '<div class="state-title">Could not load users</div>'
+          + '<div class="state-desc">Error: ' + esc(r.error.message) + '<br>'
+          + 'Make sure <strong>users_setup_v2.sql</strong> has been run in Supabase.</div></div>';
+        return;
+      }
+      _allUsers = r.data || [];
+      updateStats(_allUsers);
+      renderTable(_allUsers);
+    });
+}
+
+function updateStats(users) {
+  document.getElementById('statTotal').textContent    = users.length;
+  document.getElementById('statStudents').textContent = users.filter(function(u) { return u.role === 'student'; }).length;
+  document.getElementById('statTeachers').textContent = users.filter(function(u) { return u.role === 'teacher'; }).length;
+  document.getElementById('statAdmins').textContent   = users.filter(function(u) { return u.role === 'admin'; }).length;
+}
+
+// ── FILTER ────────────────────────────────────────────────────
+function filterUsers() {
+  var search = document.getElementById('searchInput').value.toLowerCase();
+  var role   = document.getElementById('roleFilter').value;
+  var filtered = _allUsers.filter(function(u) {
+    var matchSearch = !search
+      || (u.email || '').toLowerCase().includes(search)
+      || (u.full_name || '').toLowerCase().includes(search);
+    var matchRole = !role || u.role === role;
+    return matchSearch && matchRole;
+  });
+  document.getElementById('userCount').textContent = filtered.length + ' user' + (filtered.length !== 1 ? 's' : '');
+  renderTable(filtered);
+}
+
+// ── RENDER TABLE ──────────────────────────────────────────────
+function renderTable(users) {
+  var container = document.getElementById('tableContainer');
+  document.getElementById('userCount').textContent = users.length + ' user' + (users.length !== 1 ? 's' : '');
+
+  if (!users.length) {
+    container.innerHTML = '<div class="table-state">'
+      + '<div class="state-icon">&#128100;</div>'
+      + '<div class="state-title">No users found</div>'
+      + '<div class="state-desc">Try a different search or filter.</div>'
+      + '</div>';
+    return;
+  }
+
+  var html = '<table class="users-table">'
+    + '<thead><tr>'
+    + '<th>User</th><th>Role</th><th>Subject</th><th>Joined</th><th>Actions</th>'
+    + '</tr></thead><tbody>';
+
+  users.forEach(function(u) {
+    var initial  = u.full_name ? u.full_name.charAt(0).toUpperCase() : u.email.charAt(0).toUpperCase();
+    var roleClass = 'role-' + (u.role || 'student');
+    var isMe     = _user && u.id === _user.id;
+
+    html += '<tr>';
+
+    // User cell
+    html += '<td><div class="user-info-wrap">'
+      + '<div class="user-av">' + initial + '</div>'
+      + '<div>'
+      + '<div class="user-name">' + esc(u.full_name || '—') + (isMe ? ' <span style="font-size:10px;color:var(--teal);font-weight:600;">(you)</span>' : '') + '</div>'
+      + '<div class="user-email">' + esc(u.email) + '</div>'
+      + '</div></div></td>';
+
+    // Role cell — dropdown
+    html += '<td>'
+      + '<select class="role-dropdown ' + roleClass + '" onchange="changeRole(\'' + u.id + '\', this.value)"'
+      + (isMe ? ' disabled title="Cannot change your own role"' : '') + '>'
+      + ['student','teacher','admin'].map(function(r) {
+          return '<option value="' + r + '"' + (u.role === r ? ' selected' : '') + '>'
+            + r.charAt(0).toUpperCase() + r.slice(1) + '</option>';
+        }).join('')
+      + '</select></td>';
+
+    // Subject
+    html += '<td>' + esc(u.subject || '—') + '</td>';
+
+    // Joined
+    html += '<td>' + formatDate(u.created_at) + '</td>';
+
+    // Actions
+    html += '<td>'
+      + '<button class="btn-edit" onclick="openEdit(\'' + u.id + '\')">Edit</button>'
+      + (!isMe ? '<button class="btn-remove" onclick="removeUser(\'' + u.id + '\')">Remove</button>' : '')
+      + '</td>';
+
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+// ── CHANGE ROLE ───────────────────────────────────────────────
+function changeRole(userId, newRole) {
+  _sb.from('users').update({ role: newRole, updated_at: new Date().toISOString() })
+    .eq('id', userId)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message, 'error'); loadUsers(); return; }
+      showNotif('Role changed to ' + newRole, 'success');
+      var u = _allUsers.find(function(x) { return x.id === userId; });
+      if (u) u.role = newRole;
+      updateStats(_allUsers);
+    });
+}
+
+// ── EDIT MODAL ────────────────────────────────────────────────
+function openEdit(userId) {
+  var u = _allUsers.find(function(x) { return x.id === userId; });
+  if (!u) return;
+  document.getElementById('editUserId').value  = u.id;
+  document.getElementById('editName').value    = u.full_name || '';
+  document.getElementById('editSubject').value = u.subject || '';
+  document.getElementById('editRole').value    = u.role || 'student';
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+}
+
+function saveUserEdit() {
+  var id      = document.getElementById('editUserId').value;
+  var name    = document.getElementById('editName').value.trim();
+  var subject = document.getElementById('editSubject').value.trim();
+  var role    = document.getElementById('editRole').value;
+
+  if (!name) { showNotif('Name cannot be empty.', 'error'); return; }
+
+  _sb.from('users').update({
+    full_name:  name,
+    subject:    subject || null,
+    role:       role,
+    updated_at: new Date().toISOString()
+  }).eq('id', id)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+      showNotif('User updated.', 'success');
+      closeModal();
+      loadUsers();
+    });
+}
+
+// ── REMOVE USER ───────────────────────────────────────────────
+function removeUser(userId) {
+  var u = _allUsers.find(function(x) { return x.id === userId; });
+  var name = u ? (u.full_name || u.email) : 'this user';
+  if (!confirm('Remove ' + name + ' from the users table?\n\nNote: This only removes their profile data. Their auth account still exists in Supabase.')) return;
+
+  _sb.from('users').delete().eq('id', userId)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+      showNotif('User removed.', 'success');
+      loadUsers();
+    });
+}
+
+// Close modal on backdrop click
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
