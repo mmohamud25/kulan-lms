@@ -237,6 +237,46 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .cert-complete-card .ccc-sub   { font-size:12px;color:rgba(255,255,255,0.5); }
 .cert-complete-card .btn-cert  { padding:9px 18px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:var(--navy);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0; }
 
+
+/* ── CATALOG SEARCH & FILTER ── */
+.catalog-controls {
+  display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; align-items:center;
+}
+.catalog-search-wrap {
+  position:relative; flex:1; min-width:200px;
+}
+.catalog-search-wrap::before {
+  content:'🔍'; position:absolute; left:12px; top:50%;
+  transform:translateY(-50%); font-size:14px; pointer-events:none;
+}
+.catalog-search {
+  width:100%; padding:10px 14px 10px 36px;
+  border-radius:10px; border:1.5px solid rgba(11,31,58,0.1);
+  background:#fff; font-family:'DM Sans',sans-serif;
+  font-size:13px; color:var(--text); outline:none; transition:border .2s;
+}
+.catalog-search:focus { border-color:var(--cyan); box-shadow:0 0 0 3px rgba(27,174,204,0.1); }
+.catalog-search::placeholder { color:var(--text-light); }
+
+.cat-filter-pills { display:flex; gap:6px; flex-wrap:wrap; }
+.cat-pill {
+  padding:7px 14px; border-radius:8px; border:1.5px solid rgba(11,31,58,0.1);
+  background:#fff; font-family:'DM Sans',sans-serif; font-size:12px;
+  font-weight:600; color:var(--text-mid); cursor:pointer; transition:all .2s;
+  white-space:nowrap;
+}
+.cat-pill:hover  { border-color:var(--navy); color:var(--navy); }
+.cat-pill.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+
+.catalog-count {
+  font-size:12px; color:var(--text-light); margin-bottom:14px;
+}
+.catalog-no-results {
+  grid-column:1/-1; text-align:center; padding:48px 20px;
+  color:var(--text-light); font-size:14px;
+}
+.catalog-no-results .e-icon { font-size:40px; margin-bottom:10px; }
+
 </style>
 </head>
 <body>
@@ -327,6 +367,21 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     <!-- Browse Catalog -->
     <div class="tab-panel" id="tab-catalog">
       <div class="sec-header"><div class="sec-title">Browse All Courses</div></div>
+
+      <div class="catalog-controls">
+        <div class="catalog-search-wrap">
+          <input class="catalog-search" id="catalogSearch" type="text"
+            placeholder="Search courses..." oninput="filterCatalog()">
+        </div>
+        <div class="cat-filter-pills">
+          <button class="cat-pill active" data-level="all"     onclick="setCatLevel('all',this)">All</button>
+          <button class="cat-pill"        data-level="beginner" onclick="setCatLevel('beginner',this)">Beginner</button>
+          <button class="cat-pill"        data-level="intermediate" onclick="setCatLevel('intermediate',this)">Intermediate</button>
+          <button class="cat-pill"        data-level="advanced" onclick="setCatLevel('advanced',this)">Advanced</button>
+        </div>
+      </div>
+
+      <div class="catalog-count" id="catalogCount"></div>
       <div class="catalog-grid" id="catalogGrid">
         <div class="empty-state"><div class="e-icon">&#9203;</div><div class="e-title">Loading...</div></div>
       </div>
@@ -415,7 +470,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 <div class="notif" id="notif"></div>
 
 <script>
-var _user=null, _userData=null, _courses=[], _materials=[], _enrollments=[], _started=false, _soOn=false, _notifTimer, _anncs=[];
+var _user=null, _userData=null, _courses=[], _materials=[], _enrollments=[], _started=false, _soOn=false, _notifTimer, _anncs=[], _catLevel='all';
 var ICONS=['&#129302;','&#128272;','&#128187;','&#128202;','&#127758;','&#129504;','&#128737;','&#128241;'];
 var BG=['rgba(27,174,204,0.12)','rgba(212,168,67,0.12)','rgba(14,124,123,0.12)','rgba(11,31,58,0.08)'];
 var BARS=['linear-gradient(90deg,#1BAECC,#0E7C7B)','linear-gradient(90deg,#D4A843,#e8c060)','linear-gradient(90deg,#0E7C7B,#0a5c5b)','linear-gradient(90deg,#1A3C6E,#0B1F3A)'];
@@ -509,6 +564,7 @@ function switchTab(name,el){
   if(el) el.classList.add('active');
   if(name==='notes')         loadNotes();
   if(name==='announcements') renderAnnouncements(_anncs);
+  if(name==='catalog')       { filterCatalog(); }
 }
 
 function loadNotes(){
@@ -665,6 +721,83 @@ function updateStreak() {
   }).catch(function(){});
 }
 
+
+function setCatLevel(level, el) {
+  _catLevel = level;
+  document.querySelectorAll('.cat-pill').forEach(function(p){ p.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  filterCatalog();
+}
+
+function filterCatalog() {
+  var query = (document.getElementById('catalogSearch').value || '').toLowerCase().trim();
+  var grid  = document.getElementById('catalogGrid');
+  var enrolledIds = _enrollments.map(function(e){ return e.course_id; });
+
+  var filtered = _courses.filter(function(c) {
+    if (c.status !== 'active' && c.status !== 'coming') return false;
+
+    // Level filter
+    if (_catLevel !== 'all') {
+      var lvl = (c.level||'').toLowerCase();
+      if (!lvl.includes(_catLevel)) return false;
+    }
+
+    // Search query — matches title, description, or Somali title
+    if (query) {
+      var haystack = [
+        c.title||'', c.description||'', c.title_so||'', c.level||''
+      ].join(' ').toLowerCase();
+      if (!haystack.includes(query)) return false;
+    }
+
+    return true;
+  });
+
+  // Update count
+  var countEl = document.getElementById('catalogCount');
+  if (countEl) {
+    countEl.textContent = filtered.length + ' course' + (filtered.length !== 1 ? 's' : '') + ' found';
+  }
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="catalog-no-results"><div class="e-icon">&#128269;</div>No courses match your search. Try different keywords or filters.</div>';
+    return;
+  }
+
+  // Re-render filtered subset
+  grid.innerHTML = filtered.map(function(c, i) {
+    var mats = _materials.filter(function(m){ return m.course_id===c.id; });
+    var enrolled  = enrolledIds.indexOf(c.id) > -1;
+    var isComing  = c.status === 'coming';
+    var icon = ICONS[i % ICONS.length];
+    var enrollBtn = enrolled
+      ? '<button class="btn-enroll enrolled" disabled>&#10003; Enrolled</button>'
+      : isComing
+      ? '<button class="btn-enroll coming" disabled>&#128274; Coming Soon</button>'
+      : '<button class="btn-enroll" onclick="enrollCourse(\"'+c.id+'\",this)">Enroll Free &rarr;</button>';
+
+    // Highlight matching text
+    var title = esc(c.title);
+    if (query && c.title.toLowerCase().includes(query)) {
+      title = title.replace(new RegExp('('+esc(query)+')', 'gi'), '<mark style="background:rgba(27,174,204,0.2);border-radius:3px;padding:0 2px;">$1</mark>');
+    }
+
+    return '<div class="catalog-card">'
+      + '<div class="cat-icon">'+icon+'</div>'
+      + '<div class="cat-name">'+title+'</div>'
+      + (c.title_so ? '<div style="font-size:11px;font-style:italic;color:var(--text-light);margin-bottom:6px;">'+esc(c.title_so)+'</div>' : '')
+      + '<div class="cat-meta">'+esc(c.description||'A comprehensive course for all skill levels.')+'</div>'
+      + '<div class="cat-tags">'
+      + '<span class="cat-tag">'+(c.modules||mats.length||'?')+' Modules</span>'
+      + '<span class="cat-tag">'+esc(c.level||'All Levels')+'</span>'
+      + '<span class="cat-tag" style="background:rgba(34,197,94,0.1);color:#16a34a;">Free</span>'
+      + (isComing ? '<span class="cat-tag" style="background:rgba(212,168,67,0.1);color:#b8860b;">Coming Soon</span>' : '')
+      + '</div>'
+      + enrollBtn
+      + '</div>';
+  }).join('');
+}
 function renderCatalog(){
   var grid=document.getElementById('catalogGrid');
   var enrolledIds=_enrollments.map(function(e){ return e.course_id; });
