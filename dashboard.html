@@ -277,6 +277,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 }
 .catalog-no-results .e-icon { font-size:40px; margin-bottom:10px; }
 
+
+/* ── BILINGUAL / SOMALI ── */
+.so { display:none; font-style:italic; color:var(--text-light); font-size:0.88em; }
+body.somali-on .so { display:inline; }
+body.somali-on .en { display:none; }
+.en { display:inline; }
+
 </style>
 </head>
 <body>
@@ -305,38 +312,38 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
       <div class="wb-text">
         <div class="wb-greeting" id="wbGreeting">Welcome</div>
         <div class="wb-name" id="wbName">Loading...</div>
-        <div class="wb-sub">Keep up the great work. Your next lesson is waiting.</div>
+        <div class="wb-sub"><span class="en">Keep up the great work. Your next lesson is waiting.</span><span class="so">Sii wad shaqada fiican. Casharadaada xigta waa sugaysa.</span></div>
       </div>
       <div class="wb-right">
         <div class="streak-card">
           <div class="streak-num" id="streakNum">0</div>
-          <div class="streak-lbl">Day Streak &#128293;</div>
+          <div class="streak-lbl"><span class="en">Day Streak</span><span class="so">Joogtaynta</span> &#128293;</div>
         </div>
         <div class="streak-card">
           <div class="streak-num" id="completedNum">0</div>
-          <div class="streak-lbl">Completed</div>
+          <div class="streak-lbl"><span class="en">Completed</span><span class="so">La Dhammeeyay</span></div>
         </div>
       </div>
     </div>
 
     <div class="stats-row">
       <div class="stat-card">
-        <div class="stat-label">Courses</div>
+        <div class="stat-label"><span class="en">Courses</span><span class="so">Koorsooyin</span></div>
         <div class="stat-num" id="statCourses">0</div>
         <div class="stat-sub">enrolled</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Progress</div>
+        <div class="stat-label"><span class="en">Progress</span><span class="so">Horumarka</span></div>
         <div class="stat-num" id="statProgress">0<span style="font-size:14px;font-weight:400;color:var(--text-light);">%</span></div>
         <div class="stat-bar-wrap"><div class="stat-bar" id="statBar" style="width:0%;background:linear-gradient(90deg,var(--cyan),var(--teal))"></div></div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Certificates</div>
+        <div class="stat-label"><span class="en">Certificates</span><span class="so">Shahaado</span></div>
         <div class="stat-num" id="statCerts">0</div>
         <div class="stat-sub">earned</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Plan</div>
+        <div class="stat-label"><span class="en">Plan</span><span class="so">Qorshaha</span></div>
         <div class="stat-num" style="font-size:18px;padding-top:4px;">Free</div>
         <div class="stat-sub">all courses included</div>
       </div>
@@ -345,18 +352,18 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     <div class="continue-card" id="continueBanner" style="display:none;"></div>
 
     <div class="dash-tabs">
-      <button class="dash-tab active" onclick="switchTab('courses',this)">&#128218; My Courses</button>
-      <button class="dash-tab" onclick="switchTab('catalog',this)">&#127758; Browse</button>
-      <button class="dash-tab" onclick="switchTab('certs',this)">&#127891; Certificates</button>
-      <button class="dash-tab" onclick="switchTab('announcements',this)">&#128226; Announcements</button>
-      <button class="dash-tab" onclick="switchTab('payments',this)">&#128176; Payments</button>
-      <button class="dash-tab" onclick="switchTab('notes',this)">&#128221; Notes</button>
+      <button class="dash-tab active" onclick="switchTab('courses',this)">&#128218; <span class="en"><span class="en">My Courses</span><span class="so"> &bull; Koorsadayda</span></span><span class="so">Koorsadayda</span></button>
+      <button class="dash-tab" onclick="switchTab('catalog',this)">&#127758; <span class="en">Browse</span><span class="so">Raadi</span></button>
+      <button class="dash-tab" onclick="switchTab('certs',this)">&#127891; <span class="en">Certificates</span><span class="so">Shahaadooyinka</span></button>
+      <button class="dash-tab" onclick="switchTab('announcements',this)">&#128226; <span class="en"><span class="en">Announcements</span><span class="so"> &bull; Xayeysiisyada</span></span><span class="so">Xayeysiisyada</span></button>
+      <button class="dash-tab" onclick="switchTab('payments',this)">&#128176; <span class="en">Payments</span><span class="so">Lacag-bixinta</span></button>
+      <button class="dash-tab" onclick="switchTab('notes',this)">&#128221; <span class="en">Notes</span><span class="so">Xusuus-qorayaasha</span></button>
     </div>
 
     <!-- My Courses -->
     <div class="tab-panel active" id="tab-courses">
       <div class="sec-header">
-        <div class="sec-title">My Courses</div>
+        <div class="sec-title"><span class="en">My Courses</span><span class="so"> &bull; Koorsadayda</span></div>
         <a href="#" class="sec-link" onclick="switchToTab('catalog');return false;">Browse more &rarr;</a>
       </div>
       <div class="courses-list" id="coursesList">
@@ -366,7 +373,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
     <!-- Browse Catalog -->
     <div class="tab-panel" id="tab-catalog">
-      <div class="sec-header"><div class="sec-title">Browse All Courses</div></div>
+      <div class="sec-header"><div class="sec-title"><span class="en">Browse All Courses</span><span class="so"> &bull; Dhammaan Koorsaha</span></div></div>
 
       <div class="catalog-controls">
         <div class="catalog-search-wrap">
@@ -389,7 +396,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
     <!-- Certificates -->
     <div class="tab-panel" id="tab-certs">
-      <div class="sec-header"><div class="sec-title">My Certificates</div></div>
+      <div class="sec-header"><div class="sec-title"><span class="en">My Certificates</span><span class="so"> &bull; Shahaadooyinkayga</span></div></div>
       <div class="cert-grid" id="certGrid">
         <div class="empty-state"><div class="e-icon">&#9203;</div><div class="e-title">Loading...</div></div>
       </div>
@@ -397,7 +404,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
     <!-- Announcements -->
     <div class="tab-panel" id="tab-announcements">
-      <div class="sec-header"><div class="sec-title">Announcements</div></div>
+      <div class="sec-header"><div class="sec-title"><span class="en">Announcements</span><span class="so"> &bull; Xayeysiisyada</span></div></div>
       <div class="announcements-list" id="announcementsList">
         <div class="empty-state"><div class="e-icon">&#9203;</div><div class="e-title">Loading...</div></div>
       </div>
@@ -405,7 +412,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
     <!-- Payments -->
     <div class="tab-panel" id="tab-payments">
-      <div class="sec-header"><div class="sec-title">Payments &amp; Billing</div></div>
+      <div class="sec-header"><div class="sec-title"><span class="en">Payments &amp; Billing</span><span class="so"> &bull; Lacag-bixinta</span></div></div>
       <div class="payment-banner">
         <div class="pay-icon">&#127881;</div>
         <div>
@@ -435,8 +442,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     <div class="pp-role-badge">&#127891; Student</div>
   </div>
   <div class="pp-body">
-    <span class="pp-section-label">Personal Information</span>
-    <div class="pp-field"><label class="pp-label">Full Name</label><input type="text" class="pp-input" id="ppNameInput" placeholder="Your full name"></div>
+    <span class="pp-section-label"><span class="en">Personal Information</span><span class="so"> &bull; Macluumaadka Shakhsiga</span></span>
+    <div class="pp-field"><label class="pp-label"><span class="en">Full Name</span><span class="so"> / Magaca Buuxa</span></label><input type="text" class="pp-input" id="ppNameInput" placeholder="Your full name"></div>
     <div class="pp-field"><label class="pp-label">Email</label><input type="email" class="pp-input" id="ppEmailInput" readonly></div>
     <div class="pp-field"><label class="pp-label">City</label><input type="text" class="pp-input" id="ppCity" placeholder="e.g. Columbus"></div>
     <div class="pp-field"><label class="pp-label">Country</label><input type="text" class="pp-input" id="ppCountry" placeholder="e.g. United States"></div>
@@ -604,7 +611,7 @@ function switchToTab(name){
 function renderCourses(){
   var list=document.getElementById('coursesList');
   if(!_enrollments.length){
-    list.innerHTML='<div class="empty-state"><div class="e-icon">&#128218;</div><div class="e-title">No courses yet</div><div class="e-desc">Browse the catalog and enroll in your first course.</div></div>';
+    list.innerHTML='<div class="empty-state"><div class="e-icon">&#128218;</div><div class="e-title"><span class="en">No courses yet</span><span class="so">Wali koorsooyin ma lihid</span></div><div class="e-desc"><span class="en">Browse the catalog and enroll in your first course.</span><span class="so">Raadi catalogka oo ku diiwaangeli koorsadaada koowaad.</span></div></div>';
     return;
   }
   var html='';
@@ -656,9 +663,9 @@ function renderCourses(){
         +'<div class="ccc-icon">&#127891;</div>'
         +'<div class="ccc-text">'
           +'<div class="ccc-title">You completed '+esc(course.title)+'</div>'
-          +'<div class="ccc-sub">Your certificate is ready to download.</div>'
+          +'<div class="ccc-sub"><span class="en">Your certificate is ready to download.</span><span class="so">Shahaadadaadu waa diyaar oo la soo dejin karaa.</span></div>'
         +'</div>'
-        +'<a href="/certificate.html?course='+course.id+'" class="btn-cert">Download &rarr;</a>'
+        +'<a href="/certificate.html?course='+course.id+'" class="btn-cert"><span class="en">Download</span><span class="so">Soo Deji</span> &rarr;</a>'
         +'</div>';
     }
   });
@@ -693,11 +700,11 @@ function renderContinueBanner() {
   cont.innerHTML =
     '<div class="cc-icon">&#9654;</div>'
     + '<div class="cc-info">'
-    + '<div class="cc-label">Continue Learning</div>'
+    + '<div class="cc-label"><span class="en">Continue Learning</span><span class="so">Waxbarasho Sii wad</span></div>'
     + '<div class="cc-title">'+esc(course.title)+'</div>'
     + '<div class="cc-mod">'+done+' of '+total+' modules complete</div>'
     + '</div>'
-    + '<a href="/course-viewer.html?course='+course.id+'" class="btn-cont">Resume &rarr;</a>';
+    + '<a href="/course-viewer.html?course='+course.id+'" class="btn-cont"><span class="en">Resume</span><span class="so">Ku Laabo</span> &rarr;</a>';
 }
 
 // ── STREAK TRACKING ───────────────────────────────────────────
@@ -861,7 +868,7 @@ function renderCerts(){
 function renderAnnouncements(anncs){
   var list=document.getElementById('announcementsList');
   if(!anncs||!anncs.length){
-    list.innerHTML='<div class="empty-state"><div class="e-icon">&#128226;</div><div class="e-title">No announcements yet</div><div class="e-desc">Check back soon for updates from Kulan Institute.</div></div>';
+    list.innerHTML='<div class="empty-state"><div class="e-icon">&#128226;</div><div class="e-title"><span class="en">No announcements yet</span><span class="so">Wali war-baahino ma jirto</span></div><div class="e-desc"><span class="en">Check back soon for updates from Kulan Institute.</span><span class="so">Dib u eeg dhawaan cusbooneysiin ka Machadka Kulan.</span></div></div>';
     return;
   }
   list.innerHTML=anncs.map(function(a){
@@ -902,7 +909,7 @@ function renderPayments(){
 function toggleLang(){
   _soOn=!_soOn;
   document.getElementById('langToggle').textContent=_soOn?'English':'+ Somali';
-  document.querySelectorAll('.so').forEach(function(el){ el.style.display=_soOn?'':'none'; });
+  document.body.classList.toggle('somali-on', _soOn);
 }
 
 // PROFILE
