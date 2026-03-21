@@ -176,6 +176,44 @@ nav {
   .stats-row { grid-template-columns:1fr 1fr; }
   .ann-actions { flex-wrap:wrap; }
 }
+
+/* ── UPLOAD SECTION ── */
+.upload-tabs { display:flex; gap:6px; margin-bottom:10px; }
+.upload-tab  { padding:7px 16px; border-radius:8px; border:1.5px solid rgba(11,31,58,0.1); background:#fff; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:var(--text-mid); cursor:pointer; transition:all .2s; }
+.upload-tab.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+
+.upload-drop {
+  border:2px dashed rgba(11,31,58,0.15); border-radius:12px;
+  padding:28px 20px; text-align:center; cursor:pointer;
+  transition:all .2s; background:rgba(27,174,204,0.02);
+}
+.upload-drop:hover, .upload-drop.drag-over { border-color:var(--cyan); background:rgba(27,174,204,0.05); }
+.ud-icon { font-size:32px; margin-bottom:8px; }
+.ud-text { font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; }
+.ud-sub  { font-size:12px; color:var(--text-light); }
+
+.upload-preview {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; border-radius:10px;
+  background:rgba(27,174,204,0.05); border:1px solid rgba(27,174,204,0.15);
+}
+.up-info { display:flex; align-items:center; gap:10px; min-width:0; }
+.up-icon { font-size:22px; flex-shrink:0; }
+.up-name { font-size:13px; font-weight:600; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:280px; }
+.up-size { font-size:11px; color:var(--text-light); margin-top:2px; }
+.up-remove { background:none; border:none; cursor:pointer; color:var(--error); font-size:16px; padding:4px; flex-shrink:0; }
+
+.upload-progress { margin-top:10px; }
+.up-prog-bar  { height:6px; background:rgba(11,31,58,0.08); border-radius:3px; overflow:hidden; margin-bottom:6px; }
+.up-prog-fill { height:100%; background:linear-gradient(90deg,var(--cyan),var(--teal)); border-radius:3px; transition:width .3s; width:0%; }
+.up-prog-label { font-size:12px; color:var(--text-light); }
+
+.btn-add-link { padding:9px 18px; border-radius:9px; background:linear-gradient(135deg,var(--navy),var(--blue)); border:none; color:#fff; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; cursor:pointer; }
+
+/* Attachment badge on card */
+.ann-attachment { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; background:rgba(27,174,204,0.08); border:1px solid rgba(27,174,204,0.15); font-size:11px; font-weight:600; color:var(--cyan); text-decoration:none; margin-top:6px; }
+.ann-attachment:hover { background:rgba(27,174,204,0.14); }
+
 </style>
 </head>
 <body>
@@ -261,6 +299,54 @@ nav {
       </div>
     </div>
 
+    <!-- Attachment Upload -->
+    <div class="f-group">
+      <label class="f-label">Attachment <span style="color:var(--text-light);font-weight:400;text-transform:none;letter-spacing:0;">(optional — file, image, PDF, or link)</span></label>
+      <div class="upload-tabs">
+        <button class="upload-tab active" id="tabFile" onclick="switchUploadTab('file',this)">&#128196; Upload File</button>
+        <button class="upload-tab"        id="tabLink" onclick="switchUploadTab('link',this)">&#128279; Add Link</button>
+      </div>
+      <!-- File upload panel -->
+      <div id="uploadFilePanel">
+        <div class="upload-drop" id="uploadDrop" onclick="document.getElementById('fileInput').click()" ondragover="onDragOver(event)" ondrop="onDrop(event)">
+          <div class="ud-icon">&#128196;</div>
+          <div class="ud-text">Click to upload or drag &amp; drop</div>
+          <div class="ud-sub">PDF, Word, PowerPoint, images, video — up to 50MB</div>
+          <input type="file" id="fileInput" style="display:none" onchange="onFileSelected(this)">
+        </div>
+        <div class="upload-preview" id="uploadPreview" style="display:none;">
+          <div class="up-info">
+            <span class="up-icon" id="upIcon">&#128196;</span>
+            <div>
+              <div class="up-name" id="upName"></div>
+              <div class="up-size" id="upSize"></div>
+            </div>
+          </div>
+          <button class="up-remove" onclick="removeAttachment()">&#215; Remove</button>
+        </div>
+        <div class="upload-progress" id="uploadProgressWrap" style="display:none;">
+          <div class="up-prog-bar"><div class="up-prog-fill" id="upProgFill"></div></div>
+          <div class="up-prog-label" id="upProgLabel">Uploading...</div>
+        </div>
+      </div>
+      <!-- Link panel -->
+      <div id="uploadLinkPanel" style="display:none;">
+        <input type="url"  class="f-input" id="linkUrl"  placeholder="https://drive.google.com/..." style="margin-bottom:8px;">
+        <input type="text" class="f-input" id="linkName" placeholder="Link label (e.g. Study Guide PDF)">
+        <button class="btn-add-link" onclick="addLink()" style="margin-top:8px;">Add Link</button>
+        <div class="upload-preview" id="linkPreview" style="display:none;margin-top:8px;">
+          <div class="up-info">
+            <span class="up-icon">&#128279;</span>
+            <div>
+              <div class="up-name" id="linkPreviewName"></div>
+              <div class="up-size" id="linkPreviewUrl" style="word-break:break-all;"></div>
+            </div>
+          </div>
+          <button class="up-remove" onclick="removeAttachment()">&#215; Remove</button>
+        </div>
+      </div>
+    </div>
+
     <div class="editor-actions">
       <button class="btn-save-draft" onclick="saveAnn('draft')">Save as Draft</button>
       <button class="btn-publish"    onclick="saveAnn('published')">&#10003; Publish</button>
@@ -281,14 +367,131 @@ nav {
 <div class="notif" id="notif"></div>
 
 <script>
-var _user   = null;
-var _allAnns = [];
-var _filter  = 'all';
-var _annType = 'info';
-var _pinned  = false;
-var _editId  = null;
+var _user           = null;
+var _allAnns        = [];
+var _filter         = 'all';
+var _annType        = 'info';
+var _pinned         = false;
+var _editId         = null;
+var _attachmentUrl  = null;
+var _attachmentName = null;
+var _attachmentType = null;
+var _uploadFile     = null;
 
 var TYPE_ICONS = { info:'&#128226;', success:'&#10003;', warning:'&#9888;', urgent:'&#128680;' };
+
+
+// ── UPLOAD TAB SWITCH ─────────────────────────────────────────
+function switchUploadTab(tab, el) {
+  document.querySelectorAll('.upload-tab').forEach(function(b){ b.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  document.getElementById('uploadFilePanel').style.display = tab==='file' ? 'block' : 'none';
+  document.getElementById('uploadLinkPanel').style.display = tab==='link' ? 'block' : 'none';
+}
+
+// ── FILE TYPE ICON ────────────────────────────────────────────
+function fileIcon(name) {
+  var ext = (name||'').split('.').pop().toLowerCase();
+  if (['jpg','jpeg','png','gif','webp','svg'].includes(ext)) return '&#128444;';
+  if (ext==='pdf')   return '&#128196;';
+  if (['doc','docx'].includes(ext)) return '&#128209;';
+  if (['ppt','pptx'].includes(ext)) return '&#128218;';
+  if (['xls','xlsx'].includes(ext)) return '&#128202;';
+  if (['mp4','mov','avi','webm'].includes(ext)) return '&#127910;';
+  if (['mp3','wav','m4a'].includes(ext)) return '&#127925;';
+  if (['zip','rar','7z'].includes(ext)) return '&#128230;';
+  return '&#128196;';
+}
+function fmtSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1048576).toFixed(1) + ' MB';
+}
+
+// ── DRAG AND DROP ─────────────────────────────────────────────
+function onDragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadDrop').classList.add('drag-over');
+}
+function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadDrop').classList.remove('drag-over');
+  var file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+}
+function onFileSelected(inp) {
+  if (inp.files[0]) processFile(inp.files[0]);
+}
+function processFile(file) {
+  if (file.size > 52428800) { showNotif('File too large. Max 50MB.', 'error'); return; }
+  _uploadFile = file;
+  _attachmentName = file.name;
+  _attachmentType = 'file';
+  _attachmentUrl  = null; // will be set after upload
+
+  document.getElementById('uploadDrop').style.display = 'none';
+  document.getElementById('uploadPreview').style.display = 'flex';
+  document.getElementById('upIcon').innerHTML = fileIcon(file.name);
+  document.getElementById('upName').textContent = file.name;
+  document.getElementById('upSize').textContent = fmtSize(file.size);
+}
+
+// ── ADD LINK ──────────────────────────────────────────────────
+function addLink() {
+  var url  = document.getElementById('linkUrl').value.trim();
+  var name = document.getElementById('linkName').value.trim();
+  if (!url) { showNotif('Please enter a URL.', 'error'); return; }
+  _attachmentUrl  = url;
+  _attachmentName = name || url;
+  _attachmentType = 'link';
+  _uploadFile     = null;
+  document.getElementById('linkPreview').style.display    = 'flex';
+  document.getElementById('linkPreviewName').textContent   = _attachmentName;
+  document.getElementById('linkPreviewUrl').textContent    = url;
+  document.getElementById('linkUrl').style.display  = 'none';
+  document.getElementById('linkName').style.display = 'none';
+  document.querySelector('.btn-add-link').style.display = 'none';
+}
+
+// ── REMOVE ATTACHMENT ─────────────────────────────────────────
+function removeAttachment() {
+  _uploadFile = null; _attachmentUrl = null; _attachmentName = null; _attachmentType = null;
+  document.getElementById('uploadDrop').style.display    = 'block';
+  document.getElementById('uploadPreview').style.display = 'none';
+  document.getElementById('uploadProgressWrap').style.display = 'none';
+  document.getElementById('linkPreview').style.display   = 'none';
+  document.getElementById('linkUrl').style.display  = '';
+  document.getElementById('linkName').style.display = '';
+  document.querySelector('.btn-add-link').style.display = '';
+  document.getElementById('linkUrl').value  = '';
+  document.getElementById('linkName').value = '';
+  document.getElementById('fileInput').value = '';
+}
+
+// ── UPLOAD TO SUPABASE STORAGE ────────────────────────────────
+async function uploadFileToStorage(file) {
+  var bucket  = 'kulan-materials';
+  var path    = 'announcements/' + Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  var progWrap = document.getElementById('uploadProgressWrap');
+  var progFill = document.getElementById('upProgFill');
+  var progLabel= document.getElementById('upProgLabel');
+
+  document.getElementById('uploadPreview').style.display = 'none';
+  progWrap.style.display = 'block';
+  progFill.style.width = '30%';
+  progLabel.textContent = 'Uploading...';
+
+  var result = await _sb.storage.from(bucket).upload(path, file, { upsert:true });
+  if (result.error) {
+    progWrap.style.display = 'none';
+    document.getElementById('uploadPreview').style.display = 'flex';
+    throw new Error(result.error.message);
+  }
+  progFill.style.width = '100%';
+  progLabel.textContent = 'Upload complete';
+  var urlResult = _sb.storage.from(bucket).getPublicUrl(path);
+  return urlResult.data.publicUrl;
+}
 
 // ── AUTH ─────────────────────────────────────────────────────
 var _started = false;
@@ -370,6 +573,7 @@ function renderAnns() {
         + '</div>'
         + (a.content ? '<div class="ann-content">'+esc(a.content)+'</div>' : '')
         + '<div class="ann-meta"><span>'+date+'</span><span>'+esc(a.author||'Admin')+'</span></div>'
+        + (a.attachment_url ? '<div><a class="ann-attachment" href="'+esc(a.attachment_url)+'" target="_blank">'+(a.attachment_type==='link'?'&#128279;':'&#128196;')+' '+esc(a.attachment_name||'Attachment')+'</a></div>' : '')
       + '</div>'
       + '<div class="ann-actions">'
         + '<button class="btn-edit-ann" onclick="editAnn(\''+a.id+'\')">&#9998; Edit</button>'
@@ -400,6 +604,25 @@ function openEditor(ann) {
   document.getElementById('pinTrack').classList.toggle('on', _pinned);
   document.getElementById('pinLabel').textContent = _pinned ? 'Pinned to top' : 'Not pinned';
 
+  // Restore attachment state if editing existing ann
+  if (ann && ann.attachment_url) {
+    _attachmentUrl  = ann.attachment_url;
+    _attachmentName = ann.attachment_name || ann.attachment_url;
+    _attachmentType = ann.attachment_type || 'file';
+    if (ann.attachment_type === 'link') {
+      switchUploadTab('link', document.getElementById('tabLink'));
+      document.getElementById('linkUrl').value  = ann.attachment_url;
+      document.getElementById('linkName').value = ann.attachment_name||'';
+      addLink();
+    } else {
+      document.getElementById('uploadDrop').style.display    = 'none';
+      document.getElementById('uploadPreview').style.display = 'flex';
+      document.getElementById('upIcon').innerHTML = '&#128196;';
+      document.getElementById('upName').textContent = _attachmentName;
+      document.getElementById('upSize').textContent = 'Previously uploaded';
+    }
+  }
+
   document.getElementById('editorWrap').classList.add('open');
   document.getElementById('annTitle').focus();
   document.getElementById('editorWrap').scrollIntoView({ behavior:'smooth', block:'nearest' });
@@ -408,6 +631,7 @@ function openEditor(ann) {
 function closeEditor() {
   document.getElementById('editorWrap').classList.remove('open');
   _editId = null; _annType = 'info'; _pinned = false;
+  removeAttachment();
 }
 
 function selectType(type, el) {
@@ -434,25 +658,41 @@ function saveAnn(status) {
   if (!title) { showNotif('Please enter a title.', 'error'); return; }
 
   var payload = {
-    title:      title,
-    content:    content || null,
-    type:       _annType,
-    pinned:     _pinned,
-    status:     status,
-    author:     'Kulan Institute',
-    updated_at: new Date().toISOString()
+    title:           title,
+    content:         content || null,
+    type:            _annType,
+    pinned:          _pinned,
+    status:          status,
+    author:          'Kulan Institute',
+    updated_at:      new Date().toISOString(),
+    attachment_url:  _attachmentUrl  || null,
+    attachment_name: _attachmentName || null,
+    attachment_type: _attachmentType || null
   };
 
-  var op = _editId
-    ? _sb.from('announcements').update(payload).eq('id', _editId)
-    : _sb.from('announcements').insert([Object.assign(payload, { created_at: new Date().toISOString() })]);
+  // Upload file first if one is pending
+  var doSave = function(finalPayload) {
+    var op = _editId
+      ? _sb.from('announcements').update(finalPayload).eq('id', _editId)
+      : _sb.from('announcements').insert([Object.assign({}, finalPayload, { created_at: new Date().toISOString() })]);
+    op.then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+      showNotif(_editId ? 'Announcement updated.' : (status==='published' ? 'Published!' : 'Saved as draft.'), 'success');
+      closeEditor();
+      loadAnns();
+    });
+  };
 
-  op.then(function(r) {
-    if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
-    showNotif(_editId ? 'Announcement updated.' : (status==='published' ? 'Published!' : 'Saved as draft.'), 'success');
-    closeEditor();
-    loadAnns();
-  });
+  if (_uploadFile) {
+    uploadFileToStorage(_uploadFile).then(function(url) {
+      payload.attachment_url = url;
+      doSave(payload);
+    }).catch(function(e) {
+      showNotif('Upload failed: ' + e.message, 'error');
+    });
+  } else {
+    doSave(payload);
+  }
 }
 
 // ── TOGGLE PIN ────────────────────────────────────────────────
