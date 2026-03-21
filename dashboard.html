@@ -221,7 +221,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     </a>
     <div class="tb-right">
       <button class="lang-toggle" id="langToggle" onclick="toggleLang()">+ Somali</button>
-      <button class="avatar-btn" id="avatarBtn" onclick="openProfile()" title="My Profile"></button>
+      <button class="avatar-btn" id="avatarBtn" onclick="openProfile()" title="My Profile">&#128100;</button>
     </div>
   </div>
 
@@ -330,25 +330,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     </div>
 
   </div>
-</div>
-
-<!-- Profile Panel -->
-<div class="profile-overlay" 
-    <!-- Notes -->
-    <div class="tab-panel" id="tab-notes">
-      <div class="section-head">
-        <div class="section-title">&#128221; My Course Notes</div>
-        <div style="font-size:13px;color:var(--text-light);">Notes you write in the course viewer appear here.</div>
-      </div>
-      <div id="notesList">
-        <div class="empty-state">
-          <div class="e-icon">&#128221;</div>
-          <div class="e-title">No notes yet</div>
-          <div class="e-desc">Open a course module and use the Notes panel to start writing. Your notes are saved automatically.</div>
-        </div>
-      </div>
-    </div>
-id="profileOverlay" onclick="closeProfile()"></div>
+<div class="profile-overlay" id="profileOverlay" onclick="closeProfile()"></div>
 <div class="profile-panel" id="profilePanel">
   <div class="pp-header">
     <button class="pp-close" onclick="closeProfile()">&#215;</button>
@@ -374,6 +356,25 @@ id="profileOverlay" onclick="closeProfile()"></div>
     <button class="pp-action danger" onclick="doSignOut()">&#128682; Sign Out</button>
   </div>
 </div>
+</div>
+
+<!-- Profile Panel -->
+<div class="profile-overlay" 
+    <!-- Notes -->
+    <div class="tab-panel" id="tab-notes">
+      <div class="section-head">
+        <div class="section-title">&#128221; My Course Notes</div>
+        <div style="font-size:13px;color:var(--text-light);">Notes you write in the course viewer appear here.</div>
+      </div>
+      <div id="notesList">
+        <div class="empty-state">
+          <div class="e-icon">&#128221;</div>
+          <div class="e-title">No notes yet</div>
+          <div class="e-desc">Open a course module and use the Notes panel to start writing. Your notes are saved automatically.</div>
+        </div>
+      </div>
+    </div>
+
 
 <div class="notif" id="notif"></div>
 
@@ -433,6 +434,7 @@ function renderAll(anncs){
 
   document.getElementById('wbName').textContent='Welcome back, '+name+' \uD83D\uDC4B';
   document.getElementById('avatarBtn').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('avatarBtn').title='My Profile — '+name;
   document.getElementById('ppNameDisplay').textContent=name;
   document.getElementById('ppEmailDisplay').textContent=_user.email;
   document.getElementById('ppAvatarInitial').textContent=name.charAt(0).toUpperCase();
@@ -680,6 +682,7 @@ function saveProfile(){
       document.getElementById('wbName').textContent='Welcome back, '+name+' \uD83D\uDC4B';
       document.getElementById('ppNameDisplay').textContent=name;
       document.getElementById('avatarBtn').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('avatarBtn').title='My Profile — '+name;
       document.getElementById('ppAvatarInitial').textContent=name.charAt(0).toUpperCase();
       showNotif('Profile saved!','success');
       closeProfile();
