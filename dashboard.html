@@ -195,6 +195,14 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   .dash-tabs{gap:4px;}
   .dash-tab{padding:8px 12px;font-size:12px;}
 }
+
+/* Profile overlay */
+#profileOverlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.5); z-index:200;
+  backdrop-filter:blur(3px);
+}
+#profileOverlay.open { display:block; }
 </style>
 </head>
 <body>
@@ -370,7 +378,7 @@ id="profileOverlay" onclick="closeProfile()"></div>
 <div class="notif" id="notif"></div>
 
 <script>
-var _user=null, _userData=null, _courses=[], _materials=[], _enrollments=[], _started=false, _soOn=false, _notifTimer;
+var _user=null, _userData=null, _courses=[], _materials=[], _enrollments=[], _started=false, _soOn=false, _notifTimer, _anncs=[];
 var ICONS=['&#129302;','&#128272;','&#128187;','&#128202;','&#127758;','&#129504;','&#128737;','&#128241;'];
 var BG=['rgba(27,174,204,0.12)','rgba(212,168,67,0.12)','rgba(14,124,123,0.12)','rgba(11,31,58,0.08)'];
 var BARS=['linear-gradient(90deg,#1BAECC,#0E7C7B)','linear-gradient(90deg,#D4A843,#e8c060)','linear-gradient(90deg,#0E7C7B,#0a5c5b)','linear-gradient(90deg,#1A3C6E,#0B1F3A)'];
@@ -410,8 +418,8 @@ function loadAll(){
     _courses     = res[1].data || [];
     _materials   = res[2].data || [];
     _enrollments = res[3].data || [];
-    var anncs    = res[4].data || [];
-    renderAll(posts);
+    _anncs       = res[4].data || [];
+    renderAll(_anncs);
     // Update last_active silently
     _sb.from('users').update({last_active:new Date().toISOString()}).eq('id',_user.id).then(function(){});
   }).catch(function(){
@@ -419,7 +427,7 @@ function loadAll(){
   });
 }
 
-function renderAll(posts){
+function renderAll(anncs){
   var name=(_userData&&_userData.full_name)||(_user.user_metadata&&_user.user_metadata.full_name)||_user.email.split('@')[0]||'Student';
   _userData.full_name=name;
 
@@ -460,7 +468,8 @@ function switchTab(name,el){
   document.querySelectorAll('.dash-tab').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('tab-'+name).classList.add('active');
   if(el) el.classList.add('active');
-  if(name==='notes') loadNotes();
+  if(name==='notes')         loadNotes();
+  if(name==='announcements') renderAnnouncements(_anncs);
 }
 
 function loadNotes(){
@@ -666,7 +675,7 @@ function saveProfile(){
   if(!name){ showNotif('Please enter your name.'); return; }
   _sb.from('users').update({full_name:name,city:city||null,country:country||null,updated_at:new Date().toISOString()}).eq('id',_user.id)
     .then(function(r){
-      if(r.error){ showNotif('Error: '+r.error.message); return; }
+      if(r.error){ showNotif(r.error.message.includes('column')?'Run student_setup.sql in Supabase first.':'Error: '+r.error.message,'error'); return; }
       _userData.full_name=name; _userData.city=city; _userData.country=country;
       document.getElementById('wbName').textContent='Welcome back, '+name+' \uD83D\uDC4B';
       document.getElementById('ppNameDisplay').textContent=name;
