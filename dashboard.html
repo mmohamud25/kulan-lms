@@ -203,6 +203,40 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   backdrop-filter:blur(3px);
 }
 #profileOverlay.open { display:block; }
+
+/* ── PROGRESS RINGS ── */
+.ring-wrap { position:relative;width:64px;height:64px;flex-shrink:0; }
+.ring-svg { transform:rotate(-90deg); }
+.ring-bg   { fill:none;stroke:rgba(11,31,58,0.08);stroke-width:5; }
+.ring-fill { fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .6s ease; }
+.ring-pct  { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--navy); }
+
+/* ── CONTINUE BANNER ── */
+.continue-card {
+  background:#fff;border-radius:14px;padding:18px 22px;
+  border:1px solid rgba(11,31,58,0.07);margin-bottom:24px;
+  display:flex;align-items:center;gap:16px;
+  border-left:4px solid var(--cyan);
+}
+.continue-card .cc-icon { font-size:28px;flex-shrink:0; }
+.continue-card .cc-info { flex:1;min-width:0; }
+.continue-card .cc-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--cyan);margin-bottom:3px; }
+.continue-card .cc-title { font-size:15px;font-weight:700;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.continue-card .cc-mod   { font-size:12px;color:var(--text-light);margin-top:2px; }
+.continue-card .btn-cont { padding:10px 20px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--teal));border:none;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0; }
+
+/* ── CERT CARD ON DASHBOARD ── */
+.cert-complete-card {
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  border-radius:14px;padding:18px 22px;margin-top:10px;
+  display:flex;align-items:center;gap:14px;
+}
+.cert-complete-card .ccc-icon { font-size:32px;flex-shrink:0; }
+.cert-complete-card .ccc-text { flex:1; }
+.cert-complete-card .ccc-title { font-size:14px;font-weight:700;color:#fff;margin-bottom:3px; }
+.cert-complete-card .ccc-sub   { font-size:12px;color:rgba(255,255,255,0.5); }
+.cert-complete-card .btn-cert  { padding:9px 18px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;color:var(--navy);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0; }
+
 </style>
 </head>
 <body>
@@ -267,6 +301,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
         <div class="stat-sub">all courses included</div>
       </div>
     </div>
+
+    <div class="continue-card" id="continueBanner" style="display:none;"></div>
 
     <div class="dash-tabs">
       <button class="dash-tab active" onclick="switchTab('courses',this)">&#128218; My Courses</button>
@@ -405,6 +441,7 @@ function startDashboard(){
   var h=new Date().getHours();
   document.getElementById('wbGreeting').textContent = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
   loadAll();
+  setTimeout(updateStreak, 2000);
 }
 
 function loadAll(){
@@ -523,19 +560,28 @@ function renderCourses(){
     var total=mats.length;
     var cpPct=total>0?Math.round((done/total)*100):0;
     var isComplete=total>0&&done>=total;
-    var icon=ICONS[i%ICONS.length]; var bg=BG[i%BG.length]; var bar=BARS[i%BARS.length];
+    var icon=ICONS[i%ICONS.length];
+    var bar=BARS[i%BARS.length];
+
+    // Progress ring
+    var r=28; var circ=Math.round(2*Math.PI*r);
+    var offset=Math.round(circ*(1-cpPct/100));
+    var ringColor=isComplete?'#16a34a':bar.match(/#[0-9a-fA-F]{6}/)?bar.match(/#[0-9a-fA-F]{6}/)[0]:'#1BAECC';
+
     html+='<div class="course-row">'
-      +'<div class="course-icon" style="background:'+bg+'">'+icon+'</div>'
-      +'<div class="course-info">'
-      +'<div class="course-name">'+esc(course.title)+'<span class="badge-free">Free</span></div>'
-      +(course.title_so?'<div class="course-name-so">'+esc(course.title_so)+'</div>':'')
-      +'<div class="course-meta-line">'+(course.modules||total||'?')+' Modules &bull; '+esc(course.level||'All Levels')+' &bull; '+total+' material'+(total!==1?'s':'')+' available</div>'
+      +'<div class="ring-wrap">'
+        +'<svg class="ring-svg" width="64" height="64" viewBox="0 0 64 64">'
+          +'<circle class="ring-bg" cx="32" cy="32" r="'+r+'"/>'
+          +'<circle class="ring-fill" cx="32" cy="32" r="'+r+'" stroke="'+ringColor+'" stroke-dasharray="'+circ+'" stroke-dashoffset="'+offset+'"/>'
+        +'</svg>'
+        +'<div class="ring-pct">'+(isComplete?'&#10003;':cpPct+'%')+'</div>'
       +'</div>'
-      +'<div class="course-progress">'
-      +'<div class="cp-label">Progress</div>'
-      +'<div class="cp-bar-wrap"><div class="cp-bar" style="width:'+cpPct+'%;background:'+bar+'"></div></div>'
-      +'<div class="cp-pct">'+done+' / '+(total||'?')+' complete</div>'
+      +'<div class="course-info">'
+        +'<div class="course-name">'+esc(course.title)+'<span class="badge-free">Free</span></div>'
+        +(course.title_so?'<div class="course-name-so">'+esc(course.title_so)+'</div>':'')
+        +'<div class="course-meta-line">'+(course.modules||total||'?')+' Modules &bull; '+esc(course.level||'All Levels')+'</div>'
       +'</div>';
+
     if(!total){
       html+='<button class="locked-btn">&#128109; No content yet</button>';
     } else if(isComplete){
@@ -547,11 +593,78 @@ function renderCourses(){
       html+='<a href="/course-viewer.html?course='+course.id+'" class="btn-course">'+(done===0?'Start &rarr;':'Continue &rarr;')+'</a>';
     }
     html+='</div>';
+
+    // Certificate completion card below the row
+    if(isComplete){
+      html+='<div class="cert-complete-card">'
+        +'<div class="ccc-icon">&#127891;</div>'
+        +'<div class="ccc-text">'
+          +'<div class="ccc-title">You completed '+esc(course.title)+'</div>'
+          +'<div class="ccc-sub">Your certificate is ready to download.</div>'
+        +'</div>'
+        +'<a href="/certificate.html?course='+course.id+'" class="btn-cert">Download &rarr;</a>'
+        +'</div>';
+    }
   });
   list.innerHTML=html;
+  renderContinueBanner();
 }
 
 // CATALOG
+
+// ── CONTINUE BANNER ──────────────────────────────────────────
+function renderContinueBanner() {
+  var cont = document.getElementById('continueBanner');
+  if (!cont) return;
+  // Find the course with the most recent progress that isn't complete
+  var inProgress = _enrollments.filter(function(en) {
+    var mats = _materials.filter(function(m){ return m.course_id===en.course_id; });
+    var done = en.completed_materials ? en.completed_materials.length : (en.progress||0);
+    return mats.length > 0 && done < mats.length && done > 0;
+  });
+  if (!inProgress.length) { cont.style.display='none'; return; }
+  // Sort by most recently updated
+  inProgress.sort(function(a,b){
+    return new Date(b.updated_at||b.enrolled_at||0) - new Date(a.updated_at||a.enrolled_at||0);
+  });
+  var en = inProgress[0];
+  var course = _courses.find(function(c){ return c.id===en.course_id; });
+  if (!course) { cont.style.display='none'; return; }
+  var mats = _materials.filter(function(m){ return m.course_id===en.course_id; });
+  var done = en.completed_materials ? en.completed_materials.length : (en.progress||0);
+  var total = mats.length;
+  cont.style.display = 'flex';
+  cont.innerHTML =
+    '<div class="cc-icon">&#9654;</div>'
+    + '<div class="cc-info">'
+    + '<div class="cc-label">Continue Learning</div>'
+    + '<div class="cc-title">'+esc(course.title)+'</div>'
+    + '<div class="cc-mod">'+done+' of '+total+' modules complete</div>'
+    + '</div>'
+    + '<a href="/course-viewer.html?course='+course.id+'" class="btn-cont">Resume &rarr;</a>';
+}
+
+// ── STREAK TRACKING ───────────────────────────────────────────
+function updateStreak() {
+  if (!_user || !_userData) return;
+  var now       = new Date();
+  var today     = now.toISOString().split('T')[0];
+  var lastActive = _userData.last_active ? new Date(_userData.last_active).toISOString().split('T')[0] : null;
+  if (lastActive === today) return; // Already updated today
+
+  var yesterday = new Date(now - 86400000).toISOString().split('T')[0];
+  var newStreak = (lastActive === yesterday) ? ((_userData.streak||0) + 1) : 1;
+
+  _sb.from('users').update({
+    last_active: now.toISOString(),
+    streak: newStreak
+  }).eq('id', _user.id).then(function() {
+    _userData.streak = newStreak;
+    _userData.last_active = now.toISOString();
+    document.getElementById('streakNum').textContent = newStreak;
+  }).catch(function(){});
+}
+
 function renderCatalog(){
   var grid=document.getElementById('catalogGrid');
   var enrolledIds=_enrollments.map(function(e){ return e.course_id; });
