@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Announcements — Kulan Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL  = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY  = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var ADMIN_EMAIL   = 'mohamedmohammud@gmail.com';
+var ADMIN_UID     = '34e4009e-21de-4a55-ab9d-e8c767dfe898';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+<style>
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
+  --white:#fff; --bg:#F4F7FB;
+  --text:#1a2840; --text-mid:#4a6080; --text-light:#8a9bb0;
+  --error:#ef4444; --success:#22c55e;
+  --warn:#f59e0b;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ── NAV ── */
+nav {
+  background:var(--navy); height:60px; padding:0 28px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid rgba(212,168,67,0.15); position:sticky; top:0; z-index:50;
+}
+.nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.nav-logo-icon { width:34px; height:34px; background:linear-gradient(135deg,var(--gold),var(--gold2)); border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-weight:900; font-size:15px; color:var(--navy); }
+.nav-logo-text .t1 { font-size:13px; font-weight:700; color:#fff; }
+.nav-logo-text .t2 { font-size:10px; color:rgba(212,168,67,0.7); }
+.nav-back { font-size:13px; color:rgba(255,255,255,0.45); text-decoration:none; transition:color .2s; }
+.nav-back:hover { color:var(--gold); }
+
+/* ── PAGE ── */
+.page-inner { max-width:900px; margin:0 auto; padding:36px 28px 80px; }
+
+/* ── STATS ROW ── */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; }
+.stat-card { background:#fff; border-radius:14px; padding:18px 20px; border:1px solid rgba(11,31,58,0.07); }
+.stat-num  { font-size:26px; font-weight:700; color:var(--navy); margin-bottom:4px; }
+.stat-lbl  { font-size:12px; color:var(--text-light); font-weight:600; text-transform:uppercase; letter-spacing:.6px; }
+
+/* ── NEW BUTTON ── */
+.top-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.page-title { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--navy); }
+.btn-new { padding:10px 22px; border-radius:10px; background:linear-gradient(135deg,var(--navy),var(--blue)); border:none; color:#fff; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; }
+.btn-new:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(11,31,58,0.25); }
+
+/* ── FILTER BAR ── */
+.filter-bar { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+.filter-btn { padding:7px 16px; border-radius:8px; border:1.5px solid rgba(11,31,58,0.1); background:#fff; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:var(--text-mid); cursor:pointer; transition:all .2s; }
+.filter-btn:hover { border-color:var(--navy); color:var(--navy); }
+.filter-btn.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+
+/* ── EDITOR ── */
+.editor-wrap { background:#fff; border-radius:16px; padding:28px 32px; border:1px solid rgba(11,31,58,0.07); margin-bottom:24px; display:none; }
+.editor-wrap.open { display:block; }
+.editor-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+.editor-title-text { font-family:'Playfair Display',serif; font-size:19px; font-weight:700; color:var(--navy); }
+.editor-close { background:rgba(11,31,58,0.06); border:none; border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:18px; color:var(--text-mid); display:flex; align-items:center; justify-content:center; transition:background .2s; }
+.editor-close:hover { background:rgba(239,68,68,0.1); color:var(--error); }
+
+.f-label { display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--text-mid); margin-bottom:7px; }
+.f-input, .f-select, .f-textarea {
+  width:100%; padding:11px 14px; border-radius:10px;
+  border:1.5px solid rgba(11,31,58,0.12); background:#fff;
+  color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px;
+  outline:none; transition:border .2s, box-shadow .2s;
+}
+.f-input:focus, .f-select:focus, .f-textarea:focus {
+  border-color:var(--cyan); box-shadow:0 0 0 3px rgba(27,174,204,0.1);
+}
+.f-textarea { resize:vertical; min-height:120px; }
+.f-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.f-group { margin-bottom:16px; }
+
+/* Pin toggle */
+.pin-toggle { display:flex; align-items:center; gap:10px; cursor:pointer; }
+.pin-toggle input { display:none; }
+.pin-track { width:42px; height:24px; border-radius:12px; background:rgba(11,31,58,0.12); position:relative; transition:background .2s; flex-shrink:0; }
+.pin-track.on { background:var(--gold); }
+.pin-thumb { position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 4px rgba(0,0,0,0.2); }
+.pin-track.on .pin-thumb { transform:translateX(18px); }
+.pin-label { font-size:13px; font-weight:600; color:var(--text-mid); }
+
+/* Type pills */
+.type-pills { display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
+.type-pill { padding:7px 14px; border-radius:8px; border:1.5px solid rgba(11,31,58,0.12); background:#fff; font-size:12px; font-weight:700; cursor:pointer; transition:all .2s; color:var(--text-mid); }
+.type-pill:hover { border-color:var(--navy); }
+.type-pill.active { color:#fff; border-color:transparent; }
+.type-pill[data-type="info"].active    { background:var(--cyan); }
+.type-pill[data-type="success"].active { background:#16a34a; }
+.type-pill[data-type="warning"].active { background:var(--warn); }
+.type-pill[data-type="urgent"].active  { background:var(--error); }
+
+.editor-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+.btn-save-draft { padding:10px 20px; border-radius:10px; border:1.5px solid rgba(11,31,58,0.12); background:transparent; color:var(--text-mid); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; }
+.btn-save-draft:hover { border-color:var(--navy); color:var(--navy); }
+.btn-publish { padding:10px 24px; border-radius:10px; background:linear-gradient(135deg,var(--teal),#0a5c5b); border:none; color:#fff; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; }
+.btn-publish:hover { transform:translateY(-1px); box-shadow:0 5px 14px rgba(14,124,123,0.3); }
+
+/* ── ANNOUNCEMENT CARDS ── */
+.ann-list { display:flex; flex-direction:column; gap:12px; }
+.ann-card {
+  background:#fff; border-radius:14px; padding:20px 24px;
+  border:1px solid rgba(11,31,58,0.07);
+  display:flex; align-items:flex-start; gap:14px; transition:box-shadow .2s;
+}
+.ann-card:hover { box-shadow:0 4px 18px rgba(11,31,58,0.08); }
+.ann-card.pinned { border-left:4px solid var(--gold); }
+.ann-card.draft   { opacity:.65; }
+
+.ann-type-dot {
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+.ann-type-dot.info    { background:rgba(27,174,204,0.12); color:var(--cyan); }
+.ann-type-dot.success { background:rgba(22,163,74,0.1);   color:#16a34a; }
+.ann-type-dot.warning { background:rgba(245,158,11,0.1);  color:var(--warn); }
+.ann-type-dot.urgent  { background:rgba(239,68,68,0.1);   color:var(--error); }
+
+.ann-body  { flex:1; min-width:0; }
+.ann-title { font-size:15px; font-weight:700; color:var(--navy); margin-bottom:5px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.ann-content { font-size:13px; color:var(--text-mid); line-height:1.6; margin-bottom:8px; white-space:pre-wrap; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.ann-meta { font-size:11px; color:var(--text-light); display:flex; gap:10px; flex-wrap:wrap; }
+
+.badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
+.badge-pinned  { background:rgba(212,168,67,0.12); color:#b45309; }
+.badge-draft   { background:rgba(11,31,58,0.07);  color:var(--text-mid); }
+.badge-pub     { background:rgba(22,163,74,0.1);  color:#16a34a; }
+
+.ann-actions { display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+.btn-edit-ann { padding:7px 14px; border-radius:8px; border:1.5px solid rgba(11,31,58,0.12); background:transparent; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:var(--text-mid); cursor:pointer; transition:all .2s; white-space:nowrap; }
+.btn-edit-ann:hover { border-color:var(--navy); color:var(--navy); }
+.btn-del-ann  { padding:7px 14px; border-radius:8px; border:1.5px solid rgba(239,68,68,0.2); background:transparent; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:var(--error); cursor:pointer; transition:all .2s; white-space:nowrap; }
+.btn-del-ann:hover { background:rgba(239,68,68,0.06); }
+.btn-pin-ann  { padding:7px 14px; border-radius:8px; border:1.5px solid rgba(212,168,67,0.25); background:transparent; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:#b45309; cursor:pointer; transition:all .2s; white-space:nowrap; }
+.btn-pin-ann:hover { background:rgba(212,168,67,0.08); }
+
+/* ── NOTIF ── */
+.notif { position:fixed; bottom:24px; right:24px; padding:12px 20px; border-radius:12px; font-size:14px; font-weight:600; color:#fff; z-index:999; opacity:0; transform:translateY(12px); transition:all .3s; pointer-events:none; }
+.notif.show { opacity:1; transform:none; }
+.notif.success { background:var(--teal); }
+.notif.error   { background:var(--error); }
+.notif.info    { background:var(--navy); }
+
+/* ── EMPTY ── */
+.empty-state { text-align:center; padding:60px 20px; }
+.e-icon  { font-size:48px; margin-bottom:12px; }
+.e-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+.e-desc  { font-size:14px; color:var(--text-light); }
+
+/* ── LOADING ── */
+#loadingScreen { position:fixed; inset:0; background:var(--navy); display:flex; align-items:center; justify-content:center; z-index:999; flex-direction:column; gap:14px; }
+.spinner { width:36px; height:36px; border-radius:50%; border:3px solid rgba(255,255,255,0.1); border-top-color:var(--cyan); animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+#loadingScreen p { color:rgba(255,255,255,0.5); font-size:14px; }
+
+@media(max-width:768px) {
+  .page-inner { padding:24px 16px 60px; }
+  .stats-row { grid-template-columns:1fr 1fr; }
+  .f-row { grid-template-columns:1fr; }
+  .ann-card { flex-direction:column; }
+  .ann-actions { flex-direction:row; }
+  .editor-wrap { padding:20px 18px; }
+}
+@media(max-width:480px) {
+  .stats-row { grid-template-columns:1fr 1fr; }
+  .ann-actions { flex-wrap:wrap; }
+}
+</style>
+</head>
+<body>
+
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <p>Loading announcements...</p>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="/admin.html" class="nav-logo">
+    <div class="nav-logo-icon">KI</div>
+    <div class="nav-logo-text">
+      <div class="t1">Kulan Institute</div>
+      <div class="t2">Admin Panel</div>
+    </div>
+  </a>
+  <a href="/admin.html" class="nav-back">&larr; Back to Admin</a>
+</nav>
+
+<div class="page-inner">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
+    <div class="stat-card"><div class="stat-num" id="statPublished">0</div><div class="stat-lbl">Published</div></div>
+    <div class="stat-card"><div class="stat-num" id="statPinned">0</div><div class="stat-lbl">Pinned</div></div>
+    <div class="stat-card"><div class="stat-num" id="statDraft">0</div><div class="stat-lbl">Drafts</div></div>
+  </div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="page-title">&#128226; Announcements</div>
+    <button class="btn-new" onclick="openEditor()">+ New Announcement</button>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterAnns('all',this)">All</button>
+    <button class="filter-btn" onclick="filterAnns('published',this)">Published</button>
+    <button class="filter-btn" onclick="filterAnns('draft',this)">Drafts</button>
+    <button class="filter-btn" onclick="filterAnns('pinned',this)">Pinned</button>
+  </div>
+
+  <!-- Editor -->
+  <div class="editor-wrap" id="editorWrap">
+    <div class="editor-header">
+      <div class="editor-title-text" id="editorHeading">New Announcement</div>
+      <button class="editor-close" onclick="closeEditor()">&#215;</button>
+    </div>
+
+    <input type="hidden" id="editingId">
+
+    <div class="f-group">
+      <label class="f-label">Title <span style="color:var(--gold)">*</span></label>
+      <input type="text" class="f-input" id="annTitle" placeholder="e.g. System maintenance on Saturday">
+    </div>
+
+    <div class="f-group">
+      <label class="f-label">Message</label>
+      <textarea class="f-textarea" id="annContent" placeholder="Write the full announcement here..."></textarea>
+    </div>
+
+    <div class="f-row">
+      <div class="f-group">
+        <label class="f-label">Type</label>
+        <div class="type-pills">
+          <button class="type-pill active" data-type="info"    onclick="selectType('info',this)">&#128226; Info</button>
+          <button class="type-pill"        data-type="success" onclick="selectType('success',this)">&#10003; Good News</button>
+          <button class="type-pill"        data-type="warning" onclick="selectType('warning',this)">&#9888; Warning</button>
+          <button class="type-pill"        data-type="urgent"  onclick="selectType('urgent',this)">&#128680; Urgent</button>
+        </div>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Pin to top</label>
+        <label class="pin-toggle" onclick="togglePin()">
+          <div class="pin-track" id="pinTrack">
+            <div class="pin-thumb"></div>
+          </div>
+          <span class="pin-label" id="pinLabel">Not pinned</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="editor-actions">
+      <button class="btn-save-draft" onclick="saveAnn('draft')">Save as Draft</button>
+      <button class="btn-publish"    onclick="saveAnn('published')">&#10003; Publish</button>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div class="ann-list" id="annList">
+    <div class="empty-state">
+      <div class="e-icon">&#128226;</div>
+      <div class="e-title">No announcements yet</div>
+      <div class="e-desc">Click "New Announcement" to post your first one.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+var _user   = null;
+var _allAnns = [];
+var _filter  = 'all';
+var _annType = 'info';
+var _pinned  = false;
+var _editId  = null;
+
+var TYPE_ICONS = { info:'&#128226;', success:'&#10003;', warning:'&#9888;', urgent:'&#128680;' };
+
+// ── AUTH ─────────────────────────────────────────────────────
+var _started = false;
+function tryStart(user) {
+  if (_started || !user) return;
+  _started = true;
+  var email = (user.email||'').toLowerCase();
+  if (email !== 'mohamedmohammud@gmail.com' && user.id !== ADMIN_UID) {
+    window.location.href = '/login.html'; return;
+  }
+  _user = user;
+  document.getElementById('loadingScreen').style.display = 'none';
+  loadAnns();
+}
+
+_sb.auth.getSession().then(function(r) {
+  tryStart(r.data.session ? r.data.session.user : null);
+  if (!r.data.session) setTimeout(function() { if (!_started) window.location.href='/login.html'; }, 4000);
+});
+_sb.auth.onAuthStateChange(function(event, s) {
+  if (event === 'SIGNED_IN' && s) tryStart(s.user);
+});
+
+// ── LOAD ─────────────────────────────────────────────────────
+function loadAnns() {
+  _sb.from('announcements').select('*').order('pinned', { ascending:false }).order('created_at', { ascending:false })
+    .then(function(r) {
+      _allAnns = r.data || [];
+      updateStats();
+      renderAnns();
+    }).catch(function(e) {
+      showNotif('Failed to load: ' + (e.message||'unknown error'), 'error');
+    });
+}
+
+function updateStats() {
+  var pub  = _allAnns.filter(function(a){ return a.status==='published'; }).length;
+  var pin  = _allAnns.filter(function(a){ return a.pinned; }).length;
+  var drft = _allAnns.filter(function(a){ return a.status==='draft'; }).length;
+  document.getElementById('statTotal').textContent     = _allAnns.length;
+  document.getElementById('statPublished').textContent = pub;
+  document.getElementById('statPinned').textContent    = pin;
+  document.getElementById('statDraft').textContent     = drft;
+}
+
+function filterAnns(f, el) {
+  _filter = f;
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  renderAnns();
+}
+
+function renderAnns() {
+  var list = document.getElementById('annList');
+  var data = _allAnns.filter(function(a) {
+    if (_filter === 'published') return a.status === 'published';
+    if (_filter === 'draft')     return a.status === 'draft';
+    if (_filter === 'pinned')    return a.pinned;
+    return true;
+  });
+
+  if (!data.length) {
+    list.innerHTML = '<div class="empty-state"><div class="e-icon">&#128226;</div><div class="e-title">No announcements</div><div class="e-desc">Try a different filter or create a new one.</div></div>';
+    return;
+  }
+
+  list.innerHTML = data.map(function(a) {
+    var type = a.type || 'info';
+    var icon = TYPE_ICONS[type] || '&#128226;';
+    var date = a.created_at ? new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+    var isPinned = a.pinned;
+    var isDraft  = a.status === 'draft';
+    return '<div class="ann-card' + (isPinned?' pinned':'') + (isDraft?' draft':'') + '">'
+      + '<div class="ann-type-dot '+type+'">'+icon+'</div>'
+      + '<div class="ann-body">'
+        + '<div class="ann-title">'+esc(a.title)
+          + (isPinned ? ' <span class="badge badge-pinned">&#128204; Pinned</span>' : '')
+          + (isDraft  ? ' <span class="badge badge-draft">Draft</span>' : '<span class="badge badge-pub">Published</span>')
+        + '</div>'
+        + (a.content ? '<div class="ann-content">'+esc(a.content)+'</div>' : '')
+        + '<div class="ann-meta"><span>'+date+'</span><span>'+esc(a.author||'Admin')+'</span></div>'
+      + '</div>'
+      + '<div class="ann-actions">'
+        + '<button class="btn-edit-ann" onclick="editAnn(\''+a.id+'\')">&#9998; Edit</button>'
+        + '<button class="btn-pin-ann"  onclick="togglePinAnn(\''+a.id+'\','+(!isPinned)+')">'+( isPinned ? '&#128204; Unpin' : '&#128204; Pin')+'</button>'
+        + '<button class="btn-del-ann"  onclick="deleteAnn(\''+a.id+'\')">&#128465; Delete</button>'
+      + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+// ── EDITOR ───────────────────────────────────────────────────
+function openEditor(ann) {
+  _editId  = ann ? ann.id : null;
+  _annType = ann ? (ann.type||'info') : 'info';
+  _pinned  = ann ? !!ann.pinned : false;
+
+  document.getElementById('editorHeading').textContent = ann ? 'Edit Announcement' : 'New Announcement';
+  document.getElementById('editingId').value    = _editId || '';
+  document.getElementById('annTitle').value     = ann ? (ann.title||'') : '';
+  document.getElementById('annContent').value   = ann ? (ann.content||'') : '';
+
+  // Set type pills
+  document.querySelectorAll('.type-pill').forEach(function(p) {
+    p.classList.toggle('active', p.dataset.type === _annType);
+  });
+
+  // Set pin toggle
+  document.getElementById('pinTrack').classList.toggle('on', _pinned);
+  document.getElementById('pinLabel').textContent = _pinned ? 'Pinned to top' : 'Not pinned';
+
+  document.getElementById('editorWrap').classList.add('open');
+  document.getElementById('annTitle').focus();
+  document.getElementById('editorWrap').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function closeEditor() {
+  document.getElementById('editorWrap').classList.remove('open');
+  _editId = null; _annType = 'info'; _pinned = false;
+}
+
+function selectType(type, el) {
+  _annType = type;
+  document.querySelectorAll('.type-pill').forEach(function(p){ p.classList.remove('active'); });
+  if (el) el.classList.add('active');
+}
+
+function togglePin() {
+  _pinned = !_pinned;
+  document.getElementById('pinTrack').classList.toggle('on', _pinned);
+  document.getElementById('pinLabel').textContent = _pinned ? 'Pinned to top' : 'Not pinned';
+}
+
+function editAnn(id) {
+  var ann = _allAnns.find(function(a){ return a.id === id; });
+  if (ann) openEditor(ann);
+}
+
+// ── SAVE ─────────────────────────────────────────────────────
+function saveAnn(status) {
+  var title   = document.getElementById('annTitle').value.trim();
+  var content = document.getElementById('annContent').value.trim();
+  if (!title) { showNotif('Please enter a title.', 'error'); return; }
+
+  var payload = {
+    title:      title,
+    content:    content || null,
+    type:       _annType,
+    pinned:     _pinned,
+    status:     status,
+    author:     'Kulan Institute',
+    updated_at: new Date().toISOString()
+  };
+
+  var op = _editId
+    ? _sb.from('announcements').update(payload).eq('id', _editId)
+    : _sb.from('announcements').insert([Object.assign(payload, { created_at: new Date().toISOString() })]);
+
+  op.then(function(r) {
+    if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+    showNotif(_editId ? 'Announcement updated.' : (status==='published' ? 'Published!' : 'Saved as draft.'), 'success');
+    closeEditor();
+    loadAnns();
+  });
+}
+
+// ── TOGGLE PIN ────────────────────────────────────────────────
+function togglePinAnn(id, newPinState) {
+  _sb.from('announcements').update({ pinned: newPinState, updated_at: new Date().toISOString() }).eq('id', id)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: '+r.error.message, 'error'); return; }
+      showNotif(newPinState ? 'Pinned to top.' : 'Unpinned.', 'success');
+      loadAnns();
+    });
+}
+
+// ── DELETE ────────────────────────────────────────────────────
+function deleteAnn(id) {
+  var ann = _allAnns.find(function(a){ return a.id===id; });
+  if (!confirm('Delete "' + (ann?ann.title:'this announcement') + '"? This cannot be undone.')) return;
+  _sb.from('announcements').delete().eq('id', id)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: '+r.error.message, 'error'); return; }
+      showNotif('Announcement deleted.', 'success');
+      loadAnns();
+    });
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showNotif(msg, type) {
+  var el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = 'notif show ' + (type||'info');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>
