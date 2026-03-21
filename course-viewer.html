@@ -123,6 +123,28 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
   .topnav { padding:0 12px;height:50px; }
   :root { --sidebar-w:85vw; }
 }
+
+/* ── COMPLETION MODAL ── */
+.completion-modal {
+  display:none;position:fixed;inset:0;z-index:200;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);
+}
+.completion-modal.show { display:flex; }
+.cm-card {
+  background:#fff;border-radius:22px;padding:44px 40px;
+  text-align:center;max-width:420px;width:100%;
+  box-shadow:0 24px 64px rgba(0,0,0,0.3);
+  animation:cmPop .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes cmPop { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
+.cm-icon  { font-size:64px;margin-bottom:16px; }
+.cm-title { font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#0B1F3A;margin-bottom:10px; }
+.cm-sub   { font-size:14px;color:#4a6080;line-height:1.7;margin-bottom:28px; }
+.cm-actions { display:flex;gap:10px;justify-content:center;flex-wrap:wrap; }
+.cm-btn-cert { padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,#D4A843,#e8c060);border:none;color:#0B1F3A;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none; }
+.cm-btn-dash { padding:12px 20px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.15);background:transparent;color:#4a6080;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none; }
+
 </style>
 </head>
 <body>
@@ -407,11 +429,22 @@ function updateModuleState(matId) {
   if(icon) icon.innerHTML='&#9989;';
 }
 function saveProgress() {
-  if(!_viewerUser||!_courseId) return;
+  if (!_viewerUser||!_courseId) return;
+  var matId = _currentMat ? _currentMat.id : null;
+  var totalMats = _allMats.filter(function(m){ return m.course_id===_courseId; }).length;
   _sb.from('enrollments').upsert({
-    user_id:_viewerUser.id, course_id:_courseId,
-    completed_materials:_completed, progress:_completed.length
-  },{onConflict:'user_id,course_id'}).then(function(){});
+    user_id:              _viewerUser.id,
+    course_id:            _courseId,
+    completed_materials:  _completed,
+    progress:             _completed.length,
+    last_material_id:     matId,
+    updated_at:           new Date().toISOString()
+  }, { onConflict:'user_id,course_id' }).then(function(){
+    // Show celebration when all modules complete
+    if (totalMats > 0 && _completed.length >= totalMats) {
+      setTimeout(function(){ showCompletionModal(_courseId); }, 800);
+    }
+  });
 }
 
 // SIDEBAR
@@ -496,6 +529,31 @@ function saveNote() {
   });
 }
 
+
+function showCompletionModal(courseId) {
+  var modal = document.getElementById('completionModal');
+  var certBtn = document.getElementById('cmCertBtn');
+  if (certBtn) certBtn.href = '/certificate.html?course=' + courseId;
+  if (modal) modal.classList.add('show');
+}
+document.getElementById('completionModal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('show');
+});
+
 </script>
+
+<!-- Completion Modal -->
+<div class="completion-modal" id="completionModal">
+  <div class="cm-card">
+    <div class="cm-icon">&#127881;</div>
+    <div class="cm-title">Course Complete!</div>
+    <div class="cm-sub" id="cmSub">You have completed all modules. Your certificate is ready.</div>
+    <div class="cm-actions">
+      <a href="#" class="cm-btn-cert" id="cmCertBtn">&#127891; Get Certificate</a>
+      <a href="/dashboard.html" class="cm-btn-dash">Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
