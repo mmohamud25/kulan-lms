@@ -1036,17 +1036,18 @@ var _apImg = '';
 function openAdminProfile() {
   var u = _adminUser;
   if (!u) { showNotif('Session not ready.'); return; }
-  var saved = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  document.getElementById('apName').value      = saved.name      || '';
-  document.getElementById('apRole').value      = saved.role      || 'Administrator';
-  document.getElementById('apInstitute').value = saved.institute || 'Kulan Institute of Learning';
-  document.getElementById('apBio').value       = saved.bio       || '';
   document.getElementById('apEmailShow').textContent = u.email;
-  _apImg = saved.avatar || '';
-  var av = document.getElementById('apAvEl');
-  av.innerHTML = (_apImg ? '<img src="'+_apImg+'" style="width:68px;height:68px;border-radius:50%;object-fit:cover;">' : u.email.charAt(0).toUpperCase())
-    + '<div class="ap-cam">&#128247;</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
   document.getElementById('apOk').style.display = 'none';
+  _apImg = '';
+  // Load from users table
+  _sb.from('users').select('full_name, subject').eq('id', u.id).single()
+    .then(function(r) {
+      document.getElementById('apName').value = (r.data && r.data.full_name) || '';
+      document.getElementById('apRole').value = (r.data && r.data.subject)   || 'Administrator';
+    }).catch(function(){});
+  var av = document.getElementById('apAvEl');
+  av.innerHTML = u.email.charAt(0).toUpperCase()
+    + '<div class="ap-cam">&#128247;</div><input type="file" accept="image/*" style="display:none" onchange="apAvatarPick(this)">';
   document.getElementById('apModal').classList.add('open');
 }
 function closeAdminProfile() { document.getElementById('apModal').classList.remove('open'); }
@@ -1061,18 +1062,38 @@ function apAvatarPick(inp) {
   r.readAsDataURL(inp.files[0]);
 }
 function saveAdminProfile() {
+  if (!_adminUser) return;
   var name = document.getElementById('apName').value.trim();
-  var data = { name:name, role:document.getElementById('apRole').value.trim(), institute:document.getElementById('apInstitute').value.trim(), bio:document.getElementById('apBio').value.trim(), avatar:_apImg };
-  localStorage.setItem('ki_admin_profile', JSON.stringify(data));
-  if (name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=name; }
-  if (_apImg) { var av=document.getElementById('avatarInitial'); if(av) av.innerHTML='<img src="'+_apImg+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">'; }
-  document.getElementById('apOk').style.display='block';
-  setTimeout(function(){ document.getElementById('apOk').style.display='none'; closeAdminProfile(); },900);
+  if (!name) { showNotif('Please enter a name'); return; }
+  _sb.from('users').update({
+    full_name:  name,
+    subject:    document.getElementById('apRole').value.trim() || null,
+    updated_at: new Date().toISOString()
+  }).eq('id', _adminUser.id).then(function(r) {
+    if (r.error) { showNotif('Error: ' + r.error.message); return; }
+    var el = document.getElementById('adminEmail');
+    if (el) el.textContent = name;
+    document.getElementById('apOk').style.display = 'block';
+    setTimeout(function(){ document.getElementById('apOk').style.display='none'; closeAdminProfile(); }, 900);
+  });
 }
 function loadAdminProfile() {
-  var s = JSON.parse(localStorage.getItem('ki_admin_profile') || '{}');
-  if (s.name) { var el=document.getElementById('adminEmail'); if(el) el.textContent=s.name; }
-  if (s.avatar) { var av=document.getElementById('avatarInitial'); if(av) av.innerHTML='<img src="'+s.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">'; }
+  if (!_adminUser) return;
+  _sb.from('users').select('full_name, subject').eq('id', _adminUser.id).single()
+    .then(function(r) {
+      if (!r.data) return;
+      if (r.data.full_name) {
+        var el = document.getElementById('adminEmail');
+        if (el) el.textContent = r.data.full_name;
+        var apName = document.getElementById('apName');
+        if (apName) apName.value = r.data.full_name;
+      }
+      if (r.data.subject) {
+        var apRole = document.getElementById('apRole');
+        if (apRole) apRole.value = r.data.subject;
+      }
+    })
+    .catch(function(){});
 }
 
 

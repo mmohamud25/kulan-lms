@@ -211,14 +211,22 @@ _sb.auth.onAuthStateChange(function(event, session) {
 function loadCourse() {
   var params = new URLSearchParams(window.location.search);
   _courseId  = params.get('course') || null;
+  // Only fetch the specific course (not all courses) and its materials
+  var courseQuery = _courseId
+    ? _sb.from('courses').select('*').eq('id', _courseId).single()
+    : _sb.from('courses').select('*').limit(1).single();
+
   Promise.all([
-    _sb.from('courses').select('*'),
-    _sb.from('materials').select('*').order('module_number')
+    courseQuery,
+    _courseId
+      ? _sb.from('materials').select('*').eq('course_id', _courseId).order('module_number')
+      : Promise.resolve({ data: [] })
   ]).then(function(results) {
-    var courses   = results[0].data || [];
-    var materials = results[1].data || [];
+    var courseData = results[0].data;
+    var courses    = courseData ? [courseData] : [];
+    var materials  = results[1].data || [];
     _allMats = materials;
-    var course = courses.find(function(c){ return String(c.id)===String(_courseId); }) || courses[0];
+    var course = courses[0];
     if (!course) {
       document.getElementById('moduleList').innerHTML = '<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:13px;">Course not found.</div>';
       return;

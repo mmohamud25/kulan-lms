@@ -252,9 +252,15 @@ function loadDashboard() {
     var enrollments = results[2].data || [];
     var activeCourses = courses.filter(function(c) { return c.status === 'active'; });
     var comingCourses = courses.filter(function(c) { return c.status === 'coming'; });
-    var totalMats = materials.length;
-    var totalDone = enrollments.reduce(function(acc, e) { return acc + (e.progress || 0); }, 0);
-    var pct = totalMats > 0 ? Math.round((totalDone / totalMats) * 100) : 0;
+    // Per-course progress: count completed materials across enrolled courses only
+    var enrolledCourseIds = enrollments.map(function(e){ return e.course_id; });
+    var enrolledMats = materials.filter(function(m){ return enrolledCourseIds.indexOf(m.course_id) > -1; });
+    var totalMats = enrolledMats.length;
+    var totalDone = enrollments.reduce(function(acc, e) {
+      var done = e.completed_materials ? e.completed_materials.length : (e.progress || 0);
+      return acc + done;
+    }, 0);
+    var pct = totalMats > 0 ? Math.round(Math.min(totalDone / totalMats, 1) * 100) : 0;
     document.getElementById('totalEnrolled').innerHTML  = activeCourses.length + ' <span>courses</span>';
     document.getElementById('enrolledSub').textContent  = activeCourses.length > 0 ? 'Active learner' : 'No active courses yet';
     document.getElementById('totalCompleted').innerHTML = totalDone + ' <span>/ ' + totalMats + '</span>';

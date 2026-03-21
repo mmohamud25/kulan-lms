@@ -204,7 +204,10 @@ function loadCertificate() {
     if (!course) { showError('Course not found','This course does not exist.'); return; }
     var totalMats = materials.length;
     var completed = enrollment && enrollment.completed_materials ? enrollment.completed_materials : [];
-    if (totalMats > 0 && completed.length < totalMats) {
+    if (totalMats === 0) {
+      showError('No Materials Yet', 'This course has no materials yet. Complete the course content to earn your certificate.'); return;
+    }
+    if (completed.length < totalMats) {
       showError('Course Not Yet Complete','You have completed '+completed.length+' of '+totalMats+' materials. Finish all to earn your certificate.'); return;
     }
     buildCertificate(course, enrollment, userRow);
