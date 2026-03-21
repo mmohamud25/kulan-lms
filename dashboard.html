@@ -824,32 +824,7 @@ function filterCatalog() {
   }).join('');
 }
 function renderCatalog(){
-  var grid=document.getElementById('catalogGrid');
-  var enrolledIds=_enrollments.map(function(e){ return e.course_id; });
-  var all=_courses.filter(function(c){ return c.status==='active'||c.status==='coming'; });
-  if(!all.length){ grid.innerHTML='<div class="empty-state"><div class="e-icon">&#128218;</div><div class="e-title">No courses available yet</div></div>'; return; }
-  grid.innerHTML=all.map(function(c,i){
-    var mats=_materials.filter(function(m){ return m.course_id===c.id; });
-    var enrolled=enrolledIds.indexOf(c.id)>-1;
-    var isComing=c.status==='coming';
-    var icon=ICONS[i%ICONS.length];
-    var enrollBtn = enrolled
-      ? '<div style="display:flex;flex-direction:column;gap:6px;"><button class="btn-enroll enrolled" disabled>&#10003; <span class="en">Enrolled</span><span class="so">Diiwaan</span></button><button class="btn-unenroll" onclick="unenrollCourse(\"'+c.id+'\",this)">&#8722; <span class="en">Unenroll</span><span class="so">Ka Bax</span></button></div>'
-      : isComing
-      ? '<button class="btn-enroll coming" disabled>&#128274; Coming Soon</button>'
-      : '<button class="btn-enroll" onclick="enrollCourse(\''+c.id+'\',this)">Enroll Free &rarr;</button>';
-    return '<div class="catalog-card">'
-      +'<div class="cat-icon">'+icon+'</div>'
-      +'<div class="cat-name">'+esc(c.title)+'</div>'
-      +(c.title_so?'<div style="font-size:11px;font-style:italic;color:var(--text-light);margin-bottom:6px;">'+esc(c.title_so)+'</div>':'')
-      +'<div class="cat-meta">'+esc(c.description||'A comprehensive course for all skill levels.')+'</div>'
-      +'<div class="cat-tags">'
-      +'<span class="cat-tag">'+(c.modules||mats.length||'?')+' Modules</span>'
-      +'<span class="cat-tag">'+esc(c.level||'All Levels')+'</span>'
-      +'<span class="cat-tag" style="background:rgba(34,197,94,0.1);color:#16a34a;">Free</span>'
-      +(isComing?'<span class="cat-tag" style="background:rgba(212,168,67,0.1);color:#b8860b;">Coming Soon</span>':'')
-      +'</div>'+enrollBtn+'</div>';
-  }).join('');
+  filterCatalog();
 }
 
 
@@ -867,15 +842,42 @@ function unenrollCourse(courseId, btn) {
       loadAll();
     });
 }
-function enrollCourse(courseId,btn){
-  if(!_user) return;
-  btn.disabled=true; btn.textContent='Enrolling...';
-  _sb.from('enrollments').insert([{user_id:_user.id,course_id:courseId,progress:0}])
-    .then(function(r){
-      if(r.error){ showNotif('Error: '+r.error.message); btn.disabled=false; btn.textContent='Enroll Free →'; return; }
-      showNotif('Enrolled! Good luck.','success');
-      loadAll();
-    });
+function enrollCourse(courseId, btn) {
+  if (!_user) { showNotif('Please sign in first.', 'error'); return; }
+  if (!courseId) return;
+  var origHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '&#9203; Enrolling...';
+
+  _sb.from('enrollments').insert([{
+    user_id:     _user.id,
+    course_id:   courseId,
+    progress:    0,
+    enrolled_at: new Date().toISOString(),
+    updated_at:  new Date().toISOString(),
+    completed_materials: []
+  }])
+  .then(function(r) {
+    if (r.error) {
+      btn.disabled = false;
+      btn.innerHTML = origHTML;
+      // Duplicate key = already enrolled
+      if (r.error.code === '23505') {
+        showNotif('You are already enrolled in this course.', 'info');
+        loadAll();
+      } else {
+        showNotif('Enroll failed: ' + r.error.message, 'error');
+      }
+      return;
+    }
+    showNotif('Enrolled! Good luck.', 'success');
+    loadAll();
+  })
+  .catch(function(e) {
+    btn.disabled = false;
+    btn.innerHTML = origHTML;
+    showNotif('Network error. Please try again.', 'error');
+  });
 }
 
 // CERTIFICATES
