@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student Dashboard — Kulan Institute</title>
+<title>My Dashboard — Kulan Institute</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -17,69 +17,66 @@ var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
   --bg:#F4F7FB; --white:#fff;
   --text:#1a2840; --text-mid:#4a6080; --text-light:#8a9bb0;
+  --success:#22c55e; --error:#ef4444;
 }
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
 body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
-/* ── LOADING ── */
-#loadingScreen {
-  position:fixed; inset:0;
-  background:linear-gradient(160deg,#0B1F3A,#1A3C6E);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:9999;
-}
+#loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B1F3A,#1A3C6E);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
 .ld-logo { width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy); }
 .ld-spin { width:26px;height:26px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
 @keyframes spin { to{transform:rotate(360deg);} }
 .ld-text { font-size:14px;color:rgba(255,255,255,0.5); }
-.ld-fallback { font-size:12px;color:rgba(255,255,255,0.25);display:none; }
-.ld-fallback a { color:var(--cyan); }
 #page { display:none; }
 
-/* ── TOPBAR ── */
-.topbar {
-  background:var(--navy); padding:0 28px; height:60px;
-  display:flex; align-items:center; justify-content:space-between;
-  border-bottom:1px solid rgba(212,168,67,0.2);
-  position:sticky; top:0; z-index:50;
-}
+.topbar { background:var(--navy);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(212,168,67,0.2);position:sticky;top:0;z-index:50; }
 .tb-logo { display:flex;align-items:center;gap:10px;text-decoration:none; }
 .tb-logo-icon { width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:15px;color:var(--navy);flex-shrink:0; }
 .tb-logo-text .t1 { font-size:13px;font-weight:700;color:#fff; }
 .tb-logo-text .t2 { font-size:10px;color:rgba(212,168,67,0.65); }
 .tb-right { display:flex;align-items:center;gap:10px; }
-.tb-pill { background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,0.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px; }
-.btn-logout { background:none;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:7px 13px;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap; }
-.btn-logout:hover { color:#fff;border-color:rgba(255,255,255,0.35); }
+.lang-toggle { background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s; }
+.lang-toggle:hover { color:#fff;border-color:rgba(255,255,255,0.3); }
+.avatar-btn { width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;overflow:hidden; }
+.avatar-btn:hover { border-color:var(--gold);transform:scale(1.05); }
 
-/* ── MAIN ── */
-.main { max-width:1060px;margin:0 auto;padding:40px 20px 72px; }
+.main { max-width:1080px;margin:0 auto;padding:36px 20px 80px; }
 
-/* Welcome */
-.welcome { margin-bottom:36px; }
-.welcome h1 { font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,32px);font-weight:700;color:var(--navy); }
-.welcome h1 span { color:var(--gold); }
-.welcome p { font-size:15px;color:var(--text-mid);margin-top:6px; }
+.welcome-banner { background:linear-gradient(135deg,var(--navy),var(--blue));border-radius:18px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:16px;position:relative;overflow:hidden; }
+.welcome-banner::before { content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(27,174,204,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.06) 1px,transparent 1px);background-size:40px 40px; }
+.wb-text { position:relative;z-index:1; }
+.wb-greeting { font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:5px; }
+.wb-name { font-family:'Playfair Display',serif;font-size:clamp(20px,3vw,28px);font-weight:700;color:#fff;margin-bottom:4px; }
+.wb-sub { font-size:13px;color:rgba(255,255,255,0.45);line-height:1.5; }
+.wb-right { display:flex;gap:16px;flex-shrink:0;position:relative;z-index:1; }
+.streak-card { background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 18px;text-align:center;min-width:80px; }
+.streak-num { font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--gold); }
+.streak-lbl { font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px; }
 
-/* Progress cards */
-.progress-row { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px; }
-.prog-card { background:var(--white);border-radius:16px;padding:22px;border:1px solid rgba(11,31,58,0.07); }
-.prog-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);margin-bottom:8px; }
-.prog-val { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--navy);line-height:1.1; }
-.prog-val span { font-size:13px;font-weight:400;color:var(--text-light); }
-.prog-sub { font-size:12px;color:var(--text-light);margin-top:4px; }
-.prog-bar-wrap { background:rgba(11,31,58,0.08);border-radius:6px;height:5px;margin-top:10px; }
-.prog-bar { height:5px;border-radius:6px;background:linear-gradient(90deg,var(--cyan),var(--teal));transition:width .6s ease; }
+.stats-row { display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px; }
+.stat-card { background:var(--white);border-radius:14px;padding:18px 20px;border:1px solid rgba(11,31,58,0.07);transition:box-shadow .2s; }
+.stat-card:hover { box-shadow:0 4px 16px rgba(11,31,58,0.08); }
+.stat-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);margin-bottom:6px; }
+.stat-num { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--navy); }
+.stat-sub { font-size:12px;color:var(--text-light);margin-top:3px; }
+.stat-bar-wrap { background:rgba(11,31,58,0.06);border-radius:4px;height:4px;margin-top:8px; }
+.stat-bar { height:4px;border-radius:4px;transition:width .6s ease; }
 
-/* Section */
-.sec-title { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy);margin-bottom:16px; }
+.sec-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:16px; }
+.sec-title { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy); }
+.sec-link { font-size:13px;font-weight:600;color:var(--cyan);text-decoration:none;transition:opacity .2s; }
+.sec-link:hover { opacity:.7; }
 
-/* Course rows */
-.courses-list { display:flex;flex-direction:column;gap:14px;margin-bottom:36px; }
-.course-row {
-  background:var(--white);border-radius:14px;padding:20px 22px;
-  border:1px solid rgba(11,31,58,0.07);
-  display:flex;align-items:center;gap:16px;transition:box-shadow .2s;
-}
+.dash-tabs { display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap; }
+.dash-tab { padding:9px 18px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.1);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-mid);cursor:pointer;transition:all .2s; }
+.dash-tab:hover { border-color:var(--navy);color:var(--navy); }
+.dash-tab.active { background:var(--navy);border-color:var(--navy);color:#fff; }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+.courses-list { display:flex;flex-direction:column;gap:14px; }
+.course-row { background:var(--white);border-radius:14px;padding:20px 22px;border:1px solid rgba(11,31,58,0.07);display:flex;align-items:center;gap:16px;transition:box-shadow .2s; }
 .course-row:hover { box-shadow:0 6px 22px rgba(11,31,58,0.08); }
 .course-icon { width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0; }
 .course-info { flex:1;min-width:0; }
@@ -87,49 +84,116 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .course-name-so { font-size:11px;font-style:italic;color:var(--text-light);margin-top:2px; }
 .course-meta-line { font-size:12px;color:var(--text-light);margin-top:5px; }
 .badge-free { display:inline-block;padding:2px 9px;background:rgba(27,174,204,0.1);color:var(--cyan);border-radius:20px;font-size:10px;font-weight:600;margin-left:6px; }
-.badge-paid { display:inline-block;padding:2px 9px;background:rgba(212,168,67,0.12);color:var(--gold);border-radius:20px;font-size:10px;font-weight:600;margin-left:6px; }
-.course-progress { min-width:160px; }
+.course-progress { min-width:140px; }
 .cp-label { font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);margin-bottom:5px; }
 .cp-bar-wrap { background:rgba(11,31,58,0.08);border-radius:6px;height:6px; }
 .cp-bar { height:6px;border-radius:6px;transition:width .6s ease; }
 .cp-pct { font-size:11px;color:var(--text-mid);margin-top:4px;font-weight:600; }
-.course-btn {
-  background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);
-  border:none;border-radius:9px;padding:10px 18px;
-  font-size:13px;font-weight:700;cursor:pointer;
-  font-family:'DM Sans',sans-serif;text-decoration:none;
-  white-space:nowrap;flex-shrink:0;display:inline-block;transition:all .2s;
-}
-.course-btn:hover { transform:translateY(-1px);box-shadow:0 5px 14px rgba(212,168,67,0.3); }
+.btn-course { background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;border-radius:9px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;white-space:nowrap;flex-shrink:0;display:inline-block;transition:all .2s; }
+.btn-course:hover { transform:translateY(-1px);box-shadow:0 5px 14px rgba(212,168,67,0.3); }
+.btn-outline-course { background:transparent;color:var(--text-mid);border:1.5px solid rgba(11,31,58,0.12);border-radius:9px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;white-space:nowrap;flex-shrink:0;display:inline-block;transition:all .2s; }
+.btn-outline-course:hover { border-color:var(--navy);color:var(--navy); }
 .locked-btn { background:rgba(11,31,58,0.06);color:var(--text-light);border:none;border-radius:9px;padding:10px 18px;font-size:13px;font-weight:600;cursor:not-allowed;font-family:'DM Sans',sans-serif;flex-shrink:0; }
 
-/* Empty state */
+.cert-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px; }
+.cert-card { background:var(--white);border-radius:14px;padding:24px;border:1px solid rgba(11,31,58,0.07);text-align:center;transition:all .2s; }
+.cert-card:hover { box-shadow:0 6px 22px rgba(11,31,58,0.08);transform:translateY(-2px); }
+.cert-icon { font-size:40px;margin-bottom:12px; }
+.cert-course-name { font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px; }
+.cert-date { font-size:12px;color:var(--text-light);margin-bottom:16px; }
+.btn-cert { display:inline-block;padding:10px 20px;border-radius:9px;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s; }
+.btn-cert:hover { transform:translateY(-1px);box-shadow:0 5px 14px rgba(11,31,58,0.25); }
+
+.catalog-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px; }
+.catalog-card { background:var(--white);border-radius:14px;padding:22px;border:1px solid rgba(11,31,58,0.07);transition:all .2s; }
+.catalog-card:hover { box-shadow:0 6px 22px rgba(11,31,58,0.08); }
+.cat-icon { font-size:36px;margin-bottom:12px; }
+.cat-name { font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px; }
+.cat-meta { font-size:12px;color:var(--text-light);margin-bottom:14px;line-height:1.6; }
+.cat-tags { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px; }
+.cat-tag { padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(11,31,58,0.06);color:var(--text-mid); }
+.btn-enroll { width:100%;padding:11px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s; }
+.btn-enroll:hover:not(:disabled) { transform:translateY(-1px);box-shadow:0 5px 14px rgba(11,31,58,0.25); }
+.btn-enroll.enrolled { background:rgba(34,197,94,0.1);color:#16a34a;cursor:default; }
+.btn-enroll.coming { background:rgba(11,31,58,0.06);color:var(--text-light);cursor:not-allowed; }
+
+.announcements-list { display:flex;flex-direction:column;gap:12px; }
+.announce-card { background:var(--white);border-radius:14px;padding:20px 22px;border:1px solid rgba(11,31,58,0.07);border-left:4px solid var(--cyan);display:flex;align-items:flex-start;gap:14px; }
+.ann-icon { font-size:22px;flex-shrink:0;margin-top:2px; }
+.ann-body { flex:1; }
+.ann-title { font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px; }
+.ann-excerpt { font-size:13px;color:var(--text-mid);line-height:1.6; }
+.ann-date { font-size:11px;color:var(--text-light);margin-top:6px; }
+
+.payment-banner { background:linear-gradient(135deg,rgba(34,197,94,0.06),rgba(27,174,204,0.06));border:1.5px solid rgba(34,197,94,0.2);border-radius:16px;padding:28px 32px;display:flex;align-items:center;gap:20px;margin-bottom:24px; }
+.pay-icon { font-size:44px;flex-shrink:0; }
+.pay-title { font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:6px; }
+.pay-desc { font-size:14px;color:var(--text-mid);line-height:1.7; }
+.pay-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;color:#16a34a;margin-top:10px; }
+.payments-table { background:var(--white);border-radius:14px;border:1px solid rgba(11,31,58,0.07);overflow:hidden; }
+.pt-header { display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:12px 20px;background:#F8F9FB;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);border-bottom:1px solid rgba(11,31,58,0.07); }
+.pt-row { display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:14px 20px;font-size:13px;border-bottom:1px solid rgba(11,31,58,0.05);align-items:center; }
+.pt-row:last-child { border-bottom:none; }
+.pt-course-name { font-weight:600;color:var(--navy); }
+.pt-free-badge { padding:3px 10px;border-radius:20px;background:rgba(34,197,94,0.1);color:#16a34a;font-size:11px;font-weight:600;display:inline-block; }
+
 .empty-state { background:var(--white);border-radius:14px;padding:52px 20px;border:1px solid rgba(11,31,58,0.07);text-align:center;color:var(--text-light); }
 .e-icon { font-size:40px;margin-bottom:12px; }
 .e-title { font-size:16px;font-weight:600;color:var(--text-mid);margin-bottom:6px; }
 .e-desc { font-size:13px;line-height:1.7; }
 
-/* Announce */
-.announce { background:linear-gradient(135deg,var(--navy),var(--blue));border-radius:14px;padding:24px 28px;color:#fff;display:flex;align-items:center;gap:16px; }
-.announce-icon { font-size:28px;flex-shrink:0; }
-.announce h3 { font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:4px; }
-.announce p { font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6; }
+.notif { position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:12px;background:var(--navy);color:#fff;font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(11,31,58,0.3);transform:translateY(80px);opacity:0;transition:all .3s;z-index:999;max-width:300px; }
+.notif.show { transform:translateY(0);opacity:1; }
+.notif.success { background:#16a34a; }
 
-/* ── RESPONSIVE ── */
-@media(max-width:900px) { .progress-row { grid-template-columns:repeat(3,1fr); } }
+/* Profile panel */
+.profile-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;backdrop-filter:blur(3px); }
+.profile-overlay.open { display:block; }
+.profile-panel { position:fixed;top:0;right:-100%;bottom:0;width:min(400px,100vw);background:var(--white);z-index:201;box-shadow:-8px 0 40px rgba(0,0,0,0.15);transition:right .3s ease;overflow-y:auto;display:flex;flex-direction:column; }
+.profile-panel.open { right:0; }
+.pp-header { background:linear-gradient(135deg,var(--navy),var(--blue));padding:32px 28px 28px;text-align:center;position:relative; }
+.pp-close { position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.1);border:none;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.7);font-size:18px;transition:all .2s; }
+.pp-close:hover { background:rgba(255,255,255,0.2);color:#fff; }
+.pp-avatar { width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#fff;margin:0 auto 14px;border:3px solid rgba(255,255,255,0.2);overflow:hidden;cursor:pointer;position:relative; }
+.pp-avatar-overlay { position:absolute;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;font-size:18px;border-radius:50%; }
+.pp-avatar:hover .pp-avatar-overlay { display:flex; }
+.pp-name { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px; }
+.pp-email-text { font-size:13px;color:rgba(255,255,255,0.5); }
+.pp-role-badge { display:inline-flex;align-items:center;gap:5px;background:rgba(212,168,67,0.15);border:1px solid rgba(212,168,67,0.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--gold);margin-top:10px; }
+.pp-body { padding:24px 28px;flex:1; }
+.pp-section-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);margin-bottom:12px;margin-top:20px;display:block; }
+.pp-section-label:first-child { margin-top:0; }
+.pp-field { margin-bottom:14px; }
+.pp-label { font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text-light);margin-bottom:6px;display:block; }
+.pp-input { width:100%;padding:11px 14px;border:1.5px solid rgba(11,31,58,0.12);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border .2s;color:var(--text); }
+.pp-input:focus { border-color:var(--cyan); }
+.pp-input[readonly] { background:#F8F9FB;cursor:default; }
+.pp-save { width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px; }
+.pp-save:hover { transform:translateY(-1px);box-shadow:0 6px 18px rgba(11,31,58,0.2); }
+.pp-footer { padding:20px 28px;border-top:1px solid rgba(11,31,58,0.07);display:flex;flex-direction:column;gap:10px; }
+.pp-action { display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.1);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text-mid);cursor:pointer;text-decoration:none;transition:all .2s;width:100%; }
+.pp-action:hover { border-color:var(--navy);color:var(--navy); }
+.pp-action.danger { color:var(--error);border-color:rgba(239,68,68,0.2); }
+.pp-action.danger:hover { border-color:var(--error);background:rgba(239,68,68,0.04); }
+
+@media(max-width:900px) { .stats-row{grid-template-columns:repeat(2,1fr);} }
 @media(max-width:680px) {
-  .topbar { padding:0 16px; }
-  .tb-pill { display:none; }
-  .progress-row { grid-template-columns:repeat(2,1fr); }
-  .course-row { flex-wrap:wrap; }
-  .course-progress { min-width:100%;order:4; }
-  .course-btn,.locked-btn { order:5;width:100%;text-align:center; }
+  .topbar{padding:0 16px;} .main{padding:24px 14px 60px;}
+  .welcome-banner{flex-direction:column;align-items:flex-start;}
+  .wb-right{width:100%;justify-content:flex-start;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .course-row{flex-wrap:wrap;}
+  .course-progress{min-width:100%;order:4;}
+  .btn-course,.btn-outline-course,.locked-btn{order:5;width:100%;text-align:center;}
+  .pt-header,.pt-row{grid-template-columns:2fr 1fr 1fr;}
+  .pt-header>*:last-child,.pt-row>*:last-child{display:none;}
+  .payment-banner{flex-direction:column;text-align:center;}
 }
-@media(max-width:420px) {
-  .main { padding:28px 14px 60px; }
-  .progress-row { grid-template-columns:1fr 1fr; }
-  .prog-card:last-child { grid-column:1/-1; }
-  .announce { flex-direction:column;text-align:center; }
+@media(max-width:480px) {
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .cert-grid,.catalog-grid{grid-template-columns:1fr;}
+  .dash-tabs{gap:4px;}
+  .dash-tab{padding:8px 12px;font-size:12px;}
 }
 </style>
 </head>
@@ -139,193 +203,501 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   <div class="ld-logo">KI</div>
   <div class="ld-spin"></div>
   <div class="ld-text">Loading your dashboard...</div>
-  <div class="ld-fallback" id="ldFallback">Taking too long? <a href="/login.html">Return to login</a></div>
 </div>
 
 <div id="page">
   <div class="topbar">
     <a href="https://kulaninstitute.org" class="tb-logo">
       <div class="tb-logo-icon">KI</div>
-      <div class="tb-logo-text">
-        <div class="t1">Kulan Institute</div>
-        <div class="t2">of Learning</div>
-      </div>
+      <div class="tb-logo-text"><div class="t1">Kulan Institute</div><div class="t2">of Learning</div></div>
     </a>
     <div class="tb-right">
-      <div class="tb-pill">&#128100; <span id="userEmail">Loading...</span></div>
-      <button class="btn-logout" id="logoutBtn">Sign Out</button>
+      <button class="lang-toggle" id="langToggle" onclick="toggleLang()">+ Somali</button>
+      <button class="avatar-btn" id="avatarBtn" onclick="openProfile()" title="My Profile"></button>
     </div>
   </div>
 
   <div class="main">
-    <div class="welcome">
-      <h1>Welcome back, <span id="userName">Student</span> &#128075;</h1>
-      <p>Here is your learning progress at Kulan Institute.</p>
-    </div>
 
-    <div class="progress-row">
-      <div class="prog-card">
-        <div class="prog-label">Courses Available</div>
-        <div class="prog-val" id="totalEnrolled">0 <span>courses</span></div>
-        <div class="prog-sub" id="enrolledSub">No active courses yet</div>
+    <div class="welcome-banner">
+      <div class="wb-text">
+        <div class="wb-greeting" id="wbGreeting">Welcome</div>
+        <div class="wb-name" id="wbName">Loading...</div>
+        <div class="wb-sub">Keep up the great work. Your next lesson is waiting.</div>
       </div>
-      <div class="prog-card">
-        <div class="prog-label">Modules Completed</div>
-        <div class="prog-val" id="totalCompleted">0 <span>/ 0</span></div>
-        <div class="prog-bar-wrap"><div class="prog-bar" id="completedBar" style="width:0%"></div></div>
-      </div>
-      <div class="prog-card">
-        <div class="prog-label">Overall Progress</div>
-        <div class="prog-val" id="overallPct">0 <span>%</span></div>
-        <div class="prog-bar-wrap"><div class="prog-bar" id="overallBar" style="width:0%;background:linear-gradient(90deg,var(--gold),var(--gold2))"></div></div>
+      <div class="wb-right">
+        <div class="streak-card">
+          <div class="streak-num" id="streakNum">0</div>
+          <div class="streak-lbl">Day Streak &#128293;</div>
+        </div>
+        <div class="streak-card">
+          <div class="streak-num" id="completedNum">0</div>
+          <div class="streak-lbl">Completed</div>
+        </div>
       </div>
     </div>
 
-    <div class="sec-title">My Courses</div>
-    <div class="courses-list" id="coursesList">
-      <div class="empty-state"><div class="e-icon">&#128218;</div><div class="e-title">Loading courses...</div></div>
-    </div>
-
-    <div class="announce">
-      <div class="announce-icon">&#128226;</div>
-      <div>
-        <h3>New modules coming soon!</h3>
-        <p>We are actively building out more course materials. Keep up the great work and check back soon!</p>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Courses</div>
+        <div class="stat-num" id="statCourses">0</div>
+        <div class="stat-sub">enrolled</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Progress</div>
+        <div class="stat-num" id="statProgress">0<span style="font-size:14px;font-weight:400;color:var(--text-light);">%</span></div>
+        <div class="stat-bar-wrap"><div class="stat-bar" id="statBar" style="width:0%;background:linear-gradient(90deg,var(--cyan),var(--teal))"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Certificates</div>
+        <div class="stat-num" id="statCerts">0</div>
+        <div class="stat-sub">earned</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Plan</div>
+        <div class="stat-num" style="font-size:18px;padding-top:4px;">Free</div>
+        <div class="stat-sub">all courses included</div>
       </div>
     </div>
+
+    <div class="dash-tabs">
+      <button class="dash-tab active" onclick="switchTab('courses',this)">&#128218; My Courses</button>
+      <button class="dash-tab" onclick="switchTab('catalog',this)">&#127758; Browse</button>
+      <button class="dash-tab" onclick="switchTab('certs',this)">&#127891; Certificates</button>
+      <button class="dash-tab" onclick="switchTab('announcements',this)">&#128226; Announcements</button>
+      <button class="dash-tab" onclick="switchTab('payments',this)">&#128176; Payments</button>
+      <button class="dash-tab" onclick="switchTab('notes',this)">&#128221; Notes</button>
+    </div>
+
+    <!-- My Courses -->
+    <div class="tab-panel active" id="tab-courses">
+      <div class="sec-header">
+        <div class="sec-title">My Courses</div>
+        <a href="#" class="sec-link" onclick="switchToTab('catalog');return false;">Browse more &rarr;</a>
+      </div>
+      <div class="courses-list" id="coursesList">
+        <div class="empty-state"><div class="e-icon">&#9203;</div><div class="e-title">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Browse Catalog -->
+    <div class="tab-panel" id="tab-catalog">
+      <div class="sec-header"><div class="sec-title">Browse All Courses</div></div>
+      <div class="catalog-grid" id="catalogGrid">
+        <div class="empty-state"><div class="e-icon">&#9203;</div><div class="e-title">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Certificates -->
+    <div class="tab-panel" id="tab-certs">
+      <div class="sec-header"><div class="sec-title">My Certificates</div></div>
+      <div class="cert-grid" id="certGrid">
+        <div class="empty-state"><div class="e-icon">&#9203;</div><div class="e-title">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Announcements -->
+    <div class="tab-panel" id="tab-announcements">
+      <div class="sec-header"><div class="sec-title">Announcements</div></div>
+      <div class="announcements-list" id="announcementsList">
+        <div class="empty-state"><div class="e-icon">&#9203;</div><div class="e-title">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Payments -->
+    <div class="tab-panel" id="tab-payments">
+      <div class="sec-header"><div class="sec-title">Payments &amp; Billing</div></div>
+      <div class="payment-banner">
+        <div class="pay-icon">&#127881;</div>
+        <div>
+          <div class="pay-title">All Courses Are Free</div>
+          <div class="pay-desc">Kulan Institute is committed to making education accessible to everyone. All current courses are completely free.</div>
+          <div class="pay-badge">&#10003; Free Access &mdash; No payment required</div>
+        </div>
+      </div>
+      <div class="payments-table">
+        <div class="pt-header"><span>Course</span><span>Status</span><span>Enrolled</span><span>Amount</span></div>
+        <div id="paymentsRows"><div style="padding:24px;text-align:center;color:var(--text-light);font-size:13px;">Loading...</div></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
+<!-- Profile Panel -->
+<div class="profile-overlay" 
+    <!-- Notes -->
+    <div class="tab-panel" id="tab-notes">
+      <div class="section-head">
+        <div class="section-title">&#128221; My Course Notes</div>
+        <div style="font-size:13px;color:var(--text-light);">Notes you write in the course viewer appear here.</div>
+      </div>
+      <div id="notesList">
+        <div class="empty-state">
+          <div class="e-icon">&#128221;</div>
+          <div class="e-title">No notes yet</div>
+          <div class="e-desc">Open a course module and use the Notes panel to start writing. Your notes are saved automatically.</div>
+        </div>
+      </div>
+    </div>
+id="profileOverlay" onclick="closeProfile()"></div>
+<div class="profile-panel" id="profilePanel">
+  <div class="pp-header">
+    <button class="pp-close" onclick="closeProfile()">&#215;</button>
+    <div class="pp-avatar" id="ppAvatar" onclick="document.getElementById('ppPhotoInput').click()">
+      <span id="ppAvatarInitial">?</span>
+      <div class="pp-avatar-overlay">&#128247;</div>
+      <input type="file" accept="image/*" id="ppPhotoInput" style="display:none" onchange="ppPhotoSelected(this)">
+    </div>
+    <div class="pp-name" id="ppNameDisplay">Loading...</div>
+    <div class="pp-email-text" id="ppEmailDisplay"></div>
+    <div class="pp-role-badge">&#127891; Student</div>
+  </div>
+  <div class="pp-body">
+    <span class="pp-section-label">Personal Information</span>
+    <div class="pp-field"><label class="pp-label">Full Name</label><input type="text" class="pp-input" id="ppNameInput" placeholder="Your full name"></div>
+    <div class="pp-field"><label class="pp-label">Email</label><input type="email" class="pp-input" id="ppEmailInput" readonly></div>
+    <div class="pp-field"><label class="pp-label">City</label><input type="text" class="pp-input" id="ppCity" placeholder="e.g. Columbus"></div>
+    <div class="pp-field"><label class="pp-label">Country</label><input type="text" class="pp-input" id="ppCountry" placeholder="e.g. United States"></div>
+    <button class="pp-save" onclick="saveProfile()">Save Changes</button>
+  </div>
+  <div class="pp-footer">
+    <a href="/reset-password.html" class="pp-action">&#128274; Change Password</a>
+    <button class="pp-action danger" onclick="doSignOut()">&#128682; Sign Out</button>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
 <script>
-var _dashUser    = null;
-var _dashStarted = false;
+var _user=null, _userData=null, _courses=[], _materials=[], _enrollments=[], _started=false, _soOn=false, _notifTimer;
+var ICONS=['&#129302;','&#128272;','&#128187;','&#128202;','&#127758;','&#129504;','&#128737;','&#128241;'];
+var BG=['rgba(27,174,204,0.12)','rgba(212,168,67,0.12)','rgba(14,124,123,0.12)','rgba(11,31,58,0.08)'];
+var BARS=['linear-gradient(90deg,#1BAECC,#0E7C7B)','linear-gradient(90deg,#D4A843,#e8c060)','linear-gradient(90deg,#0E7C7B,#0a5c5b)','linear-gradient(90deg,#1A3C6E,#0B1F3A)'];
 
-function tryDash(user) {
-  if (_dashStarted) return;
-  if (!user) return;
-  _dashStarted = true;
-  _dashUser = user;
-  startDashboard(user);
-}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showNotif(msg,type){ var el=document.getElementById('notif'); el.textContent=msg; el.className='notif show'+(type?' '+type:''); clearTimeout(_notifTimer); _notifTimer=setTimeout(function(){ el.classList.remove('show'); },3000); }
+function formatDate(d){ return d?new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}):'—'; }
 
-_sb.auth.getSession().then(function(result) {
-  tryDash(result.data.session ? result.data.session.user : null);
-  if (!result.data.session) {
-    setTimeout(function() {
-      _sb.auth.getSession().then(function(r) { tryDash(r.data.session ? r.data.session.user : null); });
-    }, 1500);
-    setTimeout(function() { if (!_dashStarted) { var fb=document.getElementById('ldFallback'); if(fb) fb.style.display='block'; } }, 5000);
-    setTimeout(function() { if (!_dashStarted) window.location.href = '/login.html'; }, 9000);
+// AUTH
+function tryDash(user){ if(_started||!user) return; _started=true; _user=user; startDashboard(); }
+_sb.auth.getSession().then(function(r){
+  tryDash(r.data.session?r.data.session.user:null);
+  if(!r.data.session){
+    setTimeout(function(){ _sb.auth.getSession().then(function(r2){ tryDash(r2.data.session?r2.data.session.user:null); }); },1500);
+    setTimeout(function(){ if(!_started) window.location.href='/login.html'; },9000);
   }
 });
-_sb.auth.onAuthStateChange(function(event, session) {
-  if (event === 'SIGNED_IN')  tryDash(session ? session.user : null);
-  if (event === 'SIGNED_OUT') window.location.href = '/login.html';
-});
+_sb.auth.onAuthStateChange(function(e,s){ if(e==='SIGNED_IN') tryDash(s?s.user:null); if(e==='SIGNED_OUT') window.location.href='/login.html'; });
 
-function startDashboard(user) {
-  document.getElementById('loadingScreen').style.display = 'none';
-  document.getElementById('page').style.display = 'block';
-  var email = user.email || '';
-  var name  = (user.user_metadata && user.user_metadata.full_name) || email.split('@')[0] || 'Student';
-  // Also try users table for full_name
-  _sb.from('users').select('full_name').eq('id', user.id).single()
-    .then(function(r) { if (r.data && r.data.full_name) { name = r.data.full_name; document.getElementById('userName').textContent = name; } })
-    .catch(function(){});
-  document.getElementById('userEmail').textContent = email;
-  document.getElementById('userName').textContent  = name;
-  document.getElementById('logoutBtn').addEventListener('click', function() {
-    _sb.auth.signOut().then(function() { window.location.href = '/login.html'; });
-  });
-  loadDashboard();
+function startDashboard(){
+  document.getElementById('loadingScreen').style.display='none';
+  document.getElementById('page').style.display='block';
+  var h=new Date().getHours();
+  document.getElementById('wbGreeting').textContent = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  loadAll();
 }
 
-function loadDashboard() {
-  var uid = _dashUser ? _dashUser.id : null;
+function loadAll(){
   Promise.all([
+    _sb.from('users').select('*').eq('id',_user.id).single(),
     _sb.from('courses').select('*').order('created_at'),
-    _sb.from('materials').select('*').order('module_number'),
-    uid ? _sb.from('enrollments').select('*').eq('user_id', uid) : Promise.resolve({ data: [] })
-  ]).then(function(results) {
-    var courses     = results[0].data || [];
-    var materials   = results[1].data || [];
-    var enrollments = results[2].data || [];
-    var activeCourses = courses.filter(function(c) { return c.status === 'active'; });
-    var comingCourses = courses.filter(function(c) { return c.status === 'coming'; });
-    // Per-course progress: count completed materials across enrolled courses only
-    var enrolledCourseIds = enrollments.map(function(e){ return e.course_id; });
-    var enrolledMats = materials.filter(function(m){ return enrolledCourseIds.indexOf(m.course_id) > -1; });
-    var totalMats = enrolledMats.length;
-    var totalDone = enrollments.reduce(function(acc, e) {
-      var done = e.completed_materials ? e.completed_materials.length : (e.progress || 0);
-      return acc + done;
-    }, 0);
-    var pct = totalMats > 0 ? Math.round(Math.min(totalDone / totalMats, 1) * 100) : 0;
-    document.getElementById('totalEnrolled').innerHTML  = activeCourses.length + ' <span>courses</span>';
-    document.getElementById('enrolledSub').textContent  = activeCourses.length > 0 ? 'Active learner' : 'No active courses yet';
-    document.getElementById('totalCompleted').innerHTML = totalDone + ' <span>/ ' + totalMats + '</span>';
-    document.getElementById('completedBar').style.width = pct + '%';
-    document.getElementById('overallPct').innerHTML     = pct + ' <span>%</span>';
-    document.getElementById('overallBar').style.width   = pct + '%';
-    renderCourseList(activeCourses, comingCourses, materials, enrollments);
-  }).catch(function() {
-    document.getElementById('coursesList').innerHTML = '<div class="empty-state"><div class="e-icon">&#9888;</div><div class="e-title">Could not load courses</div><div class="e-desc">Please refresh the page.</div></div>';
+    _sb.from('materials').select('id,course_id').order('module_number'),
+    _sb.from('enrollments').select('*').eq('user_id',_user.id),
+    _sb.from('announcements').select('*').eq('status','published').order('pinned',{ascending:false}).order('created_at',{ascending:false}).limit(10)
+  ]).then(function(res){
+    _userData    = res[0].data || {};
+    _courses     = res[1].data || [];
+    _materials   = res[2].data || [];
+    _enrollments = res[3].data || [];
+    var anncs    = res[4].data || [];
+    renderAll(posts);
+    // Update last_active silently
+    _sb.from('users').update({last_active:new Date().toISOString()}).eq('id',_user.id).then(function(){});
+  }).catch(function(){
+    document.getElementById('coursesList').innerHTML='<div class="empty-state"><div class="e-icon">&#9888;</div><div class="e-title">Could not load data</div><div class="e-desc">Please refresh the page.</div></div>';
   });
 }
 
-function renderCourseList(activeCourses, comingCourses, materials, enrollments) {
-  var list = document.getElementById('coursesList');
-  var icons    = ['&#129302;','&#128272;','&#128187;','&#128202;','&#127758;','&#129504;','&#128241;','&#128737;'];
-  var bgColors = ['rgba(27,174,204,0.12)','rgba(212,168,67,0.12)','rgba(14,124,123,0.12)','rgba(11,31,58,0.08)'];
-  var barStyles = ['linear-gradient(90deg,var(--cyan),var(--teal))','linear-gradient(90deg,var(--gold),var(--gold2))','linear-gradient(90deg,var(--teal),#0a5c5b)','linear-gradient(90deg,var(--blue),var(--navy))'];
-  if (activeCourses.length === 0 && comingCourses.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="e-icon">&#128218;</div><div class="e-title">No courses available yet</div><div class="e-desc">Check back soon or contact Kulan Institute.</div></div>';
+function renderAll(posts){
+  var name=(_userData&&_userData.full_name)||(_user.user_metadata&&_user.user_metadata.full_name)||_user.email.split('@')[0]||'Student';
+  _userData.full_name=name;
+
+  document.getElementById('wbName').textContent='Welcome back, '+name+' \uD83D\uDC4B';
+  document.getElementById('avatarBtn').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('ppNameDisplay').textContent=name;
+  document.getElementById('ppEmailDisplay').textContent=_user.email;
+  document.getElementById('ppAvatarInitial').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('ppNameInput').value=name;
+  document.getElementById('ppEmailInput').value=_user.email;
+  document.getElementById('ppCity').value=(_userData&&_userData.city)||'';
+  document.getElementById('ppCountry').value=(_userData&&_userData.country)||'';
+
+  var enrolledIds=_enrollments.map(function(e){ return e.course_id; });
+  var enrolledMats=_materials.filter(function(m){ return enrolledIds.indexOf(m.course_id)>-1; });
+  var totalMats=enrolledMats.length;
+  var totalDone=_enrollments.reduce(function(acc,e){ return acc+(e.completed_materials?e.completed_materials.length:(e.progress||0)); },0);
+  var pct=totalMats>0?Math.round(Math.min(totalDone/totalMats,1)*100):0;
+  var certCount=_enrollments.filter(function(e){ return e.certificate_id; }).length;
+
+  document.getElementById('statCourses').textContent=_enrollments.length;
+  document.getElementById('statProgress').innerHTML=pct+'<span style="font-size:14px;font-weight:400;color:var(--text-light);">%</span>';
+  document.getElementById('statBar').style.width=pct+'%';
+  document.getElementById('statCerts').textContent=certCount;
+  document.getElementById('completedNum').textContent=totalDone;
+  document.getElementById('streakNum').textContent=(_userData&&_userData.streak)||0;
+
+  renderCourses();
+  renderCatalog();
+  renderCerts();
+  renderAnnouncements(anncs);
+  renderPayments();
+}
+
+// TABS
+function switchTab(name,el){
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.dash-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  if(name==='notes') loadNotes();
+}
+
+function loadNotes(){
+  if(!_user) return;
+  var list=document.getElementById('notesList');
+  list.innerHTML='<div style="text-align:center;padding:32px;color:var(--text-light);">Loading notes...</div>';
+  _sb.from('notes').select('*, courses(title)').eq('user_id',_user.id).order('updated_at',{ascending:false})
+    .then(function(r){
+      var notes=r.data||[];
+      if(!notes.length){
+        list.innerHTML='<div class="empty-state"><div class="e-icon">&#128221;</div><div class="e-title">No notes yet</div><div class="e-desc">Open a course module and use the Notes panel to start writing. Your notes are saved automatically.</div></div>';
+        return;
+      }
+      list.innerHTML=notes.map(function(n){
+        var courseTitle=n.courses&&n.courses.title?n.courses.title:'Unknown Course';
+        var preview=n.content.length>200?n.content.substr(0,200)+'...':n.content;
+        return '<div style="background:#fff;border-radius:14px;padding:18px 22px;border:1px solid rgba(11,31,58,0.07);margin-bottom:12px;">'
+          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+          +'<span style="font-size:12px;font-weight:600;color:var(--teal);">'+esc(courseTitle)+'</span>'
+          +'<span style="font-size:11px;color:var(--text-light);">'+formatDate(n.updated_at)+'</span>'
+          +'</div>'
+          +'<div style="font-size:14px;color:var(--text);line-height:1.65;white-space:pre-wrap;">'+esc(preview)+'</div>'
+          +'</div>';
+      }).join('');
+    })
+    .catch(function(){
+      list.innerHTML='<div class="empty-state"><div class="e-icon">&#9888;</div><div class="e-title">Could not load notes</div><div class="e-desc">Make sure the notes table has been created in Supabase.</div></div>';
+    });
+}
+function switchToTab(name){
+  var btn=document.querySelector('.dash-tab[onclick*="\''+name+'\'"]');
+  switchTab(name,btn);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// COURSES
+function renderCourses(){
+  var list=document.getElementById('coursesList');
+  if(!_enrollments.length){
+    list.innerHTML='<div class="empty-state"><div class="e-icon">&#128218;</div><div class="e-title">No courses yet</div><div class="e-desc">Browse the catalog and enroll in your first course.</div></div>';
     return;
   }
-  var html = '';
-  activeCourses.forEach(function(c, i) {
-    var mats = materials.filter(function(m){ return m.course_id===c.id; });
-    var enroll = enrollments.find(function(e){ return e.course_id===c.id; });
-    var done = enroll ? (enroll.progress||0) : 0;
-    var total = mats.length;
-    var cpPct = total>0 ? Math.round((done/total)*100) : 0;
-    var hasContent = total>0;
-    var icon = icons[i%icons.length]; var bg = bgColors[i%bgColors.length]; var bar = barStyles[i%barStyles.length];
-    var priceBadge = c.paid ? '<span class="badge-paid">$'+(c.price||0)+'</span>' : '<span class="badge-free">Free</span>';
-    var actionBtn = !hasContent
-      ? '<button class="locked-btn">&#128109; No content yet</button>'
-      : (done >= total && total > 0
-        ? '<div style="display:flex;flex-direction:column;gap:6px;align-items:stretch;flex-shrink:0;min-width:120px;">'
-          + '<a href="/course-viewer.html?course='+c.id+'" class="course-btn" style="background:rgba(14,124,123,0.1);color:var(--teal);border:1.5px solid rgba(14,124,123,0.2);text-align:center;">Review &rarr;</a>'
-          + '<a href="/certificate.html?course='+c.id+'" class="course-btn" style="text-align:center;">&#127891; Certificate</a>'
-          + '</div>'
-        : '<a href="/course-viewer.html?course='+c.id+'" class="course-btn">'+(done===0?'Start &rarr;':'Continue &rarr;')+'</a>');
-    html += '<div class="course-row">'
-      + '<div class="course-icon" style="background:'+bg+'">'+icon+'</div>'
-      + '<div class="course-info">'
-      + '<div class="course-name">'+esc(c.title)+priceBadge+'</div>'
-      + (c.title_so ? '<div class="course-name-so">'+esc(c.title_so)+'</div>' : '')
-      + '<div class="course-meta-line">'+(c.modules||total||'TBA')+' Modules &bull; '+esc(c.level||'All Levels')+' &bull; '+total+' material'+(total!==1?'s':'')+' available</div>'
-      + '</div>'
-      + '<div class="course-progress">'
-      + '<div class="cp-label">Progress</div>'
-      + '<div class="cp-bar-wrap"><div class="cp-bar" style="width:'+cpPct+'%;background:'+bar+'"></div></div>'
-      + '<div class="cp-pct">'+done+' of '+(total||c.modules||'?')+' complete</div>'
-      + '</div>'
-      + actionBtn + '</div>';
+  var html='';
+  _enrollments.forEach(function(en,i){
+    var course=_courses.find(function(c){ return c.id===en.course_id; });
+    if(!course) return;
+    var mats=_materials.filter(function(m){ return m.course_id===course.id; });
+    var done=en.completed_materials?en.completed_materials.length:(en.progress||0);
+    var total=mats.length;
+    var cpPct=total>0?Math.round((done/total)*100):0;
+    var isComplete=total>0&&done>=total;
+    var icon=ICONS[i%ICONS.length]; var bg=BG[i%BG.length]; var bar=BARS[i%BARS.length];
+    html+='<div class="course-row">'
+      +'<div class="course-icon" style="background:'+bg+'">'+icon+'</div>'
+      +'<div class="course-info">'
+      +'<div class="course-name">'+esc(course.title)+'<span class="badge-free">Free</span></div>'
+      +(course.title_so?'<div class="course-name-so">'+esc(course.title_so)+'</div>':'')
+      +'<div class="course-meta-line">'+(course.modules||total||'?')+' Modules &bull; '+esc(course.level||'All Levels')+' &bull; '+total+' material'+(total!==1?'s':'')+' available</div>'
+      +'</div>'
+      +'<div class="course-progress">'
+      +'<div class="cp-label">Progress</div>'
+      +'<div class="cp-bar-wrap"><div class="cp-bar" style="width:'+cpPct+'%;background:'+bar+'"></div></div>'
+      +'<div class="cp-pct">'+done+' / '+(total||'?')+' complete</div>'
+      +'</div>';
+    if(!total){
+      html+='<button class="locked-btn">&#128109; No content yet</button>';
+    } else if(isComplete){
+      html+='<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;min-width:130px;">'
+        +'<a href="/course-viewer.html?course='+course.id+'" class="btn-outline-course" style="text-align:center;">Review &rarr;</a>'
+        +'<a href="/certificate.html?course='+course.id+'" class="btn-course" style="text-align:center;">&#127891; Certificate</a>'
+        +'</div>';
+    } else {
+      html+='<a href="/course-viewer.html?course='+course.id+'" class="btn-course">'+(done===0?'Start &rarr;':'Continue &rarr;')+'</a>';
+    }
+    html+='</div>';
   });
-  comingCourses.forEach(function(c) {
-    html += '<div class="course-row" style="opacity:0.6">'
-      + '<div class="course-icon" style="background:rgba(11,31,58,0.06)">&#128187;</div>'
-      + '<div class="course-info"><div class="course-name">'+esc(c.title)+'</div>'
-      + '<div class="course-meta-line">Coming Soon &bull; '+esc(c.level||'All Levels')+'</div></div>'
-      + '<div class="course-progress"><div class="cp-label">Status</div><div class="cp-bar-wrap"><div class="cp-bar" style="width:0%"></div></div><div class="cp-pct">Not available yet</div></div>'
-      + '<button class="locked-btn">&#128274; Coming Soon</button></div>';
-  });
-  list.innerHTML = html;
+  list.innerHTML=html;
 }
 
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// CATALOG
+function renderCatalog(){
+  var grid=document.getElementById('catalogGrid');
+  var enrolledIds=_enrollments.map(function(e){ return e.course_id; });
+  var all=_courses.filter(function(c){ return c.status==='active'||c.status==='coming'; });
+  if(!all.length){ grid.innerHTML='<div class="empty-state"><div class="e-icon">&#128218;</div><div class="e-title">No courses available yet</div></div>'; return; }
+  grid.innerHTML=all.map(function(c,i){
+    var mats=_materials.filter(function(m){ return m.course_id===c.id; });
+    var enrolled=enrolledIds.indexOf(c.id)>-1;
+    var isComing=c.status==='coming';
+    var icon=ICONS[i%ICONS.length];
+    var enrollBtn = enrolled
+      ? '<button class="btn-enroll enrolled" disabled>&#10003; Enrolled</button>'
+      : isComing
+      ? '<button class="btn-enroll coming" disabled>&#128274; Coming Soon</button>'
+      : '<button class="btn-enroll" onclick="enrollCourse(\''+c.id+'\',this)">Enroll Free &rarr;</button>';
+    return '<div class="catalog-card">'
+      +'<div class="cat-icon">'+icon+'</div>'
+      +'<div class="cat-name">'+esc(c.title)+'</div>'
+      +(c.title_so?'<div style="font-size:11px;font-style:italic;color:var(--text-light);margin-bottom:6px;">'+esc(c.title_so)+'</div>':'')
+      +'<div class="cat-meta">'+esc(c.description||'A comprehensive course for all skill levels.')+'</div>'
+      +'<div class="cat-tags">'
+      +'<span class="cat-tag">'+(c.modules||mats.length||'?')+' Modules</span>'
+      +'<span class="cat-tag">'+esc(c.level||'All Levels')+'</span>'
+      +'<span class="cat-tag" style="background:rgba(34,197,94,0.1);color:#16a34a;">Free</span>'
+      +(isComing?'<span class="cat-tag" style="background:rgba(212,168,67,0.1);color:#b8860b;">Coming Soon</span>':'')
+      +'</div>'+enrollBtn+'</div>';
+  }).join('');
+}
+
+function enrollCourse(courseId,btn){
+  if(!_user) return;
+  btn.disabled=true; btn.textContent='Enrolling...';
+  _sb.from('enrollments').insert([{user_id:_user.id,course_id:courseId,progress:0}])
+    .then(function(r){
+      if(r.error){ showNotif('Error: '+r.error.message); btn.disabled=false; btn.textContent='Enroll Free →'; return; }
+      showNotif('Enrolled! Good luck.','success');
+      loadAll();
+    });
+}
+
+// CERTIFICATES
+function renderCerts(){
+  var grid=document.getElementById('certGrid');
+  var earned=_enrollments.filter(function(e){ return e.certificate_id; });
+  if(!earned.length){
+    grid.innerHTML='<div class="empty-state"><div class="e-icon">&#127891;</div><div class="e-title">No certificates yet</div><div class="e-desc">Complete a course to earn your first certificate.</div></div>';
+    return;
+  }
+  grid.innerHTML=earned.map(function(e){
+    var course=_courses.find(function(c){ return c.id===e.course_id; });
+    return '<div class="cert-card">'
+      +'<div class="cert-icon">&#127891;</div>'
+      +'<div class="cert-course-name">'+esc(course?course.title:'Course')+'</div>'
+      +'<div class="cert-date">Completed '+formatDate(e.updated_at)+'</div>'
+      +'<a href="/certificate.html?course='+e.course_id+'" class="btn-cert">&#128438; View Certificate</a>'
+      +'</div>';
+  }).join('');
+}
+
+// ANNOUNCEMENTS
+function renderAnnouncements(anncs){
+  var list=document.getElementById('announcementsList');
+  if(!anncs||!anncs.length){
+    list.innerHTML='<div class="empty-state"><div class="e-icon">&#128226;</div><div class="e-title">No announcements yet</div><div class="e-desc">Check back soon for updates from Kulan Institute.</div></div>';
+    return;
+  }
+  list.innerHTML=anncs.map(function(a){
+    var type=a.type||'info';
+    var icons={info:'&#128226;',warning:'&#9888;',success:'&#10003;'};
+    var colors={info:'var(--cyan)',warning:'#b45309',success:'#16a34a'};
+    var bgs={info:'rgba(27,174,204,0.08)',warning:'rgba(245,158,11,0.08)',success:'rgba(34,197,94,0.08)'};
+    var borderStyle=a.pinned?'border-left:3px solid var(--gold);':'';
+    return '<div class="announce-card" style="'+borderStyle+'">'
+      +'<div class="ann-icon" style="background:'+bgs[type]+';color:'+colors[type]+'">'+(icons[type]||'&#128226;')+(a.pinned?' &#128204;':'')+'</div>'
+      +'<div class="ann-body">'
+      +'<div class="ann-title">'+esc(a.title)+'</div>'
+      +'<div class="ann-excerpt">'+esc(a.content||'')+'</div>'
+      +'<div class="ann-date">'+formatDate(a.created_at)+'</div>'
+      +'</div></div>';
+  }).join('');
+}
+
+// PAYMENTS
+function renderPayments(){
+  var rows=document.getElementById('paymentsRows');
+  if(!_enrollments.length){
+    rows.innerHTML='<div style="padding:24px;text-align:center;color:var(--text-light);font-size:13px;">No enrollment history yet.</div>';
+    return;
+  }
+  rows.innerHTML=_enrollments.map(function(e){
+    var course=_courses.find(function(c){ return c.id===e.course_id; });
+    return '<div class="pt-row">'
+      +'<span class="pt-course-name">'+esc(course?course.title:'Unknown Course')+'</span>'
+      +'<span><span class="pt-free-badge">Free</span></span>'
+      +'<span style="color:var(--text-light);">'+formatDate(e.enrolled_at||e.created_at)+'</span>'
+      +'<span style="color:#16a34a;font-weight:600;">$0.00</span>'
+      +'</div>';
+  }).join('');
+}
+
+// LANG
+function toggleLang(){
+  _soOn=!_soOn;
+  document.getElementById('langToggle').textContent=_soOn?'English':'+ Somali';
+  document.querySelectorAll('.so').forEach(function(el){ el.style.display=_soOn?'':'none'; });
+}
+
+// PROFILE
+function openProfile(){
+  document.getElementById('profileOverlay').classList.add('open');
+  document.getElementById('profilePanel').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeProfile(){
+  document.getElementById('profileOverlay').classList.remove('open');
+  document.getElementById('profilePanel').classList.remove('open');
+  document.body.style.overflow='';
+}
+function saveProfile(){
+  var name=document.getElementById('ppNameInput').value.trim();
+  var city=document.getElementById('ppCity').value.trim();
+  var country=document.getElementById('ppCountry').value.trim();
+  if(!name){ showNotif('Please enter your name.'); return; }
+  _sb.from('users').update({full_name:name,city:city||null,country:country||null,updated_at:new Date().toISOString()}).eq('id',_user.id)
+    .then(function(r){
+      if(r.error){ showNotif('Error: '+r.error.message); return; }
+      _userData.full_name=name; _userData.city=city; _userData.country=country;
+      document.getElementById('wbName').textContent='Welcome back, '+name+' \uD83D\uDC4B';
+      document.getElementById('ppNameDisplay').textContent=name;
+      document.getElementById('avatarBtn').textContent=name.charAt(0).toUpperCase();
+      document.getElementById('ppAvatarInitial').textContent=name.charAt(0).toUpperCase();
+      showNotif('Profile saved!','success');
+      closeProfile();
+    });
+}
+function ppPhotoSelected(input){
+  if(!input.files||!input.files[0]) return;
+  var file=input.files[0];
+  if(file.size>500000){ showNotif('Photo must be under 500KB'); return; }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var av=document.getElementById('ppAvatarInitial');
+    av.style.display='none';
+    var avDiv=document.getElementById('ppAvatar');
+    avDiv.style.backgroundImage='url('+e.target.result+')';
+    avDiv.style.backgroundSize='cover';
+    var btn=document.getElementById('avatarBtn');
+    btn.style.backgroundImage='url('+e.target.result+')';
+    btn.style.backgroundSize='cover';
+    btn.textContent='';
+    showNotif('Photo updated!','success');
+  };
+  reader.readAsDataURL(file);
+}
+function doSignOut(){
+  _sb.auth.signOut().then(function(){ window.location.href='/login.html'; });
+}
 </script>
 </body>
 </html>
