@@ -145,6 +145,24 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
 .cm-btn-cert { padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,#D4A843,#e8c060);border:none;color:#0B1F3A;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none; }
 .cm-btn-dash { padding:12px 20px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.15);background:transparent;color:#4a6080;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none; }
 
+
+/* ── MARK COMPLETE BUTTON ── */
+.btn-mark-complete {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 16px; border-radius:8px; border:none; cursor:pointer;
+  background:linear-gradient(135deg,#0E7C7B,#0a5c5b);
+  color:#fff; font-family:'DM Sans',sans-serif;
+  font-size:13px; font-weight:700; transition:all .2s;
+}
+.btn-mark-complete:hover { transform:translateY(-1px); box-shadow:0 5px 14px rgba(14,124,123,0.35); }
+.btn-mark-done {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 16px; border-radius:8px; border:none;
+  background:rgba(34,197,94,0.12); color:#16a34a;
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700;
+  cursor:default; opacity:.8;
+}
+
 </style>
 </head>
 <body>
@@ -189,6 +207,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
         <div class="vh-title" id="viewerTitle"></div>
         <div class="vh-meta" id="viewerMeta"></div>
         <div class="vh-actions">
+          <button class="btn-mark-complete" id="markCompleteBtn" style="display:none;">&#10003; Mark as Complete</button>
           <a href="#" class="btn-dl hidden" id="downloadBtn" target="_blank" download>&#8659; Download</a>
         </div>
       </div>
@@ -360,13 +379,8 @@ function openMaterial(mat, totalMats) {
   var noteData=_notesData[key];
   document.getElementById('notesArea').value=noteData?noteData.content:'';
 
-  // Mark complete
-  if(_completed.indexOf(mat.id)===-1) {
-    _completed.push(mat.id);
-    updateProgressBar(totalMats);
-    updateModuleState(mat.id);
-    saveProgress();
-  }
+  // Update complete button state
+  updateCompleteBtn(mat.id, totalMats);
 }
 
 // NOTES
@@ -427,6 +441,38 @@ function updateModuleState(matId) {
   el.classList.add('done');
   var icon=el.querySelector('.mod-icon');
   if(icon) icon.innerHTML='&#9989;';
+}
+
+function updateCompleteBtn(matId, totalMats) {
+  var btn = document.getElementById('markCompleteBtn');
+  if (!btn) return;
+  var isDone = _completed.indexOf(matId) > -1;
+  if (isDone) {
+    btn.textContent = '✓ Completed';
+    btn.className = 'btn-mark-done';
+    btn.disabled = true;
+  } else {
+    btn.textContent = '✓ Mark as Complete';
+    btn.className = 'btn-mark-complete';
+    btn.disabled = false;
+    btn.onclick = function() { markComplete(matId, totalMats); };
+  }
+  btn.style.display = 'inline-flex';
+}
+
+function markComplete(matId, totalMats) {
+  if (_completed.indexOf(matId) > -1) return;
+  _completed.push(matId);
+  updateProgressBar(totalMats);
+  updateModuleState(matId);
+  saveProgress();
+  updateCompleteBtn(matId, totalMats);
+  // Brief pulse animation
+  var btn = document.getElementById('markCompleteBtn');
+  if (btn) {
+    btn.style.transform = 'scale(1.05)';
+    setTimeout(function(){ btn.style.transform = ''; }, 200);
+  }
 }
 function saveProgress() {
   if (!_viewerUser||!_courseId) return;
