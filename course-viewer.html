@@ -15,12 +15,11 @@ var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 :root {
   --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
   --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
-  --bg:#0d1624; --sidebar-w:280px;
+  --bg:#0d1624; --sidebar-w:280px; --notes-w:300px;
 }
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; height:100vh; overflow:hidden; display:flex; flex-direction:column; }
 
-/* LOADING */
 #loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B1F3A,#1A3C6E);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
 .ld-logo { width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy); }
 .ld-spin { width:26px;height:26px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
@@ -30,50 +29,35 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
 #page { display:flex;flex-direction:column;height:100vh;opacity:0;transition:opacity .3s; }
 #page.visible { opacity:1; }
 
-/* TOP NAV */
-.topnav {
-  background:#0a1420; padding:0 20px; height:54px;
-  display:flex; align-items:center; justify-content:space-between;
-  border-bottom:1px solid rgba(255,255,255,0.07);
-  flex-shrink:0; position:relative; z-index:30;
-}
-.tn-left { display:flex;align-items:center;gap:14px; }
-.tn-back { display:flex;align-items:center;gap:5px;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;padding:6px 11px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);transition:all .2s;white-space:nowrap; }
+/* TOPNAV */
+.topnav { background:#0a1420;padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;position:relative;z-index:30; }
+.tn-left { display:flex;align-items:center;gap:12px; }
+.sidebar-toggle { background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.5);font-size:20px;padding:4px;transition:color .2s; }
+.sidebar-toggle:hover { color:#fff; }
+.tn-back { display:flex;align-items:center;gap:5px;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;padding:6px 11px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);transition:all .2s; }
 .tn-back:hover { color:var(--gold);border-color:rgba(212,168,67,0.3); }
-.course-badge { display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.8); }
-.course-badge span { color:rgba(255,255,255,0.4); }
-.tn-right { display:flex;align-items:center;gap:12px; }
+.course-badge { font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.tn-right { display:flex;align-items:center;gap:10px; }
 .progress-wrap { display:flex;align-items:center;gap:10px; }
 .progress-track { width:120px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden; }
 .progress-fill { height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:3px;transition:width .5s; }
 .progress-txt { font-size:11px;color:rgba(255,255,255,0.4);white-space:nowrap; }
-.sidebar-toggle { background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.5);font-size:20px;padding:4px;display:none; }
+.btn-notes-toggle { display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s; }
+.btn-notes-toggle:hover { color:#fff;border-color:rgba(255,255,255,0.25); }
+.btn-notes-toggle.active { background:rgba(212,168,67,0.1);border-color:rgba(212,168,67,0.3);color:var(--gold); }
 
 /* LAYOUT */
 .viewer-body { display:flex;flex:1;overflow:hidden; }
 
-/* SIDEBAR */
-.sidebar {
-  width:var(--sidebar-w);flex-shrink:0;
-  background:#060e1a;border-right:1px solid rgba(255,255,255,0.06);
-  display:flex;flex-direction:column;overflow:hidden;
-  transition:transform .3s;
-}
-.sidebar.hidden { transform:translateX(-100%); }
+/* MODULE SIDEBAR */
+.sidebar { width:var(--sidebar-w);flex-shrink:0;background:#060e1a;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;overflow:hidden;transition:transform .3s; }
 .sb-header { padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0; }
 .sb-course-title { font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.3; }
 .sb-course-sub { font-size:12px;color:rgba(255,255,255,0.35); }
 .module-list { flex:1;overflow-y:auto;padding:10px 0; }
 .module-list::-webkit-scrollbar { width:4px; }
 .module-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1);border-radius:2px; }
-
-/* Module items */
-.mod-item {
-  display:flex;align-items:center;gap:12px;
-  padding:12px 18px;cursor:pointer;
-  border-left:3px solid transparent;
-  transition:all .15s;
-}
+.mod-item { display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-left:3px solid transparent;transition:all .15s; }
 .mod-item:hover { background:rgba(255,255,255,0.04); }
 .mod-item.active { background:rgba(27,174,204,0.08);border-left-color:var(--cyan); }
 .mod-item.done .mod-icon { color:var(--teal); }
@@ -85,7 +69,6 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
 
 /* CONTENT AREA */
 .content-area { flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative; }
-
 #viewerHeader { padding:14px 20px;background:#0a1420;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;display:none; }
 .vh-title { font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:3px; }
 .vh-meta { font-size:12px;color:rgba(255,255,255,0.35); }
@@ -93,30 +76,51 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
 .btn-dl { padding:6px 14px;border-radius:8px;border:1px solid rgba(27,174,204,0.3);background:rgba(27,174,204,0.08);color:var(--cyan);font-size:12px;font-weight:600;text-decoration:none;transition:all .2s; }
 .btn-dl:hover { background:rgba(27,174,204,0.15); }
 .btn-dl.hidden { display:none; }
-
 #noContent { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,0.25);text-align:center;padding:32px; }
 #noContent .nc-icon { font-size:48px;margin-bottom:14px; }
 #noContent .nc-title { font-size:16px;font-weight:600;margin-bottom:6px;color:rgba(255,255,255,0.45); }
 #noContent .nc-sub { font-size:13px;line-height:1.7; }
-
 #contentFrame { flex:1;width:100%;border:none;background:#fff;display:none; }
 
-/* MOBILE OVERLAY */
+/* NOTES PANEL */
+.notes-panel { width:var(--notes-w);flex-shrink:0;background:#07111c;border-left:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;transition:width .3s,opacity .3s;overflow:hidden; }
+.notes-panel.closed { width:0;opacity:0; }
+.np-header { padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;display:flex;align-items:center;justify-content:space-between; }
+.np-title { font-size:14px;font-weight:700;color:#fff; }
+.np-close { background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.3);font-size:18px;padding:2px;transition:color .2s; }
+.np-close:hover { color:#fff; }
+.np-module-name { padding:10px 18px;font-size:12px;color:rgba(255,255,255,0.35);border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.np-body { flex:1;display:flex;flex-direction:column;padding:14px 18px;gap:12px;overflow:hidden; }
+.notes-textarea { flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px;color:rgba(255,255,255,0.85);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.7;resize:none;outline:none;transition:border .2s; }
+.notes-textarea:focus { border-color:rgba(27,174,204,0.4); }
+.notes-textarea::placeholder { color:rgba(255,255,255,0.2); }
+.np-actions { display:flex;gap:8px; }
+.btn-save-note { flex:1;padding:10px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--teal),#0a5c5b);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s; }
+.btn-save-note:hover { transform:translateY(-1px);box-shadow:0 4px 12px rgba(14,124,123,0.3); }
+.btn-clear-note { padding:10px 14px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s; }
+.btn-clear-note:hover { color:#fff;border-color:rgba(255,255,255,0.25); }
+.note-saved-msg { font-size:12px;color:var(--teal);text-align:center;opacity:0;transition:opacity .3s; }
+.note-saved-msg.show { opacity:1; }
+
+/* OVERLAYS */
 .sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:19; }
 .sidebar-overlay.show { display:block; }
 
-/* ── RESPONSIVE ── */
+/* RESPONSIVE */
 @media(max-width:768px) {
   :root { --sidebar-w:300px; }
   .sidebar { position:fixed;top:0;bottom:0;left:0;z-index:20;transform:translateX(-100%); }
   .sidebar.open { transform:translateX(0); }
   .sidebar-toggle { display:block; }
   .progress-wrap { display:none; }
-  .tn-back span:not(:first-child) { display:none; }
   .course-badge { display:none; }
+  .notes-panel { position:fixed;top:54px;right:0;bottom:0;z-index:20;width:min(var(--notes-w),90vw);transition:transform .3s; }
+  .notes-panel.closed { width:min(var(--notes-w),90vw);opacity:1;transform:translateX(100%); }
+  .notes-panel:not(.closed) { transform:translateX(0); }
+  .btn-notes-toggle { display:flex; }
 }
 @media(max-width:420px) {
-  .topnav { padding:0 12px; height:50px; }
+  .topnav { padding:0 12px;height:50px; }
   :root { --sidebar-w:85vw; }
 }
 </style>
@@ -130,24 +134,22 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
 </div>
 
 <div id="page">
-  <!-- Top nav -->
   <div class="topnav">
     <div class="tn-left">
-      <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">&#9776;</button>
+      <button class="sidebar-toggle" onclick="toggleSidebar()">&#9776;</button>
       <a href="/dashboard.html" class="tn-back">&larr; <span>Dashboard</span></a>
-      <div class="course-badge" id="courseBadge"><span>Loading...</span></div>
+      <div class="course-badge" id="courseBadge">Loading...</div>
     </div>
     <div class="tn-right">
       <div class="progress-wrap">
         <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
         <div class="progress-txt" id="progressLabel">0/0 completed</div>
       </div>
+      <button class="btn-notes-toggle" id="notesToggleBtn" onclick="toggleNotes()">&#128221; Notes</button>
     </div>
   </div>
 
-  <!-- Body -->
   <div class="viewer-body">
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
       <div class="sb-header">
         <div class="sb-course-title" id="sidebarTitle">Loading...</div>
@@ -158,10 +160,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
       </div>
     </div>
 
-    <!-- Mobile overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
 
-    <!-- Content -->
     <div class="content-area">
       <div id="viewerHeader">
         <div class="vh-title" id="viewerTitle"></div>
@@ -177,123 +177,169 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
       </div>
       <iframe id="contentFrame" allowfullscreen></iframe>
     </div>
+
+    <!-- Notes Panel -->
+    <div class="notes-panel closed" id="notesPanel">
+      <div class="np-header">
+        <div class="np-title">&#128221; My Notes</div>
+        <button class="np-close" onclick="toggleNotes()">&#215;</button>
+      </div>
+      <div class="np-module-name" id="npModuleName">Select a module to take notes</div>
+      <div class="np-body">
+        <textarea class="notes-textarea" id="notesArea" placeholder="Type your notes here...&#10;&#10;Notes are saved per module and sync automatically."></textarea>
+        <div class="np-actions">
+          <button class="btn-save-note" onclick="saveNote()">&#128190; Save Note</button>
+          <button class="btn-clear-note" onclick="clearNote()">Clear</button>
+        </div>
+        <div class="note-saved-msg" id="noteSavedMsg">&#10003; Note saved</div>
+      </div>
+    </div>
+      <!-- Notes Panel -->
+    <div class="notes-panel collapsed" id="notesPanel">
+      <div class="notes-header">
+        <div class="notes-title">&#128221; Notes</div>
+        <button class="notes-toggle-btn" onclick="toggleNotesPanel()" title="Close">&#10005;</button>
+      </div>
+      <div class="notes-body">
+        <div class="notes-module-label" id="notesModuleLabel">Select a module to start</div>
+        <textarea class="notes-textarea" id="notesTextarea" placeholder="Write your notes here..." oninput="scheduleNoteSave()"></textarea>
+        <div class="notes-saved" id="notesSaved"></div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-var _viewerUser = null;
-var _courseId   = null;
-var _completed  = [];
-var _allMats    = [];
-var _enrollment = null;
-var _started    = false;
+var _viewerUser  = null;
+var _courseId    = null;
+var _currentMat  = null;
+var _completed   = [];
+var _allMats     = [];
+var _enrollment  = null;
+var _notesOpen   = false;
+var _notesData   = {};
+var _notesSaveTimer = null;
+var _started     = false;
 
 function tryStart(user) {
   if (_started||!user) return;
-  _started = true; _viewerUser = user;
-  document.getElementById('loadingScreen').style.display = 'none';
+  _started=true; _viewerUser=user;
+  document.getElementById('loadingScreen').style.display='none';
   document.getElementById('page').classList.add('visible');
   loadCourse();
 }
-
 _sb.auth.getSession().then(function(r) {
-  tryStart(r.data.session ? r.data.session.user : null);
-  if (!r.data.session) {
-    setTimeout(function(){ _sb.auth.getSession().then(function(r2){ tryStart(r2.data.session?r2.data.session.user:null); }); }, 1500);
-    setTimeout(function(){ if(!_started) window.location.href='/login.html'; }, 9000);
+  tryStart(r.data.session?r.data.session.user:null);
+  if(!r.data.session){
+    setTimeout(function(){ _sb.auth.getSession().then(function(r2){ tryStart(r2.data.session?r2.data.session.user:null); }); },1500);
+    setTimeout(function(){ if(!_started) window.location.href='/login.html'; },9000);
   }
 });
-_sb.auth.onAuthStateChange(function(event, session) {
-  if (event==='SIGNED_IN') tryStart(session?session.user:null);
-  if (event==='SIGNED_OUT') window.location.href='/login.html';
+_sb.auth.onAuthStateChange(function(e,s){
+  if(e==='SIGNED_IN') tryStart(s?s.user:null);
+  if(e==='SIGNED_OUT') window.location.href='/login.html';
 });
 
 function loadCourse() {
-  var params = new URLSearchParams(window.location.search);
-  _courseId  = params.get('course') || null;
-  // Only fetch the specific course (not all courses) and its materials
-  var courseQuery = _courseId
-    ? _sb.from('courses').select('*').eq('id', _courseId).single()
+  var params=new URLSearchParams(window.location.search);
+  _courseId=params.get('course')||null;
+
+  var courseQuery=_courseId
+    ? _sb.from('courses').select('*').eq('id',_courseId).single()
     : _sb.from('courses').select('*').limit(1).single();
 
   Promise.all([
     courseQuery,
-    _courseId
-      ? _sb.from('materials').select('*').eq('course_id', _courseId).order('module_number')
-      : Promise.resolve({ data: [] })
+    _courseId ? _sb.from('materials').select('*').eq('course_id',_courseId).order('module_number') : Promise.resolve({data:[]})
   ]).then(function(results) {
-    var courseData = results[0].data;
-    var courses    = courseData ? [courseData] : [];
-    var materials  = results[1].data || [];
-    _allMats = materials;
-    var course = courses[0];
-    if (!course) {
-      document.getElementById('moduleList').innerHTML = '<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:13px;">Course not found.</div>';
+    var course=results[0].data;
+    var materials=results[1].data||[];
+    _allMats=materials;
+
+    if(!course) {
+      document.getElementById('moduleList').innerHTML='<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:13px;">Course not found.</div>';
       return;
     }
-    _courseId = course.id;
-    document.getElementById('courseBadge').innerHTML = '<span>' + esc(course.title) + '</span>';
-    document.getElementById('sidebarTitle').textContent = course.title;
-    document.title = course.title + ' — Kulan Institute';
-    var courseMats = materials.filter(function(m){ return m.course_id===course.id; })
-      .sort(function(a,b){ return (a.module_number||0)-(b.module_number||0); });
-    document.getElementById('sidebarSub').textContent = courseMats.length + ' module' + (courseMats.length!==1?'s':'');
-    _sb.from('enrollments').select('*').eq('user_id',_viewerUser.id).eq('course_id',course.id).maybeSingle()
+    _courseId=course.id;
+    document.getElementById('courseBadge').textContent=course.title;
+    document.getElementById('sidebarTitle').textContent=course.title;
+    document.title=course.title+' — Kulan Institute';
+    document.getElementById('sidebarSub').textContent=materials.length+' module'+(materials.length!==1?'s':'');
+
+    _sb.from('enrollments').select('*').eq('user_id',_viewerUser.id).eq('course_id',_courseId).maybeSingle()
       .then(function(enResult) {
-        _enrollment  = enResult.data;
-        _completed   = (_enrollment && _enrollment.completed_materials) ? _enrollment.completed_materials : [];
-        renderModuleList(courseMats);
-        updateProgressBar(courseMats.length);
+        _enrollment=enResult.data;
+        _completed=(_enrollment&&_enrollment.completed_materials)?_enrollment.completed_materials:[];
+        renderModuleList(materials);
+        updateProgressBar(materials.length);
+        // Load all notes for this course
+        loadNotes();
       });
   });
 }
 
+function loadNotes() {
+  _sb.from('notes').select('*').eq('user_id',_viewerUser.id).eq('course_id',_courseId)
+    .then(function(r) {
+      _notesData={};
+      (r.data||[]).forEach(function(n){ _notesData[n.material_id||'general']=n; });
+    }).catch(function(){});
+}
+
 function renderModuleList(mats) {
-  var list = document.getElementById('moduleList');
-  if (!mats.length) {
-    list.innerHTML = '<div style="text-align:center;padding:32px;color:rgba(255,255,255,0.25);"><div style="font-size:28px;margin-bottom:8px;">&#128109;</div><div style="font-size:13px;">No materials yet.<br>Check back soon!</div></div>';
+  var list=document.getElementById('moduleList');
+  if(!mats.length) {
+    list.innerHTML='<div style="text-align:center;padding:32px;color:rgba(255,255,255,0.25);"><div style="font-size:28px;margin-bottom:8px;">&#128109;</div><div style="font-size:13px;">No materials yet.<br>Check back soon!</div></div>';
     return;
   }
-  list.innerHTML = '';
-  var icons = { pdf:'&#128196;', video:'&#127909;', ppt:'&#128202;', other:'&#128190;' };
+  list.innerHTML='';
+  var icons={pdf:'&#128196;',video:'&#127909;',ppt:'&#128202;',other:'&#128190;'};
   mats.forEach(function(mat) {
-    var done = _completed.indexOf(mat.id) > -1;
-    var el   = document.createElement('div');
-    el.className = 'mod-item' + (done?' done':'');
-    el.id = 'mod-' + mat.id;
-    el.innerHTML =
-      '<div class="mod-icon">' + (done?'&#9989;':(icons[mat.type]||icons.other)) + '</div>'
-      + '<div class="mod-info"><div class="mod-name">M'+mat.module_number+': '+esc(mat.title)+'</div>'
-      + '<div class="mod-meta">'+(mat.type||'file').toUpperCase()+'</div></div>';
+    var done=_completed.indexOf(mat.id)>-1;
+    var el=document.createElement('div');
+    el.className='mod-item'+(done?' done':'');
+    el.id='mod-'+mat.id;
+    el.innerHTML='<div class="mod-icon">'+(done?'&#9989;':(icons[mat.type]||icons.other))+'</div>'
+      +'<div class="mod-info"><div class="mod-name">M'+mat.module_number+': '+esc(mat.title)+'</div>'
+      +'<div class="mod-meta">'+(mat.type||'file').toUpperCase()+'</div></div>';
     el.addEventListener('click', function() {
       openMaterial(mat, mats.length);
-      // Close sidebar on mobile after selection
-      if (window.innerWidth <= 768) toggleSidebar(false);
+      if(window.innerWidth<=768) toggleSidebar(false);
     });
     list.appendChild(el);
   });
 }
 
 function openMaterial(mat, totalMats) {
+  // Save notes for previous material
+  if(_currentMat) autoSaveNote();
+
+  _currentMat=mat;
   document.querySelectorAll('.mod-item').forEach(function(el){ el.classList.remove('active'); });
-  var modEl = document.getElementById('mod-'+mat.id);
-  if (modEl) modEl.classList.add('active');
-  document.getElementById('viewerHeader').style.display = 'block';
-  document.getElementById('viewerTitle').textContent = mat.title;
-  document.getElementById('viewerMeta').textContent = 'Module '+mat.module_number+' · '+(mat.type||'file').toUpperCase();
-  var url = mat.url || '';
-  if (url.startsWith('ki_file_')) {
-    var stored = localStorage.getItem(url);
-    if (stored) url = stored;
-    else { alert('File not available. It may have been uploaded on another device.'); return; }
-  }
-  document.getElementById('noContent').style.display = 'none';
-  var frame = document.getElementById('contentFrame');
-  frame.style.display = 'block'; frame.src = url;
-  var dlBtn = document.getElementById('downloadBtn');
-  if (mat.allow_download && url) { dlBtn.href=url; dlBtn.classList.remove('hidden'); }
+  var modEl=document.getElementById('mod-'+mat.id);
+  if(modEl) modEl.classList.add('active');
+
+  document.getElementById('viewerHeader').style.display='block';
+  document.getElementById('viewerTitle').textContent=mat.title;
+  document.getElementById('viewerMeta').textContent='Module '+mat.module_number+' · '+(mat.type||'file').toUpperCase();
+  document.getElementById('npModuleName').textContent='Notes for: '+mat.title;
+
+  var url=mat.url||'';
+  document.getElementById('noContent').style.display='none';
+  var frame=document.getElementById('contentFrame');
+  frame.style.display='block'; frame.src=url;
+
+  var dlBtn=document.getElementById('downloadBtn');
+  if(mat.allow_download&&url){ dlBtn.href=url; dlBtn.classList.remove('hidden'); }
   else dlBtn.classList.add('hidden');
-  if (_completed.indexOf(mat.id) === -1) {
+
+  // Load note for this material
+  var key=mat.id;
+  var noteData=_notesData[key];
+  document.getElementById('notesArea').value=noteData?noteData.content:'';
+
+  // Mark complete
+  if(_completed.indexOf(mat.id)===-1) {
     _completed.push(mat.id);
     updateProgressBar(totalMats);
     updateModuleState(mat.id);
@@ -301,38 +347,155 @@ function openMaterial(mat, totalMats) {
   }
 }
 
+// NOTES
+function toggleNotes() {
+  _notesOpen=!_notesOpen;
+  var panel=document.getElementById('notesPanel');
+  var btn=document.getElementById('notesToggleBtn');
+  panel.classList.toggle('closed',!_notesOpen);
+  btn.classList.toggle('active',_notesOpen);
+}
+
+function saveNote() {
+  if(!_currentMat||!_viewerUser) return;
+  var content=document.getElementById('notesArea').value;
+  var key=_currentMat.id;
+  var existing=_notesData[key];
+
+  var op=existing
+    ? _sb.from('notes').update({content:content,updated_at:new Date().toISOString()}).eq('id',existing.id)
+    : _sb.from('notes').insert([{user_id:_viewerUser.id,course_id:_courseId,material_id:key,content:content}]).select().single();
+
+  op.then(function(r) {
+    if(r.error) return;
+    if(!existing&&r.data) _notesData[key]=r.data;
+    else if(existing) _notesData[key].content=content;
+    var msg=document.getElementById('noteSavedMsg');
+    msg.classList.add('show');
+    setTimeout(function(){ msg.classList.remove('show'); },2000);
+  });
+}
+
+function autoSaveNote() {
+  var content=document.getElementById('notesArea').value.trim();
+  if(content&&_currentMat) saveNote();
+}
+
+function clearNote() {
+  if(!confirm('Clear notes for this module?')) return;
+  document.getElementById('notesArea').value='';
+  saveNote();
+}
+
+// Auto-save on input with debounce
+document.getElementById('notesArea').addEventListener('input', function() {
+  clearTimeout(_notesSaveTimer);
+  _notesSaveTimer=setTimeout(function(){ if(_currentMat) saveNote(); },2000);
+});
+
+// PROGRESS
 function updateProgressBar(total) {
-  var pct = total>0 ? Math.round((_completed.length/total)*100) : 0;
-  document.getElementById('progressBar').style.width = pct+'%';
-  document.getElementById('progressLabel').textContent = _completed.length+'/'+total+' completed';
+  var pct=total>0?Math.round((_completed.length/total)*100):0;
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent=_completed.length+'/'+total+' completed';
 }
-
 function updateModuleState(matId) {
-  var el = document.getElementById('mod-'+matId);
-  if (!el) return;
+  var el=document.getElementById('mod-'+matId);
+  if(!el) return;
   el.classList.add('done');
-  var icon = el.querySelector('.mod-icon');
-  if (icon) icon.innerHTML = '&#9989;';
+  var icon=el.querySelector('.mod-icon');
+  if(icon) icon.innerHTML='&#9989;';
 }
-
 function saveProgress() {
-  if (!_viewerUser||!_courseId) return;
+  if(!_viewerUser||!_courseId) return;
   _sb.from('enrollments').upsert({
     user_id:_viewerUser.id, course_id:_courseId,
     completed_materials:_completed, progress:_completed.length
-  }, { onConflict:'user_id,course_id' }).then(function(){});
+  },{onConflict:'user_id,course_id'}).then(function(){});
 }
 
+// SIDEBAR
 function toggleSidebar(forceOpen) {
-  var sb  = document.getElementById('sidebar');
-  var ov  = document.getElementById('sidebarOverlay');
-  var isOpen = sb.classList.contains('open');
-  var open = forceOpen !== undefined ? forceOpen : !isOpen;
-  sb.classList.toggle('open', open);
-  ov.classList.toggle('show', open);
+  var sb=document.getElementById('sidebar');
+  var ov=document.getElementById('sidebarOverlay');
+  var open=forceOpen!==undefined?forceOpen:!sb.classList.contains('open');
+  sb.classList.toggle('open',open);
+  if(ov) ov.classList.toggle('show',open);
 }
 
-function esc(str) { return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Save notes before leaving
+window.addEventListener('beforeunload', function(){ if(_currentMat) autoSaveNote(); });
+
+// ── NOTES ─────────────────────────────────────────────────────
+var _currentMatId  = null;
+var _currentCourseId = null;
+var _notesSaveTimer = null;
+var _notesPanelOpen = false;
+
+function toggleNotesPanel() {
+  var panel = document.getElementById('notesPanel');
+  var btn   = document.getElementById('notesToggleBtn');
+  _notesPanelOpen = !_notesPanelOpen;
+  if (_notesPanelOpen) {
+    panel.classList.remove('collapsed');
+    panel.classList.add('open');
+    btn.classList.add('active');
+    btn.textContent = '\u2711 Notes';
+  } else {
+    panel.classList.add('collapsed');
+    panel.classList.remove('open');
+    btn.classList.remove('active');
+    btn.textContent = '\u{1F4D1} Notes';
+  }
+}
+
+function setCurrentMaterial(matId, matTitle, courseId) {
+  _currentMatId   = matId;
+  _currentCourseId = courseId;
+  var lbl = document.getElementById('notesModuleLabel');
+  if (lbl) lbl.textContent = matTitle || 'Module Notes';
+  loadNote(matId);
+}
+
+function loadNote(matId) {
+  if (!_viewerUser || !matId) return;
+  var ta = document.getElementById('notesTextarea');
+  if (!ta) return;
+  ta.value = '';
+  ta.placeholder = 'Loading...';
+  _sb.from('notes').select('content').eq('user_id', _viewerUser.id).eq('material_id', matId).single()
+    .then(function(r) {
+      ta.placeholder = 'Write your notes here...';
+      ta.value = (r.data && r.data.content) ? r.data.content : '';
+    })
+    .catch(function() { ta.placeholder = 'Write your notes here...'; ta.value = ''; });
+}
+
+function scheduleNoteSave() {
+  clearTimeout(_notesSaveTimer);
+  _notesSaveTimer = setTimeout(saveNote, 1200);
+}
+
+function saveNote() {
+  if (!_viewerUser || !_currentMatId || !_currentCourseId) return;
+  var content = document.getElementById('notesTextarea').value;
+  _sb.from('notes').upsert({
+    user_id: _viewerUser.id,
+    course_id: _currentCourseId,
+    material_id: _currentMatId,
+    content: content,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'user_id,material_id' }).then(function() {
+    var saved = document.getElementById('notesSaved');
+    if (saved) {
+      saved.textContent = '\u2713 Saved';
+      setTimeout(function() { if(saved) saved.textContent = ''; }, 2000);
+    }
+  });
+}
+
 </script>
 </body>
 </html>
