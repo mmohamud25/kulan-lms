@@ -337,6 +337,117 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   .ctrl-btn .ctrl-lbl{display:none;}
   .ctrl-left,.ctrl-label{display:none;}
 }
+
+/* ── SPEAKING INDICATOR ── */
+.vid-tile.speaking .vid-overlay { box-shadow: inset 0 0 0 2px var(--cyan); border-radius: 12px; }
+.vid-tile.speaking { border-color: rgba(27,174,204,0.6) !important; }
+
+/* ── SPOTLIGHT ── */
+.vid-tile.spotlight { grid-column: span 2; grid-row: span 2; }
+
+/* ── NETWORK QUALITY ── */
+.net-quality {
+  position: absolute; top: 8px; left: 8px;
+  display: flex; gap: 2px; align-items: flex-end;
+}
+.net-bar { width: 3px; background: rgba(255,255,255,0.2); border-radius: 1px; }
+.net-bar.n1 { height: 6px; }
+.net-bar.n2 { height: 9px; }
+.net-bar.n3 { height: 12px; }
+.net-bar.n4 { height: 15px; }
+.net-quality.good .net-bar { background: var(--green); }
+.net-quality.ok .net-bar:nth-child(-n+3) { background: #f59e0b; }
+.net-quality.poor .net-bar:first-child { background: var(--red); }
+
+/* ── TILE ACTIONS ── */
+.tile-actions {
+  position: absolute; top: 8px; right: 8px;
+  display: none; gap: 5px;
+}
+.vid-tile:hover .tile-actions { display: flex; }
+.tile-action-btn {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1);
+  color: #fff; font-size: 12px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.tile-action-btn:hover { background: rgba(0,0,0,0.85); }
+
+/* ── RECORDING INDICATOR ── */
+.rec-indicator {
+  display: none; position: absolute; top: 14px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(239,68,68,0.9); color: #fff;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 800; letter-spacing: .5px;
+  align-items: center; gap: 6px;
+}
+.rec-indicator.show { display: flex; }
+.rec-dot-r { width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: livePulse 1s infinite; }
+
+/* ── SETTINGS MODAL ── */
+.settings-modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+  display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(6px);
+}
+.settings-modal.show { display: flex; }
+.settings-card {
+  background: var(--surface); border: 1px solid var(--border2); border-radius: 18px;
+  padding: 28px; max-width: 400px; width: calc(100% - 40px);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+}
+.settings-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.setting-row:last-child { border-bottom: none; }
+.setting-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.setting-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.setting-select {
+  background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px;
+  color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 12px;
+  padding: 6px 10px; outline: none; cursor: pointer;
+}
+.toggle-switch {
+  width: 38px; height: 22px; border-radius: 11px; background: var(--surface2);
+  border: 1px solid var(--border2); cursor: pointer; position: relative; transition: all .2s;
+}
+.toggle-switch.on { background: var(--cyan); border-color: var(--cyan); }
+.toggle-knob {
+  width: 16px; height: 16px; border-radius: 50%; background: #fff;
+  position: absolute; top: 2px; left: 2px; transition: all .2s;
+}
+.toggle-switch.on .toggle-knob { left: 18px; }
+.settings-close {
+  width: 100%; height: 40px; margin-top: 16px; border-radius: 10px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .2s;
+}
+.settings-close:hover { color: var(--text); }
+
+/* ── REACTION POPUP ── */
+.reaction-popup {
+  position: fixed; bottom: calc(var(--ctrl-h) + 12px); left: 50%;
+  transform: translateX(-50%); display: none;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 50px; padding: 8px 14px; gap: 8px; z-index: 50;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.reaction-popup.show { display: flex; }
+.react-btn {
+  font-size: 22px; cursor: pointer; transition: transform .15s;
+  padding: 4px; border: none; background: none; border-radius: 8px;
+}
+.react-btn:hover { transform: scale(1.35); }
+.floating-reaction {
+  position: fixed; font-size: 28px; pointer-events: none; z-index: 999;
+  animation: floatUp 2.5s ease-out forwards;
+}
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-180px) scale(1.4); }
+}
+
 </style>
 </head>
 <body>
@@ -396,9 +507,15 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <div class="cls-main">
 
     <!-- VIDEO GRID -->
-    <div class="video-grid p1" id="videoGrid">
+    <div style="position:relative;flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;">
+      <div class="rec-indicator" id="recIndicator">
+        <div class="rec-dot-r"></div> REC
+      </div>
+      <div class="video-grid p1" id="videoGrid">
       <!-- tiles injected here -->
     </div>
+
+    </div><!-- /grid wrapper -->
 
     <!-- SIDEBAR -->
     <div class="cls-sidebar" id="clsSidebar">
@@ -458,12 +575,63 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       <span class="ctrl-lbl">People</span>
     </button>
 
+        <button class="ctrl-btn" id="btnReact" onclick="toggleReactions()" title="Reactions">
+      <div class="ctrl-icon">&#128512;</div>
+      <span class="ctrl-lbl">React</span>
+    </button>
+
+    <button class="ctrl-btn" id="btnRecord" onclick="toggleRecording()" title="Record session">
+      <div class="ctrl-icon">&#9679;</div>
+      <span class="ctrl-lbl">Record</span>
+    </button>
+
+    <button class="ctrl-btn" id="btnSettings" onclick="openSettings()" title="Settings">
+      <div class="ctrl-icon">&#9881;</div>
+      <span class="ctrl-lbl">Settings</span>
+    </button>
+
     <button class="ctrl-end" id="btnEnd" onclick="promptLeave()">
       <div class="ctrl-end-icon">&#128222;</div>
       <span class="ctrl-lbl" id="endLabel">Leave</span>
     </button>
   </div>
 
+</div>
+
+<!-- Reactions Popup -->
+<div class="reaction-popup" id="reactionPopup">
+  <button class="react-btn" onclick="sendReaction('&#128079;')">&#128079;</button>
+  <button class="react-btn" onclick="sendReaction('&#10084;')">&#10084;</button>
+  <button class="react-btn" onclick="sendReaction('&#128512;')">&#128512;</button>
+  <button class="react-btn" onclick="sendReaction('&#128561;')">&#128561;</button>
+  <button class="react-btn" onclick="sendReaction('&#127881;')">&#127881;</button>
+  <button class="react-btn" onclick="sendReaction('&#128514;')">&#128514;</button>
+  <button class="react-btn" onclick="sendReaction('&#128075;')">&#128075;</button>
+  <button class="react-btn" onclick="sendReaction('&#128522;')">&#128522;</button>
+</div>
+
+<!-- Settings Modal -->
+<div class="settings-modal" id="settingsModal">
+  <div class="settings-card">
+    <div class="settings-title">&#9881; Settings</div>
+    <div class="setting-row">
+      <div><div class="setting-label">Microphone</div></div>
+      <select class="setting-select" id="micSelect" onchange="changeMic(this.value)"></select>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label">Camera</div></div>
+      <select class="setting-select" id="camSelect" onchange="changeCam(this.value)"></select>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label">Mirror my video</div><div class="setting-sub">Flip your camera preview</div></div>
+      <div class="toggle-switch on" id="mirrorToggle" onclick="toggleMirror()"><div class="toggle-knob"></div></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label">Noise suppression</div><div class="setting-sub">Reduces background noise</div></div>
+      <div class="toggle-switch on" id="noiseToggle"><div class="toggle-knob"></div></div>
+    </div>
+    <button class="settings-close" onclick="closeSettings()">Done</button>
+  </div>
 </div>
 
 <div class="notif" id="notif"></div>
@@ -865,8 +1033,8 @@ function toggleMute() {
     _localStream.getAudioTracks().forEach(function(t){ t.enabled = !_muted; });
   }
   var btn = document.getElementById('btnMute');
-  btn.querySelector('.ctrl-icon').textContent = _muted ? '&#128263;' : '&#127908;';
-  btn.querySelector('.ctrl-lbl').textContent  = _muted ? 'Unmute'  : 'Mute';
+  btn.querySelector('.ctrl-icon').innerHTML = _muted ? '&#128263;' : '&#127908;';
+  btn.querySelector('.ctrl-lbl').textContent = _muted ? 'Unmute' : 'Mute';
   btn.classList.toggle('muted', _muted);
   document.getElementById('localMutedIcon').style.display = _muted ? 'inline' : 'none';
   broadcast({ type:'mute_state', id:_myId, muted:_muted, camOff:_camOff });
@@ -878,8 +1046,8 @@ function toggleCamera() {
     _localStream.getVideoTracks().forEach(function(t){ t.enabled = !_camOff; });
   }
   var btn = document.getElementById('btnCam');
-  btn.querySelector('.ctrl-icon').textContent = _camOff ? '&#128247;&#65039;&#8203;&#8203;' : '&#127909;';
-  btn.querySelector('.ctrl-lbl').textContent  = _camOff ? 'Start Video' : 'Camera';
+  btn.querySelector('.ctrl-icon').innerHTML = _camOff ? '&#128247;&#8416;' : '&#127909;';
+  btn.querySelector('.ctrl-lbl').textContent = _camOff ? 'Start Video' : 'Camera';
   btn.classList.toggle('cam-off', _camOff);
   var localTile = document.getElementById('tile_local');
   if (localTile) localTile.classList.toggle('cam-off', _camOff);
@@ -1119,6 +1287,296 @@ function showNotif(msg, type) {
   clearTimeout(el._t);
   el._t = setTimeout(function(){ el.classList.remove('show'); }, 3500);
 }
+
+// ══════════════════════════════════════════════════════════
+// RECORDING
+// ══════════════════════════════════════════════════════════
+var _localRecorder = null;
+var _localChunks   = [];
+var _recording     = false;
+
+function toggleRecording() {
+  var btn = document.getElementById('btnRecord');
+  var ind = document.getElementById('recIndicator');
+  if (_recording) {
+    _localRecorder && _localRecorder.stop();
+    _recording = false;
+    btn.classList.remove('active');
+    ind.classList.remove('show');
+    btn.querySelector('.ctrl-icon').innerHTML = '&#9679;';
+    btn.querySelector('.ctrl-lbl').textContent = 'Record';
+  } else {
+    // Record the grid view — capture the page
+    var stream = document.getElementById('localVideo');
+    if (!stream || !_localStream) { showNotif('No local stream to record.', 'error'); return; }
+    var mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+      ? 'video/webm;codecs=vp9,opus' : 'video/webm';
+    // Record local stream only (browser limitation for multi-party)
+    _localChunks = [];
+    _localRecorder = new MediaRecorder(_localStream, { mimeType: mime });
+    _localRecorder.ondataavailable = function(e) { if(e.data&&e.data.size>0) _localChunks.push(e.data); };
+    _localRecorder.onstop = function() {
+      var blob = new Blob(_localChunks, { type: mime });
+      var a    = document.createElement('a');
+      a.href   = URL.createObjectURL(blob);
+      a.download = 'kulan-class-' + new Date().toISOString().slice(0,19).replace(/[:.]/g,'-') + '.webm';
+      a.click();
+      showNotif('Recording saved to your computer.', 'success');
+    };
+    _localRecorder.start(1000);
+    _recording = true;
+    btn.classList.add('active');
+    ind.classList.add('show');
+    btn.querySelector('.ctrl-icon').innerHTML = '&#9632;';
+    btn.querySelector('.ctrl-lbl').textContent = 'Stop Rec';
+    showNotif('Recording started.', 'success');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// REACTIONS
+// ══════════════════════════════════════════════════════════
+var _reactOpen = false;
+
+function toggleReactions() {
+  _reactOpen = !_reactOpen;
+  var popup = document.getElementById('reactionPopup');
+  popup.classList.toggle('show', _reactOpen);
+  document.getElementById('btnReact').classList.toggle('active', _reactOpen);
+  if (_reactOpen) {
+    // Close on outside click
+    setTimeout(function() {
+      document.addEventListener('click', closeReactionsOnce);
+    }, 50);
+  }
+}
+
+function closeReactionsOnce(e) {
+  var popup = document.getElementById('reactionPopup');
+  if (!popup.contains(e.target)) {
+    _reactOpen = false;
+    popup.classList.remove('show');
+    document.getElementById('btnReact').classList.remove('active');
+    document.removeEventListener('click', closeReactionsOnce);
+  }
+}
+
+function sendReaction(emoji) {
+  broadcast({ type: 'reaction', emoji: emoji, name: _userName, id: _myId });
+  showFloatingReaction(emoji, true);
+  _reactOpen = false;
+  document.getElementById('reactionPopup').classList.remove('show');
+  document.getElementById('btnReact').classList.remove('active');
+}
+
+function showFloatingReaction(emoji, isLocal) {
+  var el = document.createElement('div');
+  el.className = 'floating-reaction';
+  el.textContent = emoji;
+  var x = 30 + Math.random() * 40; // random % across bottom
+  el.style.left   = x + '%';
+  el.style.bottom = (70 + parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ctrl-h'))) + 'px';
+  document.body.appendChild(el);
+  setTimeout(function() { el.remove(); }, 2600);
+}
+
+// Hook reaction into handleSignal
+var _origHandleSignal = handleSignal;
+handleSignal = function(msg) {
+  if (msg && msg.type === 'reaction') {
+    showFloatingReaction(msg.emoji, false);
+    addChatSystem(msg.name + ' reacted ' + msg.emoji);
+    return;
+  }
+  _origHandleSignal(msg);
+};
+
+// ══════════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════════
+var _mirrored = true;
+
+function openSettings() {
+  // Load devices
+  navigator.mediaDevices.enumerateDevices().then(function(devices) {
+    var mics = devices.filter(function(d){ return d.kind==='audioinput'; });
+    var cams = devices.filter(function(d){ return d.kind==='videoinput'; });
+    var micSel = document.getElementById('micSelect');
+    var camSel = document.getElementById('camSelect');
+    micSel.innerHTML = mics.map(function(d){ return '<option value="'+d.deviceId+'">'+esc(d.label||'Microphone')+'</option>'; }).join('');
+    camSel.innerHTML = cams.map(function(d){ return '<option value="'+d.deviceId+'">'+esc(d.label||'Camera')+'</option>'; }).join('');
+  });
+  document.getElementById('settingsModal').classList.add('show');
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('show');
+}
+
+async function changeMic(deviceId) {
+  if (!deviceId) return;
+  try {
+    var newStream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: { exact: deviceId } } });
+    var newTrack  = newStream.getAudioTracks()[0];
+    if (_localStream) {
+      var oldTrack = _localStream.getAudioTracks()[0];
+      if (oldTrack) { _localStream.removeTrack(oldTrack); oldTrack.stop(); }
+      _localStream.addTrack(newTrack);
+    }
+    // Replace in all peer connections
+    Object.keys(_peers).forEach(function(pid) {
+      var sender = _peers[pid].pc.getSenders().find(function(s){ return s.track&&s.track.kind==='audio'; });
+      if (sender) sender.replaceTrack(newTrack).catch(function(){});
+    });
+    showNotif('Microphone changed.', 'success');
+  } catch(e) { showNotif('Could not switch microphone.', 'error'); }
+}
+
+async function changeCam(deviceId) {
+  if (!deviceId) return;
+  try {
+    var newStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
+    var newTrack  = newStream.getVideoTracks()[0];
+    if (_localStream) {
+      var oldTrack = _localStream.getVideoTracks()[0];
+      if (oldTrack) { _localStream.removeTrack(oldTrack); oldTrack.stop(); }
+      _localStream.addTrack(newTrack);
+    }
+    var vidEl = document.getElementById('localVideo');
+    if (vidEl) vidEl.srcObject = _localStream;
+    Object.keys(_peers).forEach(function(pid) {
+      var sender = _peers[pid].pc.getSenders().find(function(s){ return s.track&&s.track.kind==='video'; });
+      if (sender) sender.replaceTrack(newTrack).catch(function(){});
+    });
+    showNotif('Camera changed.', 'success');
+  } catch(e) { showNotif('Could not switch camera.', 'error'); }
+}
+
+function toggleMirror() {
+  _mirrored = !_mirrored;
+  var toggle = document.getElementById('mirrorToggle');
+  toggle.classList.toggle('on', _mirrored);
+  var localVid = document.getElementById('localVideo');
+  if (localVid) localVid.style.transform = _mirrored ? 'scaleX(-1)' : 'none';
+}
+
+// ══════════════════════════════════════════════════════════
+// SPOTLIGHT (double-click to spotlight a tile)
+// ══════════════════════════════════════════════════════════
+var _spotlightId = null;
+
+document.addEventListener('dblclick', function(e) {
+  var tile = e.target.closest('.vid-tile');
+  if (!tile) return;
+  var grid = document.getElementById('videoGrid');
+  if (_spotlightId === tile.id) {
+    tile.classList.remove('spotlight');
+    _spotlightId = null;
+    updateGridClass();
+  } else {
+    if (_spotlightId) {
+      var prev = document.getElementById(_spotlightId);
+      if (prev) prev.classList.remove('spotlight');
+    }
+    tile.classList.add('spotlight');
+    _spotlightId = tile.id;
+    updateGridClass();
+  }
+});
+
+// ══════════════════════════════════════════════════════════
+// SPEAKING DETECTION (audio level)
+// ══════════════════════════════════════════════════════════
+var _speakCtx = null;
+var _speakAnal = null;
+
+function startSpeakDetect() {
+  if (!_localStream) return;
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    _speakCtx  = new AC();
+    _speakAnal = _speakCtx.createAnalyser();
+    _speakAnal.fftSize = 256;
+    var src = _speakCtx.createMediaStreamSource(_localStream);
+    src.connect(_speakAnal);
+    var buf = new Uint8Array(_speakAnal.frequencyBinCount);
+    setInterval(function() {
+      _speakAnal.getByteFrequencyData(buf);
+      var avg = buf.reduce(function(a,b){ return a+b; },0) / buf.length;
+      var tile = document.getElementById('tile_local');
+      if (tile) tile.classList.toggle('speaking', avg > 15 && !_muted);
+    }, 150);
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════════
+// NETWORK QUALITY INDICATOR
+// ══════════════════════════════════════════════════════════
+function addNetQuality(tileId) {
+  var tile = document.getElementById(tileId);
+  if (!tile || tile.querySelector('.net-quality')) return;
+  var div = document.createElement('div');
+  div.className = 'net-quality good';
+  div.innerHTML = '<div class="net-bar n1"></div><div class="net-bar n2"></div><div class="net-bar n3"></div><div class="net-bar n4"></div>';
+  tile.appendChild(div);
+}
+
+function monitorNetQuality(peerId, pc) {
+  setInterval(function() {
+    if (!pc || pc.connectionState === 'closed') return;
+    pc.getStats().then(function(stats) {
+      var rtt = null;
+      stats.forEach(function(report) {
+        if (report.type === 'candidate-pair' && report.state === 'succeeded' && report.currentRoundTripTime) {
+          rtt = report.currentRoundTripTime * 1000; // ms
+        }
+      });
+      var sid  = safeId(peerId);
+      var tile = document.getElementById('tile_' + sid);
+      if (!tile) return;
+      var nq = tile.querySelector('.net-quality');
+      if (!nq) { addNetQuality('tile_' + sid); nq = tile.querySelector('.net-quality'); }
+      if (!nq) return;
+      if      (rtt === null || rtt < 80)  nq.className = 'net-quality good';
+      else if (rtt < 200)                 nq.className = 'net-quality ok';
+      else                                nq.className = 'net-quality poor';
+    }).catch(function(){});
+  }, 4000);
+}
+
+// ══════════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ══════════════════════════════════════════════════════════
+document.addEventListener('keydown', function(e) {
+  // Don't fire if typing in input
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'm' || e.key === 'M') toggleMute();
+  if (e.key === 'v' || e.key === 'V') toggleCamera();
+  if (e.key === ' ' && e.target === document.body) { e.preventDefault(); toggleMute(); }
+  if (e.key === 'Escape') {
+    closeSettings();
+    document.getElementById('endModal').classList.remove('show');
+    _reactOpen = false;
+    document.getElementById('reactionPopup').classList.remove('show');
+  }
+});
+
+// Hook into initRoom to start speaking detection
+var _origInitRoom = initRoom;
+initRoom = function() {
+  _origInitRoom();
+  startSpeakDetect();
+  addNetQuality('tile_local');
+};
+
+// Hook into createPeerConnection to monitor net quality
+var _origCPC = createPeerConnection;
+createPeerConnection = async function(peerId, peerName, peerRole, isInitiator) {
+  await _origCPC(peerId, peerName, peerRole, isInitiator);
+  var peer = _peers[peerId];
+  if (peer) monitorNetQuality(peerId, peer.pc);
+};
+
 </script>
 </body>
 </html>
