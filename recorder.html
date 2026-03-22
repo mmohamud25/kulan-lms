@@ -186,7 +186,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 <body>
 
 <div class="topbar">
-  <a href="/teacher.html" class="tb-brand">
+  <a href="#" onclick="goBack()" class="tb-brand">
     <div class="tb-icon">KI</div>
     <div><div class="tb-name">Kulan Studio</div><div class="tb-sub">Lesson Recorder</div></div>
   </a>
@@ -201,7 +201,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <div class="ph-lbl" id="pl3">Studio</div>
   </div>
   <div class="tb-right">
-    <a href="/teacher.html" class="btn-back">&larr; Portal</a>
+    <a href="#" class="btn-back" id="backBtn" onclick="goBack()">&larr; Portal</a>
   </div>
 </div>
 
@@ -325,7 +325,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
         <input  class="sv-in"  id="svMod" type="number" value="1" min="1">
 
         <label class="sv-lbl" style="margin-top:18px;">&#8675; Download Your Recording</label>
-        <button class="btn-dl btn-mp4" onclick="dlMP4()">&#8675; Download MP4</button>
+        <button class="btn-dl btn-mp4" onclick="dlMP4()">&#8675; Download Video (.webm)</button>
         <div class="yt-hint">Record &rarr; Download &rarr; Upload to YouTube &rarr; paste link below.</div>
 
         <label class="sv-lbl">YouTube / Video URL</label>
@@ -625,13 +625,14 @@ function seekTo(t){document.getElementById('previewVideo').currentTime=t;}
 function dlMP4(){
   if(!_blob){showN('No recording found.','error');return;}
   var title=(document.getElementById('svTitle').value||'kulan-lesson').replace(/[^a-zA-Z0-9]/g,'_');
-  var ext=_blob.type.includes('webm')?'webm':'mp4';
+  // Browsers record in WebM format — YouTube accepts WebM natively
+  var ext='webm';
   var pv=document.getElementById('previewVideo');
   if((_trimIn>0.5)||(_trimOut<(pv.duration||0)-0.5)){
-    showN('Downloading full recording. Trim precisely in a video editor after downloading.','info');
+    showN('Downloading full recording. Trim in a video editor if needed.','info');
   }
   var a=document.createElement('a');a.href=URL.createObjectURL(_blob);a.download=title+'.'+ext;a.click();
-  showN('Download started. Upload to YouTube, then paste the URL in the Save section.','success');
+  showN('Downloaded as .webm — YouTube accepts this format directly. Upload and paste the URL below.','success');
 }
 
 // SAVE TO COURSE
@@ -721,6 +722,27 @@ function showN(msg,type){
   var el=document.getElementById('notif');el.textContent=msg;el.className='notif show '+(type||'info');
   clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},5000);
 }
+
+// ── ROLE-AWARE BACK NAVIGATION ────────────────────────────────
+function goBack() {
+  if (!_user) { window.location.href = '/login.html'; return; }
+  var email = (_user.email||'').toLowerCase();
+  var meta  = _user.user_metadata || {};
+  if (email === 'mohamedmohammud@gmail.com' || _user.id === '34e4009e-21de-4a55-ab9d-e8c767dfe898') {
+    window.location.href = '/admin.html'; return;
+  }
+  _sb.from('users').select('role').eq('id', _user.id).single()
+    .then(function(r) {
+      var role = r.data && r.data.role;
+      if (role === 'admin') window.location.href = '/admin.html';
+      else window.location.href = '/teacher.html';
+    })
+    .catch(function() {
+      var metaRole = meta.role || '';
+      window.location.href = metaRole === 'admin' ? '/admin.html' : '/teacher.html';
+    });
+}
+
 </script>
 </body>
 </html>
