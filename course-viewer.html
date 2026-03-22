@@ -907,8 +907,13 @@ function loadAllNotes() {
 }
 
 function saveNote() {
-  if (!_viewerUser || !_currentMat) return;
-  var content = document.getElementById('notesArea').value.trim();
+  if (!_viewerUser) { showNotif('Please sign in to save notes.', 'error'); return; }
+  if (!_currentMat) { showNotif('Select a module first.', 'error'); return; }
+  var content = document.getElementById('notesArea').value;
+  var btn     = document.querySelector('.btn-save-note');
+  if (btn) { btn.disabled=true; btn.textContent='Saving...'; }
+
+  // Try upsert first; if no unique constraint, fall back to delete+insert
   _sb.from('notes').upsert({
     user_id:     _viewerUser.id,
     course_id:   _courseId,
@@ -916,18 +921,45 @@ function saveNote() {
     content:     content,
     updated_at:  new Date().toISOString()
   }, { onConflict: 'user_id,course_id,material_id' }).then(function(r) {
-    if (!r.error) {
-      _notesData[_currentMat.id] = { content: content };
-      var msg = document.getElementById('noteSavedMsg');
-      msg.classList.add('show');
-      setTimeout(function() { msg.classList.remove('show'); }, 1800);
+    if (btn) { btn.disabled=false; btn.innerHTML='&#128190; Save'; }
+    if (r.error) {
+      // Fallback: delete existing then insert fresh
+      _sb.from('notes').delete()
+        .eq('user_id',     _viewerUser.id)
+        .eq('course_id',   _courseId)
+        .eq('material_id', _currentMat.id)
+        .then(function() {
+          _sb.from('notes').insert([{
+            user_id:     _viewerUser.id,
+            course_id:   _courseId,
+            material_id: _currentMat.id,
+            content:     content,
+            updated_at:  new Date().toISOString()
+          }]).then(function(r2) {
+            if (r2.error) { showNotif('Save failed: ' + r2.error.message, 'error'); return; }
+            _notesData[_currentMat.id] = { content: content };
+            showSavedMsg();
+          });
+        });
+      return;
     }
+    _notesData[_currentMat.id] = { content: content };
+    showSavedMsg();
   });
+}
+
+function showSavedMsg() {
+  var msg = document.getElementById('noteSavedMsg');
+  if (!msg) return;
+  msg.classList.add('show');
+  clearTimeout(msg._t);
+  msg._t = setTimeout(function() { msg.classList.remove('show'); }, 2000);
 }
 
 function autoSaveNote() {
   if (!_viewerUser || !_currentMat) return;
-  var content = document.getElementById('notesArea').value.trim();
+  var ta      = document.getElementById('notesArea');
+  var content = ta ? ta.value : '';
   if (!content && !_notesData[_currentMat.id]) return;
   var existing = _notesData[_currentMat.id];
   if (existing && existing.content === content) return;
