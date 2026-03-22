@@ -4,641 +4,522 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Course Viewer — Kulan Institute</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
-var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
-var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var SUPABASE_URL='https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY='sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 </script>
+
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
+  window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-GGBZJXPLRP');
+  gtag('js',new Date());
+  gtag('config','G-GGBZJXPLRP');
 </script>
 <style>
-
-:root {
-  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
-  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
-  --bg:#0d1624; --sidebar-w:280px; --notes-w:300px;
+:root{
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --gold:#D4A843;
+  --teal:#0E7C7B; --bg:#07101c; --panel:#0d1829; --panel2:#111f30;
+  --panel3:#162236; --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+  --text:#e2e8f4; --text-mid:#6b7fa3; --text-light:#3a4f6a;
+  --success:#16a34a; --error:#ef4444;
+  --sidebar-w:280px; --panel-w:340px;
 }
-*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; height:100vh; overflow:hidden; display:flex; flex-direction:column; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
 
-#loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B1F3A,#1A3C6E);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
-.ld-logo { width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy); }
-.ld-spin { width:26px;height:26px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
-@keyframes spin { to{transform:rotate(360deg);} }
-.ld-text { font-size:14px;color:rgba(255,255,255,0.5); }
-
-#page { display:flex;flex-direction:column;height:100vh;opacity:0;transition:opacity .3s; }
-#page.visible { opacity:1; }
-
-/* TOPNAV */
-.topnav { background:#0a1420;padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;position:relative;z-index:30; }
-.tn-left { display:flex;align-items:center;gap:12px; }
-.sidebar-toggle { background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.5);font-size:20px;padding:4px;transition:color .2s; }
-.sidebar-toggle:hover { color:#fff; }
-.tn-back { display:flex;align-items:center;gap:5px;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;padding:6px 11px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);transition:all .2s; }
-.tn-back:hover { color:var(--gold);border-color:rgba(212,168,67,0.3); }
-.course-badge { font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.tn-right { display:flex;align-items:center;gap:10px; }
-.progress-wrap { display:flex;align-items:center;gap:10px; }
-.progress-track { width:120px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden; }
-.progress-fill { height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:3px;transition:width .5s; }
-.progress-txt { font-size:11px;color:rgba(255,255,255,0.4);white-space:nowrap; }
-.btn-notes-toggle { display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s; }
-.btn-notes-toggle:hover { color:#fff;border-color:rgba(255,255,255,0.25); }
-.btn-notes-toggle.active { background:rgba(212,168,67,0.1);border-color:rgba(212,168,67,0.3);color:var(--gold); }
-
-/* LAYOUT */
-.viewer-body { display:flex;flex:1;overflow:hidden; }
-
-/* MODULE SIDEBAR */
-.sidebar { width:var(--sidebar-w);flex-shrink:0;background:#060e1a;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;overflow:hidden;transition:transform .3s; }
-.sb-header { padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0; }
-.sb-course-title { font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.3; }
-.sb-course-sub { font-size:12px;color:rgba(255,255,255,0.35); }
-.module-list { flex:1;overflow-y:auto;padding:10px 0; }
-.module-list::-webkit-scrollbar { width:4px; }
-.module-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1);border-radius:2px; }
-.mod-item { display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-left:3px solid transparent;transition:all .15s; }
-.mod-item:hover { background:rgba(255,255,255,0.04); }
-.mod-item.active { background:rgba(27,174,204,0.08);border-left-color:var(--cyan); }
-.mod-item.done .mod-icon { color:var(--teal); }
-.mod-icon { font-size:16px;flex-shrink:0;width:20px;text-align:center; }
-.mod-info { flex:1;min-width:0; }
-.mod-name { font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.mod-meta { font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px; }
-.mod-item.done .mod-name { color:rgba(255,255,255,0.5); }
-
-/* CONTENT AREA */
-.content-area { flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative; }
-#viewerHeader { padding:14px 20px;background:#0a1420;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;display:none; }
-.vh-title { font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:3px; }
-.vh-meta { font-size:12px;color:rgba(255,255,255,0.35); }
-.vh-actions { display:flex;align-items:center;gap:10px;margin-top:8px; }
-.btn-dl { padding:6px 14px;border-radius:8px;border:1px solid rgba(27,174,204,0.3);background:rgba(27,174,204,0.08);color:var(--cyan);font-size:12px;font-weight:600;text-decoration:none;transition:all .2s; }
-.btn-dl:hover { background:rgba(27,174,204,0.15); }
-.btn-dl.hidden { display:none; }
-#noContent { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,0.25);text-align:center;padding:32px; }
-#noContent .nc-icon { font-size:48px;margin-bottom:14px; }
-#noContent .nc-title { font-size:16px;font-weight:600;margin-bottom:6px;color:rgba(255,255,255,0.45); }
-#noContent .nc-sub { font-size:13px;line-height:1.7; }
-#contentFrame { flex:1;width:100%;border:none;background:#fff;display:none; }
-
-/* NOTES PANEL */
-.notes-panel { width:var(--notes-w);flex-shrink:0;background:#07111c;border-left:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;transition:width .3s,opacity .3s;overflow:hidden; }
-.notes-panel.closed { width:0;opacity:0; }
-.np-header { padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;display:flex;align-items:center;justify-content:space-between; }
-.np-title { font-size:14px;font-weight:700;color:#fff; }
-.np-close { background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.3);font-size:18px;padding:2px;transition:color .2s; }
-.np-close:hover { color:#fff; }
-.np-module-name { padding:10px 18px;font-size:12px;color:rgba(255,255,255,0.35);border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.np-body { flex:1;display:flex;flex-direction:column;padding:14px 18px;gap:12px;overflow:hidden; }
-.notes-textarea { flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px;color:rgba(255,255,255,0.85);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.7;resize:none;outline:none;transition:border .2s; }
-.notes-textarea:focus { border-color:rgba(27,174,204,0.4); }
-.notes-textarea::placeholder { color:rgba(255,255,255,0.2); }
-.np-actions { display:flex;gap:8px; }
-.btn-save-note { flex:1;padding:10px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--teal),#0a5c5b);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s; }
-.btn-save-note:hover { transform:translateY(-1px);box-shadow:0 4px 12px rgba(14,124,123,0.3); }
-.btn-clear-note { padding:10px 14px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s; }
-.btn-clear-note:hover { color:#fff;border-color:rgba(255,255,255,0.25); }
-.note-saved-msg { font-size:12px;color:var(--teal);text-align:center;opacity:0;transition:opacity .3s; }
-.note-saved-msg.show { opacity:1; }
-
-/* OVERLAYS */
-.sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:19; }
-.sidebar-overlay.show { display:block; }
-
-/* RESPONSIVE */
-@media(max-width:768px) {
-  :root { --sidebar-w:300px; }
-  .sidebar { position:fixed;top:0;bottom:0;left:0;z-index:20;transform:translateX(-100%); }
-  .sidebar.open { transform:translateX(0); }
-  .sidebar-toggle { display:block; }
-  .progress-wrap { display:none; }
-  .course-badge { display:none; }
-  .notes-panel { position:fixed;top:54px;right:0;bottom:0;z-index:20;width:min(var(--notes-w),90vw);transition:transform .3s; }
-  .notes-panel.closed { width:min(var(--notes-w),90vw);opacity:1;transform:translateX(100%); }
-  .notes-panel:not(.closed) { transform:translateX(0); }
-  .btn-notes-toggle { display:flex; }
+/* ── LOADING ── */
+#loadingScreen{
+  position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;z-index:999;
 }
-@media(max-width:420px) {
-  .topnav { padding:0 12px;height:50px; }
-  :root { --sidebar-w:85vw; }
+.ld-logo{
+  width:56px;height:56px;background:linear-gradient(135deg,#D4A843,#e8c060);
+  border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:#0B1F3A;
+  box-shadow:0 8px 24px rgba(212,168,67,0.35);
 }
+.ld-dots{display:flex;gap:7px;}
+.ld-dot{
+  width:8px;height:8px;border-radius:50%;background:rgba(27,174,204,0.4);
+  animation:ldBounce 1.2s ease-in-out infinite;
+}
+.ld-dot:nth-child(2){animation-delay:.2s;}
+.ld-dot:nth-child(3){animation-delay:.4s;}
+@keyframes ldBounce{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+.ld-text{font-size:13px;color:var(--text-mid);}
 
-/* ── COMPLETION MODAL ── */
-.completion-modal {
-  display:none;position:fixed;inset:0;z-index:200;
-  align-items:center;justify-content:center;padding:20px;
-  background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);
-}
-.completion-modal.show { display:flex; }
-.cm-card {
-  background:#fff;border-radius:22px;padding:44px 40px;
-  text-align:center;max-width:420px;width:100%;
-  box-shadow:0 24px 64px rgba(0,0,0,0.3);
-  animation:cmPop .4s cubic-bezier(.175,.885,.32,1.275);
-}
-@keyframes cmPop { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
-.cm-icon  { font-size:64px;margin-bottom:16px; }
-.cm-title { font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#0B1F3A;margin-bottom:10px; }
-.cm-sub   { font-size:14px;color:#4a6080;line-height:1.7;margin-bottom:28px; }
-.cm-actions { display:flex;gap:10px;justify-content:center;flex-wrap:wrap; }
-.cm-btn-cert { padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,#D4A843,#e8c060);border:none;color:#0B1F3A;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none; }
-.cm-btn-dash { padding:12px 20px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.15);background:transparent;color:#4a6080;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none; }
+/* ── PAGE ── */
+#page{display:none;flex-direction:column;height:100vh;overflow:hidden;}
+#page.visible{display:flex;}
 
-
-/* ── MARK COMPLETE BUTTON ── */
-.btn-mark-complete {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:8px 16px; border-radius:8px; border:none; cursor:pointer;
-  background:linear-gradient(135deg,#0E7C7B,#0a5c5b);
-  color:#fff; font-family:'DM Sans',sans-serif;
-  font-size:13px; font-weight:700; transition:all .2s;
+/* ── TOP NAV ── */
+.topnav{
+  height:52px;background:var(--panel);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:10;
 }
-.btn-mark-complete:hover { transform:translateY(-1px); box-shadow:0 5px 14px rgba(14,124,123,0.35); }
-.btn-mark-done {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:8px 16px; border-radius:8px; border:none;
-  background:rgba(34,197,94,0.12); color:#16a34a;
-  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700;
-  cursor:default; opacity:.8;
-}
-
-
-/* ── VIDEO PLAYER ── */
-.video-wrap {
-  display:none; flex-direction:column; width:100%; height:100%;
-  background:#000; position:relative;
-}
-.video-wrap.active { display:flex; }
-#videoEl {
-  flex:1; width:100%; outline:none; background:#000;
-  min-height:0;
-}
-.video-controls {
-  background:linear-gradient(0deg,rgba(0,0,0,0.9),transparent);
-  padding:10px 14px 12px; display:flex; flex-direction:column; gap:8px;
+.sidebar-toggle{
+  width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;color:var(--text-mid);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
   flex-shrink:0;
 }
-.vc-progress { position:relative; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; cursor:pointer; transition:height .15s; }
-.vc-progress:hover { height:6px; }
-.vc-progress-fill { height:100%; background:var(--cyan); border-radius:2px; pointer-events:none; }
-.vc-progress-buf  { height:100%; background:rgba(255,255,255,0.2); border-radius:2px; position:absolute; top:0; left:0; pointer-events:none; }
-.vc-row { display:flex; align-items:center; gap:10px; }
-.vc-btn { background:none; border:none; color:#fff; cursor:pointer; padding:4px; font-size:16px; transition:opacity .2s; line-height:1; }
-.vc-btn:hover { opacity:.7; }
-.vc-time { font-size:12px; color:rgba(255,255,255,0.6); min-width:90px; }
-.vc-vol-wrap { display:flex; align-items:center; gap:6px; }
-.vc-vol { width:70px; accent-color:var(--cyan); cursor:pointer; }
-.vc-speed { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; padding:3px 8px; cursor:pointer; }
-.vc-speed:focus { outline:none; }
-.vc-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
-
-
-/* ── DISCUSSION PANEL ── */
-.disc-tabs { display:flex; border-bottom:1px solid rgba(255,255,255,0.07); flex-shrink:0; }
-.disc-tab {
-  flex:1; padding:10px 0; text-align:center; font-size:12px; font-weight:700;
-  color:rgba(255,255,255,0.4); cursor:pointer; border:none; background:none;
-  border-bottom:2px solid transparent; transition:all .2s; font-family:'DM Sans',sans-serif;
+.sidebar-toggle:hover{background:var(--panel2);color:var(--text);}
+.tn-back{
+  display:flex;align-items:center;gap:6px;text-decoration:none;
+  color:var(--text-mid);font-size:13px;font-weight:600;transition:color .2s;
+  white-space:nowrap;
 }
-.disc-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
-.disc-scope-label { font-size:10px; color:rgba(255,255,255,0.3); padding:6px 14px 0; text-transform:uppercase; letter-spacing:.6px; flex-shrink:0; }
-
-.disc-list { flex:1; overflow-y:auto; padding:10px 12px; display:flex; flex-direction:column; gap:8px; min-height:0; }
-.disc-empty { text-align:center; padding:32px 16px; color:rgba(255,255,255,0.25); font-size:12px; line-height:1.9; }
-
-/* Comment card */
-.disc-comment {
-  background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 12px;
-  border:1px solid rgba(255,255,255,0.06); transition:border .2s;
+.tn-back:hover{color:var(--cyan);}
+.course-badge{
+  background:rgba(27,174,204,0.1);border:1px solid rgba(27,174,204,0.2);
+  color:var(--cyan);font-size:11px;font-weight:700;padding:4px 10px;
+  border-radius:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:200px;
 }
-.disc-comment.pinned { border-color:rgba(212,168,67,0.3); background:rgba(212,168,67,0.05); }
-.disc-comment-header { display:flex; align-items:center; gap:7px; margin-bottom:6px; }
-.disc-avatar {
-  width:26px; height:26px; border-radius:50%; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  font-size:11px; font-weight:700; color:#fff;
+.tn-center{flex:1;display:flex;align-items:center;justify-content:center;padding:0 12px;}
+.progress-wrap{display:flex;align-items:center;gap:8px;}
+.progress-track{
+  width:140px;height:5px;background:rgba(255,255,255,0.08);
+  border-radius:3px;overflow:hidden;
 }
-.disc-avatar.student { background:linear-gradient(135deg,#1BAECC,#0E7C7B); }
-.disc-avatar.teacher { background:linear-gradient(135deg,#D4A843,#b8860b); }
-.disc-avatar.admin   { background:linear-gradient(135deg,#7c3aed,#5b21b6); }
-.disc-author { font-size:12px; font-weight:700; color:rgba(255,255,255,0.85); }
-.disc-role-badge {
-  font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
-  padding:2px 6px; border-radius:4px;
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:3px;transition:width .5s ease;}
+.progress-txt{font-size:11px;color:var(--text-mid);white-space:nowrap;font-weight:600;}
+.tn-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.tn-btn{
+  height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;color:var(--text-mid);font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
 }
-.disc-role-badge.teacher { background:rgba(212,168,67,0.15); color:var(--gold); }
-.disc-role-badge.admin   { background:rgba(124,58,237,0.15); color:#a78bfa; }
-.disc-pin-badge { font-size:9px; color:var(--gold); margin-left:auto; }
-.disc-time { font-size:10px; color:rgba(255,255,255,0.25); margin-left:auto; }
-.disc-body { font-size:13px; color:rgba(255,255,255,0.75); line-height:1.6; margin-bottom:8px; word-break:break-word; }
-.disc-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-.disc-action-btn {
-  background:none; border:none; color:rgba(255,255,255,0.3); font-size:11px; font-weight:600;
-  cursor:pointer; padding:3px 6px; border-radius:5px; transition:all .2s;
-  font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:3px;
+.tn-btn:hover{background:var(--panel2);color:var(--text);border-color:var(--border2);}
+.tn-btn.active{background:rgba(27,174,204,0.1);border-color:rgba(27,174,204,0.3);color:var(--cyan);}
+.tn-btn.disc-btn.active{background:rgba(212,168,67,0.1);border-color:rgba(212,168,67,0.3);color:var(--gold);}
+
+/* ── VIEWER BODY ── */
+.viewer-body{flex:1;display:flex;overflow:hidden;position:relative;min-height:0;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;background:var(--panel);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;
+  overflow:hidden;transition:transform .3s;z-index:5;
 }
-.disc-action-btn:hover { color:rgba(255,255,255,0.7); background:rgba(255,255,255,0.06); }
-.disc-action-btn.liked { color:var(--cyan); }
-.disc-action-btn.pin-btn:hover { color:var(--gold); }
-.disc-action-btn.del-btn:hover { color:#ef4444; }
-
-/* Replies */
-.disc-replies { margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; gap:6px; }
-.disc-reply { display:flex; gap:7px; }
-.disc-reply-line { width:2px; background:rgba(255,255,255,0.06); flex-shrink:0; border-radius:1px; }
-.disc-reply-body { flex:1; }
-.disc-reply-header { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
-.disc-reply-author { font-size:11px; font-weight:700; color:rgba(255,255,255,0.7); }
-.disc-reply-time   { font-size:10px; color:rgba(255,255,255,0.2); margin-left:auto; }
-.disc-reply-text   { font-size:12px; color:rgba(255,255,255,0.6); line-height:1.5; word-break:break-word; }
-
-/* Reply compose */
-.disc-reply-compose { margin-top:8px; display:none; }
-.disc-reply-compose.show { display:flex; gap:6px; }
-.disc-reply-input {
-  flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
-  border-radius:7px; padding:7px 10px; color:#fff; font-family:'DM Sans',sans-serif;
-  font-size:12px; outline:none; resize:none; transition:border .2s;
+.sb-header{
+  padding:16px;border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.disc-reply-input:focus { border-color:rgba(27,174,204,0.4); }
-.disc-reply-send {
-  padding:7px 12px; border-radius:7px; background:var(--cyan); border:none;
-  color:#fff; font-size:12px; font-weight:700; cursor:pointer; align-self:flex-end;
-  font-family:'DM Sans',sans-serif; transition:all .2s;
+.sb-course-title{
+  font-family:'Playfair Display',serif;font-size:15px;font-weight:700;
+  color:var(--text);line-height:1.4;margin-bottom:4px;
 }
-.disc-reply-send:hover { background:#18a0b8; }
+.sb-meta{font-size:11px;color:var(--text-mid);}
+.module-list{flex:1;overflow-y:auto;padding:8px;}
+.module-list::-webkit-scrollbar{width:4px;}
+.module-list::-webkit-scrollbar-track{background:transparent;}
+.module-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 
-/* Compose box */
-.disc-compose {
-  border-top:1px solid rgba(255,255,255,0.07); padding:10px 12px;
-  flex-shrink:0; background:#07111c;
+/* Module items */
+.mod-item{
+  display:flex;align-items:center;gap:10px;padding:10px 10px;
+  border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:2px;
+  border:1px solid transparent;
 }
-.disc-input {
-  width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
-  border-radius:9px; padding:9px 12px; color:#fff; font-family:'DM Sans',sans-serif;
-  font-size:13px; outline:none; resize:none; transition:border .2s; margin-bottom:7px;
-}
-.disc-input:focus { border-color:rgba(27,174,204,0.35); }
-.disc-compose-actions { display:flex; align-items:center; justify-content:space-between; }
-.disc-char-count { font-size:10px; color:rgba(255,255,255,0.2); }
-.disc-submit-btn {
-  padding:7px 18px; border-radius:8px; background:linear-gradient(135deg,var(--cyan),var(--teal));
-  border:none; color:#fff; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700;
-  cursor:pointer; transition:all .2s;
-}
-.disc-submit-btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(27,174,204,0.3); }
-.disc-submit-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
-
-
-
-:root {
-  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
-  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
-  --bg:#0d1624; --sidebar-w:280px; --notes-w:300px;
-}
-*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; height:100vh; overflow:hidden; display:flex; flex-direction:column; }
-
-#loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B1F3A,#1A3C6E);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
-.ld-logo { width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy); }
-.ld-spin { width:26px;height:26px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
-@keyframes spin { to{transform:rotate(360deg);} }
-.ld-text { font-size:14px;color:rgba(255,255,255,0.5); }
-
-#page { display:flex;flex-direction:column;height:100vh;opacity:0;transition:opacity .3s; }
-#page.visible { opacity:1; }
-
-/* TOPNAV */
-.topnav { background:#0a1420;padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;position:relative;z-index:30; }
-.tn-left { display:flex;align-items:center;gap:12px; }
-.sidebar-toggle { background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.5);font-size:20px;padding:4px;transition:color .2s; }
-.sidebar-toggle:hover { color:#fff; }
-.tn-back { display:flex;align-items:center;gap:5px;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;padding:6px 11px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);transition:all .2s; }
-.tn-back:hover { color:var(--gold);border-color:rgba(212,168,67,0.3); }
-.course-badge { font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.tn-right { display:flex;align-items:center;gap:10px; }
-.progress-wrap { display:flex;align-items:center;gap:10px; }
-.progress-track { width:120px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden; }
-.progress-fill { height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:3px;transition:width .5s; }
-.progress-txt { font-size:11px;color:rgba(255,255,255,0.4);white-space:nowrap; }
-.btn-notes-toggle { display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s; }
-.btn-notes-toggle:hover { color:#fff;border-color:rgba(255,255,255,0.25); }
-.btn-notes-toggle.active { background:rgba(212,168,67,0.1);border-color:rgba(212,168,67,0.3);color:var(--gold); }
-
-/* LAYOUT */
-.viewer-body { display:flex;flex:1;overflow:hidden; }
-
-/* MODULE SIDEBAR */
-.sidebar { width:var(--sidebar-w);flex-shrink:0;background:#060e1a;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;overflow:hidden;transition:transform .3s; }
-.sb-header { padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0; }
-.sb-course-title { font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.3; }
-.sb-course-sub { font-size:12px;color:rgba(255,255,255,0.35); }
-.module-list { flex:1;overflow-y:auto;padding:10px 0; }
-.module-list::-webkit-scrollbar { width:4px; }
-.module-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1);border-radius:2px; }
-.mod-item { display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-left:3px solid transparent;transition:all .15s; }
-.mod-item:hover { background:rgba(255,255,255,0.04); }
-.mod-item.active { background:rgba(27,174,204,0.08);border-left-color:var(--cyan); }
-.mod-item.done .mod-icon { color:var(--teal); }
-.mod-icon { font-size:16px;flex-shrink:0;width:20px;text-align:center; }
-.mod-info { flex:1;min-width:0; }
-.mod-name { font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.mod-meta { font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px; }
-.mod-item.done .mod-name { color:rgba(255,255,255,0.5); }
-
-/* CONTENT AREA */
-.content-area { flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative; }
-#viewerHeader { padding:14px 20px;background:#0a1420;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;display:none; }
-.vh-title { font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:3px; }
-.vh-meta { font-size:12px;color:rgba(255,255,255,0.35); }
-.vh-actions { display:flex;align-items:center;gap:10px;margin-top:8px; }
-.btn-dl { padding:6px 14px;border-radius:8px;border:1px solid rgba(27,174,204,0.3);background:rgba(27,174,204,0.08);color:var(--cyan);font-size:12px;font-weight:600;text-decoration:none;transition:all .2s; }
-.btn-dl:hover { background:rgba(27,174,204,0.15); }
-.btn-dl.hidden { display:none; }
-#noContent { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,0.25);text-align:center;padding:32px; }
-#noContent .nc-icon { font-size:48px;margin-bottom:14px; }
-#noContent .nc-title { font-size:16px;font-weight:600;margin-bottom:6px;color:rgba(255,255,255,0.45); }
-#noContent .nc-sub { font-size:13px;line-height:1.7; }
-#contentFrame { flex:1;width:100%;border:none;background:#fff;display:none; }
-
-/* NOTES PANEL */
-.notes-panel { width:var(--notes-w);flex-shrink:0;background:#07111c;border-left:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;transition:width .3s,opacity .3s;overflow:hidden; }
-.notes-panel.closed { width:0;opacity:0; }
-.np-header { padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;display:flex;align-items:center;justify-content:space-between; }
-.np-title { font-size:14px;font-weight:700;color:#fff; }
-.np-close { background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.3);font-size:18px;padding:2px;transition:color .2s; }
-.np-close:hover { color:#fff; }
-.np-module-name { padding:10px 18px;font-size:12px;color:rgba(255,255,255,0.35);border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.np-body { flex:1;display:flex;flex-direction:column;padding:14px 18px;gap:12px;overflow:hidden; }
-.notes-textarea { flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px;color:rgba(255,255,255,0.85);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.7;resize:none;outline:none;transition:border .2s; }
-.notes-textarea:focus { border-color:rgba(27,174,204,0.4); }
-.notes-textarea::placeholder { color:rgba(255,255,255,0.2); }
-.np-actions { display:flex;gap:8px; }
-.btn-save-note { flex:1;padding:10px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--teal),#0a5c5b);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s; }
-.btn-save-note:hover { transform:translateY(-1px);box-shadow:0 4px 12px rgba(14,124,123,0.3); }
-.btn-clear-note { padding:10px 14px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s; }
-.btn-clear-note:hover { color:#fff;border-color:rgba(255,255,255,0.25); }
-.note-saved-msg { font-size:12px;color:var(--teal);text-align:center;opacity:0;transition:opacity .3s; }
-.note-saved-msg.show { opacity:1; }
-
-/* OVERLAYS */
-.sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:19; }
-.sidebar-overlay.show { display:block; }
-
-/* RESPONSIVE */
-@media(max-width:768px) {
-  :root { --sidebar-w:300px; }
-  .sidebar { position:fixed;top:0;bottom:0;left:0;z-index:20;transform:translateX(-100%); }
-  .sidebar.open { transform:translateX(0); }
-  .sidebar-toggle { display:block; }
-  .progress-wrap { display:none; }
-  .course-badge { display:none; }
-  .notes-panel { position:fixed;top:54px;right:0;bottom:0;z-index:20;width:min(var(--notes-w),90vw);transition:transform .3s; }
-  .notes-panel.closed { width:min(var(--notes-w),90vw);opacity:1;transform:translateX(100%); }
-  .notes-panel:not(.closed) { transform:translateX(0); }
-  .btn-notes-toggle { display:flex; }
-}
-@media(max-width:420px) {
-  .topnav { padding:0 12px;height:50px; }
-  :root { --sidebar-w:85vw; }
-}
-
-/* ── COMPLETION MODAL ── */
-.completion-modal {
-  display:none;position:fixed;inset:0;z-index:200;
-  align-items:center;justify-content:center;padding:20px;
-  background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);
-}
-.completion-modal.show { display:flex; }
-.cm-card {
-  background:#fff;border-radius:22px;padding:44px 40px;
-  text-align:center;max-width:420px;width:100%;
-  box-shadow:0 24px 64px rgba(0,0,0,0.3);
-  animation:cmPop .4s cubic-bezier(.175,.885,.32,1.275);
-}
-@keyframes cmPop { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
-.cm-icon  { font-size:64px;margin-bottom:16px; }
-.cm-title { font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#0B1F3A;margin-bottom:10px; }
-.cm-sub   { font-size:14px;color:#4a6080;line-height:1.7;margin-bottom:28px; }
-.cm-actions { display:flex;gap:10px;justify-content:center;flex-wrap:wrap; }
-.cm-btn-cert { padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,#D4A843,#e8c060);border:none;color:#0B1F3A;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none; }
-.cm-btn-dash { padding:12px 20px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.15);background:transparent;color:#4a6080;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none; }
-
-
-/* ── MARK COMPLETE BUTTON ── */
-.btn-mark-complete {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:8px 16px; border-radius:8px; border:none; cursor:pointer;
-  background:linear-gradient(135deg,#0E7C7B,#0a5c5b);
-  color:#fff; font-family:'DM Sans',sans-serif;
-  font-size:13px; font-weight:700; transition:all .2s;
-}
-.btn-mark-complete:hover { transform:translateY(-1px); box-shadow:0 5px 14px rgba(14,124,123,0.35); }
-.btn-mark-done {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:8px 16px; border-radius:8px; border:none;
-  background:rgba(34,197,94,0.12); color:#16a34a;
-  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700;
-  cursor:default; opacity:.8;
-}
-
-
-/* ── VIDEO PLAYER ── */
-.video-wrap {
-  display:none; flex-direction:column; width:100%; height:100%;
-  background:#000; position:relative;
-}
-.video-wrap.active { display:flex; }
-#videoEl {
-  flex:1; width:100%; outline:none; background:#000;
-  min-height:0;
-}
-.video-controls {
-  background:linear-gradient(0deg,rgba(0,0,0,0.9),transparent);
-  padding:10px 14px 12px; display:flex; flex-direction:column; gap:8px;
+.mod-item:hover{background:rgba(255,255,255,0.04);}
+.mod-item.active{background:rgba(27,174,204,0.08);border-color:rgba(27,174,204,0.2);}
+.mod-item.done .mod-icon{color:var(--success);}
+.mod-icon{
+  width:30px;height:30px;border-radius:8px;background:var(--panel2);
+  display:flex;align-items:center;justify-content:center;font-size:14px;
   flex-shrink:0;
 }
-.vc-progress { position:relative; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; cursor:pointer; transition:height .15s; }
-.vc-progress:hover { height:6px; }
-.vc-progress-fill { height:100%; background:var(--cyan); border-radius:2px; pointer-events:none; }
-.vc-progress-buf  { height:100%; background:rgba(255,255,255,0.2); border-radius:2px; position:absolute; top:0; left:0; pointer-events:none; }
-.vc-row { display:flex; align-items:center; gap:10px; }
-.vc-btn { background:none; border:none; color:#fff; cursor:pointer; padding:4px; font-size:16px; transition:opacity .2s; line-height:1; }
-.vc-btn:hover { opacity:.7; }
-.vc-time { font-size:12px; color:rgba(255,255,255,0.6); min-width:90px; }
-.vc-vol-wrap { display:flex; align-items:center; gap:6px; }
-.vc-vol { width:70px; accent-color:var(--cyan); cursor:pointer; }
-.vc-speed { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; padding:3px 8px; cursor:pointer; }
-.vc-speed:focus { outline:none; }
-.vc-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+.mod-item.active .mod-icon{background:rgba(27,174,204,0.12);}
+.mod-info{flex:1;min-width:0;}
+.mod-name{font-size:12px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;}
+.mod-item.done .mod-name{color:var(--text-mid);}
+.mod-meta{font-size:10px;color:var(--text-light);margin-top:2px;}
+.mod-check{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;}
+.mod-item.done .mod-check{background:var(--success);border-color:var(--success);color:#fff;}
 
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:4;
+}
+
+/* ── CONTENT AREA ── */
+.content-area{
+  flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;
+  background:var(--bg);
+}
+
+/* Viewer header */
+#viewerHeader{
+  padding:12px 20px;background:var(--panel);border-bottom:1px solid var(--border);
+  display:none;align-items:center;gap:12px;flex-shrink:0;
+}
+#viewerHeader.show{display:flex;}
+.vh-info{flex:1;min-width:0;}
+.vh-title{font-size:15px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.vh-meta{font-size:11px;color:var(--text-mid);margin-top:2px;}
+.vh-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.btn-mark-complete{
+  padding:8px 18px;border-radius:9px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+  transition:all .2s;display:inline-flex;align-items:center;gap:6px;
+}
+.btn-mark-complete:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(27,174,204,0.35);}
+.btn-mark-done{
+  padding:8px 18px;border-radius:9px;border:none;cursor:default;
+  background:rgba(22,163,74,0.12);color:var(--success);
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+  border:1px solid rgba(22,163,74,0.2);
+}
+.btn-dl{
+  padding:8px 14px;border-radius:9px;border:1px solid var(--border);
+  background:transparent;color:var(--text-mid);font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:600;text-decoration:none;transition:all .2s;
+}
+.btn-dl:hover{border-color:var(--border2);color:var(--text);}
+.btn-dl.hidden{display:none;}
+
+/* No content */
+#noContent{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:14px;padding:40px;
+}
+.nc-icon{font-size:56px;opacity:.25;}
+.nc-title{font-family:'Playfair Display',serif;font-size:20px;color:rgba(255,255,255,0.4);}
+.nc-sub{font-size:13px;color:var(--text-light);text-align:center;max-width:260px;line-height:1.7;}
+
+/* ── VIDEO PLAYER ── */
+.video-wrap{
+  display:none;flex:1;flex-direction:column;background:#000;min-height:0;
+}
+.video-wrap.active{display:flex;}
+#videoEl{flex:1;width:100%;outline:none;background:#000;min-height:0;}
+.video-controls{
+  background:linear-gradient(0deg,rgba(0,0,0,0.92),transparent);
+  padding:8px 14px 10px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;
+}
+.vc-progress{
+  height:4px;background:rgba(255,255,255,0.12);border-radius:2px;
+  cursor:pointer;position:relative;transition:height .15s;
+}
+.vc-progress:hover{height:6px;}
+.vc-progress-buf{position:absolute;top:0;left:0;height:100%;background:rgba(255,255,255,0.15);border-radius:2px;}
+.vc-progress-fill{position:absolute;top:0;left:0;height:100%;background:var(--cyan);border-radius:2px;pointer-events:none;}
+.vc-row{display:flex;align-items:center;gap:8px;}
+.vc-btn{background:none;border:none;color:#fff;cursor:pointer;padding:4px;font-size:15px;transition:opacity .2s;line-height:1;}
+.vc-btn:hover{opacity:.7;}
+.vc-time{font-size:11px;color:rgba(255,255,255,0.5);min-width:90px;}
+.vc-vol-wrap{display:flex;align-items:center;gap:5px;}
+.vc-vol{width:60px;accent-color:var(--cyan);cursor:pointer;}
+.vc-speed{
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+  border-radius:5px;color:#fff;font-size:11px;font-weight:700;
+  padding:3px 7px;cursor:pointer;font-family:'DM Sans',sans-serif;
+}
+.vc-right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+
+/* Iframe */
+#contentFrame{
+  flex:1;width:100%;border:none;display:none;min-height:0;
+}
+#contentFrame.active{display:block;}
+
+/* ── SLIDE PANELS (Notes + Discussion) ── */
+.side-panel{
+  position:fixed;top:52px;right:0;bottom:0;width:var(--panel-w);
+  background:var(--panel);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;transform:translateX(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:15;
+  box-shadow:-8px 0 32px rgba(0,0,0,0.4);
+}
+.side-panel.open{transform:translateX(0);}
+.sp-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.sp-title{font-size:14px;font-weight:700;color:var(--text);}
+.sp-close{
+  width:28px;height:28px;border-radius:7px;border:1px solid var(--border);
+  background:transparent;color:var(--text-mid);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.sp-close:hover{background:var(--panel2);color:var(--text);}
+
+/* ── NOTES PANEL ── */
+.notes-body{flex:1;display:flex;flex-direction:column;padding:14px;gap:10px;overflow:hidden;}
+.notes-mod-label{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--text-mid);
+}
+.notes-textarea{
+  flex:1;background:var(--panel2);border:1.5px solid var(--border);
+  border-radius:10px;padding:12px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.7;
+  resize:none;outline:none;transition:border .2s;min-height:0;
+}
+.notes-textarea:focus{border-color:rgba(27,174,204,0.3);}
+.notes-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+.btn-save-note{
+  flex:1;padding:9px;border-radius:9px;border:none;
+  background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.btn-save-note:hover{transform:translateY(-1px);}
+.btn-clear-note{
+  padding:9px 14px;border-radius:9px;border:1px solid var(--border);
+  background:transparent;color:var(--text-mid);font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;
+}
+.btn-clear-note:hover{border-color:var(--border2);color:var(--text);}
+.note-saved{
+  font-size:11px;color:var(--success);font-weight:700;
+  opacity:0;transition:opacity .3s;
+}
+.note-saved.show{opacity:1;}
 
 /* ── DISCUSSION PANEL ── */
-.disc-tabs { display:flex; border-bottom:1px solid rgba(255,255,255,0.07); flex-shrink:0; }
-.disc-tab {
-  flex:1; padding:10px 0; text-align:center; font-size:12px; font-weight:700;
-  color:rgba(255,255,255,0.4); cursor:pointer; border:none; background:none;
-  border-bottom:2px solid transparent; transition:all .2s; font-family:'DM Sans',sans-serif;
+.disc-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
+.disc-tab{
+  flex:1;padding:10px 0;text-align:center;font-size:12px;font-weight:700;
+  color:var(--text-mid);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .2s;font-family:'DM Sans',sans-serif;
 }
-.disc-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
-.disc-scope-label { font-size:10px; color:rgba(255,255,255,0.3); padding:6px 14px 0; text-transform:uppercase; letter-spacing:.6px; flex-shrink:0; }
-
-.disc-list { flex:1; overflow-y:auto; padding:10px 12px; display:flex; flex-direction:column; gap:8px; min-height:0; }
-.disc-empty { text-align:center; padding:32px 16px; color:rgba(255,255,255,0.25); font-size:12px; line-height:1.9; }
+.disc-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.disc-list{
+  flex:1;overflow-y:auto;padding:10px;display:flex;
+  flex-direction:column;gap:8px;min-height:0;
+}
+.disc-list::-webkit-scrollbar{width:3px;}
+.disc-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.disc-empty{
+  text-align:center;padding:40px 16px;color:var(--text-light);
+  font-size:12px;line-height:2;
+}
 
 /* Comment card */
-.disc-comment {
-  background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 12px;
-  border:1px solid rgba(255,255,255,0.06); transition:border .2s;
+.disc-card{
+  background:var(--panel2);border-radius:10px;padding:10px 12px;
+  border:1px solid var(--border);transition:border .2s;
 }
-.disc-comment.pinned { border-color:rgba(212,168,67,0.3); background:rgba(212,168,67,0.05); }
-.disc-comment-header { display:flex; align-items:center; gap:7px; margin-bottom:6px; }
-.disc-avatar {
-  width:26px; height:26px; border-radius:50%; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  font-size:11px; font-weight:700; color:#fff;
+.disc-card.pinned{border-color:rgba(212,168,67,0.25);background:rgba(212,168,67,0.04);}
+.disc-card-head{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap;}
+.disc-av{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;
 }
-.disc-avatar.student { background:linear-gradient(135deg,#1BAECC,#0E7C7B); }
-.disc-avatar.teacher { background:linear-gradient(135deg,#D4A843,#b8860b); }
-.disc-avatar.admin   { background:linear-gradient(135deg,#7c3aed,#5b21b6); }
-.disc-author { font-size:12px; font-weight:700; color:rgba(255,255,255,0.85); }
-.disc-role-badge {
-  font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
-  padding:2px 6px; border-radius:4px;
+.disc-av.student{background:linear-gradient(135deg,#1BAECC,#0E7C7B);}
+.disc-av.teacher{background:linear-gradient(135deg,#D4A843,#a0720f);}
+.disc-av.admin  {background:linear-gradient(135deg,#7c3aed,#5b21b6);}
+.disc-author{font-size:12px;font-weight:700;color:var(--text);}
+.role-badge{
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  padding:2px 6px;border-radius:4px;
 }
-.disc-role-badge.teacher { background:rgba(212,168,67,0.15); color:var(--gold); }
-.disc-role-badge.admin   { background:rgba(124,58,237,0.15); color:#a78bfa; }
-.disc-pin-badge { font-size:9px; color:var(--gold); margin-left:auto; }
-.disc-time { font-size:10px; color:rgba(255,255,255,0.25); margin-left:auto; }
-.disc-body { font-size:13px; color:rgba(255,255,255,0.75); line-height:1.6; margin-bottom:8px; word-break:break-word; }
-.disc-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-.disc-action-btn {
-  background:none; border:none; color:rgba(255,255,255,0.3); font-size:11px; font-weight:600;
-  cursor:pointer; padding:3px 6px; border-radius:5px; transition:all .2s;
-  font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:3px;
+.role-badge.teacher{background:rgba(212,168,67,0.12);color:var(--gold);}
+.role-badge.admin  {background:rgba(124,58,237,0.12);color:#a78bfa;}
+.pin-badge{font-size:10px;color:var(--gold);margin-left:auto;}
+.disc-time{font-size:10px;color:var(--text-light);margin-left:auto;}
+.disc-body{font-size:12px;color:rgba(255,255,255,0.75);line-height:1.65;margin-bottom:8px;word-break:break-word;}
+.disc-acts{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.dact{
+  background:none;border:none;color:var(--text-light);font-size:11px;font-weight:600;
+  cursor:pointer;padding:3px 7px;border-radius:5px;transition:all .2s;
+  font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:3px;
 }
-.disc-action-btn:hover { color:rgba(255,255,255,0.7); background:rgba(255,255,255,0.06); }
-.disc-action-btn.liked { color:var(--cyan); }
-.disc-action-btn.pin-btn:hover { color:var(--gold); }
-.disc-action-btn.del-btn:hover { color:#ef4444; }
+.dact:hover{color:var(--text-mid);background:rgba(255,255,255,0.05);}
+.dact.liked{color:var(--cyan);}
+.dact.pin:hover{color:var(--gold);}
+.dact.del:hover{color:var(--error);}
 
 /* Replies */
-.disc-replies { margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; gap:6px; }
-.disc-reply { display:flex; gap:7px; }
-.disc-reply-line { width:2px; background:rgba(255,255,255,0.06); flex-shrink:0; border-radius:1px; }
-.disc-reply-body { flex:1; }
-.disc-reply-header { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
-.disc-reply-author { font-size:11px; font-weight:700; color:rgba(255,255,255,0.7); }
-.disc-reply-time   { font-size:10px; color:rgba(255,255,255,0.2); margin-left:auto; }
-.disc-reply-text   { font-size:12px; color:rgba(255,255,255,0.6); line-height:1.5; word-break:break-word; }
+.disc-replies{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column;gap:6px;}
+.disc-reply{display:flex;gap:7px;}
+.reply-line{width:2px;background:rgba(255,255,255,0.05);flex-shrink:0;border-radius:1px;}
+.reply-body{flex:1;}
+.reply-head{display:flex;align-items:center;gap:5px;margin-bottom:3px;flex-wrap:wrap;}
+.reply-author{font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);}
+.reply-time{font-size:10px;color:var(--text-light);margin-left:auto;}
+.reply-text{font-size:12px;color:rgba(255,255,255,0.55);line-height:1.55;word-break:break-word;}
 
 /* Reply compose */
-.disc-reply-compose { margin-top:8px; display:none; }
-.disc-reply-compose.show { display:flex; gap:6px; }
-.disc-reply-input {
-  flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
-  border-radius:7px; padding:7px 10px; color:#fff; font-family:'DM Sans',sans-serif;
-  font-size:12px; outline:none; resize:none; transition:border .2s;
+.reply-compose{margin-top:7px;display:none;gap:6px;}
+.reply-compose.open{display:flex;}
+.reply-input{
+  flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border2);
+  border-radius:7px;padding:7px 10px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:12px;outline:none;
+  resize:none;transition:border .2s;
 }
-.disc-reply-input:focus { border-color:rgba(27,174,204,0.4); }
-.disc-reply-send {
-  padding:7px 12px; border-radius:7px; background:var(--cyan); border:none;
-  color:#fff; font-size:12px; font-weight:700; cursor:pointer; align-self:flex-end;
-  font-family:'DM Sans',sans-serif; transition:all .2s;
+.reply-input:focus{border-color:rgba(27,174,204,0.35);}
+.reply-send{
+  padding:7px 12px;border-radius:7px;background:var(--cyan);border:none;
+  color:#fff;font-size:12px;font-weight:700;cursor:pointer;align-self:flex-end;
+  font-family:'DM Sans',sans-serif;transition:all .2s;
 }
-.disc-reply-send:hover { background:#18a0b8; }
+.reply-send:hover{background:#18a0b8;}
 
-/* Compose box */
-.disc-compose {
-  border-top:1px solid rgba(255,255,255,0.07); padding:10px 12px;
-  flex-shrink:0; background:#07111c;
+/* Compose */
+.disc-compose{
+  border-top:1px solid var(--border);padding:10px;flex-shrink:0;
+  background:var(--panel);
 }
-.disc-input {
-  width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
-  border-radius:9px; padding:9px 12px; color:#fff; font-family:'DM Sans',sans-serif;
-  font-size:13px; outline:none; resize:none; transition:border .2s; margin-bottom:7px;
+.disc-compose-input{
+  width:100%;background:var(--panel2);border:1.5px solid var(--border);
+  border-radius:9px;padding:9px 12px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:13px;outline:none;
+  resize:none;transition:border .2s;margin-bottom:7px;
 }
-.disc-input:focus { border-color:rgba(27,174,204,0.35); }
-.disc-compose-actions { display:flex; align-items:center; justify-content:space-between; }
-.disc-char-count { font-size:10px; color:rgba(255,255,255,0.2); }
-.disc-submit-btn {
-  padding:7px 18px; border-radius:8px; background:linear-gradient(135deg,var(--cyan),var(--teal));
-  border:none; color:#fff; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700;
-  cursor:pointer; transition:all .2s;
+.disc-compose-input:focus{border-color:rgba(27,174,204,0.3);}
+.disc-compose-row{display:flex;align-items:center;justify-content:space-between;}
+.disc-char{font-size:10px;color:var(--text-light);}
+.disc-post-btn{
+  padding:7px 18px;border-radius:8px;
+  background:linear-gradient(135deg,var(--cyan),var(--teal));
+  border:none;color:#fff;font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;
 }
-.disc-submit-btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(27,174,204,0.3); }
-.disc-submit-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+.disc-post-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(27,174,204,0.3);}
+.disc-post-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 
+/* ── COMPLETION MODAL ── */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  display:none;align-items:center;justify-content:center;z-index:100;
+  backdrop-filter:blur(6px);
+}
+.modal-bg.show{display:flex;}
+.modal-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:20px;padding:36px;max-width:420px;width:calc(100% - 40px);
+  text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.5);
+  animation:popIn .35s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-emoji{font-size:54px;margin-bottom:16px;}
+.modal-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:8px;}
+.modal-sub{font-size:13px;color:var(--text-mid);line-height:1.7;margin-bottom:24px;}
+.modal-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.modal-btn-primary{
+  padding:11px 28px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,var(--gold),var(--teal));
+  color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;text-decoration:none;transition:all .2s;
+}
+.modal-btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(14,124,123,0.4);}
+.modal-btn-sec{
+  padding:11px 20px;border-radius:10px;border:1.5px solid var(--border2);
+  background:transparent;color:var(--text-mid);font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;
+}
+.modal-btn-sec:hover{color:var(--text);border-color:var(--text-mid);}
 
+/* ── NOTIF TOAST ── */
+.notif{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--panel2);border:1px solid var(--border2);border-radius:10px;
+  padding:10px 20px;font-size:13px;font-weight:600;color:var(--text);
+  z-index:999;opacity:0;transition:all .3s;pointer-events:none;
+  white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4);
+}
+.notif.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.notif.success{background:rgba(22,163,74,0.15);border-color:rgba(22,163,74,0.3);color:#4ade80;}
+.notif.error  {background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.25);color:#fca5a5;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{
+    position:fixed;left:0;top:52px;bottom:0;z-index:6;
+    transform:translateX(-100%);
+  }
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-overlay{display:block;display:none;}
+  .sidebar-overlay.show{display:block;}
+  .side-panel{width:min(var(--panel-w),92vw);}
+  .course-badge,.tn-center{display:none;}
+}
+@media(min-width:769px){
+  .sidebar-toggle{display:none;}
+}
 </style>
 </head>
-
-
 <body>
+
 <div id="loadingScreen">
   <div class="ld-logo">KI</div>
-  <div class="ld-spin"></div>
+  <div class="ld-dots">
+    <div class="ld-dot"></div>
+    <div class="ld-dot"></div>
+    <div class="ld-dot"></div>
+  </div>
   <div class="ld-text">Loading course...</div>
 </div>
 
 <div id="page">
+
+  <!-- TOP NAV -->
   <div class="topnav">
-    <div class="tn-left">
-      <button class="sidebar-toggle" onclick="toggleSidebar()">&#9776;</button>
-      <a href="/dashboard.html" class="tn-back">&larr; <span>Dashboard</span></a>
-      <div class="course-badge" id="courseBadge">Loading...</div>
-    </div>
-    <div class="tn-right">
+    <button class="sidebar-toggle" onclick="toggleSidebar()">&#9776;</button>
+    <a href="/dashboard.html" class="tn-back">&larr; Dashboard</a>
+    <div class="course-badge" id="courseBadge">Loading...</div>
+    <div class="tn-center">
       <div class="progress-wrap">
         <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
-        <div class="progress-txt" id="progressLabel">0/0 completed</div>
+        <div class="progress-txt" id="progressLabel">0 / 0</div>
       </div>
-      <button class="btn-notes-toggle" id="notesToggleBtn" onclick="toggleNotes()">&#128221; Notes</button>
-      <button class="btn-notes-toggle" id="discussToggleBtn" onclick="toggleDiscussion()" style="background:rgba(212,168,67,0.12);border-color:rgba(212,168,67,0.3);color:var(--gold);">&#128172; Discuss</button>
+    </div>
+    <div class="tn-actions">
+      <button class="tn-btn" id="notesTnBtn" onclick="toggleNotesPanel()">&#128221; Notes</button>
+      <button class="tn-btn disc-btn" id="discTnBtn" onclick="toggleDiscPanel()">&#128172; Discuss</button>
     </div>
   </div>
 
+  <!-- VIEWER BODY -->
   <div class="viewer-body">
+
+    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
       <div class="sb-header">
         <div class="sb-course-title" id="sidebarTitle">Loading...</div>
-        <div class="sb-course-sub" id="sidebarSub">0 modules</div>
+        <div class="sb-meta" id="sidebarSub">0 modules</div>
       </div>
       <div class="module-list" id="moduleList">
-        <div style="text-align:center;padding:32px;color:rgba(255,255,255,0.25);font-size:13px;">Loading modules...</div>
+        <div style="text-align:center;padding:32px;color:var(--text-light);font-size:13px;">Loading...</div>
       </div>
     </div>
-
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
 
+    <!-- CONTENT -->
     <div class="content-area">
+      <!-- Viewer header -->
       <div id="viewerHeader">
-        <div class="vh-title" id="viewerTitle"></div>
-        <div class="vh-meta" id="viewerMeta"></div>
+        <div class="vh-info">
+          <div class="vh-title" id="viewerTitle"></div>
+          <div class="vh-meta"  id="viewerMeta"></div>
+        </div>
         <div class="vh-actions">
           <button class="btn-mark-complete" id="markCompleteBtn" style="display:none;">&#10003; Mark as Complete</button>
           <a href="#" class="btn-dl hidden" id="downloadBtn" target="_blank" download>&#8659; Download</a>
         </div>
       </div>
+
+      <!-- No content state -->
       <div id="noContent">
         <div class="nc-icon">&#127891;</div>
         <div class="nc-title">Select a module to begin</div>
-        <div class="nc-sub">Choose a module from the sidebar on the left to start learning.</div>
+        <div class="nc-sub">Choose a lesson from the sidebar to start learning.</div>
       </div>
-      <!-- Video Player (for mp4, webm, Supabase) -->
+
+      <!-- Native video player -->
       <div class="video-wrap" id="videoWrap">
         <video id="videoEl" preload="metadata" playsinline></video>
-        <div class="video-controls" id="videoControls">
+        <div class="video-controls">
           <div class="vc-progress" id="vcProgress" onclick="vcSeek(event)">
             <div class="vc-progress-buf"  id="vcBuf"></div>
             <div class="vc-progress-fill" id="vcFill" style="width:0%"></div>
@@ -646,10 +527,10 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
           <div class="vc-row">
             <button class="vc-btn" id="vcPlay" onclick="vcTogglePlay()">&#9654;</button>
             <div class="vc-vol-wrap">
-              <button class="vc-btn" onclick="vcToggleMute()">&#128266;</button>
+              <button class="vc-btn" id="vcMute" onclick="vcToggleMute()">&#128266;</button>
               <input class="vc-vol" type="range" min="0" max="1" step="0.05" value="1" oninput="vcSetVol(this.value)">
             </div>
-            <div class="vc-time" id="vcTime">0:00 / 0:00</div>
+            <span class="vc-time" id="vcTime">0:00 / 0:00</span>
             <div class="vc-right">
               <select class="vc-speed" onchange="vcSetSpeed(this.value)">
                 <option value="0.75">0.75x</option>
@@ -663,94 +544,118 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
           </div>
         </div>
       </div>
-      <!-- Iframe (for YouTube, PDFs, Google Drive, PPT) -->
+
+      <!-- Iframe (YouTube, PDF, Drive) -->
       <iframe id="contentFrame" allowfullscreen allow="autoplay; encrypted-media"></iframe>
     </div>
 
-    <!-- Notes Panel -->
-    <div class="notes-panel closed" id="notesPanel">
-      <div class="np-header">
-        <div class="np-title">&#128221; My Notes</div>
-        <button class="np-close" onclick="toggleNotes()">&#215;</button>
+    <!-- NOTES PANEL -->
+    <div class="side-panel" id="notesPanel">
+      <div class="sp-header">
+        <div class="sp-title">&#128221; My Notes</div>
+        <button class="sp-close" onclick="toggleNotesPanel()">&#215;</button>
       </div>
-      <div class="np-module-name" id="npModuleName">Select a module to take notes</div>
-      <div class="np-body">
-        <textarea class="notes-textarea" id="notesArea" placeholder="Type your notes here...&#10;&#10;Notes are saved per module and sync automatically."></textarea>
-        <div class="np-actions">
-          <button class="btn-save-note" onclick="saveNote()">&#128190; Save Note</button>
+      <div class="notes-body">
+        <div class="notes-mod-label" id="notesModLabel">Select a module to take notes</div>
+        <textarea class="notes-textarea" id="notesArea" placeholder="Type your notes here...&#10;&#10;Notes are saved per module automatically."></textarea>
+        <div class="notes-actions">
+          <button class="btn-save-note" onclick="saveNote()">&#128190; Save</button>
           <button class="btn-clear-note" onclick="clearNote()">Clear</button>
+          <span class="note-saved" id="noteSavedMsg">&#10003; Saved</span>
         </div>
-        <div class="note-saved-msg" id="noteSavedMsg">&#10003; Note saved</div>
       </div>
     </div>
-    <!-- Discussion Panel -->
-    <div class="notes-panel closed" id="discussPanel">
-      <div class="np-header">
-        <div class="np-title">&#128172; Discussion</div>
-        <button class="np-close" onclick="toggleDiscussion()">&#215;</button>
+
+    <!-- DISCUSSION PANEL -->
+    <div class="side-panel" id="discPanel">
+      <div class="sp-header">
+        <div class="sp-title">&#128172; Discussion</div>
+        <button class="sp-close" onclick="toggleDiscPanel()">&#215;</button>
       </div>
-      <!-- Tabs: Module / Course -->
       <div class="disc-tabs">
         <button class="disc-tab active" id="dtabModule" onclick="switchDiscTab('module')">&#127916; This Module</button>
         <button class="disc-tab"        id="dtabCourse" onclick="switchDiscTab('course')">&#127979; This Course</button>
       </div>
-      <div class="disc-scope-label" id="discScopeLabel">Comments for this module</div>
-      <!-- Comment list -->
       <div class="disc-list" id="discList">
         <div class="disc-empty">&#128172;<br>No comments yet.<br>Be the first to start the discussion.</div>
       </div>
-      <!-- Compose -->
       <div class="disc-compose">
-        <textarea class="disc-input" id="discInput" placeholder="Write a comment..." rows="2" maxlength="2000"></textarea>
-        <div class="disc-compose-actions">
-          <span class="disc-char-count" id="discCharCount">0/2000</span>
-          <button class="disc-submit-btn" id="discSubmitBtn" onclick="postComment()">&#9658; Post</button>
+        <textarea class="disc-compose-input" id="discInput" placeholder="Write a comment..." rows="2" maxlength="2000"></textarea>
+        <div class="disc-compose-row">
+          <span class="disc-char" id="discChar">0 / 2000</span>
+          <button class="disc-post-btn" id="discPostBtn" onclick="postComment()">Post</button>
         </div>
       </div>
     </div>
-      <!-- Notes Panel -->
-    <div class="notes-panel collapsed" id="notesPanel">
-      <div class="notes-header">
-        <div class="notes-title">&#128221; Notes</div>
-        <button class="notes-toggle-btn" onclick="toggleNotesPanel()" title="Close">&#10005;</button>
-      </div>
-      <div class="notes-body">
-        <div class="notes-module-label" id="notesModuleLabel">Select a module to start</div>
-        <textarea class="notes-textarea" id="notesTextarea" placeholder="Write your notes here..." oninput="scheduleNoteSave()"></textarea>
-        <div class="notes-saved" id="notesSaved"></div>
-      </div>
+
+  </div><!-- /viewer-body -->
+</div><!-- /page -->
+
+<!-- COMPLETION MODAL -->
+<div class="modal-bg" id="completionModal">
+  <div class="modal-card">
+    <div class="modal-emoji">&#127881;</div>
+    <div class="modal-title">Course Complete!</div>
+    <div class="modal-sub" id="completionMsg">You've completed all modules. Your certificate is ready.</div>
+    <div class="modal-btns">
+      <a href="#" class="modal-btn-primary" id="cmCertBtn">&#127942; Get Certificate</a>
+      <button class="modal-btn-sec" onclick="document.getElementById('completionModal').classList.remove('show')">Continue Learning</button>
     </div>
   </div>
 </div>
 
-<script>
+<div class="notif" id="notif"></div>
 
-var _viewerUser  = null;
-var _courseId    = null;
-var _currentMat  = null;
-var _completed   = [];
-var _userRole    = 'student'; // student | teacher | admin
-var _userName    = 'Student';
-var _allMats     = [];
-var _enrollment  = null;
-var _notesOpen   = false;
-var _notesData   = {};
-var _notesSaveTimer = null;
-var _started     = false;
+<script>
+// ── SUPABASE CONFIG ────────────────────────────────────────────
+// (initialized in separate script block above)
+
+// ── STATE ──────────────────────────────────────────────────────
+var _viewerUser = null;
+var _courseId   = null;
+var _currentMat = null;
+var _completed  = [];
+var _allMats    = [];
+var _notesData  = {};
+var _started    = false;
+var _userRole   = 'student';
+var _userName   = 'Student';
+var _notesOpen  = false;
+var _discOpen   = false;
+var _discTab    = 'module';
+var _videoEl    = null;
+
+// ── AUTH ───────────────────────────────────────────────────────
+_sb.auth.getSession().then(function(r) {
+  var u = r.data.session && r.data.session.user;
+  tryStart(u);
+  if (!u) setTimeout(function(){
+    _sb.auth.getSession().then(function(r2){
+      tryStart(r2.data.session && r2.data.session.user);
+    });
+  }, 1500);
+});
+_sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_IN') tryStart(session && session.user);
+  if (event === 'SIGNED_OUT') window.location.href = '/login.html';
+});
+setTimeout(function() {
+  if (!_started) window.location.href = '/login.html';
+}, 9000);
 
 function tryStart(user) {
-  if (_started||!user) return;
-  _started=true; _viewerUser=user;
-  document.getElementById('loadingScreen').style.display='none';
+  if (_started || !user) return;
+  _started = true; _viewerUser = user;
+  document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('page').classList.add('visible');
-  // Fetch role and name for comments
-  _sb.from('users').select('role,full_name').eq('id',user.id).single()
-    .then(function(r){
-      if(r.data){
+  // Fetch role & name
+  _sb.from('users').select('role,full_name').eq('id', user.id).single()
+    .then(function(r) {
+      if (r.data) {
         _userRole = r.data.role || 'student';
         _userName = r.data.full_name || user.email.split('@')[0] || 'Student';
       } else {
-        _userRole = (user.email==='mohamedmohammud@gmail.com'||user.id==='34e4009e-21de-4a55-ab9d-e8c767dfe898') ? 'admin' : 'student';
+        _userRole = (user.id === '34e4009e-21de-4a55-ab9d-e8c767dfe898') ? 'admin' : 'student';
         _userName = user.email.split('@')[0] || 'Student';
       }
     }).catch(function(){
@@ -758,193 +663,191 @@ function tryStart(user) {
     });
   loadCourse();
 }
-_sb.auth.getSession().then(function(r) {
-  tryStart(r.data.session?r.data.session.user:null);
-  if(!r.data.session){
-    setTimeout(function(){ _sb.auth.getSession().then(function(r2){ tryStart(r2.data.session?r2.data.session.user:null); }); },1500);
-    setTimeout(function(){ if(!_started) window.location.href='/login.html'; },9000);
-  }
-});
-_sb.auth.onAuthStateChange(function(e,s){
-  if(e==='SIGNED_IN') tryStart(s?s.user:null);
-  if(e==='SIGNED_OUT') window.location.href='/login.html';
-});
 
+// ── LOAD COURSE ────────────────────────────────────────────────
 function loadCourse() {
-  var params=new URLSearchParams(window.location.search);
-  _courseId=params.get('course')||null;
+  var params = new URLSearchParams(window.location.search);
+  _courseId = params.get('course') || null;
 
-  var courseQuery=_courseId
-    ? _sb.from('courses').select('*').eq('id',_courseId).single()
+  var cq = _courseId
+    ? _sb.from('courses').select('*').eq('id', _courseId).single()
     : _sb.from('courses').select('*').limit(1).single();
 
-  Promise.all([
-    courseQuery,
-    _courseId ? _sb.from('materials').select('*').eq('course_id',_courseId).order('module_number') : Promise.resolve({data:[]})
-  ]).then(function(results) {
-    var course=results[0].data;
-    var materials=results[1].data||[];
-    _allMats=materials;
+  var mq = _courseId
+    ? _sb.from('materials').select('*').eq('course_id', _courseId).order('module_number')
+    : Promise.resolve({ data: [] });
 
-    if(!course) {
-      document.getElementById('moduleList').innerHTML='<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);font-size:13px;">Course not found.</div>';
+  var eq = _viewerUser && _courseId
+    ? _sb.from('enrollments').select('completed_materials').eq('user_id', _viewerUser.id).eq('course_id', _courseId).single()
+    : Promise.resolve({ data: null });
+
+  Promise.all([cq, mq, eq]).then(function(results) {
+    var course = results[0].data;
+    var mats   = results[1].data || [];
+    var enroll = results[2].data;
+
+    if (!course) {
+      document.getElementById('sidebarTitle').textContent = 'Course not found';
       return;
     }
-    _courseId=course.id;
-    document.getElementById('courseBadge').textContent=course.title;
-    document.getElementById('sidebarTitle').textContent=course.title;
-    document.title=course.title+' — Kulan Institute';
-    document.getElementById('sidebarSub').textContent=materials.length+' module'+(materials.length!==1?'s':'');
 
-    _sb.from('enrollments').select('*').eq('user_id',_viewerUser.id).eq('course_id',_courseId).maybeSingle()
-      .then(function(enResult) {
-        _enrollment=enResult.data;
-        _completed=(_enrollment&&_enrollment.completed_materials)?_enrollment.completed_materials:[];
-        renderModuleList(materials);
-        updateProgressBar(materials.length);
-        // Load all notes for this course
-        loadNotes();
-      });
+    _allMats = mats;
+    _completed = (enroll && enroll.completed_materials) ? enroll.completed_materials : [];
+
+    document.getElementById('courseBadge').textContent = course.title;
+    document.getElementById('sidebarTitle').textContent = course.title;
+    document.getElementById('sidebarSub').textContent   = mats.length + ' module' + (mats.length !== 1 ? 's' : '');
+    document.title = course.title + ' — Kulan Institute';
+
+    renderModuleList(mats);
+    updateProgressBar(mats.length);
+    loadAllNotes();
+
+    // Auto-open first incomplete module
+    var first = mats.find(function(m) { return _completed.indexOf(m.id) === -1; }) || mats[0];
+    if (first) openMaterial(first, mats.length);
+  }).catch(function(e) {
+    showNotif('Failed to load course: ' + e.message, 'error');
   });
 }
 
-function loadNotes() {
-  _sb.from('notes').select('*').eq('user_id',_viewerUser.id).eq('course_id',_courseId)
-    .then(function(r) {
-      _notesData={};
-      (r.data||[]).forEach(function(n){ _notesData[n.material_id||'general']=n; });
-    }).catch(function(){});
-}
-
+// ── RENDER MODULE LIST ─────────────────────────────────────────
 function renderModuleList(mats) {
-  var list=document.getElementById('moduleList');
-  if(!mats.length) {
-    list.innerHTML='<div style="text-align:center;padding:32px;color:rgba(255,255,255,0.25);"><div style="font-size:28px;margin-bottom:8px;">&#128109;</div><div style="font-size:13px;">No materials yet.<br>Check back soon!</div></div>';
+  var list = document.getElementById('moduleList');
+  if (!mats.length) {
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-light);font-size:13px;">&#128109;<br>No materials yet.</div>';
     return;
   }
-  list.innerHTML='';
-  var icons={pdf:'&#128196;',video:'&#127909;',ppt:'&#128202;',other:'&#128190;'};
-  mats.forEach(function(mat) {
-    var done=_completed.indexOf(mat.id)>-1;
-    var el=document.createElement('div');
-    el.className='mod-item'+(done?' done':'');
-    el.id='mod-'+mat.id;
-    el.innerHTML='<div class="mod-icon">'+(done?'&#9989;':(icons[mat.type]||icons.other))+'</div>'
-      +'<div class="mod-info"><div class="mod-name">M'+mat.module_number+': '+esc(mat.title)+'</div>'
-      +'<div class="mod-meta">'+(mat.type||'file').toUpperCase()+'</div></div>';
-    el.addEventListener('click', function() {
-      openMaterial(mat, mats.length);
-      if(window.innerWidth<=768) toggleSidebar(false);
-    });
-    list.appendChild(el);
-  });
+  var icons = { pdf: '&#128196;', video: '&#127909;', ppt: '&#128202;', other: '&#128190;' };
+  list.innerHTML = mats.map(function(mat) {
+    var done = _completed.indexOf(mat.id) > -1;
+    var icon = done ? '&#9989;' : (icons[mat.type] || icons.other);
+    var active = _currentMat && _currentMat.id === mat.id;
+    return '<div class="mod-item' + (done ? ' done' : '') + (active ? ' active' : '') + '" id="mod-' + mat.id + '" onclick="openMaterial(' + JSON.stringify(mat).replace(/"/g, '&quot;') + ',' + mats.length + ')">'
+      + '<div class="mod-icon">' + icon + '</div>'
+      + '<div class="mod-info">'
+      + '<div class="mod-name">' + esc(mat.title) + '</div>'
+      + '<div class="mod-meta">Module ' + mat.module_number + ' &middot; ' + (mat.type || 'file').toUpperCase() + '</div>'
+      + '</div>'
+      + '<div class="mod-check">' + (done ? '&#10003;' : '') + '</div>'
+      + '</div>';
+  }).join('');
 }
 
+// ── OPEN MATERIAL ──────────────────────────────────────────────
 function openMaterial(mat, totalMats) {
-  // Save notes for previous material
-  if(_currentMat) autoSaveNote();
+  if (_currentMat) autoSaveNote();
+  _currentMat = mat;
 
-  _currentMat=mat;
-  document.querySelectorAll('.mod-item').forEach(function(el){ el.classList.remove('active'); });
-  var modEl=document.getElementById('mod-'+mat.id);
-  if(modEl) modEl.classList.add('active');
+  // Update sidebar active state
+  document.querySelectorAll('.mod-item').forEach(function(el) { el.classList.remove('active'); });
+  var modEl = document.getElementById('mod-' + mat.id);
+  if (modEl) { modEl.classList.add('active'); modEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
 
-  document.getElementById('viewerHeader').style.display='block';
-  document.getElementById('viewerTitle').textContent=mat.title;
-  document.getElementById('viewerMeta').textContent='Module '+mat.module_number+' · '+(mat.type||'file').toUpperCase();
-  document.getElementById('npModuleName').textContent='Notes for: '+mat.title;
+  // Update header
+  var header = document.getElementById('viewerHeader');
+  header.classList.add('show');
+  document.getElementById('viewerTitle').textContent = mat.title;
+  document.getElementById('viewerMeta').textContent  = 'Module ' + mat.module_number + ' · ' + (mat.type || 'file').toUpperCase();
+  document.getElementById('notesModLabel').textContent = 'Notes — ' + mat.title;
+  document.getElementById('noContent').style.display  = 'none';
 
-  var url=mat.url||'';
-  document.getElementById('noContent').style.display='none';
-  openMaterialWithPlayer(url);
-  reloadDiscIfOpen();
+  // Load player
+  openMaterialWithPlayer(mat.url || '');
 
-  var dlBtn=document.getElementById('downloadBtn');
-  if(mat.allow_download&&url){ dlBtn.href=url; dlBtn.classList.remove('hidden'); }
+  // Download button
+  var dlBtn = document.getElementById('downloadBtn');
+  if (mat.allow_download && mat.url) { dlBtn.href = mat.url; dlBtn.classList.remove('hidden'); }
   else dlBtn.classList.add('hidden');
 
-  // Load note for this material
-  var key=mat.id;
-  var noteData=_notesData[key];
-  document.getElementById('notesArea').value=noteData?noteData.content:'';
+  // Notes for this material
+  var noteContent = _notesData[mat.id] ? _notesData[mat.id].content : '';
+  document.getElementById('notesArea').value = noteContent;
 
-  // Update complete button state
+  // Complete button
   updateCompleteBtn(mat.id, totalMats);
+
+  // Reload discussion
+  if (_discOpen) loadComments();
+
+  // Mobile: close sidebar
+  if (window.innerWidth <= 768) toggleSidebar(false);
 }
 
-// NOTES
-function toggleNotes() {
-  _notesOpen=!_notesOpen;
-  var panel=document.getElementById('notesPanel');
-  var btn=document.getElementById('notesToggleBtn');
-  panel.classList.toggle('closed',!_notesOpen);
-  btn.classList.toggle('active',_notesOpen);
+// ── VIDEO / IFRAME PLAYER ──────────────────────────────────────
+function isVideoUrl(url) {
+  if (!url) return false;
+  var u = url.toLowerCase().split('?')[0]; // strip query string for extension check
+  if (/\.(mp4|webm|mov|m4v|ogv)$/.test(u)) return true;
+  if (url.includes('supabase') && /\.(mp4|webm|mov)/.test(url.toLowerCase())) return true;
+  return false;
 }
 
-function saveNote() {
-  if(!_currentMat||!_viewerUser) return;
-  var content=document.getElementById('notesArea').value;
-  var key=_currentMat.id;
-  var existing=_notesData[key];
+function openMaterialWithPlayer(url) {
+  var vWrap = document.getElementById('videoWrap');
+  var frame = document.getElementById('contentFrame');
 
-  var op=existing
-    ? _sb.from('notes').update({content:content,updated_at:new Date().toISOString()}).eq('id',existing.id)
-    : _sb.from('notes').insert([{user_id:_viewerUser.id,course_id:_courseId,material_id:key,content:content}]).select().single();
-
-  op.then(function(r) {
-    if(r.error) return;
-    if(!existing&&r.data) _notesData[key]=r.data;
-    else if(existing) _notesData[key].content=content;
-    var msg=document.getElementById('noteSavedMsg');
-    msg.classList.add('show');
-    setTimeout(function(){ msg.classList.remove('show'); },2000);
-  });
+  if (isVideoUrl(url)) {
+    vWrap.classList.add('active');
+    frame.classList.remove('active');
+    frame.src = '';
+    if (!_videoEl) initVideoPlayer();
+    _videoEl.src = url;
+    _videoEl.load();
+    _videoEl.play().catch(function(){});
+  } else {
+    vWrap.classList.remove('active');
+    frame.classList.add('active');
+    // Convert YouTube watch to embed
+    var ytm = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if (ytm) url = 'https://www.youtube.com/embed/' + ytm[1] + '?autoplay=1';
+    // Convert Google Drive share to preview
+    url = url.replace('/view?usp=sharing', '/preview').replace('/view?usp=drive_link', '/preview');
+    if (url.includes('drive.google.com/file') && !url.includes('/preview')) url += '/preview';
+    frame.src = url;
+  }
 }
 
-function autoSaveNote() {
-  var content=document.getElementById('notesArea').value.trim();
-  if(content&&_currentMat) saveNote();
+function initVideoPlayer() {
+  _videoEl = document.getElementById('videoEl');
+  _videoEl.addEventListener('timeupdate', vcUpdateProgress);
+  _videoEl.addEventListener('progress',   vcUpdateBuffer);
+  _videoEl.addEventListener('play',  function() { document.getElementById('vcPlay').innerHTML = '&#10074;&#10074;'; });
+  _videoEl.addEventListener('pause', function() { document.getElementById('vcPlay').innerHTML = '&#9654;'; });
+  _videoEl.addEventListener('ended', function() { document.getElementById('vcPlay').innerHTML = '&#9654;'; });
 }
-
-function clearNote() {
-  if(!confirm('Clear notes for this module?')) return;
-  document.getElementById('notesArea').value='';
-  saveNote();
+function vcTogglePlay()  { _videoEl && (_videoEl.paused ? _videoEl.play() : _videoEl.pause()); }
+function vcToggleMute()  { if(!_videoEl) return; _videoEl.muted=!_videoEl.muted; document.getElementById('vcMute').textContent=_videoEl.muted?'&#128263;':'&#128266;'; }
+function vcSetVol(v)     { if(_videoEl) _videoEl.volume=parseFloat(v); }
+function vcSetSpeed(s)   { if(_videoEl) _videoEl.playbackRate=parseFloat(s); }
+function vcFullscreen()  { var w=document.getElementById('videoWrap'); if(document.fullscreenElement) document.exitFullscreen(); else w.requestFullscreen&&w.requestFullscreen(); }
+function vcSeek(e)       { if(!_videoEl||!_videoEl.duration) return; var r=document.getElementById('vcProgress').getBoundingClientRect(); _videoEl.currentTime=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*_videoEl.duration; }
+function vcUpdateProgress() {
+  if (!_videoEl||!_videoEl.duration) return;
+  var pct=(_videoEl.currentTime/_videoEl.duration)*100;
+  document.getElementById('vcFill').style.width=pct+'%';
+  document.getElementById('vcTime').textContent=fmtTime(_videoEl.currentTime)+' / '+fmtTime(_videoEl.duration);
 }
-
-// Auto-save on input with debounce
-document.getElementById('notesArea').addEventListener('input', function() {
-  clearTimeout(_notesSaveTimer);
-  _notesSaveTimer=setTimeout(function(){ if(_currentMat) saveNote(); },2000);
-});
-
-// PROGRESS
-function updateProgressBar(total) {
-  var pct=total>0?Math.round((_completed.length/total)*100):0;
-  document.getElementById('progressBar').style.width=pct+'%';
-  document.getElementById('progressLabel').textContent=_completed.length+'/'+total+' completed';
+function vcUpdateBuffer() {
+  if (!_videoEl||!_videoEl.duration||!_videoEl.buffered.length) return;
+  document.getElementById('vcBuf').style.width=(_videoEl.buffered.end(_videoEl.buffered.length-1)/_videoEl.duration*100)+'%';
 }
-function updateModuleState(matId) {
-  var el=document.getElementById('mod-'+matId);
-  if(!el) return;
-  el.classList.add('done');
-  var icon=el.querySelector('.mod-icon');
-  if(icon) icon.innerHTML='&#9989;';
-}
+function fmtTime(s) { var m=Math.floor(s/60),sec=Math.floor(s%60); return m+':'+(sec<10?'0':'')+sec; }
 
+// ── MARK COMPLETE ──────────────────────────────────────────────
 function updateCompleteBtn(matId, totalMats) {
   var btn = document.getElementById('markCompleteBtn');
   if (!btn) return;
-  var isDone = _completed.indexOf(matId) > -1;
-  if (isDone) {
-    btn.textContent = '✓ Completed';
-    btn.className = 'btn-mark-done';
-    btn.disabled = true;
+  var done = _completed.indexOf(matId) > -1;
+  if (done) {
+    btn.textContent = '&#10003; Completed';
+    btn.className   = 'btn-mark-done';
+    btn.disabled    = true;
   } else {
-    btn.textContent = '✓ Mark as Complete';
-    btn.className = 'btn-mark-complete';
-    btn.disabled = false;
-    btn.onclick = function() { markComplete(matId, totalMats); };
+    btn.innerHTML   = '&#10003; Mark as Complete';
+    btn.className   = 'btn-mark-complete';
+    btn.disabled    = false;
+    btn.onclick     = function() { markComplete(matId, totalMats); };
   }
   btn.style.display = 'inline-flex';
 }
@@ -956,533 +859,365 @@ function markComplete(matId, totalMats) {
   updateModuleState(matId);
   saveProgress();
   updateCompleteBtn(matId, totalMats);
-  if(typeof gtag!=='undefined') gtag('event','module_complete',{material_id:matId,total:totalMats,completed:_completed.length});
-  // Brief pulse animation
-  var btn = document.getElementById('markCompleteBtn');
-  if (btn) {
-    btn.style.transform = 'scale(1.05)';
-    setTimeout(function(){ btn.style.transform = ''; }, 200);
-  }
+  if (typeof gtag !== 'undefined') gtag('event', 'module_complete', { material_id: matId, total: totalMats, completed: _completed.length });
+  if (_completed.length >= totalMats) setTimeout(function() { showCompletionModal(_courseId); }, 600);
 }
 
-
-// ══════════════════════════════════════════════════════════
-// DISCUSSION SYSTEM
-// ══════════════════════════════════════════════════════════
-var _discTab   = 'module'; // 'module' | 'course'
-var _discOpen  = false;
-var _discComments = [];
-var _myLikes   = new Set();
-
-function toggleDiscussion(){
-  var panel = document.getElementById('discussPanel');
-  var notesPanel = document.getElementById('notesPanel');
-  _discOpen = !_discOpen;
-  if(_discOpen){
-    panel.classList.remove('closed');
-    // Close notes if open
-    notesPanel.classList.add('closed');
-    loadComments();
-  } else {
-    panel.classList.add('closed');
-  }
+function updateModuleState(matId) {
+  var el = document.getElementById('mod-' + matId);
+  if (!el) return;
+  el.classList.add('done');
+  el.querySelector('.mod-icon').innerHTML = '&#9989;';
+  el.querySelector('.mod-check').innerHTML = '&#10003;';
 }
 
-function switchDiscTab(tab){
-  _discTab = tab;
-  document.getElementById('dtabModule').className = 'disc-tab' + (tab==='module'?' active':'');
-  document.getElementById('dtabCourse').className = 'disc-tab' + (tab==='course'?' active':'');
-  var lbl = document.getElementById('discScopeLabel');
-  lbl.textContent = tab==='module' ? 'Comments for this module' : 'Comments for this course';
-  loadComments();
+function updateProgressBar(totalMats) {
+  var pct = totalMats > 0 ? Math.round((_completed.length / totalMats) * 100) : 0;
+  document.getElementById('progressBar').style.width  = pct + '%';
+  document.getElementById('progressLabel').textContent = _completed.length + ' / ' + totalMats;
 }
 
-function loadComments(){
-  if(!_courseId) return;
-  var list = document.getElementById('discList');
-  list.innerHTML = '<div class="disc-empty">Loading...</div>';
-
-  // Build query
-  var query = _sb.from('comments')
-    .select('*')
-    .eq('course_id', _courseId)
-    .is('parent_id', null) // top-level only
-    .order('pinned', {ascending:false})
-    .order('created_at', {ascending:true});
-
-  if(_discTab==='module' && _currentMat){
-    query = query.eq('material_id', _currentMat);
-  } else {
-    query = query.is('material_id', null);
-  }
-
-  // Also load user's likes
-  var likesQuery = _viewerUser
-    ? _sb.from('comment_likes').select('comment_id').eq('user_id', _viewerUser.id)
-    : Promise.resolve({data:[]});
-
-  Promise.all([query, likesQuery]).then(function(results){
-    var comments = results[0].data || [];
-    var likes    = results[1].data || [];
-    _myLikes = new Set(likes.map(function(l){ return l.comment_id; }));
-    // Now load replies for each comment
-    if(!comments.length){
-      list.innerHTML = '<div class="disc-empty">&#128172;<br>No comments yet.<br>Be the first to start the discussion.</div>';
-      return;
-    }
-    var ids = comments.map(function(c){ return c.id; });
-    _sb.from('comments').select('*').in('parent_id', ids).order('created_at',{ascending:true})
-      .then(function(r){
-        var replies = r.data || [];
-        renderComments(comments, replies);
-      });
-  });
-}
-
-function renderComments(comments, replies){
-  var list = document.getElementById('discList');
-  var replyMap = {};
-  replies.forEach(function(r){
-    if(!replyMap[r.parent_id]) replyMap[r.parent_id] = [];
-    replyMap[r.parent_id].push(r);
-  });
-
-  list.innerHTML = comments.map(function(c){
-    return renderComment(c, replyMap[c.id]||[]);
-  }).join('');
-}
-
-function renderComment(c, replies){
-  var isOwn      = _viewerUser && c.user_id === _viewerUser.id;
-  var isMod      = _userRole === 'teacher' || _userRole === 'admin';
-  var liked      = _myLikes.has(c.id);
-  var roleBadge  = (c.author_role==='teacher'||c.author_role==='admin')
-    ? '<span class="disc-role-badge '+c.author_role+'">'+c.author_role+'</span>' : '';
-  var pinBadge   = c.pinned ? '<span class="disc-pin-badge">&#128204; Pinned</span>' : '';
-  var timeStr    = relTime(c.created_at);
-
-  var replyHTML = replies.length ? '<div class="disc-replies">'
-    + replies.map(function(r){ return renderReply(r); }).join('')
-    + '</div>' : '';
-
-  var safeId = c.id.replace(/-/g,'_');
-  var replyCompose = '<div class="disc-reply-compose" id="rc_'+safeId+'">'
-    + '<textarea class="disc-reply-input" id="ri_'+safeId+'" placeholder="Write a reply..." rows="1" maxlength="1000"></textarea>'
-    + '<button class="disc-reply-send" data-pid="'+c.id+'" onclick="postReplyBtn(this)">Reply</button>'
-    + '</div>';
-
-  var pinBtn = isMod
-    ? '<button class="disc-action-btn pin-btn" data-cid="'+c.id+'" data-pinned="'+c.pinned+'" onclick="togglePinBtn(this)">'
-      +(c.pinned?'&#128204; Unpin':'&#128204; Pin')+'</button>' : '';
-  var delBtn = (isOwn||isMod)
-    ? '<button class="disc-action-btn del-btn" data-cid="'+c.id+'" onclick="deleteCommentBtn(this)">&#128465;</button>' : '';
-
-  return '<div class="disc-comment'+(c.pinned?' pinned':'')+'" id="cmt_'+c.id+'">'
-    + '<div class="disc-comment-header">'
-    + '<div class="disc-avatar '+c.author_role+'">'+c.author_name.charAt(0).toUpperCase()+'</div>'
-    + '<span class="disc-author">'+esc(c.author_name)+'</span>'
-    + roleBadge + pinBadge
-    + '<span class="disc-time">'+timeStr+'</span>'
-    + '</div>'
-    + '<div class="disc-body">'+esc(c.content)+'</div>'
-    + '<div class="disc-actions">'
-    + '<button class="disc-action-btn'+(liked?' liked':'')+' like-btn" data-cid="'+c.id+'" data-liked="'+liked+'" onclick="toggleLikeBtn(this)">&#10084; '+c.likes+'</button>'
-    + '<button class="disc-action-btn" data-cid="'+c.id+'" onclick="showReplyBoxBtn(this)">&#8617; Reply</button>'
-    + pinBtn + delBtn
-    + '</div>'
-    + replyHTML + replyCompose
-    + '</div>';
-}
-
-function renderReply(r){
-  var isOwn = _viewerUser && r.user_id === _viewerUser.id;
-  var isMod = _userRole === 'teacher' || _userRole === 'admin';
-  var delBtn = (isOwn||isMod)
-    ? '<button class="disc-action-btn del-btn" data-cid="'+r.id+'" onclick="deleteCommentBtn(this)">&#128465;</button>' : '';
-  return '<div class="disc-reply">'
-    + '<div class="disc-reply-line"></div>'
-    + '<div class="disc-reply-body">'
-    + '<div class="disc-reply-header">'
-    + '<div class="disc-avatar '+r.author_role+'" style="width:20px;height:20px;font-size:9px;">'+r.author_name.charAt(0).toUpperCase()+'</div>'
-    + '<span class="disc-reply-author">'+esc(r.author_name)+'</span>'
-    + ((r.author_role==='teacher'||r.author_role==='admin')?'<span class="disc-role-badge '+r.author_role+'">'+r.author_role+'</span>':'')
-    + '<span class="disc-reply-time">'+relTime(r.created_at)+'</span>'
-    + delBtn
-    + '</div>'
-    + '<div class="disc-reply-text">'+esc(r.content)+'</div>'
-    + '</div></div>';
-}
-
-// ── Post comment ─────────────────────────────────────────
-function postComment(){
-  var input   = document.getElementById('discInput');
-  var content = input.value.trim();
-  if(!content){ input.focus(); return; }
-  if(!_viewerUser){ showNotif('Please sign in to comment.'); return; }
-  var btn = document.getElementById('discSubmitBtn');
-  btn.disabled=true; btn.textContent='Posting...';
-
-  var row = {
-    course_id:   _courseId,
-    material_id: _discTab==='module' ? (_currentMat||null) : null,
-    user_id:     _viewerUser.id,
-    content:     content,
-    author_name: _userName,
-    author_role: _userRole
-  };
-
-  _sb.from('comments').insert([row]).then(function(r){
-    btn.disabled=false; btn.textContent='▶ Post';
-    if(r.error){ showNotif('Error: '+r.error.message); return; }
-    input.value='';
-    document.getElementById('discCharCount').textContent='0/2000';
-    loadComments();
-    if(typeof gtag!=='undefined') gtag('event','comment_post',{role:_userRole});
-  });
-}
-
-// ── Post reply ───────────────────────────────────────────
-function showReplyBox(commentId){
-  var safeId = commentId.replace(/-/g,'_');
-  var box = document.getElementById('rc_'+safeId);
-  if(!box) return;
-  box.classList.toggle('show');
-  if(box.classList.contains('show')) document.getElementById('ri_'+safeId).focus();
-}
-
-function postReplyBtn(btn){
-  var parentId = btn.getAttribute('data-pid');
-  postReply(parentId);
-}
-
-function postReply(parentId){
-  var safeId  = parentId.replace(/-/g,'_');
-  var inp     = document.getElementById('ri_'+safeId);
-  var content = inp.value.trim();
-  if(!content){ inp.focus(); return; }
-  if(!_viewerUser) return;
-  inp.disabled=true;
-
-  // Get parent's material_id
-  var parent = _discComments.find(function(c){ return c.id===parentId; });
-
-  var row = {
-    course_id:   _courseId,
-    material_id: _discTab==='module' ? (_currentMat||null) : null,
-    user_id:     _viewerUser.id,
-    parent_id:   parentId,
-    content:     content,
-    author_name: _userName,
-    author_role: _userRole
-  };
-
-  _sb.from('comments').insert([row]).then(function(r){
-    inp.disabled=false;
-    if(r.error){ showNotif('Error: '+r.error.message); return; }
-    inp.value='';
-    document.getElementById('rc_'+(parentId.replace(/-/g,'_'))).classList.remove('show');
-    loadComments();
-  });
-}
-
-// ── Like / unlike ─────────────────────────────────────────
-
-function toggleLikeBtn(btn){
-  var cid = btn.getAttribute('data-cid');
-  var liked = btn.getAttribute('data-liked')==='true';
-  toggleLike(cid, liked);
-}
-function togglePinBtn(btn){
-  var cid = btn.getAttribute('data-cid');
-  var pinned = btn.getAttribute('data-pinned')==='true';
-  togglePin(cid, pinned);
-}
-function deleteCommentBtn(btn){
-  var cid = btn.getAttribute('data-cid');
-  deleteComment(cid);
-}
-function toggleLike(commentId, isLiked){
-  if(!_viewerUser) return;
-  if(isLiked){
-    _sb.from('comment_likes').delete()
-      .eq('comment_id',commentId).eq('user_id',_viewerUser.id)
-      .then(function(){
-        _sb.from('comments').update({likes: getLikeCount(commentId)-1}).eq('id',commentId)
-          .then(function(){ loadComments(); });
-      });
-  } else {
-    _sb.from('comment_likes').insert([{comment_id:commentId,user_id:_viewerUser.id}])
-      .then(function(){
-        _sb.from('comments').update({likes: getLikeCount(commentId)+1}).eq('id',commentId)
-          .then(function(){ loadComments(); });
-      });
-  }
-}
-
-function getLikeCount(commentId){
-  var el = document.getElementById('cmt_'+commentId);
-  if(!el) return 0;
-  var btn = el.querySelector('.disc-action-btn');
-  if(!btn) return 0;
-  return parseInt(btn.textContent.replace(/[^0-9]/g,''))||0;
-}
-
-// ── Pin / unpin ───────────────────────────────────────────
-function togglePin(commentId, isPinned){
-  var isMod = _userRole==='teacher'||_userRole==='admin';
-  if(!isMod) return;
-  _sb.from('comments').update({pinned:!isPinned}).eq('id',commentId)
-    .then(function(r){
-      if(r.error){ showNotif('Error: '+r.error.message); return; }
-      loadComments();
-    });
-}
-
-// ── Delete ────────────────────────────────────────────────
-function deleteComment(commentId){
-  if(!confirm('Delete this comment?')) return;
-  _sb.from('comments').delete().eq('id',commentId).then(function(r){
-    if(r.error){ showNotif('Error: '+r.error.message); return; }
-    loadComments();
-  });
-}
-
-// ── Reload comments when module changes ──────────────────
-function reloadDiscIfOpen(){
-  if(_discOpen) loadComments();
-}
-
-// ── Helpers ───────────────────────────────────────────────
-function relTime(ts){
-  var diff = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
-  if(diff < 60)  return 'just now';
-  if(diff < 3600)  return Math.floor(diff/60)+'m ago';
-  if(diff < 86400) return Math.floor(diff/3600)+'h ago';
-  return Math.floor(diff/86400)+'d ago';
-}
-
-// Char counter for compose
-document.addEventListener('DOMContentLoaded', function(){
-  var inp = document.getElementById('discInput');
-  if(inp) inp.addEventListener('input', function(){
-    document.getElementById('discCharCount').textContent = inp.value.length+'/2000';
-  });
-});
-
-// ── VIDEO PLAYER ────────────────────────────────────────────────
-var _videoEl = null;
-
-function initVideoPlayer() {
-  _videoEl = document.getElementById('videoEl');
-  _videoEl.addEventListener('timeupdate', vcUpdateProgress);
-  _videoEl.addEventListener('progress',   vcUpdateBuffer);
-  _videoEl.addEventListener('play',  function(){ document.getElementById('vcPlay').textContent = '⏸'; });
-  _videoEl.addEventListener('pause', function(){ document.getElementById('vcPlay').textContent = '▶'; });
-  _videoEl.addEventListener('ended', function(){ document.getElementById('vcPlay').textContent = '▶'; });
-}
-
-function isVideoUrl(url) {
-  if (!url) return false;
-  var u = url.toLowerCase();
-  // Direct video file
-  if (/\.(mp4|webm|mov|m4v|ogv)($|\?)/.test(u)) return true;
-  // Supabase storage URL with video extension
-  if (u.includes('supabase') && /\.(mp4|webm|mov)/.test(u)) return true;
-  return false;
-}
-
-function isYouTubeUrl(url) {
-  return url && (url.includes('youtube.com') || url.includes('youtu.be'));
-}
-
-function openMaterialWithPlayer(url) {
-  var videoWrap = document.getElementById('videoWrap');
-  var frame     = document.getElementById('contentFrame');
-
-  if (isVideoUrl(url)) {
-    // Show video player
-    videoWrap.classList.add('active');
-    frame.style.display = 'none';
-    frame.src = '';
-    if (!_videoEl) initVideoPlayer();
-    _videoEl.src = url;
-    _videoEl.load();
-    _videoEl.play().catch(function(){});
-  } else {
-    // Show iframe (YouTube, PDF, Google Drive, PPT)
-    videoWrap.classList.remove('active');
-    frame.style.display = 'block';
-    frame.src = url;
-  }
-}
-
-function vcTogglePlay() {
-  if (!_videoEl) return;
-  if (_videoEl.paused) _videoEl.play();
-  else _videoEl.pause();
-}
-function vcToggleMute() {
-  if (!_videoEl) return;
-  _videoEl.muted = !_videoEl.muted;
-  document.querySelector('.vc-btn[onclick="vcToggleMute()"]').textContent = _videoEl.muted ? '🔇' : '🔊';
-}
-function vcSetVol(v) { if (_videoEl) _videoEl.volume = parseFloat(v); }
-function vcSetSpeed(s) { if (_videoEl) _videoEl.playbackRate = parseFloat(s); }
-function vcFullscreen() {
-  var wrap = document.getElementById('videoWrap');
-  if (document.fullscreenElement) document.exitFullscreen();
-  else if (wrap.requestFullscreen) wrap.requestFullscreen();
-}
-function vcUpdateProgress() {
-  if (!_videoEl || !_videoEl.duration) return;
-  var pct = (_videoEl.currentTime / _videoEl.duration) * 100;
-  document.getElementById('vcFill').style.width = pct + '%';
-  document.getElementById('vcTime').textContent = fmtTime(_videoEl.currentTime) + ' / ' + fmtTime(_videoEl.duration);
-}
-function vcUpdateBuffer() {
-  if (!_videoEl || !_videoEl.duration || !_videoEl.buffered.length) return;
-  var buf = (_videoEl.buffered.end(_videoEl.buffered.length-1) / _videoEl.duration) * 100;
-  document.getElementById('vcBuf').style.width = buf + '%';
-}
-function vcSeek(e) {
-  if (!_videoEl || !_videoEl.duration) return;
-  var bar = document.getElementById('vcProgress');
-  var rect = bar.getBoundingClientRect();
-  var pct = (e.clientX - rect.left) / rect.width;
-  _videoEl.currentTime = pct * _videoEl.duration;
-}
-function fmtTime(s) {
-  var m = Math.floor(s/60), sec = Math.floor(s%60);
-  return m + ':' + (sec<10?'0':'')+sec;
-}
 function saveProgress() {
-  if (!_viewerUser||!_courseId) return;
+  if (!_viewerUser || !_courseId) return;
   var matId = _currentMat ? _currentMat.id : null;
-  var totalMats = _allMats.filter(function(m){ return m.course_id===_courseId; }).length;
   _sb.from('enrollments').upsert({
-    user_id:              _viewerUser.id,
-    course_id:            _courseId,
-    completed_materials:  _completed,
-    progress:             _completed.length,
-    last_material_id:     matId,
-    updated_at:           new Date().toISOString()
-  }, { onConflict:'user_id,course_id' }).then(function(){
-    // Show celebration when all modules complete
-    if (totalMats > 0 && _completed.length >= totalMats) {
-      setTimeout(function(){ showCompletionModal(_courseId); }, 800);
-    }
-  });
+    user_id:             _viewerUser.id,
+    course_id:           _courseId,
+    completed_materials: _completed,
+    progress:            _allMats.length ? Math.round((_completed.length / _allMats.length) * 100) : 0,
+    last_material_id:    matId,
+    updated_at:          new Date().toISOString()
+  }, { onConflict: 'user_id,course_id' }).then(function(){});
 }
-
-// SIDEBAR
-function toggleSidebar(forceOpen) {
-  var sb=document.getElementById('sidebar');
-  var ov=document.getElementById('sidebarOverlay');
-  var open=forceOpen!==undefined?forceOpen:!sb.classList.contains('open');
-  sb.classList.toggle('open',open);
-  if(ov) ov.classList.toggle('show',open);
-}
-
-function esc(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-// Save notes before leaving
-window.addEventListener('beforeunload', function(){ if(_currentMat) autoSaveNote(); });
-
-// ── NOTES ─────────────────────────────────────────────────────
-var _currentMatId  = null;
-var _currentCourseId = null;
-var _notesSaveTimer = null;
-var _notesPanelOpen = false;
-
-function toggleNotesPanel() {
-  var panel = document.getElementById('notesPanel');
-  var btn   = document.getElementById('notesToggleBtn');
-  _notesPanelOpen = !_notesPanelOpen;
-  if (_notesPanelOpen) {
-    panel.classList.remove('collapsed');
-    panel.classList.add('open');
-    btn.classList.add('active');
-    btn.textContent = '\u2711 Notes';
-  } else {
-    panel.classList.add('collapsed');
-    panel.classList.remove('open');
-    btn.classList.remove('active');
-    btn.textContent = '\u{1F4D1} Notes';
-  }
-}
-
-function setCurrentMaterial(matId, matTitle, courseId) {
-  _currentMatId   = matId;
-  _currentCourseId = courseId;
-  var lbl = document.getElementById('notesModuleLabel');
-  if (lbl) lbl.textContent = matTitle || 'Module Notes';
-  loadNote(matId);
-}
-
-function loadNote(matId) {
-  if (!_viewerUser || !matId) return;
-  var ta = document.getElementById('notesTextarea');
-  if (!ta) return;
-  ta.value = '';
-  ta.placeholder = 'Loading...';
-  _sb.from('notes').select('content').eq('user_id', _viewerUser.id).eq('material_id', matId).single()
-    .then(function(r) {
-      ta.placeholder = 'Write your notes here...';
-      ta.value = (r.data && r.data.content) ? r.data.content : '';
-    })
-    .catch(function() { ta.placeholder = 'Write your notes here...'; ta.value = ''; });
-}
-
-function scheduleNoteSave() {
-  clearTimeout(_notesSaveTimer);
-  _notesSaveTimer = setTimeout(saveNote, 1200);
-}
-
-function saveNote() {
-  if (!_viewerUser || !_currentMatId || !_currentCourseId) return;
-  var content = document.getElementById('notesTextarea').value;
-  _sb.from('notes').upsert({
-    user_id: _viewerUser.id,
-    course_id: _currentCourseId,
-    material_id: _currentMatId,
-    content: content,
-    updated_at: new Date().toISOString()
-  }, { onConflict: 'user_id,material_id' }).then(function() {
-    var saved = document.getElementById('notesSaved');
-    if (saved) {
-      saved.textContent = '\u2713 Saved';
-      setTimeout(function() { if(saved) saved.textContent = ''; }, 2000);
-    }
-  });
-}
-
 
 function showCompletionModal(courseId) {
   var modal = document.getElementById('completionModal');
   var certBtn = document.getElementById('cmCertBtn');
   if (certBtn) certBtn.href = '/certificate.html?course=' + courseId;
-  if (modal) modal.classList.add('show');
+  modal.classList.add('show');
 }
-document.getElementById('completionModal').addEventListener('click', function(e) {
-  if (e.target === this) this.classList.remove('show');
+
+// ── NOTES ──────────────────────────────────────────────────────
+function loadAllNotes() {
+  if (!_viewerUser || !_courseId) return;
+  _sb.from('notes').select('*').eq('user_id', _viewerUser.id).eq('course_id', _courseId)
+    .then(function(r) {
+      (r.data || []).forEach(function(n) { _notesData[n.material_id] = n; });
+    });
+}
+
+function saveNote() {
+  if (!_viewerUser || !_currentMat) return;
+  var content = document.getElementById('notesArea').value.trim();
+  _sb.from('notes').upsert({
+    user_id:     _viewerUser.id,
+    course_id:   _courseId,
+    material_id: _currentMat.id,
+    content:     content,
+    updated_at:  new Date().toISOString()
+  }, { onConflict: 'user_id,course_id,material_id' }).then(function(r) {
+    if (!r.error) {
+      _notesData[_currentMat.id] = { content: content };
+      var msg = document.getElementById('noteSavedMsg');
+      msg.classList.add('show');
+      setTimeout(function() { msg.classList.remove('show'); }, 1800);
+    }
+  });
+}
+
+function autoSaveNote() {
+  if (!_viewerUser || !_currentMat) return;
+  var content = document.getElementById('notesArea').value.trim();
+  if (!content && !_notesData[_currentMat.id]) return;
+  var existing = _notesData[_currentMat.id];
+  if (existing && existing.content === content) return;
+  saveNote();
+}
+
+function clearNote() {
+  document.getElementById('notesArea').value = '';
+  if (_currentMat) { delete _notesData[_currentMat.id]; saveNote(); }
+}
+
+// Auto-save notes on typing (debounced)
+var _noteTimer = null;
+document.addEventListener('DOMContentLoaded', function() {
+  var ta = document.getElementById('notesArea');
+  if (ta) ta.addEventListener('input', function() {
+    clearTimeout(_noteTimer);
+    _noteTimer = setTimeout(saveNote, 2500);
+  });
+  var di = document.getElementById('discInput');
+  if (di) di.addEventListener('input', function() {
+    document.getElementById('discChar').textContent = di.value.length + ' / 2000';
+  });
 });
 
+// ── PANEL TOGGLES ──────────────────────────────────────────────
+function toggleNotesPanel() {
+  _notesOpen = !_notesOpen;
+  if (_notesOpen && _discOpen) { _discOpen=false; document.getElementById('discPanel').classList.remove('open'); document.getElementById('discTnBtn').classList.remove('active'); }
+  document.getElementById('notesPanel').classList.toggle('open', _notesOpen);
+  document.getElementById('notesTnBtn').classList.toggle('active', _notesOpen);
+}
+
+function toggleDiscPanel() {
+  _discOpen = !_discOpen;
+  if (_discOpen && _notesOpen) { _notesOpen=false; document.getElementById('notesPanel').classList.remove('open'); document.getElementById('notesTnBtn').classList.remove('active'); }
+  document.getElementById('discPanel').classList.toggle('open', _discOpen);
+  document.getElementById('discTnBtn').classList.toggle('active', _discOpen);
+  if (_discOpen) loadComments();
+}
+
+// ── SIDEBAR ────────────────────────────────────────────────────
+function toggleSidebar(force) {
+  var sb = document.getElementById('sidebar');
+  var ov = document.getElementById('sidebarOverlay');
+  var open = force !== undefined ? force : !sb.classList.contains('open');
+  sb.classList.toggle('open', open);
+  ov.classList.toggle('show', open);
+}
+
+// ── DISCUSSION ─────────────────────────────────────────────────
+function switchDiscTab(tab) {
+  _discTab = tab;
+  document.getElementById('dtabModule').classList.toggle('active', tab === 'module');
+  document.getElementById('dtabCourse').classList.toggle('active', tab === 'course');
+  loadComments();
+}
+
+function loadComments() {
+  if (!_courseId) return;
+  var list = document.getElementById('discList');
+  list.innerHTML = '<div class="disc-empty">Loading...</div>';
+
+  var query = _sb.from('comments')
+    .select('*')
+    .eq('course_id', _courseId)
+    .is('parent_id', null)
+    .order('pinned', { ascending: false })
+    .order('created_at', { ascending: true });
+
+  if (_discTab === 'module' && _currentMat) {
+    query = query.eq('material_id', _currentMat.id);
+  } else {
+    query = query.is('material_id', null);
+  }
+
+  var likesQ = _viewerUser
+    ? _sb.from('comment_likes').select('comment_id').eq('user_id', _viewerUser.id)
+    : Promise.resolve({ data: [] });
+
+  Promise.all([query, likesQ]).then(function(res) {
+    var comments = res[0].data || [];
+    var myLikes  = new Set((res[1].data || []).map(function(l) { return l.comment_id; }));
+
+    if (!comments.length) {
+      list.innerHTML = '<div class="disc-empty">&#128172;<br>No comments yet.<br>Be the first to start the discussion.</div>';
+      return;
+    }
+
+    var ids = comments.map(function(c) { return c.id; });
+    _sb.from('comments').select('*').in('parent_id', ids).order('created_at', { ascending: true })
+      .then(function(r) {
+        renderComments(comments, r.data || [], myLikes);
+      });
+  });
+}
+
+function renderComments(comments, replies, myLikes) {
+  var replyMap = {};
+  replies.forEach(function(r) {
+    if (!replyMap[r.parent_id]) replyMap[r.parent_id] = [];
+    replyMap[r.parent_id].push(r);
+  });
+  document.getElementById('discList').innerHTML = comments.map(function(c) {
+    return renderComment(c, replyMap[c.id] || [], myLikes);
+  }).join('');
+}
+
+function renderComment(c, replies, myLikes) {
+  var isOwn = _viewerUser && c.user_id === _viewerUser.id;
+  var isMod = _userRole === 'teacher' || _userRole === 'admin';
+  var liked = myLikes && myLikes.has(c.id);
+  var safeId = c.id.replace(/-/g, '_');
+
+  var roleBadge = (c.author_role === 'teacher' || c.author_role === 'admin')
+    ? '<span class="role-badge ' + c.author_role + '">' + c.author_role + '</span>' : '';
+  var pinBadge = c.pinned ? '<span class="pin-badge">&#128204; Pinned</span>' : '';
+
+  var replyHTML = replies.length
+    ? '<div class="disc-replies">' + replies.map(function(r) { return renderReply(r, isMod); }).join('') + '</div>'
+    : '';
+
+  var replyCompose = '<div class="reply-compose" id="rc_' + safeId + '">'
+    + '<textarea class="reply-input" id="ri_' + safeId + '" placeholder="Write a reply..." rows="1" maxlength="1000"></textarea>'
+    + '<button class="reply-send" data-pid="' + c.id + '" onclick="postReplyBtn(this)">Reply</button>'
+    + '</div>';
+
+  var acts = '<button class="dact' + (liked ? ' liked' : '') + '" data-cid="' + c.id + '" data-liked="' + liked + '" onclick="toggleLikeBtn(this)">&#10084; ' + c.likes + '</button>'
+    + '<button class="dact" data-sid="' + safeId + '" onclick="showReplyBoxBtn(this)">&#8617; Reply</button>'
+    + (isMod ? '<button class="dact pin" data-cid="' + c.id + '" data-pinned="' + c.pinned + '" onclick="togglePinBtn(this)">' + (c.pinned ? '&#128204; Unpin' : '&#128204; Pin') + '</button>' : '')
+    + ((isOwn || isMod) ? '<button class="dact del" data-cid="' + c.id + '" onclick="deleteCommentBtn(this)">&#128465;</button>' : '');
+
+  return '<div class="disc-card' + (c.pinned ? ' pinned' : '') + '" id="cmt_' + c.id + '">'
+    + '<div class="disc-card-head">'
+    + '<div class="disc-av ' + c.author_role + '">' + c.author_name.charAt(0).toUpperCase() + '</div>'
+    + '<span class="disc-author">' + esc(c.author_name) + '</span>'
+    + roleBadge + pinBadge
+    + '<span class="disc-time">' + relTime(c.created_at) + '</span>'
+    + '</div>'
+    + '<div class="disc-body">' + esc(c.content) + '</div>'
+    + '<div class="disc-acts">' + acts + '</div>'
+    + replyHTML + replyCompose
+    + '</div>';
+}
+
+function renderReply(r, isMod) {
+  var isOwn = _viewerUser && r.user_id === _viewerUser.id;
+  var delBtn = (isOwn || isMod)
+    ? '<button class="dact del" data-cid="' + r.id + '" onclick="deleteCommentBtn(this)">&#128465;</button>' : '';
+  var roleBadge = (r.author_role === 'teacher' || r.author_role === 'admin')
+    ? '<span class="role-badge ' + r.author_role + '">' + r.author_role + '</span>' : '';
+  return '<div class="disc-reply">'
+    + '<div class="reply-line"></div>'
+    + '<div class="reply-body">'
+    + '<div class="reply-head">'
+    + '<div class="disc-av ' + r.author_role + '" style="width:20px;height:20px;font-size:9px;">' + r.author_name.charAt(0).toUpperCase() + '</div>'
+    + '<span class="reply-author">' + esc(r.author_name) + '</span>'
+    + roleBadge
+    + '<span class="reply-time">' + relTime(r.created_at) + '</span>'
+    + delBtn
+    + '</div>'
+    + '<div class="reply-text">' + esc(r.content) + '</div>'
+    + '</div></div>';
+}
+
+// ── COMMENT ACTIONS ────────────────────────────────────────────
+function postComment() {
+  var input   = document.getElementById('discInput');
+  var content = input.value.trim();
+  if (!content) { input.focus(); return; }
+  if (!_viewerUser) { showNotif('Please sign in to comment.'); return; }
+  var btn = document.getElementById('discPostBtn');
+  btn.disabled = true; btn.textContent = 'Posting...';
+
+  _sb.from('comments').insert([{
+    course_id:   _courseId,
+    material_id: _discTab === 'module' ? (_currentMat ? _currentMat.id : null) : null,
+    user_id:     _viewerUser.id,
+    content:     content,
+    author_name: _userName,
+    author_role: _userRole
+  }]).then(function(r) {
+    btn.disabled = false; btn.textContent = 'Post';
+    if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+    input.value = '';
+    document.getElementById('discChar').textContent = '0 / 2000';
+    loadComments();
+    if (typeof gtag !== 'undefined') gtag('event', 'comment_post', { role: _userRole });
+  });
+}
+
+function showReplyBoxBtn(btn) {
+  var safeId = btn.getAttribute('data-sid');
+  var box = document.getElementById('rc_' + safeId);
+  if (!box) return;
+  box.classList.toggle('open');
+  if (box.classList.contains('open')) {
+    var inp = document.getElementById('ri_' + safeId);
+    if (inp) inp.focus();
+  }
+}
+
+function postReplyBtn(btn) {
+  var parentId = btn.getAttribute('data-pid');
+  var safeId   = parentId.replace(/-/g, '_');
+  var inp      = document.getElementById('ri_' + safeId);
+  var content  = inp ? inp.value.trim() : '';
+  if (!content) { if(inp) inp.focus(); return; }
+  if (!_viewerUser) return;
+  inp.disabled = true;
+
+  _sb.from('comments').insert([{
+    course_id:   _courseId,
+    material_id: _discTab === 'module' ? (_currentMat ? _currentMat.id : null) : null,
+    user_id:     _viewerUser.id,
+    parent_id:   parentId,
+    content:     content,
+    author_name: _userName,
+    author_role: _userRole
+  }]).then(function(r) {
+    inp.disabled = false;
+    if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+    inp.value = '';
+    document.getElementById('rc_' + safeId).classList.remove('open');
+    loadComments();
+  });
+}
+
+function toggleLikeBtn(btn) {
+  if (!_viewerUser) { showNotif('Sign in to like comments.'); return; }
+  var cid    = btn.getAttribute('data-cid');
+  var liked  = btn.getAttribute('data-liked') === 'true';
+  var curCnt = parseInt(btn.textContent.replace(/[^0-9]/g, '')) || 0;
+
+  // Optimistic update
+  btn.setAttribute('data-liked', !liked);
+  btn.className = 'dact' + (!liked ? ' liked' : '');
+  btn.innerHTML = '&#10084; ' + (liked ? curCnt - 1 : curCnt + 1);
+
+  if (liked) {
+    _sb.from('comment_likes').delete().eq('comment_id', cid).eq('user_id', _viewerUser.id)
+      .then(function() {
+        _sb.from('comments').update({ likes: Math.max(0, curCnt - 1) }).eq('id', cid).then(function(){});
+      });
+  } else {
+    _sb.from('comment_likes').insert([{ comment_id: cid, user_id: _viewerUser.id }])
+      .then(function() {
+        _sb.from('comments').update({ likes: curCnt + 1 }).eq('id', cid).then(function(){});
+      });
+  }
+}
+
+function togglePinBtn(btn) {
+  var cid    = btn.getAttribute('data-cid');
+  var pinned = btn.getAttribute('data-pinned') === 'true';
+  _sb.from('comments').update({ pinned: !pinned }).eq('id', cid)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+      loadComments();
+    });
+}
+
+function deleteCommentBtn(btn) {
+  if (!confirm('Delete this comment?')) return;
+  var cid = btn.getAttribute('data-cid');
+  _sb.from('comments').delete().eq('id', cid).then(function(r) {
+    if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+    loadComments();
+  });
+}
+
+// ── UTILS ──────────────────────────────────────────────────────
+function relTime(ts) {
+  var diff = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
+  if (diff < 60)   return 'just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400)return Math.floor(diff / 3600) + 'h ago';
+  return Math.floor(diff / 86400) + 'd ago';
+}
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showNotif(msg, type) {
+  var el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = 'notif show' + (type ? ' ' + type : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(function() { el.classList.remove('show'); }, 3500);
+}
 
 </script>
-
-<!-- Completion Modal -->
-<div class="completion-modal" id="completionModal">
-  <div class="cm-card">
-    <div class="cm-icon">&#127881;</div>
-    <div class="cm-title">Course Complete!</div>
-    <div class="cm-sub" id="cmSub">You have completed all modules. Your certificate is ready.</div>
-    <div class="cm-actions">
-      <a href="#" class="cm-btn-cert" id="cmCertBtn">&#127891; Get Certificate</a>
-      <a href="/dashboard.html" class="cm-btn-dash">Back to Dashboard</a>
-    </div>
-  </div>
-</div>
-
-
 </body>
 </html>
