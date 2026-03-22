@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kulan Studio — Lesson Recorder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL='https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY='sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+</script>
+<style>
+:root {
+  --bg:#080c14;--panel:#0e1420;--panel2:#131b28;--panel3:#1a2338;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --cyan:#1BAECC;--gold:#D4A843;--gold2:#e8c060;--teal:#0E7C7B;
+  --red:#dc2626;--red2:#ef4444;--success:#16a34a;
+  --text:#e2e8f4;--text-mid:#6b7fa3;--text-light:#3d4f6b;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+
+/* TOPBAR */
+.topbar{height:52px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0;flex-shrink:0;z-index:20;}
+.tb-brand{display:flex;align-items:center;gap:10px;padding:0 20px;border-right:1px solid var(--border);height:100%;text-decoration:none;}
+.tb-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:13px;color:#0B1F3A;}
+.tb-name{font-size:12px;font-weight:700;color:var(--text);}
+.tb-sub{font-size:10px;color:var(--text-mid);}
+.tb-center{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;}
+.ph-dot{width:7px;height:7px;border-radius:50%;background:var(--text-light);transition:all .3s;}
+.ph-dot.active{background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+.ph-dot.done{background:var(--success);}
+.ph-lbl{font-size:11px;font-weight:600;color:var(--text-mid);text-transform:uppercase;letter-spacing:.5px;}
+.ph-lbl.active{color:var(--text);}
+.ph-sep{font-size:11px;color:var(--text-light);}
+.tb-right{padding:0 20px;border-left:1px solid var(--border);height:100%;display:flex;align-items:center;}
+.btn-back{font-size:12px;color:var(--text-mid);text-decoration:none;transition:color .2s;}
+.btn-back:hover{color:var(--gold);}
+
+.app{display:flex;flex-direction:column;height:calc(100vh - 52px);}
+
+/* PHASE 1 — SETUP */
+#phaseSetup{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto;}
+.setup-card{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:36px 40px;max-width:540px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,0.4);}
+.setup-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:6px;}
+.setup-sub{font-size:13px;color:var(--text-mid);margin-bottom:28px;line-height:1.7;}
+.s-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-mid);margin-bottom:8px;display:block;}
+.s-field{margin-bottom:20px;}
+.s-select{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border2);background:var(--panel2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border .2s;}
+.s-select:focus{border-color:var(--cyan);}
+.s-select option{background:var(--panel2);}
+
+.layout-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.layout-pill{padding:12px 14px;border-radius:12px;border:1.5px solid var(--border2);background:var(--panel2);cursor:pointer;transition:all .2s;}
+.layout-pill:hover{border-color:rgba(27,174,204,0.3);}
+.layout-pill.active{border-color:var(--cyan);background:rgba(27,174,204,0.08);}
+.lp-icon{font-size:20px;margin-bottom:4px;}
+.lp-name{font-size:12px;font-weight:700;color:var(--text);}
+.lp-desc{font-size:11px;color:var(--text-mid);}
+
+.perm-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.perm-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-mid);}
+.perm-icon{width:22px;height:22px;border-radius:6px;background:var(--panel3);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all .3s;}
+.perm-icon.ok{background:rgba(22,163,74,0.15);color:#4ade80;}
+.perm-icon.err{background:rgba(239,68,68,0.1);color:var(--red2);}
+
+.btn-begin{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-begin:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(27,174,204,0.3);}
+.btn-begin:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* PHASE 2 — RECORDING */
+#phaseRecord{flex:1;display:none;flex-direction:column;overflow:hidden;}
+.canvas-area{flex:1;display:flex;align-items:center;justify-content:center;background:#000;position:relative;overflow:hidden;min-height:0;}
+#recCanvas{max-width:100%;max-height:100%;display:block;}
+
+.rec-badge{position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(220,38,38,0.92);border-radius:20px;padding:5px 14px;display:none;align-items:center;gap:7px;font-size:12px;font-weight:700;color:#fff;}
+.rec-badge.show{display:flex;}
+.rec-dot{width:7px;height:7px;border-radius:50%;background:#fff;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.chapter-live{position:absolute;bottom:0;right:0;width:210px;max-height:170px;background:rgba(8,12,20,0.9);border-top:1px solid var(--border);border-left:1px solid var(--border);border-radius:12px 0 0 0;padding:10px 12px;overflow-y:auto;display:none;}
+.chapter-live.show{display:block;}
+.cl-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-mid);margin-bottom:7px;}
+.cl-item{display:flex;align-items:baseline;gap:6px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.cl-ts{font-size:10px;color:var(--cyan);font-variant-numeric:tabular-nums;flex-shrink:0;}
+.cl-nm{font-size:11px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+.rec-bar{background:var(--panel);border-top:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap;}
+.rec-timer{font-size:22px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;min-width:68px;}
+.rec-timer.live{color:var(--red2);}
+
+.rbtn{padding:9px 20px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;border:none;}
+.rbtn-rec{background:linear-gradient(135deg,var(--red),#b91c1c);color:#fff;}
+.rbtn-rec:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(220,38,38,0.4);}
+.rbtn-rec:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.rbtn-pause{background:var(--panel3);color:var(--text);border:1.5px solid var(--border2);}
+.rbtn-stop{background:rgba(239,68,68,0.1);color:var(--red2);border:1.5px solid rgba(239,68,68,0.25);}
+.rbtn-chap{background:rgba(212,168,67,0.1);color:var(--gold);border:1.5px solid rgba(212,168,67,0.25);}
+.rbtn-chap:hover{background:rgba(212,168,67,0.18);}
+
+.layout-sw{display:flex;gap:4px;margin-left:auto;}
+.ls-btn{padding:6px 10px;border-radius:7px;border:1.5px solid var(--border);background:transparent;color:var(--text-mid);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+.ls-btn.active{border-color:rgba(212,168,67,0.35);color:var(--gold);background:rgba(212,168,67,0.08);}
+
+/* PHASE 3 — STUDIO */
+#phaseStudio{flex:1;display:none;flex-direction:column;overflow:hidden;}
+.studio-layout{flex:1;display:flex;overflow:hidden;min-height:0;}
+.studio-preview{flex:1;display:flex;flex-direction:column;background:#000;min-width:0;}
+#previewVideo{flex:1;width:100%;object-fit:contain;min-height:0;background:#000;}
+
+.tl-wrap{padding:14px 16px;background:var(--panel);border-top:1px solid var(--border);flex-shrink:0;}
+.tl-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-mid);margin-bottom:8px;}
+.tl-track{position:relative;height:36px;background:var(--panel3);border-radius:8px;overflow:visible;cursor:pointer;border:1px solid var(--border2);}
+.tl-played{position:absolute;top:0;left:0;height:100%;background:rgba(27,174,204,0.2);border-radius:8px 0 0 8px;pointer-events:none;}
+.tl-zone{position:absolute;top:0;height:100%;background:rgba(27,174,204,0.08);border-left:2px solid var(--gold);border-right:2px solid var(--gold);pointer-events:none;}
+.tl-in,.tl-out{position:absolute;top:-5px;bottom:-5px;width:12px;background:var(--gold);border-radius:4px;cursor:ew-resize;display:flex;align-items:center;justify-content:center;z-index:5;}
+.tl-in{left:0;border-radius:4px 0 0 4px;}
+.tl-out{right:0;border-radius:0 4px 4px 0;}
+.tl-bar{font-size:9px;color:rgba(0,0,0,0.7);font-weight:900;user-select:none;}
+.tl-head{position:absolute;top:-6px;bottom:-6px;width:2px;background:#fff;border-radius:2px;pointer-events:none;z-index:4;}
+.tl-head::before{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:#fff;}
+.tl-cm{position:absolute;top:0;width:2px;height:100%;background:rgba(212,168,67,0.6);pointer-events:none;}
+.tl-cm::after{content:attr(data-n);position:absolute;bottom:calc(100%+4px);left:2px;font-size:9px;color:var(--gold);white-space:nowrap;background:rgba(8,12,20,0.85);padding:2px 5px;border-radius:3px;}
+.tl-info{display:flex;justify-content:space-between;margin-top:7px;font-size:11px;color:var(--text-mid);}
+.tl-t{color:var(--gold);font-weight:600;}
+
+/* Right panel */
+.sp{width:290px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sp-tabs{display:flex;border-bottom:1px solid var(--border);}
+.sp-tab{flex:1;padding:11px 0;text-align:center;font-size:12px;font-weight:700;color:var(--text-mid);cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;}
+.sp-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+.sp-body{flex:1;overflow-y:auto;padding:14px;}
+
+.ci{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;background:var(--panel2);cursor:pointer;}
+.ci:hover{border-color:var(--border2);}
+.ci-ts{font-size:11px;color:var(--cyan);font-variant-numeric:tabular-nums;flex-shrink:0;font-weight:600;}
+.ci-nm{flex:1;font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ci-del{background:none;border:none;color:var(--text-light);cursor:pointer;font-size:14px;padding:2px;transition:color .2s;}
+.ci-del:hover{color:var(--red2);}
+.no-ci{text-align:center;padding:24px 16px;color:var(--text-mid);font-size:12px;line-height:1.7;}
+
+.sv-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-mid);margin-bottom:7px;display:block;margin-top:14px;}
+.sv-lbl:first-child{margin-top:0;}
+.sv-in,.sv-sel{width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid var(--border2);background:var(--panel2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border .2s;margin-bottom:8px;}
+.sv-in:focus,.sv-sel:focus{border-color:var(--cyan);}
+.sv-sel option{background:var(--panel2);}
+
+.btn-dl{width:100%;padding:11px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;margin-bottom:8px;}
+.btn-mp4{background:linear-gradient(135deg,#1d4ed8,#1e40af);color:#fff;}
+.btn-mp4:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(29,78,216,0.35);}
+.btn-save{background:linear-gradient(135deg,var(--teal),#0a5c5b);color:#fff;}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(14,124,123,0.3);}
+.btn-save:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.yt-hint{font-size:11px;color:var(--text-mid);line-height:1.6;margin-bottom:10px;}
+.prog-wrap{margin:8px 0;display:none;}
+.prog-bar{height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;margin-bottom:5px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:3px;transition:width .3s;width:0;}
+.prog-lbl{font-size:11px;color:var(--text-mid);}
+
+.studio-bar{background:var(--panel);border-top:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.sbar-t{font-size:13px;color:var(--text-mid);font-variant-numeric:tabular-nums;}
+.sbar-r{margin-left:auto;display:flex;gap:6px;}
+.sbtn{padding:7px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;transition:all .2s;}
+.sbtn-play{background:var(--cyan);color:#fff;}
+.sbtn-play:hover{background:#18a0b8;}
+.sbtn-redo{background:var(--panel3);color:var(--text-mid);border:1.5px solid var(--border2);}
+.sbtn-redo:hover{color:var(--text);}
+
+.notif{position:fixed;bottom:20px;right:20px;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:600;color:#fff;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;max-width:300px;line-height:1.4;}
+.notif.show{opacity:1;transform:none;}
+.notif.success{background:var(--success);}
+.notif.error{background:var(--red);}
+.notif.info{background:var(--panel3);border:1px solid var(--border2);}
+
+@media(max-width:680px){
+  .studio-layout{flex-direction:column;}
+  .sp{width:100%;height:220px;border-left:none;border-top:1px solid var(--border);}
+  .layout-sw{display:none;}
+  .setup-card{padding:24px 18px;}
+  .layout-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/teacher.html" class="tb-brand">
+    <div class="tb-icon">KI</div>
+    <div><div class="tb-name">Kulan Studio</div><div class="tb-sub">Lesson Recorder</div></div>
+  </a>
+  <div class="tb-center">
+    <div class="ph-dot active" id="pd1"></div>
+    <div class="ph-lbl active" id="pl1">Setup</div>
+    <div class="ph-sep">›</div>
+    <div class="ph-dot" id="pd2"></div>
+    <div class="ph-lbl" id="pl2">Record</div>
+    <div class="ph-sep">›</div>
+    <div class="ph-dot" id="pd3"></div>
+    <div class="ph-lbl" id="pl3">Studio</div>
+  </div>
+  <div class="tb-right">
+    <a href="/teacher.html" class="btn-back">&larr; Portal</a>
+  </div>
+</div>
+
+<div class="app">
+
+<!-- PHASE 1 -->
+<div id="phaseSetup">
+  <div class="setup-card">
+    <div class="setup-title">&#127909; New Lesson</div>
+    <div class="setup-sub">Configure your recording. You can switch layouts live while recording.</div>
+
+    <div class="s-field">
+      <label class="s-label">Layout</label>
+      <div class="layout-grid">
+        <div class="layout-pill active" data-layout="side" onclick="pickLayout('side',this)">
+          <div class="lp-icon">&#9646;&#9646;</div>
+          <div class="lp-name">Side by Side</div>
+          <div class="lp-desc">Slides 70% &bull; Camera 30%</div>
+        </div>
+        <div class="layout-pill" data-layout="pip" onclick="pickLayout('pip',this)">
+          <div class="lp-icon">&#10697;</div>
+          <div class="lp-name">Picture-in-Picture</div>
+          <div class="lp-desc">Camera bubble over slides</div>
+        </div>
+        <div class="layout-pill" data-layout="screen" onclick="pickLayout('screen',this)">
+          <div class="lp-icon">&#128247;</div>
+          <div class="lp-name">Screen Only</div>
+          <div class="lp-desc">Slides, no camera</div>
+        </div>
+        <div class="layout-pill" data-layout="cam" onclick="pickLayout('cam',this)">
+          <div class="lp-icon">&#127910;</div>
+          <div class="lp-name">Camera Only</div>
+          <div class="lp-desc">Talking head, no screen</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s-field">
+      <label class="s-label">Quality</label>
+      <select class="s-select" id="qualSel">
+        <option value="1080">1080p — Best quality (larger file)</option>
+        <option value="720" selected>720p — Recommended</option>
+        <option value="480">480p — Smaller file</option>
+      </select>
+    </div>
+
+    <div class="perm-list">
+      <div class="perm-item"><div class="perm-icon" id="permCam">&#128247;</div> Camera &amp; Microphone</div>
+      <div class="perm-item"><div class="perm-icon" id="permScr">&#128250;</div> Screen Capture (requested on start)</div>
+    </div>
+
+    <button class="btn-begin" id="btnBegin" onclick="beginSetup()">&#9654; Start Recording Session</button>
+  </div>
+</div>
+
+<!-- PHASE 2 -->
+<div id="phaseRecord">
+  <div class="canvas-area">
+    <canvas id="recCanvas"></canvas>
+    <div class="rec-badge" id="recBadge">
+      <div class="rec-dot"></div> REC <span id="badgeTime">00:00</span>
+    </div>
+    <div class="chapter-live" id="chLive">
+      <div class="cl-title">&#128204; Chapters</div>
+      <div id="chLiveList"></div>
+    </div>
+  </div>
+
+  <div class="rec-bar">
+    <div class="rec-timer" id="recTimer">00:00</div>
+    <button class="rbtn rbtn-rec"   id="btnRec"   onclick="startRec()"  disabled>&#9679; Record</button>
+    <button class="rbtn rbtn-pause" id="btnPause" onclick="pauseRec()"  style="display:none">&#10074;&#10074; Pause</button>
+    <button class="rbtn rbtn-stop"  id="btnStop"  onclick="stopRec()"   style="display:none">&#9632; Stop</button>
+    <button class="rbtn rbtn-chap"  id="btnChap"  onclick="addChapter()" style="display:none">&#128204; Chapter</button>
+    <div class="layout-sw" id="lwSw">
+      <button class="ls-btn active" data-layout="side"   onclick="swLayout('side',this)">&#9646;&#9646;</button>
+      <button class="ls-btn"        data-layout="pip"    onclick="swLayout('pip',this)">&#10697;</button>
+      <button class="ls-btn"        data-layout="screen" onclick="swLayout('screen',this)">&#128247;</button>
+      <button class="ls-btn"        data-layout="cam"    onclick="swLayout('cam',this)">&#127910;</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 3 -->
+<div id="phaseStudio">
+  <div class="studio-layout">
+    <div class="studio-preview">
+      <video id="previewVideo" preload="auto"></video>
+      <div class="tl-wrap">
+        <div class="tl-lbl">Timeline — drag gold handles to trim</div>
+        <div class="tl-track" id="tlTrack" onmousedown="tlClick(event)" ontouchstart="tlTouch(event)">
+          <div class="tl-played" id="tlPlayed"></div>
+          <div class="tl-zone"   id="tlZone"></div>
+          <div class="tl-in"    id="tlIn"  onmousedown="startDrag('in',event)"  ontouchstart="startDrag('in',event)"><div class="tl-bar">&#9647;</div></div>
+          <div class="tl-out"   id="tlOut" onmousedown="startDrag('out',event)" ontouchstart="startDrag('out',event)"><div class="tl-bar">&#9647;</div></div>
+          <div class="tl-head"  id="tlHead"></div>
+          <div id="tlMarkers"></div>
+        </div>
+        <div class="tl-info">
+          <span>In: <span class="tl-t" id="tlInLbl">0:00</span></span>
+          <span id="tlDur">Duration: —</span>
+          <span>Out: <span class="tl-t" id="tlOutLbl">—</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sp">
+      <div class="sp-tabs">
+        <div class="sp-tab active" id="tabCh" onclick="spTab('ch')">&#128204; Chapters</div>
+        <div class="sp-tab"        id="tabSv" onclick="spTab('sv')">&#9650; Save</div>
+      </div>
+      <div class="sp-body" id="spCh">
+        <div id="chStudio"><div class="no-ci">No chapters yet.<br>Press <strong style="color:var(--gold)">Chapter</strong> while recording to mark key moments.</div></div>
+      </div>
+      <div class="sp-body" id="spSv" style="display:none;">
+        <label class="sv-lbl">Lesson Title <span style="color:var(--gold)">*</span></label>
+        <input  class="sv-in"  id="svTitle"  placeholder="e.g. Module 1 — Intro to AI">
+        <label class="sv-lbl">Course</label>
+        <select class="sv-sel" id="svCourse"><option value="">Select course...</option></select>
+        <label class="sv-lbl">Module Number</label>
+        <input  class="sv-in"  id="svMod" type="number" value="1" min="1">
+
+        <label class="sv-lbl" style="margin-top:18px;">&#8675; Download Your Recording</label>
+        <button class="btn-dl btn-mp4" onclick="dlMP4()">&#8675; Download MP4</button>
+        <div class="yt-hint">Record &rarr; Download &rarr; Upload to YouTube &rarr; paste link below.</div>
+
+        <label class="sv-lbl">YouTube / Video URL</label>
+        <input class="sv-in" id="svUrl" placeholder="https://youtu.be/...">
+        <div class="yt-hint">Paste your YouTube link (or any video URL). Students watch it directly in the course viewer.</div>
+        <div class="prog-wrap" id="progWrap">
+          <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+          <div class="prog-lbl" id="progLbl">Saving...</div>
+        </div>
+        <button class="btn-dl btn-save" id="btnSave" onclick="saveCourse()">&#10003; Save to Course</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="studio-bar">
+    <div class="sbar-t" id="sbarT">0:00 / 0:00</div>
+    <div class="sbar-r">
+      <button class="sbtn sbtn-play" id="sbPlay" onclick="pvToggle()">&#9654; Play</button>
+      <button class="sbtn sbtn-redo"              onclick="reRecord()">&#8634; Re-record</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+// STATE
+var _user=null,_courses=[],_layout='side',_quality=720;
+var _camSt=null,_scrSt=null,_recorder=null,_chunks=[],_blob=null;
+var _recording=false,_paused=false,_timerSec=0,_timerInt=null,_drawInt=null;
+var _chapters=[],_camEl=null,_scrEl=null;
+var _trimIn=0,_trimOut=0,_dragging=null;
+var canvas=document.getElementById('recCanvas');
+var ctx=canvas.getContext('2d');
+
+// AUTH
+_sb.auth.getSession().then(function(r){
+  var u=r.data.session&&r.data.session.user;
+  if(!u){window.location.href='/login.html';return;}
+  _user=u; loadCourses();
+});
+function loadCourses(){
+  _sb.from('courses').select('id,title').order('created_at').then(function(r){
+    _courses=r.data||[];
+    var el=document.getElementById('svCourse');
+    el.innerHTML='<option value="">Select course...</option>'+
+      _courses.map(function(c){return '<option value="'+c.id+'">'+esc(c.title)+'</option>';}).join('');
+  });
+}
+
+// SETUP
+function pickLayout(l,el){
+  _layout=l;
+  document.querySelectorAll('.layout-pill').forEach(function(p){p.classList.remove('active');});
+  if(el)el.classList.add('active');
+}
+
+async function beginSetup(){
+  var btn=document.getElementById('btnBegin');
+  btn.disabled=true;btn.innerHTML='&#9203; Requesting permissions...';
+  _quality=parseInt(document.getElementById('qualSel').value)||720;
+  var W=_quality>=1080?1920:_quality>=720?1280:854;
+  var H=_quality>=1080?1080:_quality>=720?720:480;
+  canvas.width=W;canvas.height=H;
+  try{
+    if(_layout!=='screen'){
+      _camSt=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:W},height:{ideal:H},facingMode:'user'},audio:true});
+      var pi=document.getElementById('permCam');pi.textContent='✓';pi.className='perm-icon ok';
+    }
+    if(_layout!=='cam'){
+      _scrSt=await navigator.mediaDevices.getDisplayMedia({video:{width:{ideal:W},height:{ideal:H}},audio:{echoCancellation:false}});
+      var ps=document.getElementById('permScr');ps.textContent='✓';ps.className='perm-icon ok';
+      _scrSt.getVideoTracks()[0].addEventListener('ended',function(){if(_recording)stopRec();});
+    }
+    goPhase(2);startDraw();
+    document.getElementById('btnRec').disabled=false;
+    syncLsw();
+  }catch(e){
+    btn.disabled=false;btn.innerHTML='&#9654; Start Recording Session';
+    showN('Permission denied: '+e.message,'error');
+    var pe=document.getElementById('permCam');pe.textContent='✗';pe.className='perm-icon err';
+  }
+}
+
+// DRAW
+function startDraw(){
+  _camEl=mkVid(_camSt);_scrEl=mkVid(_scrSt);
+  if(_drawInt)clearInterval(_drawInt);
+  _drawInt=setInterval(drawF,1000/30);
+}
+function mkVid(st){
+  if(!st)return null;
+  var v=document.createElement('video');v.srcObject=st;v.muted=true;v.play();return v;
+}
+function drawF(){
+  var W=canvas.width,H=canvas.height;
+  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+  if(_layout==='side'){dvd(_scrEl,0,0,W*.70,H);dvd(_camEl,W*.70,0,W*.30,H);}
+  else if(_layout==='pip'){
+    dvd(_scrEl,0,0,W,H);
+    if(_camEl){
+      var pw=W*.24,ph=H*.24,px=W-pw-18,py=H-ph-18;
+      ctx.save();rr(ctx,px-2,py-2,pw+4,ph+4,10);ctx.fillStyle='#000';ctx.fill();ctx.restore();
+      ctx.save();rr(ctx,px,py,pw,ph,9);ctx.clip();dvd(_camEl,px,py,pw,ph);ctx.restore();
+      ctx.strokeStyle='rgba(27,174,204,0.85)';ctx.lineWidth=2;rr(ctx,px,py,pw,ph,9);ctx.stroke();
+    }
+  }else if(_layout==='screen'){dvd(_scrEl,0,0,W,H);}
+  else{dvd(_camEl,0,0,W,H);}
+  if(_recording&&!_paused){
+    ctx.fillStyle='rgba(220,38,38,0.88)';rr(ctx,14,14,76,26,5);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='bold 12px DM Sans,sans-serif';ctx.textBaseline='middle';
+    ctx.fillText('● REC',24,27);
+  }
+}
+function dvd(el,x,y,w,h){
+  if(!el||el.readyState<2)return;
+  var vw=el.videoWidth||1,vh=el.videoHeight||1;
+  var sc=Math.min(w/vw,h/vh),dw=vw*sc,dh=vh*sc;
+  ctx.drawImage(el,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
+}
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();
+}
+
+// LAYOUT SWITCH
+function swLayout(l,el){
+  _layout=l;
+  document.querySelectorAll('#lwSw .ls-btn').forEach(function(b){b.classList.remove('active');});
+  if(el)el.classList.add('active');
+}
+function syncLsw(){
+  document.querySelectorAll('#lwSw .ls-btn').forEach(function(b){
+    b.classList.toggle('active',b.dataset.layout===_layout);
+  });
+}
+
+// RECORDING
+function startRec(){
+  _chunks=[];_chapters=[];_timerSec=0;renderChLive();
+  var tracks=[];
+  canvas.captureStream(30).getTracks().forEach(function(t){tracks.push(t);});
+  if(_camSt)_camSt.getAudioTracks().forEach(function(t){tracks.push(t);});
+  if(_scrSt)_scrSt.getAudioTracks().forEach(function(t){tracks.push(t);});
+  var mime=bestMime();
+  _recorder=new MediaRecorder(new MediaStream(tracks),{mimeType:mime,videoBitsPerSecond:brate()});
+  _recorder.ondataavailable=function(e){if(e.data&&e.data.size>0)_chunks.push(e.data);};
+  _recorder.onstop=onStop;
+  _recorder.start(1000);
+  _recording=true;_paused=false;
+  sh('btnRec',false);sh('btnPause',true);sh('btnStop',true);sh('btnChap',true);
+  document.getElementById('recBadge').classList.add('show');
+  document.getElementById('recTimer').classList.add('live');
+  startTimer();
+}
+function pauseRec(){
+  if(!_recording)return;
+  if(_paused){
+    _recorder.resume();_paused=false;
+    document.getElementById('btnPause').innerHTML='&#10074;&#10074; Pause';
+    document.getElementById('recBadge').classList.add('show');
+    startTimer();
+  }else{
+    _recorder.pause();_paused=true;
+    document.getElementById('btnPause').innerHTML='&#9654; Resume';
+    document.getElementById('recBadge').classList.remove('show');
+    clearInterval(_timerInt);
+  }
+}
+function stopRec(){
+  if(!_recorder)return;
+  clearInterval(_timerInt);_recorder.stop();_recording=false;_paused=false;
+  sh('btnRec',true);sh('btnPause',false);sh('btnStop',false);sh('btnChap',false);
+  document.getElementById('recBadge').classList.remove('show');
+  document.getElementById('recTimer').classList.remove('live');
+}
+function onStop(){
+  _blob=new Blob(_chunks,{type:bestMime()});
+  var url=URL.createObjectURL(_blob);
+  var pv=document.getElementById('previewVideo');
+  pv.src=url;pv.load();
+  var d=new Date();
+  document.getElementById('svTitle').value='Lesson — '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  goPhase(3);
+  pv.addEventListener('loadedmetadata',initTL,{once:true});
+  renderChStudio();
+}
+
+// CHAPTERS
+function addChapter(){
+  var nm='Chapter '+(_chapters.length+1);
+  var c=prompt('Chapter name (e.g. "Introduction"):',nm);
+  if(c===null)return;
+  _chapters.push({time:_timerSec,name:c||nm});
+  renderChLive();
+}
+function renderChLive(){
+  var list=document.getElementById('chLiveList');
+  var live=document.getElementById('chLive');
+  if(!_chapters.length){live.classList.remove('show');return;}
+  live.classList.add('show');
+  list.innerHTML=_chapters.map(function(c){
+    return '<div class="cl-item"><span class="cl-ts">'+fmt(c.time)+'</span><span class="cl-nm">'+esc(c.name)+'</span></div>';
+  }).join('');
+}
+function renderChStudio(){
+  var list=document.getElementById('chStudio');
+  var mrk=document.getElementById('tlMarkers');
+  var pv=document.getElementById('previewVideo');
+  var dur=pv.duration||1;
+  if(!_chapters.length){
+    list.innerHTML='<div class="no-ci">No chapters yet.<br>Press <strong style="color:var(--gold)">Chapter</strong> while recording to mark key moments.</div>';
+    if(mrk)mrk.innerHTML='';return;
+  }
+  list.innerHTML=_chapters.map(function(c,i){
+    return '<div class="ci" onclick="seekTo('+c.time+')">'
+      +'<span class="ci-ts">'+fmt(c.time)+'</span>'
+      +'<span class="ci-nm">'+esc(c.name)+'</span>'
+      +'<button class="ci-del" onclick="delCh('+i+',event)">&#215;</button>'
+      +'</div>';
+  }).join('');
+  if(mrk)mrk.innerHTML=_chapters.map(function(c){
+    return '<div class="tl-cm" style="left:'+(c.time/dur*100)+'%" data-n="'+esc(c.name)+'"></div>';
+  }).join('');
+}
+function delCh(i,e){e.stopPropagation();_chapters.splice(i,1);renderChStudio();}
+
+// TIMELINE
+function initTL(){
+  var pv=document.getElementById('previewVideo');
+  var dur=pv.duration;
+  _trimIn=0;_trimOut=dur;
+  updTL();
+  document.getElementById('tlDur').textContent='Duration: '+fmt(dur);
+  document.getElementById('tlOutLbl').textContent=fmt(dur);
+  pv.addEventListener('timeupdate',function(){
+    var d=pv.duration||1,ct=pv.currentTime;
+    document.getElementById('tlPlayed').style.width=(ct/d*100)+'%';
+    document.getElementById('tlHead').style.left=(ct/d*100)+'%';
+    document.getElementById('sbarT').textContent=fmt(ct)+' / '+fmt(d);
+    if(ct>=_trimOut){pv.pause();pv.currentTime=_trimIn;document.getElementById('sbPlay').innerHTML='&#9654; Play';}
+  });
+  renderChStudio();
+}
+function updTL(){
+  var pv=document.getElementById('previewVideo');
+  var dur=pv.duration||(_trimOut||1);
+  var ip=(_trimIn/dur)*100,op=(_trimOut/dur)*100;
+  document.getElementById('tlIn').style.left=ip+'%';
+  document.getElementById('tlOut').style.right=(100-op)+'%';
+  document.getElementById('tlZone').style.left=ip+'%';
+  document.getElementById('tlZone').style.width=(op-ip)+'%';
+  document.getElementById('tlInLbl').textContent=fmt(_trimIn);
+  document.getElementById('tlOutLbl').textContent=fmt(_trimOut);
+}
+function tlClick(e){
+  if(_dragging)return;
+  var tr=document.getElementById('tlTrack'),rc=tr.getBoundingClientRect();
+  var pct=Math.max(0,Math.min(1,(e.clientX-rc.left)/rc.width));
+  document.getElementById('previewVideo').currentTime=pct*(document.getElementById('previewVideo').duration||0);
+}
+function tlTouch(e){tlClick(e.touches[0]);}
+function startDrag(handle,e){
+  e.stopPropagation();_dragging=handle;
+  var mv=function(ev){
+    var tr=document.getElementById('tlTrack'),rc=tr.getBoundingClientRect();
+    var cx=ev.touches?ev.touches[0].clientX:ev.clientX;
+    var pct=Math.max(0,Math.min(1,(cx-rc.left)/rc.width));
+    var dur=document.getElementById('previewVideo').duration||1;
+    if(handle==='in'){_trimIn=Math.min(pct*dur,_trimOut-1);document.getElementById('previewVideo').currentTime=_trimIn;}
+    else{_trimOut=Math.max(pct*dur,_trimIn+1);}
+    updTL();
+  };
+  var up=function(){
+    _dragging=null;
+    document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);
+    document.removeEventListener('touchmove',mv);document.removeEventListener('touchend',up);
+  };
+  document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);
+  document.addEventListener('touchmove',mv,{passive:true});document.addEventListener('touchend',up);
+}
+
+// PREVIEW
+function pvToggle(){
+  var pv=document.getElementById('previewVideo'),btn=document.getElementById('sbPlay');
+  if(pv.paused){
+    if(pv.currentTime<_trimIn||pv.currentTime>=_trimOut)pv.currentTime=_trimIn;
+    pv.play();btn.innerHTML='&#10074;&#10074; Pause';
+  }else{pv.pause();btn.innerHTML='&#9654; Play';}
+}
+function seekTo(t){document.getElementById('previewVideo').currentTime=t;}
+
+// DOWNLOAD
+function dlMP4(){
+  if(!_blob){showN('No recording found.','error');return;}
+  var title=(document.getElementById('svTitle').value||'kulan-lesson').replace(/[^a-zA-Z0-9]/g,'_');
+  var ext=_blob.type.includes('webm')?'webm':'mp4';
+  var pv=document.getElementById('previewVideo');
+  if((_trimIn>0.5)||(_trimOut<(pv.duration||0)-0.5)){
+    showN('Downloading full recording. Trim precisely in a video editor after downloading.','info');
+  }
+  var a=document.createElement('a');a.href=URL.createObjectURL(_blob);a.download=title+'.'+ext;a.click();
+  showN('Download started. Upload to YouTube, then paste the URL in the Save section.','success');
+}
+
+// SAVE TO COURSE
+async function saveCourse(){
+  var title=document.getElementById('svTitle').value.trim();
+  var cid=document.getElementById('svCourse').value;
+  var mod=parseInt(document.getElementById('svMod').value)||1;
+  var url=document.getElementById('svUrl').value.trim();
+  if(!title){showN('Please enter a lesson title.','error');return;}
+  if(!cid){showN('Please select a course.','error');return;}
+  if(!url){showN('Please paste a YouTube or video URL.','error');return;}
+  var yt=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+  if(yt)url='https://www.youtube.com/embed/'+yt[1];
+  var btn=document.getElementById('btnSave');
+  btn.disabled=true;btn.textContent='Saving...';
+  document.getElementById('progWrap').style.display='block';
+  document.getElementById('progFill').style.width='60%';
+  var row={
+    course_id:cid,title:title,type:'video',url:url,module_number:mod,allow_download:false,
+    notes:_chapters.length?'Chapters: '+_chapters.map(function(c){return fmt(c.time)+' '+c.name;}).join(' | '):null
+  };
+  var res=await _sb.from('materials').insert([row]);
+  document.getElementById('progFill').style.width='100%';
+  if(res.error){
+    btn.disabled=false;btn.textContent='✓ Save to Course';
+    document.getElementById('progLbl').textContent='Error: '+res.error.message;
+    showN('Save failed: '+res.error.message,'error');return;
+  }
+  document.getElementById('progLbl').textContent='Saved!';
+  showN('Lesson saved to course!','success');
+  btn.textContent='✓ Saved!';
+  setTimeout(function(){window.location.href='/teacher.html';},1500);
+}
+
+// RE-RECORD
+function reRecord(){
+  if(!confirm('Discard this recording and start over?'))return;
+  _blob=null;_chunks=[];_chapters=[];_timerSec=0;
+  document.getElementById('previewVideo').src='';
+  document.getElementById('recTimer').textContent='00:00';
+  goPhase(2);
+}
+
+// TIMER
+function startTimer(){
+  clearInterval(_timerInt);
+  _timerInt=setInterval(function(){
+    _timerSec++;
+    var s=fmt(_timerSec);
+    document.getElementById('recTimer').textContent=s;
+    document.getElementById('badgeTime').textContent=s;
+  },1000);
+}
+
+// PHASES
+function goPhase(n){
+  document.getElementById('phaseSetup').style.display=n===1?'flex':'none';
+  document.getElementById('phaseRecord').style.display=n===2?'flex':'none';
+  document.getElementById('phaseStudio').style.display=n===3?'flex':'none';
+  for(var i=1;i<=3;i++){
+    var dot=document.getElementById('pd'+i),lbl=document.getElementById('pl'+i);
+    if(i<n){dot.className='ph-dot done';lbl.className='ph-lbl';}
+    else if(i===n){dot.className='ph-dot active';lbl.className='ph-lbl active';}
+    else{dot.className='ph-dot';lbl.className='ph-lbl';}
+  }
+}
+
+// PANEL TABS
+function spTab(t){
+  document.getElementById('spCh').style.display=t==='ch'?'block':'none';
+  document.getElementById('spSv').style.display=t==='sv'?'block':'none';
+  document.getElementById('tabCh').className='sp-tab'+(t==='ch'?' active':'');
+  document.getElementById('tabSv').className='sp-tab'+(t==='sv'?' active':'');
+}
+
+// UTILS
+function bestMime(){
+  var t=['video/mp4;codecs=h264,aac','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+  for(var i=0;i<t.length;i++)if(MediaRecorder.isTypeSupported(t[i]))return t[i];
+  return 'video/webm';
+}
+function brate(){return _quality>=1080?8000000:_quality>=720?4000000:2000000;}
+function fmt(s){var m=Math.floor(s/60),sc=Math.floor(s%60);return m+':'+(sc<10?'0':'')+sc;}
+function sh(id,v){document.getElementById(id).style.display=v?'inline-flex':'none';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showN(msg,type){
+  var el=document.getElementById('notif');el.textContent=msg;el.className='notif show '+(type||'info');
+  clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},5000);
+}
+</script>
+</body>
+</html>

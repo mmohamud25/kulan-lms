@@ -163,6 +163,36 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
   cursor:default; opacity:.8;
 }
 
+
+/* ── VIDEO PLAYER ── */
+.video-wrap {
+  display:none; flex-direction:column; width:100%; height:100%;
+  background:#000; position:relative;
+}
+.video-wrap.active { display:flex; }
+#videoEl {
+  flex:1; width:100%; outline:none; background:#000;
+  min-height:0;
+}
+.video-controls {
+  background:linear-gradient(0deg,rgba(0,0,0,0.9),transparent);
+  padding:10px 14px 12px; display:flex; flex-direction:column; gap:8px;
+  flex-shrink:0;
+}
+.vc-progress { position:relative; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; cursor:pointer; transition:height .15s; }
+.vc-progress:hover { height:6px; }
+.vc-progress-fill { height:100%; background:var(--cyan); border-radius:2px; pointer-events:none; }
+.vc-progress-buf  { height:100%; background:rgba(255,255,255,0.2); border-radius:2px; position:absolute; top:0; left:0; pointer-events:none; }
+.vc-row { display:flex; align-items:center; gap:10px; }
+.vc-btn { background:none; border:none; color:#fff; cursor:pointer; padding:4px; font-size:16px; transition:opacity .2s; line-height:1; }
+.vc-btn:hover { opacity:.7; }
+.vc-time { font-size:12px; color:rgba(255,255,255,0.6); min-width:90px; }
+.vc-vol-wrap { display:flex; align-items:center; gap:6px; }
+.vc-vol { width:70px; accent-color:var(--cyan); cursor:pointer; }
+.vc-speed { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; padding:3px 8px; cursor:pointer; }
+.vc-speed:focus { outline:none; }
+.vc-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+
 </style>
 </head>
 <body>
@@ -216,7 +246,36 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
         <div class="nc-title">Select a module to begin</div>
         <div class="nc-sub">Choose a module from the sidebar on the left to start learning.</div>
       </div>
-      <iframe id="contentFrame" allowfullscreen></iframe>
+      <!-- Video Player (for mp4, webm, Supabase) -->
+      <div class="video-wrap" id="videoWrap">
+        <video id="videoEl" preload="metadata" playsinline></video>
+        <div class="video-controls" id="videoControls">
+          <div class="vc-progress" id="vcProgress" onclick="vcSeek(event)">
+            <div class="vc-progress-buf"  id="vcBuf"></div>
+            <div class="vc-progress-fill" id="vcFill" style="width:0%"></div>
+          </div>
+          <div class="vc-row">
+            <button class="vc-btn" id="vcPlay" onclick="vcTogglePlay()">&#9654;</button>
+            <div class="vc-vol-wrap">
+              <button class="vc-btn" onclick="vcToggleMute()">&#128266;</button>
+              <input class="vc-vol" type="range" min="0" max="1" step="0.05" value="1" oninput="vcSetVol(this.value)">
+            </div>
+            <div class="vc-time" id="vcTime">0:00 / 0:00</div>
+            <div class="vc-right">
+              <select class="vc-speed" onchange="vcSetSpeed(this.value)">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+              </select>
+              <button class="vc-btn" onclick="vcFullscreen()">&#x26F6;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Iframe (for YouTube, PDFs, Google Drive, PPT) -->
+      <iframe id="contentFrame" allowfullscreen allow="autoplay; encrypted-media"></iframe>
     </div>
 
     <!-- Notes Panel -->
@@ -367,8 +426,7 @@ function openMaterial(mat, totalMats) {
 
   var url=mat.url||'';
   document.getElementById('noContent').style.display='none';
-  var frame=document.getElementById('contentFrame');
-  frame.style.display='block'; frame.src=url;
+  openMaterialWithPlayer(url);
 
   var dlBtn=document.getElementById('downloadBtn');
   if(mat.allow_download&&url){ dlBtn.href=url; dlBtn.classList.remove('hidden'); }
@@ -473,6 +531,93 @@ function markComplete(matId, totalMats) {
     btn.style.transform = 'scale(1.05)';
     setTimeout(function(){ btn.style.transform = ''; }, 200);
   }
+}
+
+// ── VIDEO PLAYER ────────────────────────────────────────────────
+var _videoEl = null;
+
+function initVideoPlayer() {
+  _videoEl = document.getElementById('videoEl');
+  _videoEl.addEventListener('timeupdate', vcUpdateProgress);
+  _videoEl.addEventListener('progress',   vcUpdateBuffer);
+  _videoEl.addEventListener('play',  function(){ document.getElementById('vcPlay').textContent = '⏸'; });
+  _videoEl.addEventListener('pause', function(){ document.getElementById('vcPlay').textContent = '▶'; });
+  _videoEl.addEventListener('ended', function(){ document.getElementById('vcPlay').textContent = '▶'; });
+}
+
+function isVideoUrl(url) {
+  if (!url) return false;
+  var u = url.toLowerCase();
+  // Direct video file
+  if (/\.(mp4|webm|mov|m4v|ogv)($|\?)/.test(u)) return true;
+  // Supabase storage URL with video extension
+  if (u.includes('supabase') && /\.(mp4|webm|mov)/.test(u)) return true;
+  return false;
+}
+
+function isYouTubeUrl(url) {
+  return url && (url.includes('youtube.com') || url.includes('youtu.be'));
+}
+
+function openMaterialWithPlayer(url) {
+  var videoWrap = document.getElementById('videoWrap');
+  var frame     = document.getElementById('contentFrame');
+
+  if (isVideoUrl(url)) {
+    // Show video player
+    videoWrap.classList.add('active');
+    frame.style.display = 'none';
+    frame.src = '';
+    if (!_videoEl) initVideoPlayer();
+    _videoEl.src = url;
+    _videoEl.load();
+    _videoEl.play().catch(function(){});
+  } else {
+    // Show iframe (YouTube, PDF, Google Drive, PPT)
+    videoWrap.classList.remove('active');
+    frame.style.display = 'block';
+    frame.src = url;
+  }
+}
+
+function vcTogglePlay() {
+  if (!_videoEl) return;
+  if (_videoEl.paused) _videoEl.play();
+  else _videoEl.pause();
+}
+function vcToggleMute() {
+  if (!_videoEl) return;
+  _videoEl.muted = !_videoEl.muted;
+  document.querySelector('.vc-btn[onclick="vcToggleMute()"]').textContent = _videoEl.muted ? '🔇' : '🔊';
+}
+function vcSetVol(v) { if (_videoEl) _videoEl.volume = parseFloat(v); }
+function vcSetSpeed(s) { if (_videoEl) _videoEl.playbackRate = parseFloat(s); }
+function vcFullscreen() {
+  var wrap = document.getElementById('videoWrap');
+  if (document.fullscreenElement) document.exitFullscreen();
+  else if (wrap.requestFullscreen) wrap.requestFullscreen();
+}
+function vcUpdateProgress() {
+  if (!_videoEl || !_videoEl.duration) return;
+  var pct = (_videoEl.currentTime / _videoEl.duration) * 100;
+  document.getElementById('vcFill').style.width = pct + '%';
+  document.getElementById('vcTime').textContent = fmtTime(_videoEl.currentTime) + ' / ' + fmtTime(_videoEl.duration);
+}
+function vcUpdateBuffer() {
+  if (!_videoEl || !_videoEl.duration || !_videoEl.buffered.length) return;
+  var buf = (_videoEl.buffered.end(_videoEl.buffered.length-1) / _videoEl.duration) * 100;
+  document.getElementById('vcBuf').style.width = buf + '%';
+}
+function vcSeek(e) {
+  if (!_videoEl || !_videoEl.duration) return;
+  var bar = document.getElementById('vcProgress');
+  var rect = bar.getBoundingClientRect();
+  var pct = (e.clientX - rect.left) / rect.width;
+  _videoEl.currentTime = pct * _videoEl.duration;
+}
+function fmtTime(s) {
+  var m = Math.floor(s/60), sec = Math.floor(s%60);
+  return m + ':' + (sec<10?'0':'')+sec;
 }
 function saveProgress() {
   if (!_viewerUser||!_courseId) return;

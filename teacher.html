@@ -880,10 +880,37 @@ function uploadMaterial() {
   var url='', isFile=false;
 
   if (_upTab==='upload') {
-    if (!_upFileData) { showNotif('Please select a file.'); return; }
-    try { localStorage.setItem('ki_file_'+matId, _upFileData.dataUrl); }
-    catch(e) { showNotif('File too large. Use the Link tab instead.'); return; }
-    url='ki_file_'+matId; isFile=true;
+    if (!_upFileData || !_upFileData.file) { showNotif('Please select a file.'); return; }
+    // Upload to Supabase Storage asynchronously
+    var uploadFile = _upFileData.file;
+    var uploadPath = 'materials/' + Date.now() + '-' + uploadFile.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+    showNotif('Uploading file...');
+    document.getElementById('upProgressText').textContent = 'Uploading to storage...';
+    _sb.storage.from('kulan-materials').upload(uploadPath, uploadFile, { upsert:true })
+      .then(function(res) {
+        if (res.error) { showNotif('Upload failed: '+res.error.message); return; }
+        var publicUrl = _sb.storage.from('kulan-materials').getPublicUrl(uploadPath).data.publicUrl;
+        var row2 = {
+          course_id:      courseId,
+          title:          title,
+          type:           document.getElementById('upType').value,
+          url:            publicUrl,
+          module_number:  parseInt(document.getElementById('upModule').value)||1,
+          allow_download: document.getElementById('upDownload').checked,
+          notes:          document.getElementById('upNotes').value.trim()||null
+        };
+        _sb.from('materials').insert([row2]).select().then(function(result) {
+          if(result.error){showNotif('Error: '+result.error.message);return;}
+          showNotif('Material "'+title+'" uploaded and saved!');
+          ['upTitle','upUrl','upModule','upNotes'].forEach(function(id){document.getElementById(id).value='';});
+          document.getElementById('upDownload').checked=false;
+          clearUpFile(); switchUpTab('upload');
+          renderAll();
+        });
+      });
+    return; // async path exits here
+  } else if (false && _upTab==='upload_old') { // disabled old path
+    url=''; isFile=false;
   } else {
     url = document.getElementById('upUrl').value.trim();
     if (!url) { showNotif('Please paste a link.'); return; }
@@ -1280,10 +1307,37 @@ function uploadMaterial() {
   var url='', isFile=false;
 
   if (_upTab==='upload') {
-    if (!_upFileData) { showNotif('Please select a file.'); return; }
-    try { localStorage.setItem('ki_file_'+matId, _upFileData.dataUrl); }
-    catch(e) { showNotif('File too large. Use the Link tab instead.'); return; }
-    url='ki_file_'+matId; isFile=true;
+    if (!_upFileData || !_upFileData.file) { showNotif('Please select a file.'); return; }
+    // Upload to Supabase Storage asynchronously
+    var uploadFile = _upFileData.file;
+    var uploadPath = 'materials/' + Date.now() + '-' + uploadFile.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+    showNotif('Uploading file...');
+    document.getElementById('upProgressText').textContent = 'Uploading to storage...';
+    _sb.storage.from('kulan-materials').upload(uploadPath, uploadFile, { upsert:true })
+      .then(function(res) {
+        if (res.error) { showNotif('Upload failed: '+res.error.message); return; }
+        var publicUrl = _sb.storage.from('kulan-materials').getPublicUrl(uploadPath).data.publicUrl;
+        var row2 = {
+          course_id:      courseId,
+          title:          title,
+          type:           document.getElementById('upType').value,
+          url:            publicUrl,
+          module_number:  parseInt(document.getElementById('upModule').value)||1,
+          allow_download: document.getElementById('upDownload').checked,
+          notes:          document.getElementById('upNotes').value.trim()||null
+        };
+        _sb.from('materials').insert([row2]).select().then(function(result) {
+          if(result.error){showNotif('Error: '+result.error.message);return;}
+          showNotif('Material "'+title+'" uploaded and saved!');
+          ['upTitle','upUrl','upModule','upNotes'].forEach(function(id){document.getElementById(id).value='';});
+          document.getElementById('upDownload').checked=false;
+          clearUpFile(); switchUpTab('upload');
+          renderAll();
+        });
+      });
+    return; // async path exits here
+  } else if (false && _upTab==='upload_old') { // disabled old path
+    url=''; isFile=false;
   } else {
     url = document.getElementById('upUrl').value.trim();
     if (!url) { showNotif('Please paste a link.'); return; }
