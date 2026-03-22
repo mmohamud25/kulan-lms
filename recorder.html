@@ -243,6 +243,34 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .rbtn-mirror { background:var(--panel3); color:var(--text-mid); border:1.5px solid var(--border2); }
 .rbtn-mirror.on { border-color:var(--cyan); color:var(--cyan); background:rgba(27,174,204,0.1); }
 
+
+/* ── DRAFT BANNER ── */
+.draft-banner {
+  display:none; background:linear-gradient(135deg,#1a2a10,var(--teal));
+  border-bottom:1px solid rgba(27,174,204,0.3);
+  padding:10px 20px; align-items:center; gap:12px; flex-shrink:0;
+}
+.draft-banner.show { display:flex; }
+.db-icon  { font-size:18px; flex-shrink:0; }
+.db-text  { flex:1; font-size:13px; color:#fff; line-height:1.5; }
+.db-title { font-weight:700; }
+.db-sub   { font-size:11px; color:rgba(255,255,255,0.6); margin-top:1px; }
+.db-btns  { display:flex; gap:8px; flex-shrink:0; }
+.db-btn-resume {
+  padding:7px 16px; border-radius:8px; border:none;
+  background:var(--gold); color:#0B1F3A;
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; cursor:pointer;
+  transition:all .2s;
+}
+.db-btn-resume:hover { background:var(--gold2); }
+.db-btn-discard {
+  padding:7px 14px; border-radius:8px;
+  border:1px solid rgba(255,255,255,0.2); background:transparent;
+  color:rgba(255,255,255,0.6); font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:600; cursor:pointer; transition:all .2s;
+}
+.db-btn-discard:hover { color:#fff; border-color:rgba(255,255,255,0.4); }
+
 </style>
 </head>
 <body>
@@ -264,6 +292,19 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   </div>
   <div class="tb-right">
     <a href="#" class="btn-back" id="backBtn" onclick="goBack()">&larr; Portal</a>
+  </div>
+</div>
+
+<!-- DRAFT BANNER -->
+<div class="draft-banner" id="draftBanner">
+  <div class="db-icon">&#128190;</div>
+  <div class="db-text">
+    <div class="db-title">Unsaved recording found</div>
+    <div class="db-sub" id="draftSub">You have a draft from a previous session.</div>
+  </div>
+  <div class="db-btns">
+    <button class="db-btn-resume"  onclick="resumeDraft()">&#9654; Resume Draft</button>
+    <button class="db-btn-discard" onclick="discardDraft()">&#10005; Discard</button>
   </div>
 </div>
 
@@ -448,6 +489,130 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 <div class="notif" id="notif"></div>
 
 <script>
+
+// ══════════════════════════════════════════════════════════
+// DRAFT SYSTEM — IndexedDB
+// ══════════════════════════════════════════════════════════
+var DB_NAME    = 'kulan_studio';
+var DB_VERSION = 1;
+var STORE_NAME = 'drafts';
+var DRAFT_KEY  = 'current_draft';
+var _db        = null;
+
+function openDB(cb){
+  if(_db){ cb(_db); return; }
+  var req = indexedDB.open(DB_NAME, DB_VERSION);
+  req.onupgradeneeded = function(e){
+    var db = e.target.result;
+    if(!db.objectStoreNames.contains(STORE_NAME)){
+      db.createObjectStore(STORE_NAME);
+    }
+  };
+  req.onsuccess = function(e){ _db=e.target.result; cb(_db); };
+  req.onerror   = function(){ cb(null); };
+}
+
+function saveDraft(blob, meta, cb){
+  openDB(function(db){
+    if(!db){ if(cb)cb(false); return; }
+    var tx = db.transaction(STORE_NAME, 'readwrite');
+    var st = tx.objectStore(STORE_NAME);
+    var draft = { blob:blob, meta:meta, savedAt:Date.now() };
+    var req = st.put(draft, DRAFT_KEY);
+    req.onsuccess = function(){ if(cb)cb(true); };
+    req.onerror   = function(){ if(cb)cb(false); };
+  });
+}
+
+function loadDraft(cb){
+  openDB(function(db){
+    if(!db){ cb(null); return; }
+    var tx = db.transaction(STORE_NAME, 'readonly');
+    var st = tx.objectStore(STORE_NAME);
+    var req = st.get(DRAFT_KEY);
+    req.onsuccess = function(){ cb(req.result||null); };
+    req.onerror   = function(){ cb(null); };
+  });
+}
+
+function clearDraft(cb){
+  openDB(function(db){
+    if(!db){ if(cb)cb(); return; }
+    var tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).delete(DRAFT_KEY);
+    tx.oncomplete = function(){ if(cb)cb(); };
+  });
+}
+
+// Check for draft on page load
+function checkForDraft(){
+  loadDraft(function(draft){
+    if(!draft || !draft.blob) return;
+    var banner = document.getElementById('draftBanner');
+    var sub    = document.getElementById('draftSub');
+    if(!banner) return;
+    var ago  = Math.round((Date.now() - draft.savedAt) / 60000);
+    var when = ago < 1 ? 'just now' : ago < 60 ? ago+'m ago' : Math.round(ago/60)+'h ago';
+    var dur  = draft.meta && draft.meta.duration ? ' (' + fmt(draft.meta.duration) + ')' : '';
+    var title= draft.meta && draft.meta.title    ? ' — "' + draft.meta.title + '"'         : '';
+    sub.textContent = 'Draft saved ' + when + dur + title;
+    banner.classList.add('show');
+  });
+}
+
+function resumeDraft(){
+  loadDraft(function(draft){
+    if(!draft || !draft.blob){ showN('Draft not found.','error'); return; }
+    _blob = draft.blob;
+    var meta = draft.meta || {};
+    // Restore chapters
+    _chapters = meta.chapters || [];
+    // Restore form fields
+    if(meta.title)  document.getElementById('svTitle').value  = meta.title;
+    if(meta.course) document.getElementById('svCourse').value = meta.course;
+    if(meta.module) document.getElementById('svMod').value    = meta.module;
+    // Set video src and trigger duration fix
+    var url = URL.createObjectURL(_blob);
+    var pv  = document.getElementById('previewVideo');
+    pv.src  = url; pv.preload='metadata';
+    pv.addEventListener('loadedmetadata', function(){
+      if(pv.duration===Infinity || isNaN(pv.duration)){
+        pv.currentTime = 1e101;
+        pv.addEventListener('timeupdate', function fixD(){
+          if(pv.duration!==Infinity && !isNaN(pv.duration)){
+            pv.removeEventListener('timeupdate', fixD);
+            pv.currentTime=0;
+            _trimIn=0; _trimOut=pv.duration;
+            openStudio();
+          }
+        });
+      } else {
+        _trimIn=0; _trimOut=pv.duration;
+        openStudio();
+      }
+    }, {once:true});
+    pv.load();
+    document.getElementById('draftBanner').classList.remove('show');
+    showN('Draft restored!', 'success');
+  });
+}
+
+function discardDraft(){
+  if(!confirm('Discard this draft permanently?')) return;
+  clearDraft(function(){
+    document.getElementById('draftBanner').classList.remove('show');
+    showN('Draft discarded.','info');
+  });
+}
+
+// ── beforeunload warning ─────────────────────────────────
+window.addEventListener('beforeunload', function(e){
+  if(_blob && !_saving){
+    e.preventDefault();
+    e.returnValue='';
+  }
+});
+
 // STATE
 var _user=null,_courses=[],_layout='side',_quality=720,_mirrored=false,_micCtx=null,_micAnal=null,_micInt=null,_saving=false;
 var _camSt=null,_scrSt=null,_recorder=null,_chunks=[],_blob=null;
@@ -462,6 +627,7 @@ _sb.auth.getSession().then(function(r){
   var u=r.data.session&&r.data.session.user;
   if(!u){window.location.href='/login.html';return;}
   _user=u; loadCourses();
+  setTimeout(checkForDraft, 800); // check after courses load
 });
 function loadCourses(){
   _sb.from('courses').select('id,title').order('created_at').then(function(r){
@@ -670,15 +836,33 @@ function onStop(){
   document.getElementById('svTitle').value='Lesson — '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   var openBtn=document.getElementById('btnOpenStudio');
   if(openBtn) openBtn.style.display='inline-flex';
+
+  // Auto-save draft to IndexedDB
+  var draftMeta = {
+    title:    document.getElementById('svTitle').value,
+    course:   document.getElementById('svCourse').value,
+    module:   document.getElementById('svMod').value,
+    chapters: _chapters,
+    duration: null // updated after duration fix
+  };
+  saveDraft(_blob, draftMeta, function(ok){
+    if(ok) showN('Draft auto-saved locally.','info');
+  });
 }
 
 function showDurationReady(dur){
-  // Update Open Studio button to show duration
   var openBtn=document.getElementById('btnOpenStudio');
   if(openBtn){
     openBtn.innerHTML='&#9654; Open Studio (' + fmt(dur) + ') &rarr;';
     openBtn.style.display='inline-flex';
   }
+  // Update draft with real duration
+  loadDraft(function(draft){
+    if(!draft) return;
+    draft.meta = draft.meta || {};
+    draft.meta.duration = dur;
+    saveDraft(draft.blob, draft.meta, null);
+  });
 }
 
 // CHAPTERS
@@ -912,7 +1096,9 @@ async function saveCourse(){
   document.getElementById('progLbl').textContent='Saved!';
   showN('Lesson saved to course!','success');
   btn.textContent='✓ Saved!';
-  setTimeout(function(){window.location.href='/teacher.html';},1500);
+  clearDraft(function(){
+    setTimeout(function(){window.location.href='/teacher.html';},1500);
+  });
 }
 
 // RE-RECORD
@@ -932,6 +1118,7 @@ function reRecord(){
   var openBtn=document.getElementById('btnOpenStudio');
   if(openBtn) openBtn.style.display='none';
   sh('btnRec',true);sh('btnPause',false);sh('btnStop',false);sh('btnChap',false);
+  clearDraft(null);
   goPhase(2);
 }
 
