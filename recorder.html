@@ -117,7 +117,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .tl-zone{position:absolute;top:0;height:100%;background:rgba(27,174,204,0.08);border-left:2px solid var(--gold);border-right:2px solid var(--gold);pointer-events:none;}
 .tl-in,.tl-out{position:absolute;top:-5px;bottom:-5px;width:12px;background:var(--gold);border-radius:4px;cursor:ew-resize;display:flex;align-items:center;justify-content:center;z-index:5;}
 .tl-in{left:0;border-radius:4px 0 0 4px;}
-.tl-out{right:0;border-radius:0 4px 4px 0;}
+.tl-out{left:calc(100% - 12px);border-radius:0 4px 4px 0;}
 .tl-bar{font-size:9px;color:rgba(0,0,0,0.7);font-weight:900;user-select:none;}
 .tl-head{position:absolute;top:-6px;bottom:-6px;width:2px;background:#fff;border-radius:2px;pointer-events:none;z-index:4;}
 .tl-head::before{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:#fff;}
@@ -296,11 +296,11 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
       <video id="previewVideo" preload="auto"></video>
       <div class="tl-wrap">
         <div class="tl-lbl">Timeline — drag gold handles to trim</div>
-        <div class="tl-track" id="tlTrack" onmousedown="tlClick(event)" ontouchstart="tlTouch(event)">
+        <div class="tl-track" id="tlTrack">
           <div class="tl-played" id="tlPlayed"></div>
           <div class="tl-zone"   id="tlZone"></div>
-          <div class="tl-in"    id="tlIn"  onmousedown="startDrag('in',event)"  ontouchstart="startDrag('in',event)"><div class="tl-bar">&#9647;</div></div>
-          <div class="tl-out"   id="tlOut" onmousedown="startDrag('out',event)" ontouchstart="startDrag('out',event)"><div class="tl-bar">&#9647;</div></div>
+          <div class="tl-in"    id="tlIn"><div class="tl-bar">&#9647;</div></div>
+          <div class="tl-out"   id="tlOut"><div class="tl-bar">&#9647;</div></div>
           <div class="tl-head"  id="tlHead"></div>
           <div id="tlMarkers"></div>
         </div>
@@ -570,7 +570,7 @@ function initTL(){
   _trimIn=0;_trimOut=dur;
   updTL();
   document.getElementById('tlDur').textContent='Duration: '+fmt(dur);
-  document.getElementById('tlOutLbl').textContent=fmt(dur);
+  initTLEvents();
   pv.addEventListener('timeupdate',function(){
     var d=pv.duration||1,ct=pv.currentTime;
     document.getElementById('tlPlayed').style.width=(ct/d*100)+'%';
@@ -580,42 +580,84 @@ function initTL(){
   });
   renderChStudio();
 }
+
+function initTLEvents(){
+  var track  = document.getElementById('tlTrack');
+  var inHndl = document.getElementById('tlIn');
+  var outHndl= document.getElementById('tlOut');
+
+  function getTrackPct(clientX){
+    var rc = track.getBoundingClientRect();
+    return Math.max(0, Math.min(1, (clientX - rc.left) / rc.width));
+  }
+
+  function doDrag(handle, clientX){
+    var pv  = document.getElementById('previewVideo');
+    var dur = pv.duration || 1;
+    var pct = getTrackPct(clientX);
+    if(handle==='in'){
+      _trimIn = Math.min(pct * dur, _trimOut - 0.5);
+      pv.currentTime = _trimIn;
+    } else {
+      _trimOut = Math.max(pct * dur, _trimIn + 0.5);
+    }
+    updTL();
+  }
+
+  function attachDrag(el, handle){
+    // Mouse
+    el.addEventListener('mousedown', function(e){
+      e.preventDefault(); e.stopPropagation();
+      _dragging = handle;
+      function onMove(ev){ doDrag(handle, ev.clientX); }
+      function onUp(){
+        _dragging = null;
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+    // Touch
+    el.addEventListener('touchstart', function(e){
+      e.preventDefault(); e.stopPropagation();
+      _dragging = handle;
+      function onMove(ev){ doDrag(handle, ev.touches[0].clientX); }
+      function onUp(){
+        _dragging = null;
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onUp);
+      }
+      document.addEventListener('touchmove', onMove, {passive:false});
+      document.addEventListener('touchend', onUp);
+    }, {passive:false});
+  }
+
+  attachDrag(inHndl,  'in');
+  attachDrag(outHndl, 'out');
+
+  // Track click to seek (only when not dragging a handle)
+  track.addEventListener('mousedown', function(e){
+    if(_dragging) return;
+    var pv = document.getElementById('previewVideo');
+    pv.currentTime = getTrackPct(e.clientX) * (pv.duration||0);
+  });
+}
 function updTL(){
   var pv=document.getElementById('previewVideo');
   var dur=pv.duration||(_trimOut||1);
-  var ip=(_trimIn/dur)*100,op=(_trimOut/dur)*100;
+  var ip=(_trimIn/dur)*100;
+  var op=(_trimOut/dur)*100;
   document.getElementById('tlIn').style.left=ip+'%';
-  document.getElementById('tlOut').style.right=(100-op)+'%';
+  document.getElementById('tlOut').style.left='calc('+op+'% - 12px)';
   document.getElementById('tlZone').style.left=ip+'%';
   document.getElementById('tlZone').style.width=(op-ip)+'%';
   document.getElementById('tlInLbl').textContent=fmt(_trimIn);
   document.getElementById('tlOutLbl').textContent=fmt(_trimOut);
 }
-function tlClick(e){
-  if(_dragging)return;
-  var tr=document.getElementById('tlTrack'),rc=tr.getBoundingClientRect();
-  var pct=Math.max(0,Math.min(1,(e.clientX-rc.left)/rc.width));
-  document.getElementById('previewVideo').currentTime=pct*(document.getElementById('previewVideo').duration||0);
-}
-function tlTouch(e){tlClick(e.touches[0]);}
+// tlClick/tlTouch handled by initTLEvents
 function startDrag(handle,e){
-  e.stopPropagation();_dragging=handle;
-  var mv=function(ev){
-    var tr=document.getElementById('tlTrack'),rc=tr.getBoundingClientRect();
-    var cx=ev.touches?ev.touches[0].clientX:ev.clientX;
-    var pct=Math.max(0,Math.min(1,(cx-rc.left)/rc.width));
-    var dur=document.getElementById('previewVideo').duration||1;
-    if(handle==='in'){_trimIn=Math.min(pct*dur,_trimOut-1);document.getElementById('previewVideo').currentTime=_trimIn;}
-    else{_trimOut=Math.max(pct*dur,_trimIn+1);}
-    updTL();
-  };
-  var up=function(){
-    _dragging=null;
-    document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);
-    document.removeEventListener('touchmove',mv);document.removeEventListener('touchend',up);
-  };
-  document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);
-  document.addEventListener('touchmove',mv,{passive:true});document.addEventListener('touchend',up);
+  // handled by initTLEvents — this is kept for safety
 }
 
 // PREVIEW
