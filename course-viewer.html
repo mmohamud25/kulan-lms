@@ -4,14 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Course Viewer — Kulan Institute</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
 var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GGBZJXPLRP');
+</script>
 <style>
+
 :root {
   --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
   --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
@@ -193,18 +202,389 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
 .vc-speed:focus { outline:none; }
 .vc-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
 
-</style>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-GGBZJXPLRP');
-</script>
-</head>
-<body>
 
+/* ── DISCUSSION PANEL ── */
+.disc-tabs { display:flex; border-bottom:1px solid rgba(255,255,255,0.07); flex-shrink:0; }
+.disc-tab {
+  flex:1; padding:10px 0; text-align:center; font-size:12px; font-weight:700;
+  color:rgba(255,255,255,0.4); cursor:pointer; border:none; background:none;
+  border-bottom:2px solid transparent; transition:all .2s; font-family:'DM Sans',sans-serif;
+}
+.disc-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.disc-scope-label { font-size:10px; color:rgba(255,255,255,0.3); padding:6px 14px 0; text-transform:uppercase; letter-spacing:.6px; flex-shrink:0; }
+
+.disc-list { flex:1; overflow-y:auto; padding:10px 12px; display:flex; flex-direction:column; gap:8px; min-height:0; }
+.disc-empty { text-align:center; padding:32px 16px; color:rgba(255,255,255,0.25); font-size:12px; line-height:1.9; }
+
+/* Comment card */
+.disc-comment {
+  background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 12px;
+  border:1px solid rgba(255,255,255,0.06); transition:border .2s;
+}
+.disc-comment.pinned { border-color:rgba(212,168,67,0.3); background:rgba(212,168,67,0.05); }
+.disc-comment-header { display:flex; align-items:center; gap:7px; margin-bottom:6px; }
+.disc-avatar {
+  width:26px; height:26px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color:#fff;
+}
+.disc-avatar.student { background:linear-gradient(135deg,#1BAECC,#0E7C7B); }
+.disc-avatar.teacher { background:linear-gradient(135deg,#D4A843,#b8860b); }
+.disc-avatar.admin   { background:linear-gradient(135deg,#7c3aed,#5b21b6); }
+.disc-author { font-size:12px; font-weight:700; color:rgba(255,255,255,0.85); }
+.disc-role-badge {
+  font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
+  padding:2px 6px; border-radius:4px;
+}
+.disc-role-badge.teacher { background:rgba(212,168,67,0.15); color:var(--gold); }
+.disc-role-badge.admin   { background:rgba(124,58,237,0.15); color:#a78bfa; }
+.disc-pin-badge { font-size:9px; color:var(--gold); margin-left:auto; }
+.disc-time { font-size:10px; color:rgba(255,255,255,0.25); margin-left:auto; }
+.disc-body { font-size:13px; color:rgba(255,255,255,0.75); line-height:1.6; margin-bottom:8px; word-break:break-word; }
+.disc-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.disc-action-btn {
+  background:none; border:none; color:rgba(255,255,255,0.3); font-size:11px; font-weight:600;
+  cursor:pointer; padding:3px 6px; border-radius:5px; transition:all .2s;
+  font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:3px;
+}
+.disc-action-btn:hover { color:rgba(255,255,255,0.7); background:rgba(255,255,255,0.06); }
+.disc-action-btn.liked { color:var(--cyan); }
+.disc-action-btn.pin-btn:hover { color:var(--gold); }
+.disc-action-btn.del-btn:hover { color:#ef4444; }
+
+/* Replies */
+.disc-replies { margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; gap:6px; }
+.disc-reply { display:flex; gap:7px; }
+.disc-reply-line { width:2px; background:rgba(255,255,255,0.06); flex-shrink:0; border-radius:1px; }
+.disc-reply-body { flex:1; }
+.disc-reply-header { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+.disc-reply-author { font-size:11px; font-weight:700; color:rgba(255,255,255,0.7); }
+.disc-reply-time   { font-size:10px; color:rgba(255,255,255,0.2); margin-left:auto; }
+.disc-reply-text   { font-size:12px; color:rgba(255,255,255,0.6); line-height:1.5; word-break:break-word; }
+
+/* Reply compose */
+.disc-reply-compose { margin-top:8px; display:none; }
+.disc-reply-compose.show { display:flex; gap:6px; }
+.disc-reply-input {
+  flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  border-radius:7px; padding:7px 10px; color:#fff; font-family:'DM Sans',sans-serif;
+  font-size:12px; outline:none; resize:none; transition:border .2s;
+}
+.disc-reply-input:focus { border-color:rgba(27,174,204,0.4); }
+.disc-reply-send {
+  padding:7px 12px; border-radius:7px; background:var(--cyan); border:none;
+  color:#fff; font-size:12px; font-weight:700; cursor:pointer; align-self:flex-end;
+  font-family:'DM Sans',sans-serif; transition:all .2s;
+}
+.disc-reply-send:hover { background:#18a0b8; }
+
+/* Compose box */
+.disc-compose {
+  border-top:1px solid rgba(255,255,255,0.07); padding:10px 12px;
+  flex-shrink:0; background:#07111c;
+}
+.disc-input {
+  width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  border-radius:9px; padding:9px 12px; color:#fff; font-family:'DM Sans',sans-serif;
+  font-size:13px; outline:none; resize:none; transition:border .2s; margin-bottom:7px;
+}
+.disc-input:focus { border-color:rgba(27,174,204,0.35); }
+.disc-compose-actions { display:flex; align-items:center; justify-content:space-between; }
+.disc-char-count { font-size:10px; color:rgba(255,255,255,0.2); }
+.disc-submit-btn {
+  padding:7px 18px; border-radius:8px; background:linear-gradient(135deg,var(--cyan),var(--teal));
+  border:none; color:#fff; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700;
+  cursor:pointer; transition:all .2s;
+}
+.disc-submit-btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(27,174,204,0.3); }
+.disc-submit-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+
+
+
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
+  --bg:#0d1624; --sidebar-w:280px; --notes-w:300px;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; height:100vh; overflow:hidden; display:flex; flex-direction:column; }
+
+#loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B1F3A,#1A3C6E);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
+.ld-logo { width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy); }
+.ld-spin { width:26px;height:26px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg);} }
+.ld-text { font-size:14px;color:rgba(255,255,255,0.5); }
+
+#page { display:flex;flex-direction:column;height:100vh;opacity:0;transition:opacity .3s; }
+#page.visible { opacity:1; }
+
+/* TOPNAV */
+.topnav { background:#0a1420;padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;position:relative;z-index:30; }
+.tn-left { display:flex;align-items:center;gap:12px; }
+.sidebar-toggle { background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.5);font-size:20px;padding:4px;transition:color .2s; }
+.sidebar-toggle:hover { color:#fff; }
+.tn-back { display:flex;align-items:center;gap:5px;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;padding:6px 11px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);transition:all .2s; }
+.tn-back:hover { color:var(--gold);border-color:rgba(212,168,67,0.3); }
+.course-badge { font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.tn-right { display:flex;align-items:center;gap:10px; }
+.progress-wrap { display:flex;align-items:center;gap:10px; }
+.progress-track { width:120px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden; }
+.progress-fill { height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:3px;transition:width .5s; }
+.progress-txt { font-size:11px;color:rgba(255,255,255,0.4);white-space:nowrap; }
+.btn-notes-toggle { display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s; }
+.btn-notes-toggle:hover { color:#fff;border-color:rgba(255,255,255,0.25); }
+.btn-notes-toggle.active { background:rgba(212,168,67,0.1);border-color:rgba(212,168,67,0.3);color:var(--gold); }
+
+/* LAYOUT */
+.viewer-body { display:flex;flex:1;overflow:hidden; }
+
+/* MODULE SIDEBAR */
+.sidebar { width:var(--sidebar-w);flex-shrink:0;background:#060e1a;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;overflow:hidden;transition:transform .3s; }
+.sb-header { padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0; }
+.sb-course-title { font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.3; }
+.sb-course-sub { font-size:12px;color:rgba(255,255,255,0.35); }
+.module-list { flex:1;overflow-y:auto;padding:10px 0; }
+.module-list::-webkit-scrollbar { width:4px; }
+.module-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1);border-radius:2px; }
+.mod-item { display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-left:3px solid transparent;transition:all .15s; }
+.mod-item:hover { background:rgba(255,255,255,0.04); }
+.mod-item.active { background:rgba(27,174,204,0.08);border-left-color:var(--cyan); }
+.mod-item.done .mod-icon { color:var(--teal); }
+.mod-icon { font-size:16px;flex-shrink:0;width:20px;text-align:center; }
+.mod-info { flex:1;min-width:0; }
+.mod-name { font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.mod-meta { font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px; }
+.mod-item.done .mod-name { color:rgba(255,255,255,0.5); }
+
+/* CONTENT AREA */
+.content-area { flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative; }
+#viewerHeader { padding:14px 20px;background:#0a1420;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;display:none; }
+.vh-title { font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:3px; }
+.vh-meta { font-size:12px;color:rgba(255,255,255,0.35); }
+.vh-actions { display:flex;align-items:center;gap:10px;margin-top:8px; }
+.btn-dl { padding:6px 14px;border-radius:8px;border:1px solid rgba(27,174,204,0.3);background:rgba(27,174,204,0.08);color:var(--cyan);font-size:12px;font-weight:600;text-decoration:none;transition:all .2s; }
+.btn-dl:hover { background:rgba(27,174,204,0.15); }
+.btn-dl.hidden { display:none; }
+#noContent { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,0.25);text-align:center;padding:32px; }
+#noContent .nc-icon { font-size:48px;margin-bottom:14px; }
+#noContent .nc-title { font-size:16px;font-weight:600;margin-bottom:6px;color:rgba(255,255,255,0.45); }
+#noContent .nc-sub { font-size:13px;line-height:1.7; }
+#contentFrame { flex:1;width:100%;border:none;background:#fff;display:none; }
+
+/* NOTES PANEL */
+.notes-panel { width:var(--notes-w);flex-shrink:0;background:#07111c;border-left:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;transition:width .3s,opacity .3s;overflow:hidden; }
+.notes-panel.closed { width:0;opacity:0; }
+.np-header { padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;display:flex;align-items:center;justify-content:space-between; }
+.np-title { font-size:14px;font-weight:700;color:#fff; }
+.np-close { background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.3);font-size:18px;padding:2px;transition:color .2s; }
+.np-close:hover { color:#fff; }
+.np-module-name { padding:10px 18px;font-size:12px;color:rgba(255,255,255,0.35);border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.np-body { flex:1;display:flex;flex-direction:column;padding:14px 18px;gap:12px;overflow:hidden; }
+.notes-textarea { flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px;color:rgba(255,255,255,0.85);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.7;resize:none;outline:none;transition:border .2s; }
+.notes-textarea:focus { border-color:rgba(27,174,204,0.4); }
+.notes-textarea::placeholder { color:rgba(255,255,255,0.2); }
+.np-actions { display:flex;gap:8px; }
+.btn-save-note { flex:1;padding:10px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--teal),#0a5c5b);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s; }
+.btn-save-note:hover { transform:translateY(-1px);box-shadow:0 4px 12px rgba(14,124,123,0.3); }
+.btn-clear-note { padding:10px 14px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s; }
+.btn-clear-note:hover { color:#fff;border-color:rgba(255,255,255,0.25); }
+.note-saved-msg { font-size:12px;color:var(--teal);text-align:center;opacity:0;transition:opacity .3s; }
+.note-saved-msg.show { opacity:1; }
+
+/* OVERLAYS */
+.sidebar-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:19; }
+.sidebar-overlay.show { display:block; }
+
+/* RESPONSIVE */
+@media(max-width:768px) {
+  :root { --sidebar-w:300px; }
+  .sidebar { position:fixed;top:0;bottom:0;left:0;z-index:20;transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+  .sidebar-toggle { display:block; }
+  .progress-wrap { display:none; }
+  .course-badge { display:none; }
+  .notes-panel { position:fixed;top:54px;right:0;bottom:0;z-index:20;width:min(var(--notes-w),90vw);transition:transform .3s; }
+  .notes-panel.closed { width:min(var(--notes-w),90vw);opacity:1;transform:translateX(100%); }
+  .notes-panel:not(.closed) { transform:translateX(0); }
+  .btn-notes-toggle { display:flex; }
+}
+@media(max-width:420px) {
+  .topnav { padding:0 12px;height:50px; }
+  :root { --sidebar-w:85vw; }
+}
+
+/* ── COMPLETION MODAL ── */
+.completion-modal {
+  display:none;position:fixed;inset:0;z-index:200;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);
+}
+.completion-modal.show { display:flex; }
+.cm-card {
+  background:#fff;border-radius:22px;padding:44px 40px;
+  text-align:center;max-width:420px;width:100%;
+  box-shadow:0 24px 64px rgba(0,0,0,0.3);
+  animation:cmPop .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes cmPop { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
+.cm-icon  { font-size:64px;margin-bottom:16px; }
+.cm-title { font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#0B1F3A;margin-bottom:10px; }
+.cm-sub   { font-size:14px;color:#4a6080;line-height:1.7;margin-bottom:28px; }
+.cm-actions { display:flex;gap:10px;justify-content:center;flex-wrap:wrap; }
+.cm-btn-cert { padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,#D4A843,#e8c060);border:none;color:#0B1F3A;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none; }
+.cm-btn-dash { padding:12px 20px;border-radius:10px;border:1.5px solid rgba(11,31,58,0.15);background:transparent;color:#4a6080;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none; }
+
+
+/* ── MARK COMPLETE BUTTON ── */
+.btn-mark-complete {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 16px; border-radius:8px; border:none; cursor:pointer;
+  background:linear-gradient(135deg,#0E7C7B,#0a5c5b);
+  color:#fff; font-family:'DM Sans',sans-serif;
+  font-size:13px; font-weight:700; transition:all .2s;
+}
+.btn-mark-complete:hover { transform:translateY(-1px); box-shadow:0 5px 14px rgba(14,124,123,0.35); }
+.btn-mark-done {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 16px; border-radius:8px; border:none;
+  background:rgba(34,197,94,0.12); color:#16a34a;
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700;
+  cursor:default; opacity:.8;
+}
+
+
+/* ── VIDEO PLAYER ── */
+.video-wrap {
+  display:none; flex-direction:column; width:100%; height:100%;
+  background:#000; position:relative;
+}
+.video-wrap.active { display:flex; }
+#videoEl {
+  flex:1; width:100%; outline:none; background:#000;
+  min-height:0;
+}
+.video-controls {
+  background:linear-gradient(0deg,rgba(0,0,0,0.9),transparent);
+  padding:10px 14px 12px; display:flex; flex-direction:column; gap:8px;
+  flex-shrink:0;
+}
+.vc-progress { position:relative; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; cursor:pointer; transition:height .15s; }
+.vc-progress:hover { height:6px; }
+.vc-progress-fill { height:100%; background:var(--cyan); border-radius:2px; pointer-events:none; }
+.vc-progress-buf  { height:100%; background:rgba(255,255,255,0.2); border-radius:2px; position:absolute; top:0; left:0; pointer-events:none; }
+.vc-row { display:flex; align-items:center; gap:10px; }
+.vc-btn { background:none; border:none; color:#fff; cursor:pointer; padding:4px; font-size:16px; transition:opacity .2s; line-height:1; }
+.vc-btn:hover { opacity:.7; }
+.vc-time { font-size:12px; color:rgba(255,255,255,0.6); min-width:90px; }
+.vc-vol-wrap { display:flex; align-items:center; gap:6px; }
+.vc-vol { width:70px; accent-color:var(--cyan); cursor:pointer; }
+.vc-speed { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; padding:3px 8px; cursor:pointer; }
+.vc-speed:focus { outline:none; }
+.vc-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+
+
+/* ── DISCUSSION PANEL ── */
+.disc-tabs { display:flex; border-bottom:1px solid rgba(255,255,255,0.07); flex-shrink:0; }
+.disc-tab {
+  flex:1; padding:10px 0; text-align:center; font-size:12px; font-weight:700;
+  color:rgba(255,255,255,0.4); cursor:pointer; border:none; background:none;
+  border-bottom:2px solid transparent; transition:all .2s; font-family:'DM Sans',sans-serif;
+}
+.disc-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+.disc-scope-label { font-size:10px; color:rgba(255,255,255,0.3); padding:6px 14px 0; text-transform:uppercase; letter-spacing:.6px; flex-shrink:0; }
+
+.disc-list { flex:1; overflow-y:auto; padding:10px 12px; display:flex; flex-direction:column; gap:8px; min-height:0; }
+.disc-empty { text-align:center; padding:32px 16px; color:rgba(255,255,255,0.25); font-size:12px; line-height:1.9; }
+
+/* Comment card */
+.disc-comment {
+  background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 12px;
+  border:1px solid rgba(255,255,255,0.06); transition:border .2s;
+}
+.disc-comment.pinned { border-color:rgba(212,168,67,0.3); background:rgba(212,168,67,0.05); }
+.disc-comment-header { display:flex; align-items:center; gap:7px; margin-bottom:6px; }
+.disc-avatar {
+  width:26px; height:26px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color:#fff;
+}
+.disc-avatar.student { background:linear-gradient(135deg,#1BAECC,#0E7C7B); }
+.disc-avatar.teacher { background:linear-gradient(135deg,#D4A843,#b8860b); }
+.disc-avatar.admin   { background:linear-gradient(135deg,#7c3aed,#5b21b6); }
+.disc-author { font-size:12px; font-weight:700; color:rgba(255,255,255,0.85); }
+.disc-role-badge {
+  font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
+  padding:2px 6px; border-radius:4px;
+}
+.disc-role-badge.teacher { background:rgba(212,168,67,0.15); color:var(--gold); }
+.disc-role-badge.admin   { background:rgba(124,58,237,0.15); color:#a78bfa; }
+.disc-pin-badge { font-size:9px; color:var(--gold); margin-left:auto; }
+.disc-time { font-size:10px; color:rgba(255,255,255,0.25); margin-left:auto; }
+.disc-body { font-size:13px; color:rgba(255,255,255,0.75); line-height:1.6; margin-bottom:8px; word-break:break-word; }
+.disc-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.disc-action-btn {
+  background:none; border:none; color:rgba(255,255,255,0.3); font-size:11px; font-weight:600;
+  cursor:pointer; padding:3px 6px; border-radius:5px; transition:all .2s;
+  font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:3px;
+}
+.disc-action-btn:hover { color:rgba(255,255,255,0.7); background:rgba(255,255,255,0.06); }
+.disc-action-btn.liked { color:var(--cyan); }
+.disc-action-btn.pin-btn:hover { color:var(--gold); }
+.disc-action-btn.del-btn:hover { color:#ef4444; }
+
+/* Replies */
+.disc-replies { margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; gap:6px; }
+.disc-reply { display:flex; gap:7px; }
+.disc-reply-line { width:2px; background:rgba(255,255,255,0.06); flex-shrink:0; border-radius:1px; }
+.disc-reply-body { flex:1; }
+.disc-reply-header { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+.disc-reply-author { font-size:11px; font-weight:700; color:rgba(255,255,255,0.7); }
+.disc-reply-time   { font-size:10px; color:rgba(255,255,255,0.2); margin-left:auto; }
+.disc-reply-text   { font-size:12px; color:rgba(255,255,255,0.6); line-height:1.5; word-break:break-word; }
+
+/* Reply compose */
+.disc-reply-compose { margin-top:8px; display:none; }
+.disc-reply-compose.show { display:flex; gap:6px; }
+.disc-reply-input {
+  flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  border-radius:7px; padding:7px 10px; color:#fff; font-family:'DM Sans',sans-serif;
+  font-size:12px; outline:none; resize:none; transition:border .2s;
+}
+.disc-reply-input:focus { border-color:rgba(27,174,204,0.4); }
+.disc-reply-send {
+  padding:7px 12px; border-radius:7px; background:var(--cyan); border:none;
+  color:#fff; font-size:12px; font-weight:700; cursor:pointer; align-self:flex-end;
+  font-family:'DM Sans',sans-serif; transition:all .2s;
+}
+.disc-reply-send:hover { background:#18a0b8; }
+
+/* Compose box */
+.disc-compose {
+  border-top:1px solid rgba(255,255,255,0.07); padding:10px 12px;
+  flex-shrink:0; background:#07111c;
+}
+.disc-input {
+  width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  border-radius:9px; padding:9px 12px; color:#fff; font-family:'DM Sans',sans-serif;
+  font-size:13px; outline:none; resize:none; transition:border .2s; margin-bottom:7px;
+}
+.disc-input:focus { border-color:rgba(27,174,204,0.35); }
+.disc-compose-actions { display:flex; align-items:center; justify-content:space-between; }
+.disc-char-count { font-size:10px; color:rgba(255,255,255,0.2); }
+.disc-submit-btn {
+  padding:7px 18px; border-radius:8px; background:linear-gradient(135deg,var(--cyan),var(--teal));
+  border:none; color:#fff; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700;
+  cursor:pointer; transition:all .2s;
+}
+.disc-submit-btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(27,174,204,0.3); }
+.disc-submit-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+
+
+</style>
+</head>
+
+
+<body>
 <div id="loadingScreen">
   <div class="ld-logo">KI</div>
   <div class="ld-spin"></div>
@@ -224,6 +604,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
         <div class="progress-txt" id="progressLabel">0/0 completed</div>
       </div>
       <button class="btn-notes-toggle" id="notesToggleBtn" onclick="toggleNotes()">&#128221; Notes</button>
+      <button class="btn-notes-toggle" id="discussToggleBtn" onclick="toggleDiscussion()" style="background:rgba(212,168,67,0.12);border-color:rgba(212,168,67,0.3);color:var(--gold);">&#128172; Discuss</button>
     </div>
   </div>
 
@@ -302,6 +683,31 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
         <div class="note-saved-msg" id="noteSavedMsg">&#10003; Note saved</div>
       </div>
     </div>
+    <!-- Discussion Panel -->
+    <div class="notes-panel closed" id="discussPanel">
+      <div class="np-header">
+        <div class="np-title">&#128172; Discussion</div>
+        <button class="np-close" onclick="toggleDiscussion()">&#215;</button>
+      </div>
+      <!-- Tabs: Module / Course -->
+      <div class="disc-tabs">
+        <button class="disc-tab active" id="dtabModule" onclick="switchDiscTab('module')">&#127916; This Module</button>
+        <button class="disc-tab"        id="dtabCourse" onclick="switchDiscTab('course')">&#127979; This Course</button>
+      </div>
+      <div class="disc-scope-label" id="discScopeLabel">Comments for this module</div>
+      <!-- Comment list -->
+      <div class="disc-list" id="discList">
+        <div class="disc-empty">&#128172;<br>No comments yet.<br>Be the first to start the discussion.</div>
+      </div>
+      <!-- Compose -->
+      <div class="disc-compose">
+        <textarea class="disc-input" id="discInput" placeholder="Write a comment..." rows="2" maxlength="2000"></textarea>
+        <div class="disc-compose-actions">
+          <span class="disc-char-count" id="discCharCount">0/2000</span>
+          <button class="disc-submit-btn" id="discSubmitBtn" onclick="postComment()">&#9658; Post</button>
+        </div>
+      </div>
+    </div>
       <!-- Notes Panel -->
     <div class="notes-panel collapsed" id="notesPanel">
       <div class="notes-header">
@@ -318,10 +724,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
 </div>
 
 <script>
+
 var _viewerUser  = null;
 var _courseId    = null;
 var _currentMat  = null;
 var _completed   = [];
+var _userRole    = 'student'; // student | teacher | admin
+var _userName    = 'Student';
 var _allMats     = [];
 var _enrollment  = null;
 var _notesOpen   = false;
@@ -334,6 +743,19 @@ function tryStart(user) {
   _started=true; _viewerUser=user;
   document.getElementById('loadingScreen').style.display='none';
   document.getElementById('page').classList.add('visible');
+  // Fetch role and name for comments
+  _sb.from('users').select('role,full_name').eq('id',user.id).single()
+    .then(function(r){
+      if(r.data){
+        _userRole = r.data.role || 'student';
+        _userName = r.data.full_name || user.email.split('@')[0] || 'Student';
+      } else {
+        _userRole = (user.email==='mohamedmohammud@gmail.com'||user.id==='34e4009e-21de-4a55-ab9d-e8c767dfe898') ? 'admin' : 'student';
+        _userName = user.email.split('@')[0] || 'Student';
+      }
+    }).catch(function(){
+      _userName = user.email.split('@')[0] || 'Student';
+    });
   loadCourse();
 }
 _sb.auth.getSession().then(function(r) {
@@ -435,6 +857,7 @@ function openMaterial(mat, totalMats) {
   var url=mat.url||'';
   document.getElementById('noContent').style.display='none';
   openMaterialWithPlayer(url);
+  reloadDiscIfOpen();
 
   var dlBtn=document.getElementById('downloadBtn');
   if(mat.allow_download&&url){ dlBtn.href=url; dlBtn.classList.remove('hidden'); }
@@ -541,6 +964,310 @@ function markComplete(matId, totalMats) {
     setTimeout(function(){ btn.style.transform = ''; }, 200);
   }
 }
+
+
+// ══════════════════════════════════════════════════════════
+// DISCUSSION SYSTEM
+// ══════════════════════════════════════════════════════════
+var _discTab   = 'module'; // 'module' | 'course'
+var _discOpen  = false;
+var _discComments = [];
+var _myLikes   = new Set();
+
+function toggleDiscussion(){
+  var panel = document.getElementById('discussPanel');
+  var notesPanel = document.getElementById('notesPanel');
+  _discOpen = !_discOpen;
+  if(_discOpen){
+    panel.classList.remove('closed');
+    // Close notes if open
+    notesPanel.classList.add('closed');
+    loadComments();
+  } else {
+    panel.classList.add('closed');
+  }
+}
+
+function switchDiscTab(tab){
+  _discTab = tab;
+  document.getElementById('dtabModule').className = 'disc-tab' + (tab==='module'?' active':'');
+  document.getElementById('dtabCourse').className = 'disc-tab' + (tab==='course'?' active':'');
+  var lbl = document.getElementById('discScopeLabel');
+  lbl.textContent = tab==='module' ? 'Comments for this module' : 'Comments for this course';
+  loadComments();
+}
+
+function loadComments(){
+  if(!_courseId) return;
+  var list = document.getElementById('discList');
+  list.innerHTML = '<div class="disc-empty">Loading...</div>';
+
+  // Build query
+  var query = _sb.from('comments')
+    .select('*')
+    .eq('course_id', _courseId)
+    .is('parent_id', null) // top-level only
+    .order('pinned', {ascending:false})
+    .order('created_at', {ascending:true});
+
+  if(_discTab==='module' && _currentMat){
+    query = query.eq('material_id', _currentMat);
+  } else {
+    query = query.is('material_id', null);
+  }
+
+  // Also load user's likes
+  var likesQuery = _viewerUser
+    ? _sb.from('comment_likes').select('comment_id').eq('user_id', _viewerUser.id)
+    : Promise.resolve({data:[]});
+
+  Promise.all([query, likesQuery]).then(function(results){
+    var comments = results[0].data || [];
+    var likes    = results[1].data || [];
+    _myLikes = new Set(likes.map(function(l){ return l.comment_id; }));
+    // Now load replies for each comment
+    if(!comments.length){
+      list.innerHTML = '<div class="disc-empty">&#128172;<br>No comments yet.<br>Be the first to start the discussion.</div>';
+      return;
+    }
+    var ids = comments.map(function(c){ return c.id; });
+    _sb.from('comments').select('*').in('parent_id', ids).order('created_at',{ascending:true})
+      .then(function(r){
+        var replies = r.data || [];
+        renderComments(comments, replies);
+      });
+  });
+}
+
+function renderComments(comments, replies){
+  var list = document.getElementById('discList');
+  var replyMap = {};
+  replies.forEach(function(r){
+    if(!replyMap[r.parent_id]) replyMap[r.parent_id] = [];
+    replyMap[r.parent_id].push(r);
+  });
+
+  list.innerHTML = comments.map(function(c){
+    return renderComment(c, replyMap[c.id]||[]);
+  }).join('');
+}
+
+function renderComment(c, replies){
+  var isOwn      = _viewerUser && c.user_id === _viewerUser.id;
+  var isMod      = _userRole === 'teacher' || _userRole === 'admin';
+  var liked      = _myLikes.has(c.id);
+  var roleBadge  = (c.author_role==='teacher'||c.author_role==='admin')
+    ? '<span class="disc-role-badge '+c.author_role+'">'+c.author_role+'</span>' : '';
+  var pinBadge   = c.pinned ? '<span class="disc-pin-badge">&#128204; Pinned</span>' : '';
+  var timeStr    = relTime(c.created_at);
+
+  var replyHTML = replies.length ? '<div class="disc-replies">'
+    + replies.map(function(r){ return renderReply(r); }).join('')
+    + '</div>' : '';
+
+  var safeId = c.id.replace(/-/g,'_');
+  var replyCompose = '<div class="disc-reply-compose" id="rc_'+safeId+'">'
+    + '<textarea class="disc-reply-input" id="ri_'+safeId+'" placeholder="Write a reply..." rows="1" maxlength="1000"></textarea>'
+    + '<button class="disc-reply-send" data-pid="'+c.id+'" onclick="postReplyBtn(this)">Reply</button>'
+    + '</div>';
+
+  var pinBtn = isMod
+    ? '<button class="disc-action-btn pin-btn" data-cid="'+c.id+'" data-pinned="'+c.pinned+'" onclick="togglePinBtn(this)">'
+      +(c.pinned?'&#128204; Unpin':'&#128204; Pin')+'</button>' : '';
+  var delBtn = (isOwn||isMod)
+    ? '<button class="disc-action-btn del-btn" data-cid="'+c.id+'" onclick="deleteCommentBtn(this)">&#128465;</button>' : '';
+
+  return '<div class="disc-comment'+(c.pinned?' pinned':'')+'" id="cmt_'+c.id+'">'
+    + '<div class="disc-comment-header">'
+    + '<div class="disc-avatar '+c.author_role+'">'+c.author_name.charAt(0).toUpperCase()+'</div>'
+    + '<span class="disc-author">'+esc(c.author_name)+'</span>'
+    + roleBadge + pinBadge
+    + '<span class="disc-time">'+timeStr+'</span>'
+    + '</div>'
+    + '<div class="disc-body">'+esc(c.content)+'</div>'
+    + '<div class="disc-actions">'
+    + '<button class="disc-action-btn'+(liked?' liked':'')+' like-btn" data-cid="'+c.id+'" data-liked="'+liked+'" onclick="toggleLikeBtn(this)">&#10084; '+c.likes+'</button>'
+    + '<button class="disc-action-btn" data-cid="'+c.id+'" onclick="showReplyBoxBtn(this)">&#8617; Reply</button>'
+    + pinBtn + delBtn
+    + '</div>'
+    + replyHTML + replyCompose
+    + '</div>';
+}
+
+function renderReply(r){
+  var isOwn = _viewerUser && r.user_id === _viewerUser.id;
+  var isMod = _userRole === 'teacher' || _userRole === 'admin';
+  var delBtn = (isOwn||isMod)
+    ? '<button class="disc-action-btn del-btn" data-cid="'+r.id+'" onclick="deleteCommentBtn(this)">&#128465;</button>' : '';
+  return '<div class="disc-reply">'
+    + '<div class="disc-reply-line"></div>'
+    + '<div class="disc-reply-body">'
+    + '<div class="disc-reply-header">'
+    + '<div class="disc-avatar '+r.author_role+'" style="width:20px;height:20px;font-size:9px;">'+r.author_name.charAt(0).toUpperCase()+'</div>'
+    + '<span class="disc-reply-author">'+esc(r.author_name)+'</span>'
+    + ((r.author_role==='teacher'||r.author_role==='admin')?'<span class="disc-role-badge '+r.author_role+'">'+r.author_role+'</span>':'')
+    + '<span class="disc-reply-time">'+relTime(r.created_at)+'</span>'
+    + delBtn
+    + '</div>'
+    + '<div class="disc-reply-text">'+esc(r.content)+'</div>'
+    + '</div></div>';
+}
+
+// ── Post comment ─────────────────────────────────────────
+function postComment(){
+  var input   = document.getElementById('discInput');
+  var content = input.value.trim();
+  if(!content){ input.focus(); return; }
+  if(!_viewerUser){ showNotif('Please sign in to comment.'); return; }
+  var btn = document.getElementById('discSubmitBtn');
+  btn.disabled=true; btn.textContent='Posting...';
+
+  var row = {
+    course_id:   _courseId,
+    material_id: _discTab==='module' ? (_currentMat||null) : null,
+    user_id:     _viewerUser.id,
+    content:     content,
+    author_name: _userName,
+    author_role: _userRole
+  };
+
+  _sb.from('comments').insert([row]).then(function(r){
+    btn.disabled=false; btn.textContent='▶ Post';
+    if(r.error){ showNotif('Error: '+r.error.message); return; }
+    input.value='';
+    document.getElementById('discCharCount').textContent='0/2000';
+    loadComments();
+    if(typeof gtag!=='undefined') gtag('event','comment_post',{role:_userRole});
+  });
+}
+
+// ── Post reply ───────────────────────────────────────────
+function showReplyBox(commentId){
+  var safeId = commentId.replace(/-/g,'_');
+  var box = document.getElementById('rc_'+safeId);
+  if(!box) return;
+  box.classList.toggle('show');
+  if(box.classList.contains('show')) document.getElementById('ri_'+safeId).focus();
+}
+
+function postReplyBtn(btn){
+  var parentId = btn.getAttribute('data-pid');
+  postReply(parentId);
+}
+
+function postReply(parentId){
+  var safeId  = parentId.replace(/-/g,'_');
+  var inp     = document.getElementById('ri_'+safeId);
+  var content = inp.value.trim();
+  if(!content){ inp.focus(); return; }
+  if(!_viewerUser) return;
+  inp.disabled=true;
+
+  // Get parent's material_id
+  var parent = _discComments.find(function(c){ return c.id===parentId; });
+
+  var row = {
+    course_id:   _courseId,
+    material_id: _discTab==='module' ? (_currentMat||null) : null,
+    user_id:     _viewerUser.id,
+    parent_id:   parentId,
+    content:     content,
+    author_name: _userName,
+    author_role: _userRole
+  };
+
+  _sb.from('comments').insert([row]).then(function(r){
+    inp.disabled=false;
+    if(r.error){ showNotif('Error: '+r.error.message); return; }
+    inp.value='';
+    document.getElementById('rc_'+(parentId.replace(/-/g,'_'))).classList.remove('show');
+    loadComments();
+  });
+}
+
+// ── Like / unlike ─────────────────────────────────────────
+
+function toggleLikeBtn(btn){
+  var cid = btn.getAttribute('data-cid');
+  var liked = btn.getAttribute('data-liked')==='true';
+  toggleLike(cid, liked);
+}
+function togglePinBtn(btn){
+  var cid = btn.getAttribute('data-cid');
+  var pinned = btn.getAttribute('data-pinned')==='true';
+  togglePin(cid, pinned);
+}
+function deleteCommentBtn(btn){
+  var cid = btn.getAttribute('data-cid');
+  deleteComment(cid);
+}
+function toggleLike(commentId, isLiked){
+  if(!_viewerUser) return;
+  if(isLiked){
+    _sb.from('comment_likes').delete()
+      .eq('comment_id',commentId).eq('user_id',_viewerUser.id)
+      .then(function(){
+        _sb.from('comments').update({likes: getLikeCount(commentId)-1}).eq('id',commentId)
+          .then(function(){ loadComments(); });
+      });
+  } else {
+    _sb.from('comment_likes').insert([{comment_id:commentId,user_id:_viewerUser.id}])
+      .then(function(){
+        _sb.from('comments').update({likes: getLikeCount(commentId)+1}).eq('id',commentId)
+          .then(function(){ loadComments(); });
+      });
+  }
+}
+
+function getLikeCount(commentId){
+  var el = document.getElementById('cmt_'+commentId);
+  if(!el) return 0;
+  var btn = el.querySelector('.disc-action-btn');
+  if(!btn) return 0;
+  return parseInt(btn.textContent.replace(/[^0-9]/g,''))||0;
+}
+
+// ── Pin / unpin ───────────────────────────────────────────
+function togglePin(commentId, isPinned){
+  var isMod = _userRole==='teacher'||_userRole==='admin';
+  if(!isMod) return;
+  _sb.from('comments').update({pinned:!isPinned}).eq('id',commentId)
+    .then(function(r){
+      if(r.error){ showNotif('Error: '+r.error.message); return; }
+      loadComments();
+    });
+}
+
+// ── Delete ────────────────────────────────────────────────
+function deleteComment(commentId){
+  if(!confirm('Delete this comment?')) return;
+  _sb.from('comments').delete().eq('id',commentId).then(function(r){
+    if(r.error){ showNotif('Error: '+r.error.message); return; }
+    loadComments();
+  });
+}
+
+// ── Reload comments when module changes ──────────────────
+function reloadDiscIfOpen(){
+  if(_discOpen) loadComments();
+}
+
+// ── Helpers ───────────────────────────────────────────────
+function relTime(ts){
+  var diff = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
+  if(diff < 60)  return 'just now';
+  if(diff < 3600)  return Math.floor(diff/60)+'m ago';
+  if(diff < 86400) return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+}
+
+// Char counter for compose
+document.addEventListener('DOMContentLoaded', function(){
+  var inp = document.getElementById('discInput');
+  if(inp) inp.addEventListener('input', function(){
+    document.getElementById('discCharCount').textContent = inp.value.length+'/2000';
+  });
+});
 
 // ── VIDEO PLAYER ────────────────────────────────────────────────
 var _videoEl = null;
@@ -740,6 +1467,7 @@ document.getElementById('completionModal').addEventListener('click', function(e)
   if (e.target === this) this.classList.remove('show');
 });
 
+
 </script>
 
 <!-- Completion Modal -->
@@ -754,6 +1482,7 @@ document.getElementById('completionModal').addEventListener('click', function(e)
     </div>
   </div>
 </div>
+
 
 </body>
 </html>
