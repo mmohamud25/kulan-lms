@@ -449,7 +449,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
 <script>
 // STATE
-var _user=null,_courses=[],_layout='side',_quality=720,_mirrored=false,_micCtx=null,_micAnal=null,_micInt=null;
+var _user=null,_courses=[],_layout='side',_quality=720,_mirrored=false,_micCtx=null,_micAnal=null,_micInt=null,_saving=false;
 var _camSt=null,_scrSt=null,_recorder=null,_chunks=[],_blob=null;
 var _recording=false,_paused=false,_timerSec=0,_timerInt=null,_drawInt=null;
 var _chapters=[],_camEl=null,_scrEl=null;
@@ -519,6 +519,12 @@ function mkVid(st){
 function drawF(){
   var W=canvas.width,H=canvas.height;
   ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+  if(_mirrored && (_layout==='cam'||_layout==='pip')){
+    // Mirror the entire canvas horizontally when camera-only or PiP
+    ctx.save();
+    ctx.translate(W,0);
+    ctx.scale(-1,1);
+  }
   if(_layout==='side'){dvd(_scrEl,0,0,W*.70,H);dvd(_camEl,W*.70,0,W*.30,H);}
   else if(_layout==='pip'){
     dvd(_scrEl,0,0,W,H);
@@ -530,6 +536,9 @@ function drawF(){
     }
   }else if(_layout==='screen'){dvd(_scrEl,0,0,W,H);}
   else{dvd(_camEl,0,0,W,H);}
+  if(_mirrored && (_layout==='cam'||_layout==='pip')){
+    ctx.restore();
+  }
   if(_recording&&!_paused){
     ctx.fillStyle='rgba(220,38,38,0.88)';rr(ctx,14,14,76,26,5);ctx.fill();
     ctx.fillStyle='#fff';ctx.font='bold 12px DM Sans,sans-serif';ctx.textBaseline='middle';
@@ -576,13 +585,18 @@ function startRec(){
       overlay.classList.remove('show');
       doStartRec();
     } else {
-      // Re-trigger animation
       numEl.style.animation='none';
-      numEl.offsetHeight; // reflow
-      numEl.style.animation='';
+      numEl.offsetHeight;
+      numEl.style.animation='cdPop .9s ease-out';
       numEl.textContent=count;
     }
   },1000);
+}
+
+function cancelCountdown(){
+  // Safety: called if user navigates away during countdown
+  document.getElementById('cdOverlay').classList.remove('show');
+  document.getElementById('btnRec').disabled=false;
 }
 
 function doStartRec(){
@@ -870,6 +884,7 @@ function dlMP4(){
 
 // SAVE TO COURSE
 async function saveCourse(){
+  if(_saving) return;
   var title=document.getElementById('svTitle').value.trim();
   var cid=document.getElementById('svCourse').value;
   var mod=parseInt(document.getElementById('svMod').value)||1;
@@ -880,7 +895,7 @@ async function saveCourse(){
   var yt=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
   if(yt)url='https://www.youtube.com/embed/'+yt[1];
   var btn=document.getElementById('btnSave');
-  btn.disabled=true;btn.textContent='Saving...';
+  btn.disabled=true;btn.textContent='Saving...';_saving=true;
   document.getElementById('progWrap').style.display='block';
   document.getElementById('progFill').style.width='60%';
   var row={
@@ -890,7 +905,7 @@ async function saveCourse(){
   var res=await _sb.from('materials').insert([row]);
   document.getElementById('progFill').style.width='100%';
   if(res.error){
-    btn.disabled=false;btn.textContent='✓ Save to Course';
+    btn.disabled=false;btn.textContent='✓ Save to Course';_saving=false;
     document.getElementById('progLbl').textContent='Error: '+res.error.message;
     showN('Save failed: '+res.error.message,'error');return;
   }
@@ -903,9 +918,20 @@ async function saveCourse(){
 // RE-RECORD
 function reRecord(){
   if(!confirm('Discard this recording and start over?'))return;
+  // Stop active recorder if running
+  if(_recorder && _recording){
+    try{ _recorder.stop(); }catch(e){}
+    _recording=false;_paused=false;
+  }
+  stopMicMeter();
+  clearInterval(_timerInt);
   _blob=null;_chunks=[];_chapters=[];_timerSec=0;
   document.getElementById('previewVideo').src='';
   document.getElementById('recTimer').textContent='00:00';
+  document.getElementById('recTimer').classList.remove('live');
+  var openBtn=document.getElementById('btnOpenStudio');
+  if(openBtn) openBtn.style.display='none';
+  sh('btnRec',true);sh('btnPause',false);sh('btnStop',false);sh('btnChap',false);
   goPhase(2);
 }
 
@@ -980,7 +1006,13 @@ function grabThumb(){
   tc.width  = pv.videoWidth  || 1280;
   tc.height = pv.videoHeight || 720;
   var ctx2 = tc.getContext('2d');
+  // Draw from preview video (reflects trimmed position)
+  if(_mirrored){
+    ctx2.translate(tc.width, 0);
+    ctx2.scale(-1, 1);
+  }
   ctx2.drawImage(pv, 0, 0, tc.width, tc.height);
+  if(_mirrored){ ctx2.setTransform(1,0,0,1,0,0); }
   var dataUrl = tc.toDataURL('image/jpeg', 0.92);
   img.src = dataUrl;
   img.style.display = 'block';
@@ -1032,13 +1064,12 @@ function openStudio(){
   goPhase(3);
   var pv=document.getElementById('previewVideo');
   // initTL needs duration — wait for metadata if not loaded yet
-  if(pv.duration && pv.duration > 0){
-    initTL();
+  if(pv.duration && pv.duration > 0 && pv.duration !== Infinity){
+    initTL(); // initTL calls renderChStudio internally
   } else {
     pv.addEventListener('loadedmetadata', initTL, {once:true});
+    renderChStudio(); // render chapters even before timeline ready
   }
-  renderChStudio();
-  // Switch to Save tab automatically
   spTab('sv');
 }
 function goPhase(n){
