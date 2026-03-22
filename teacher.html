@@ -883,17 +883,7 @@ function clearUpFile() {
 
 
 function startLiveClass() {
-  // Pick course first
-  var courseId = null;
-  if (courses && courses.length) {
-    var names = courses.map(function(c,i){ return (i+1)+'. '+c.title; }).join('\n');
-    var choice = prompt('Which course is this class for?\n\n'+names+'\n\nEnter number:');
-    var idx = parseInt(choice) - 1;
-    if (!isNaN(idx) && courses[idx]) courseId = courses[idx].id;
-  }
-  var url = '/classroom.html?role=teacher';
-  if (courseId) url += '&course=' + courseId;
-  window.open(url, '_blank');
+  window.location.href = '/ki-connect.html';
 }
 
 function uploadMaterial() {

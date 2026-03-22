@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KI Connect — Kulan Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL='https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY='sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+</script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-GGBZJXPLRP');</script>
+<style>
+:root{
+  --bg:#060d18;--surface:#0c1524;--surface2:#111e30;--surface3:#162540;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --cyan:#1BAECC;--gold:#D4A843;--gold2:#e8c060;--teal:#0E7C7B;
+  --red:#ef4444;--green:#22c55e;
+  --text:#dce8f5;--text2:#7a92b0;--text3:#3d5470;
+  --navy:#0B1F3A;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+
+/* TOPNAV */
+.topnav{
+  height:54px;background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;gap:14px;position:sticky;top:0;z-index:20;
+}
+.tn-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.tn-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:13px;color:var(--navy);}
+.tn-name{font-size:13px;font-weight:700;color:var(--text);}
+.tn-sub{font-size:10px;color:var(--text2);}
+.tn-spacer{flex:1;}
+.tn-back{font-size:12px;color:var(--text2);text-decoration:none;padding:6px 14px;border-radius:8px;border:1px solid var(--border);transition:all .2s;}
+.tn-back:hover{color:var(--text);border-color:var(--border2);}
+.tn-user{font-size:12px;color:var(--text2);}
+
+/* PAGE */
+.page{max-width:1100px;margin:0 auto;padding:32px 24px;}
+
+/* HERO */
+.hero{
+  background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);
+  border:1px solid var(--border);border-radius:20px;padding:40px;
+  display:flex;align-items:center;gap:32px;margin-bottom:32px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;right:-60px;top:-60px;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(27,174,204,0.08),transparent 70%);
+  pointer-events:none;
+}
+.hero-icon{
+  width:72px;height:72px;border-radius:18px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--cyan),var(--teal));
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;box-shadow:0 8px 32px rgba(27,174,204,0.3);
+}
+.hero-text{flex:1;}
+.hero-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--text);margin-bottom:6px;}
+.hero-sub{font-size:14px;color:var(--text2);line-height:1.6;}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+
+/* Action buttons */
+.btn-start{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .25s;
+  box-shadow:0 4px 20px rgba(27,174,204,0.3);
+}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(27,174,204,0.4);}
+.btn-schedule{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;border-radius:12px;
+  background:rgba(212,168,67,0.1);border:1px solid rgba(212,168,67,0.25);
+  color:var(--gold);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .25s;
+}
+.btn-schedule:hover{background:rgba(212,168,67,0.18);transform:translateY(-1px);}
+
+/* SECTION */
+.section-title{
+  font-family:'Playfair Display',serif;font-size:18px;font-weight:700;
+  color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:10px;
+}
+.section-badge{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;
+  padding:3px 10px;border-radius:20px;background:rgba(27,174,204,0.1);
+  color:var(--cyan);border:1px solid rgba(27,174,204,0.15);
+}
+
+/* CALENDAR */
+.calendar-wrap{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:24px;margin-bottom:32px;
+}
+.cal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;
+}
+.cal-month{font-size:16px;font-weight:700;color:var(--text);}
+.cal-nav{display:flex;gap:6px;}
+.cal-nav-btn{
+  width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);
+  background:transparent;color:var(--text2);cursor:pointer;
+  font-size:14px;transition:all .15s;display:flex;align-items:center;justify-content:center;
+}
+.cal-nav-btn:hover{background:var(--surface2);color:var(--text);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-dow{
+  text-align:center;font-size:10px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.7px;color:var(--text3);padding:6px 0;
+}
+.cal-day{
+  position:relative;aspect-ratio:1;border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:13px;font-weight:600;color:var(--text2);
+  cursor:pointer;transition:all .15s;border:1px solid transparent;
+  padding:4px;
+}
+.cal-day:hover{background:var(--surface2);color:var(--text);}
+.cal-day.today{background:rgba(27,174,204,0.1);border-color:rgba(27,174,204,0.25);color:var(--cyan);}
+.cal-day.has-session{color:var(--text);}
+.cal-day.other-month{opacity:.3;}
+.cal-day.selected{background:rgba(212,168,67,0.12);border-color:rgba(212,168,67,0.3);color:var(--gold);}
+.cal-dot{
+  position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
+  display:flex;gap:2px;
+}
+.cal-dot-item{
+  width:5px;height:5px;border-radius:50%;
+}
+.cal-dot-item.upcoming{background:var(--gold);}
+.cal-dot-item.live{background:var(--red);}
+.cal-dot-item.ended{background:var(--text3);}
+
+/* SESSIONS LIST */
+.sessions-wrap{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:24px;margin-bottom:32px;
+}
+.session-card{
+  display:flex;align-items:center;gap:16px;
+  padding:14px 16px;border-radius:12px;border:1px solid var(--border);
+  background:var(--surface2);margin-bottom:10px;transition:all .2s;
+}
+.session-card:last-child{margin-bottom:0;}
+.session-card:hover{border-color:var(--border2);}
+.session-card.live{border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.04);}
+.sc-time{
+  flex-shrink:0;text-align:center;min-width:56px;
+}
+.sc-date{font-size:20px;font-weight:900;color:var(--text);line-height:1;}
+.sc-month{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);}
+.sc-divider{width:1px;height:40px;background:var(--border);flex-shrink:0;}
+.sc-info{flex:1;min-width:0;}
+.sc-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.sc-meta{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.sc-meta-dot{width:3px;height:3px;border-radius:50%;background:var(--text3);}
+.sc-status{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  padding:3px 10px;border-radius:20px;flex-shrink:0;
+}
+.sc-status.live{background:rgba(239,68,68,0.12);color:var(--red);}
+.sc-status.upcoming{background:rgba(212,168,67,0.1);color:var(--gold);}
+.sc-status.ended{background:rgba(255,255,255,0.05);color:var(--text3);}
+.sc-actions{display:flex;gap:6px;flex-shrink:0;}
+.sc-btn{
+  padding:6px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;
+  font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;border:none;
+}
+.sc-btn-join{background:var(--red);color:#fff;}
+.sc-btn-join:hover{background:#dc2626;}
+.sc-btn-start{background:var(--cyan);color:#fff;}
+.sc-btn-start:hover{background:#18a0b8;}
+.sc-btn-copy{background:var(--surface3);color:var(--text2);border:1px solid var(--border2);}
+.sc-btn-copy:hover{color:var(--text);}
+.sc-btn-cancel{background:transparent;color:var(--red);border:1px solid rgba(239,68,68,0.2);}
+.sc-btn-cancel:hover{background:rgba(239,68,68,0.08);}
+
+.empty-state{
+  text-align:center;padding:40px;color:var(--text3);font-size:13px;line-height:1.8;
+}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:.4;}
+
+/* MODAL OVERLAY */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,0.75);
+  display:none;align-items:center;justify-content:center;
+  z-index:100;backdrop-filter:blur(8px);padding:20px;
+}
+.modal-bg.show{display:flex;}
+
+/* START NOW MODAL */
+.start-card{
+  background:var(--surface);border:1px solid var(--border2);border-radius:20px;
+  padding:32px;max-width:460px;width:100%;
+  box-shadow:0 24px 64px rgba(0,0,0,0.5);
+}
+.modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:6px;}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6;}
+.form-field{margin-bottom:16px;}
+.form-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text2);margin-bottom:7px;display:block;}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:10px 14px;border-radius:10px;
+  border:1.5px solid var(--border);background:var(--surface2);
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;
+  outline:none;transition:border .2s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(27,174,204,0.35);}
+.form-select option{background:var(--surface2);}
+.form-textarea{resize:vertical;min-height:80px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.btn-primary{
+  flex:1;height:42px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(27,174,204,0.3);}
+.btn-secondary{
+  flex:1;height:42px;border-radius:10px;border:1px solid var(--border2);
+  background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;
+}
+.btn-secondary:hover{color:var(--text);}
+
+/* SCHEDULE MODAL */
+.sched-card{
+  background:var(--surface);border:1px solid var(--border2);border-radius:20px;
+  padding:32px;max-width:520px;width:100%;
+  box-shadow:0 24px 64px rgba(0,0,0,0.5);max-height:90vh;overflow-y:auto;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* NOTIF */
+.notif{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--surface2);border:1px solid var(--border2);border-radius:10px;
+  padding:10px 20px;font-size:13px;font-weight:600;color:var(--text);
+  z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;
+}
+.notif.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.notif.success{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.25);color:#86efac;}
+.notif.error{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.2);color:#fca5a5;}
+
+@media(max-width:640px){
+  .hero{flex-direction:column;text-align:center;}
+  .hero-actions{justify-content:center;}
+  .form-row{grid-template-columns:1fr;}
+  .session-card{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+
+<!-- Topnav -->
+<div class="topnav">
+  <a href="#" class="tn-logo" id="backLink">
+    <div class="tn-icon">KI</div>
+    <div>
+      <div class="tn-name">KI Connect</div>
+      <div class="tn-sub">Live Classroom</div>
+    </div>
+  </a>
+  <div class="tn-spacer"></div>
+  <span class="tn-user" id="tnUser"></span>
+  <a href="#" class="tn-back" id="portalBack">&larr; Portal</a>
+</div>
+
+<!-- Start Now Modal -->
+<div class="modal-bg" id="startModal">
+  <div class="start-card">
+    <div class="modal-title">&#128247; Start Meeting Now</div>
+    <div class="modal-sub">Launch an instant KI Connect session for your students.</div>
+    <div class="form-field">
+      <label class="form-label">Session Title</label>
+      <input class="form-input" id="startTitle" placeholder="e.g. Module 3 — Live Q&A" value="Live Class Session">
+    </div>
+    <div class="form-field">
+      <label class="form-label">Course (optional)</label>
+      <select class="form-select" id="startCourse">
+        <option value="">No specific course</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('startModal')">Cancel</button>
+      <button class="btn-primary" onclick="launchNow()">&#9654; Launch Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- Schedule Modal -->
+<div class="modal-bg" id="schedModal">
+  <div class="sched-card">
+    <div class="modal-title">&#128197; Schedule a Session</div>
+    <div class="modal-sub">Plan your live class in advance. Students will see it on their dashboard.</div>
+    <div class="form-field">
+      <label class="form-label">Session Title <span style="color:var(--gold)">*</span></label>
+      <input class="form-input" id="schedTitle" placeholder="e.g. Week 4 — Cybersecurity Fundamentals">
+    </div>
+    <div class="form-field">
+      <label class="form-label">Course</label>
+      <select class="form-select" id="schedCourse">
+        <option value="">No specific course</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">Date <span style="color:var(--gold)">*</span></label>
+        <input class="form-input" id="schedDate" type="date">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Time <span style="color:var(--gold)">*</span></label>
+        <input class="form-input" id="schedTime" type="time" value="10:00">
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Duration</label>
+      <select class="form-select" id="schedDuration">
+        <option value="30">30 minutes</option>
+        <option value="60" selected>1 hour</option>
+        <option value="90">1.5 hours</option>
+        <option value="120">2 hours</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Description (optional)</label>
+      <textarea class="form-textarea" id="schedDesc" placeholder="What will be covered in this session?"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('schedModal')">Cancel</button>
+      <button class="btn-primary" onclick="scheduleSession()">&#128197; Schedule Session</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main Page -->
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-icon">&#128247;</div>
+    <div class="hero-text">
+      <div class="hero-title">KI Connect</div>
+      <div class="hero-sub">Host live video classes, schedule sessions, and connect with your students in real time. Powered by WebRTC — no app needed.</div>
+    </div>
+    <div class="hero-actions">
+      <button class="btn-start" onclick="openStartNow()">
+        &#9654; Start Meeting Now
+      </button>
+      <button class="btn-schedule" onclick="openSchedule()">
+        &#128197; Schedule Meeting
+      </button>
+    </div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="calendar-wrap">
+    <div class="section-title">
+      &#128197; Calendar
+      <span class="section-badge" id="calBadge">0 sessions</span>
+    </div>
+    <div class="cal-header">
+      <div class="cal-month" id="calMonth">March 2026</div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calNav(-1)">&#8249;</button>
+        <button class="cal-nav-btn" onclick="calNav(0)">Today</button>
+        <button class="cal-nav-btn" onclick="calNav(1)">&#8250;</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+
+  <!-- Sessions -->
+  <div class="sessions-wrap">
+    <div class="section-title">
+      &#128197; Sessions
+      <span class="section-badge" id="sessionsBadge">Loading...</span>
+    </div>
+    <div id="sessionsList">
+      <div class="empty-state">
+        <div class="empty-icon">&#128247;</div>
+        Loading sessions...
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────
+var _user      = null;
+var _userName  = 'Instructor';
+var _userRole  = 'teacher';
+var _courses   = [];
+var _sessions  = [];
+var _calYear   = new Date().getFullYear();
+var _calMonth  = new Date().getMonth(); // 0-indexed
+var _selectedDate = null;
+var ADMIN_UID  = '34e4009e-21de-4a55-ab9d-e8c767dfe898';
+
+// ── AUTH ───────────────────────────────────────────────────────
+_sb.auth.getSession().then(function(r) {
+  var u = r.data.session && r.data.session.user;
+  if (!u) { window.location.href = '/login.html'; return; }
+  _user = u;
+
+  _sb.from('users').select('role,full_name').eq('id', u.id).single()
+    .then(function(res) {
+      if (res.data) {
+        _userRole = res.data.role || 'teacher';
+        _userName = res.data.full_name || u.email.split('@')[0];
+      } else {
+        _userRole = u.id === ADMIN_UID ? 'admin' : 'teacher';
+        _userName = u.email.split('@')[0];
+      }
+
+      // Set portal back link
+      var backLink = document.getElementById('portalBack');
+      backLink.href = _userRole === 'admin' ? '/admin.html' : '/teacher.html';
+      document.getElementById('backLink').href = backLink.href;
+      document.getElementById('tnUser').textContent = _userName;
+
+      loadCourses();
+      loadSessions();
+    });
+});
+
+// ── LOAD DATA ──────────────────────────────────────────────────
+function loadCourses() {
+  _sb.from('courses').select('id,title').order('created_at')
+    .then(function(r) {
+      _courses = r.data || [];
+      ['startCourse','schedCourse'].forEach(function(id) {
+        var sel = document.getElementById(id);
+        _courses.forEach(function(c) {
+          var opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = c.title;
+          sel.appendChild(opt);
+        });
+      });
+    });
+}
+
+function loadSessions() {
+  // Load both live_sessions and scheduled_sessions
+  Promise.all([
+    _sb.from('live_sessions').select('*').eq('host_id' in {} ? 'host_id' : 'teacher_id', _user.id).order('started_at', {ascending:false}).limit(10),
+    _sb.from('scheduled_sessions').select('*').eq('host_id', _user.id).order('scheduled_at', {ascending:true})
+  ]).then(function(results) {
+    var live      = (results[0].data || []).map(function(s) {
+      return { id:s.id, title:s.title||'Live Session', status:s.status, type:'instant',
+               time: s.started_at, course_id:s.course_id, room_id:s.room_id, session_id:s.id };
+    });
+    var scheduled = (results[1].data || []).map(function(s) {
+      return { id:s.id, title:s.title, status:s.status, type:'scheduled',
+               time: s.scheduled_at, duration: s.duration_mins,
+               course_id:s.course_id, room_id:s.room_id,
+               description: s.description, session_id:s.id };
+    });
+
+    // Merge: scheduled first (upcoming), then instant history
+    _sessions = scheduled.concat(live.filter(function(l){ return l.status === 'active'; }));
+    renderSessions(_sessions);
+    renderCalendar();
+  }).catch(function() {
+    // Fallback: only load scheduled_sessions if live_sessions query fails
+    _sb.from('scheduled_sessions').select('*').eq('host_id', _user.id)
+      .order('scheduled_at', {ascending:true})
+      .then(function(r) {
+        _sessions = (r.data || []).map(function(s) {
+          return { id:s.id, title:s.title, status:s.status, type:'scheduled',
+                   time:s.scheduled_at, duration:s.duration_mins,
+                   course_id:s.course_id, room_id:s.room_id,
+                   description:s.description, session_id:s.id };
+        });
+        renderSessions(_sessions);
+        renderCalendar();
+      });
+  });
+}
+
+// ── RENDER SESSIONS ────────────────────────────────────────────
+function renderSessions(sessions) {
+  var list = document.getElementById('sessionsList');
+  document.getElementById('sessionsBadge').textContent = sessions.length + ' total';
+
+  if (!sessions.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128247;</div>No sessions yet. Start one now or schedule for later.</div>';
+    return;
+  }
+
+  list.innerHTML = sessions.map(function(s) {
+    var d    = new Date(s.time);
+    var day  = d.getDate();
+    var mon  = d.toLocaleDateString('en-US', {month:'short'});
+    var time = d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+    var isLive = s.status === 'active' || s.status === 'live';
+    var isUpcoming = s.status === 'upcoming';
+    var isEnded = s.status === 'ended' || s.status === 'cancelled';
+
+    var courseTitle = '';
+    if (s.course_id) {
+      var course = _courses.find(function(c){ return c.id === s.course_id; });
+      if (course) courseTitle = course.title;
+    }
+
+    var statusHtml = isLive
+      ? '<span class="sc-status live">&#128308; Live Now</span>'
+      : isUpcoming
+      ? '<span class="sc-status upcoming">&#128200; Upcoming</span>'
+      : '<span class="sc-status ended">Ended</span>';
+
+    var durHtml = s.duration ? ' <span class="sc-meta-dot"></span> ' + s.duration + ' min' : '';
+    var courseHtml = courseTitle ? ' <span class="sc-meta-dot"></span> ' + esc(courseTitle) : '';
+
+    var actions = '';
+    if (isLive) {
+      actions = '<button class="sc-btn sc-btn-join" onclick="joinSession(\''+s.room_id+'\',\''+s.session_id+'\')">Join</button>';
+    } else if (isUpcoming) {
+      actions = '<button class="sc-btn sc-btn-start" onclick="startScheduled(\''+s.id+'\',\''+s.room_id+'\')">Start</button>'
+        + '<button class="sc-btn sc-btn-copy" onclick="copySessionLink(\''+s.room_id+'\',\''+s.session_id+'\')">&#128279; Copy Link</button>'
+        + '<button class="sc-btn sc-btn-cancel" onclick="cancelSession(\''+s.id+'\')">Cancel</button>';
+    } else {
+      actions = '<button class="sc-btn sc-btn-copy" onclick="copySessionLink(\''+s.room_id+'\',\''+s.session_id+'\')">&#128279; Copy Link</button>';
+    }
+
+    return '<div class="session-card'+(isLive?' live':'')+'">'
+      + '<div class="sc-time"><div class="sc-date">'+day+'</div><div class="sc-month">'+mon+'</div></div>'
+      + '<div class="sc-divider"></div>'
+      + '<div class="sc-info">'
+      + '<div class="sc-title">'+esc(s.title)+'</div>'
+      + '<div class="sc-meta">'+time+durHtml+courseHtml+'</div>'
+      + '</div>'
+      + statusHtml
+      + '<div class="sc-actions">'+actions+'</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ── CALENDAR ───────────────────────────────────────────────────
+function renderCalendar() {
+  var grid  = document.getElementById('calGrid');
+  var month = document.getElementById('calMonth');
+  var badge = document.getElementById('calBadge');
+
+  var date  = new Date(_calYear, _calMonth, 1);
+  var monthName = date.toLocaleDateString('en-US', {month:'long', year:'numeric'});
+  month.textContent = monthName;
+
+  // Build session date map
+  var sessionMap = {};
+  _sessions.forEach(function(s) {
+    var d = new Date(s.time);
+    if (d.getFullYear() === _calYear && d.getMonth() === _calMonth) {
+      var key = d.getDate();
+      if (!sessionMap[key]) sessionMap[key] = [];
+      sessionMap[key].push(s.status);
+    }
+  });
+
+  var upcomingCount = _sessions.filter(function(s){ return s.status==='upcoming'; }).length;
+  badge.textContent = upcomingCount + ' upcoming';
+
+  // Day of week headers
+  var dows = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var html = dows.map(function(d){ return '<div class="cal-dow">'+d+'</div>'; }).join('');
+
+  // First day of month
+  var firstDay = new Date(_calYear, _calMonth, 1).getDay();
+  var daysInMonth = new Date(_calYear, _calMonth+1, 0).getDate();
+  var daysInPrev  = new Date(_calYear, _calMonth, 0).getDate();
+  var today = new Date();
+
+  // Prev month padding
+  for (var i = firstDay-1; i >= 0; i--) {
+    html += '<div class="cal-day other-month"><span>'+(daysInPrev-i)+'</span></div>';
+  }
+
+  // Current month days
+  for (var d = 1; d <= daysInMonth; d++) {
+    var isToday = (today.getFullYear()===_calYear && today.getMonth()===_calMonth && today.getDate()===d);
+    var hasSess = sessionMap[d];
+    var isSel   = _selectedDate && _selectedDate.d===d && _selectedDate.m===_calMonth && _selectedDate.y===_calYear;
+    var cls = 'cal-day' + (isToday?' today':'') + (hasSess?' has-session':'') + (isSel?' selected':'');
+    var dots = '';
+    if (hasSess) {
+      dots = '<div class="cal-dot">' + hasSess.slice(0,3).map(function(st){
+        var cls2 = st==='active'||st==='live' ? 'live' : st==='upcoming' ? 'upcoming' : 'ended';
+        return '<div class="cal-dot-item '+cls2+'"></div>';
+      }).join('') + '</div>';
+    }
+    var dayStr = JSON.stringify({d:d,m:_calMonth,y:_calYear}).replace(/"/g,'&quot;');
+    html += '<div class="'+cls+'" onclick="selectDay('+dayStr+')" data-day="'+d+'">'
+      + '<span>'+d+'</span>'+ dots +'</div>';
+  }
+
+  // Next month padding
+  var remaining = 42 - (firstDay + daysInMonth);
+  for (var n = 1; n <= remaining; n++) {
+    html += '<div class="cal-day other-month"><span>'+n+'</span></div>';
+  }
+
+  grid.innerHTML = html;
+}
+
+function calNav(dir) {
+  if (dir === 0) {
+    _calYear  = new Date().getFullYear();
+    _calMonth = new Date().getMonth();
+  } else {
+    _calMonth += dir;
+    if (_calMonth < 0)  { _calMonth = 11; _calYear--; }
+    if (_calMonth > 11) { _calMonth = 0;  _calYear++; }
+  }
+  _selectedDate = null;
+  renderCalendar();
+}
+
+function selectDay(dateObj) {
+  _selectedDate = dateObj;
+  renderCalendar();
+  // Filter sessions to this day
+  var daySessions = _sessions.filter(function(s) {
+    var d = new Date(s.time);
+    return d.getFullYear()===dateObj.y && d.getMonth()===dateObj.m && d.getDate()===dateObj.d;
+  });
+  if (daySessions.length) {
+    renderSessions(daySessions);
+  } else {
+    renderSessions(_sessions);
+  }
+}
+
+// ── START NOW ──────────────────────────────────────────────────
+function openStartNow() {
+  document.getElementById('startModal').classList.add('show');
+}
+
+function launchNow() {
+  var title    = document.getElementById('startTitle').value.trim() || 'Live Class Session';
+  var courseId = document.getElementById('startCourse').value;
+  var url = '/classroom.html?role=' + _userRole;
+  if (courseId) url += '&course=' + courseId;
+  // Pass title via sessionStorage for classroom to pick up
+  sessionStorage.setItem('ki_session_title', title);
+  closeModal('startModal');
+  window.open(url, '_blank');
+}
+
+// ── SCHEDULE ──────────────────────────────────────────────────
+function openSchedule() {
+  // Set default date to tomorrow
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('schedDate').value = tomorrow.toISOString().split('T')[0];
+  document.getElementById('schedModal').classList.add('show');
+}
+
+async function scheduleSession() {
+  var title    = document.getElementById('schedTitle').value.trim();
+  var courseId = document.getElementById('schedCourse').value;
+  var date     = document.getElementById('schedDate').value;
+  var time     = document.getElementById('schedTime').value;
+  var duration = parseInt(document.getElementById('schedDuration').value) || 60;
+  var desc     = document.getElementById('schedDesc').value.trim();
+
+  if (!title) { showNotif('Please enter a session title.', 'error'); return; }
+  if (!date || !time) { showNotif('Please select a date and time.', 'error'); return; }
+
+  var scheduledAt = new Date(date + 'T' + time);
+  if (scheduledAt <= new Date()) { showNotif('Please choose a future date and time.', 'error'); return; }
+
+  var roomId = 'ks_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+
+  var btn = document.querySelector('#schedModal .btn-primary');
+  btn.disabled = true; btn.textContent = 'Scheduling...';
+
+  var r = await _sb.from('scheduled_sessions').insert([{
+    course_id:     courseId || null,
+    host_id:       _user.id,
+    host_name:     _userName,
+    title:         title,
+    description:   desc || null,
+    scheduled_at:  scheduledAt.toISOString(),
+    duration_mins: duration,
+    room_id:       roomId,
+    status:        'upcoming'
+  }]);
+
+  btn.disabled = false; btn.textContent = '📅 Schedule Session';
+
+  if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+
+  showNotif('Session scheduled! Sharing link copied to clipboard.', 'success');
+  closeModal('schedModal');
+
+  // Auto-copy invite link
+  var link = window.location.origin + '/classroom.html?room=' + roomId;
+  navigator.clipboard.writeText(link).catch(function(){});
+
+  // Clear form
+  document.getElementById('schedTitle').value = '';
+  document.getElementById('schedDesc').value  = '';
+
+  loadSessions();
+}
+
+// ── SESSION ACTIONS ────────────────────────────────────────────
+function joinSession(roomId, sessionId) {
+  var url = '/classroom.html?room=' + roomId;
+  if (sessionId) url += '&session=' + sessionId;
+  window.open(url, '_blank');
+}
+
+function startScheduled(sessionId, roomId) {
+  // Mark as live in DB then open
+  _sb.from('scheduled_sessions').update({ status:'live' }).eq('id', sessionId)
+    .then(function() {
+      var url = '/classroom.html?room=' + roomId + '&session=' + sessionId + '&role=' + _userRole;
+      window.open(url, '_blank');
+      loadSessions();
+    });
+}
+
+function copySessionLink(roomId, sessionId) {
+  var link = window.location.origin + '/classroom.html?room=' + roomId;
+  if (sessionId) link += '&session=' + sessionId;
+  navigator.clipboard.writeText(link).then(function() {
+    showNotif('Session link copied to clipboard!', 'success');
+  }).catch(function() {
+    prompt('Copy this link:', link);
+  });
+}
+
+function cancelSession(sessionId) {
+  if (!confirm('Cancel this scheduled session?')) return;
+  _sb.from('scheduled_sessions').update({ status:'cancelled' }).eq('id', sessionId)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+      showNotif('Session cancelled.', 'success');
+      loadSessions();
+    });
+}
+
+// ── UTILS ──────────────────────────────────────────────────────
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showNotif(msg, type) {
+  var el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = 'notif show' + (type ? ' '+type : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove('show'); }, 4000);
+}
+
+// Close modals on backdrop click
+['startModal','schedModal'].forEach(function(id) {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) closeModal(id);
+  });
+});
+</script>
+</body>
+</html>

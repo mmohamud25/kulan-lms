@@ -1446,7 +1446,16 @@ function confirmLeave() {
 
   if (_channel) _sb.removeChannel(_channel);
   clearInterval(_timerInt);
-  window.location.href = _courseId ? '/course-viewer.html?course=' + _courseId : '/dashboard.html';
+  // Role-based redirect — use DB role, NOT URL param
+  if (_userRole === 'admin') {
+    window.location.href = '/admin.html';
+  } else if (_userRole === 'teacher') {
+    window.location.href = '/teacher.html';
+  } else {
+    window.location.href = _courseId
+      ? '/course-viewer.html?course=' + _courseId
+      : '/dashboard.html';
+  }
 }
 
 // ══════════════════════════════════════════════════════════
