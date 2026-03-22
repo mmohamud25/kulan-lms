@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Class — Kulan Institute</title>
+<title>KI Connect — Live Classroom</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -478,7 +478,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 <div id="loadingScreen">
   <div class="ld-icon">KI</div>
   <div class="ld-bar"><div class="ld-fill"></div></div>
-  <div class="ld-text" id="ldText">Joining class...</div>
+  <div class="ld-text" id="ldText">Joining KI Connect...</div>
 </div>
 
 <!-- Page -->
@@ -489,7 +489,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <div class="cls-logo">KI</div>
     <div>
       <div class="cls-title" id="clsTitle">Live Class</div>
-      <div class="cls-course" id="clsCourse">Kulan Institute</div>
+      <div class="cls-course" id="clsCourse">KI Connect</div>
     </div>
     <div class="live-badge">
       <div class="live-dot"></div>
@@ -540,97 +540,97 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
   <!-- CONTROLS -->
   <div class="ctrl-bar">
+
+    <!-- LEFT: name + invite -->
     <div class="ctrl-left">
-      <span class="ctrl-label" id="myNameLabel"></span>
+      <span class="ctrl-name" id="myNameLabel"></span>
+      <button class="ctrl-invite" onclick="openInvite()">
+        &#128279; Invite
+      </button>
     </div>
 
-    <button class="ctrl-btn" id="btnMute" onclick="toggleMute()" title="Mute/Unmute">
-      <div class="ctrl-icon">&#127908;</div>
-      <span class="ctrl-lbl">Mute</span>
-    </button>
+    <!-- CENTER: main controls -->
+    <div class="ctrl-center">
 
-    <button class="ctrl-btn" id="btnCam" onclick="toggleCamera()" title="Camera on/off">
-      <div class="ctrl-icon">&#127909;</div>
-      <span class="ctrl-lbl">Camera</span>
-    </button>
+      <button class="ctrl-btn" id="btnMute" onclick="toggleMute()" title="Mute (M)">
+        <div class="ctrl-icon-wrap" id="iconMute">&#127908;</div>
+        <span class="ctrl-lbl">Mute</span>
+      </button>
 
-    <button class="ctrl-btn" id="btnScreen" onclick="toggleScreenShare()" title="Share screen">
-      <div class="ctrl-icon">&#128250;</div>
-      <span class="ctrl-lbl">Share</span>
-    </button>
+      <button class="ctrl-btn" id="btnCam" onclick="toggleCamera()" title="Camera (V)">
+        <div class="ctrl-icon-wrap" id="iconCam">&#127909;</div>
+        <span class="ctrl-lbl">Camera</span>
+      </button>
 
-    <button class="ctrl-btn" id="btnHand" onclick="toggleHand()" title="Raise hand">
-      <div class="ctrl-icon">&#128400;</div>
-      <span class="ctrl-lbl">Hand</span>
-    </button>
+      <button class="ctrl-btn" id="btnScreen" onclick="toggleScreenShare()" title="Share Screen">
+        <div class="ctrl-icon-wrap" id="iconScreen">&#128250;</div>
+        <span class="ctrl-lbl">Share</span>
+      </button>
 
-    <button class="ctrl-btn" id="btnChat" onclick="toggleSidebar('chat')" title="Chat" style="position:relative;">
-      <div class="ctrl-icon">&#128172;</div>
-      <div class="badge-dot" id="chatBadge"></div>
-      <span class="ctrl-lbl">Chat</span>
-    </button>
+      <button class="ctrl-btn" id="btnHand" onclick="toggleHand()" title="Raise Hand">
+        <div class="ctrl-icon-wrap">&#128400;</div>
+        <span class="ctrl-lbl">Hand</span>
+      </button>
 
-    <button class="ctrl-btn" id="btnPeople" onclick="toggleSidebar('peers')" title="Participants">
-      <div class="ctrl-icon">&#128100;</div>
-      <span class="ctrl-lbl">People</span>
-    </button>
+      <button class="ctrl-btn" id="btnReact" onclick="toggleReactions()" title="Reactions">
+        <div class="ctrl-icon-wrap">&#128079;</div>
+        <span class="ctrl-lbl">React</span>
+      </button>
 
-        <button class="ctrl-btn" id="btnReact" onclick="toggleReactions()" title="Reactions">
-      <div class="ctrl-icon">&#128512;</div>
-      <span class="ctrl-lbl">React</span>
-    </button>
+      <button class="ctrl-btn" id="btnRecord" onclick="toggleRecording()" title="Record">
+        <div class="ctrl-icon-wrap" id="iconRecord">&#9679;</div>
+        <span class="ctrl-lbl">Record</span>
+      </button>
 
-    <button class="ctrl-btn" id="btnRecord" onclick="toggleRecording()" title="Record session">
-      <div class="ctrl-icon">&#9679;</div>
-      <span class="ctrl-lbl">Record</span>
-    </button>
+    </div>
 
-    <button class="ctrl-btn" id="btnSettings" onclick="openSettings()" title="Settings">
-      <div class="ctrl-icon">&#9881;</div>
-      <span class="ctrl-lbl">Settings</span>
-    </button>
+    <!-- RIGHT: chat, people, settings, end -->
+    <div class="ctrl-right">
 
-    <button class="ctrl-end" id="btnEnd" onclick="promptLeave()">
-      <div class="ctrl-end-icon">&#128222;</div>
-      <span class="ctrl-lbl" id="endLabel">Leave</span>
-    </button>
+      <button class="ctrl-btn" id="btnChat" onclick="toggleSidebar('chat')" title="Chat" style="position:relative;">
+        <div class="ctrl-icon-wrap">&#128172;</div>
+        <div class="badge-dot" id="chatBadge"></div>
+        <span class="ctrl-lbl">Chat</span>
+      </button>
+
+      <button class="ctrl-btn" id="btnPeople" onclick="toggleSidebar('peers')" title="Participants">
+        <div class="ctrl-icon-wrap">&#128100;</div>
+        <span class="ctrl-lbl">People</span>
+      </button>
+
+      <button class="ctrl-btn" id="btnSettings" onclick="openSettings()" title="Settings">
+        <div class="ctrl-icon-wrap">&#9881;</div>
+        <span class="ctrl-lbl">Settings</span>
+      </button>
+
+      <button class="ctrl-end-btn" id="btnEnd" onclick="promptLeave()">
+        <div class="ctrl-end-icon">&#128222;</div>
+        <span class="ctrl-end-lbl" id="endLabel">Leave</span>
+      </button>
+
+    </div>
+
   </div>
 
-</div>
 
-<!-- Reactions Popup -->
-<div class="reaction-popup" id="reactionPopup">
-  <button class="react-btn" onclick="sendReaction('&#128079;')">&#128079;</button>
-  <button class="react-btn" onclick="sendReaction('&#10084;')">&#10084;</button>
-  <button class="react-btn" onclick="sendReaction('&#128512;')">&#128512;</button>
-  <button class="react-btn" onclick="sendReaction('&#128561;')">&#128561;</button>
-  <button class="react-btn" onclick="sendReaction('&#127881;')">&#127881;</button>
-  <button class="react-btn" onclick="sendReaction('&#128514;')">&#128514;</button>
-  <button class="react-btn" onclick="sendReaction('&#128075;')">&#128075;</button>
-  <button class="react-btn" onclick="sendReaction('&#128522;')">&#128522;</button>
-</div>
 
-<!-- Settings Modal -->
-<div class="settings-modal" id="settingsModal">
-  <div class="settings-card">
-    <div class="settings-title">&#9881; Settings</div>
-    <div class="setting-row">
-      <div><div class="setting-label">Microphone</div></div>
-      <select class="setting-select" id="micSelect" onchange="changeMic(this.value)"></select>
+<!-- Invite Modal -->
+<div class="invite-modal" id="inviteModal">
+  <div class="invite-card">
+    <div class="invite-title">&#128279; Invite to Class</div>
+    <div class="invite-sub">Share the link below with anyone you want to join this session.</div>
+    <label class="invite-label">Session Link</label>
+    <div class="invite-link-wrap">
+      <input class="invite-link" id="inviteLink" readonly>
+      <button class="invite-copy" id="inviteCopyBtn" onclick="copyInviteLink()">Copy</button>
     </div>
-    <div class="setting-row">
-      <div><div class="setting-label">Camera</div></div>
-      <select class="setting-select" id="camSelect" onchange="changeCam(this.value)"></select>
+    <div class="invite-divider"><span>or send via email</span></div>
+    <label class="invite-label">Email Address</label>
+    <div class="invite-email-wrap">
+      <input class="invite-email-input" id="inviteEmail" placeholder="student@email.com" type="email">
+      <button class="invite-send" onclick="sendInviteEmail()">Send</button>
     </div>
-    <div class="setting-row">
-      <div><div class="setting-label">Mirror my video</div><div class="setting-sub">Flip your camera preview</div></div>
-      <div class="toggle-switch on" id="mirrorToggle" onclick="toggleMirror()"><div class="toggle-knob"></div></div>
-    </div>
-    <div class="setting-row">
-      <div><div class="setting-label">Noise suppression</div><div class="setting-sub">Reduces background noise</div></div>
-      <div class="toggle-switch on" id="noiseToggle"><div class="toggle-knob"></div></div>
-    </div>
-    <button class="settings-close" onclick="closeSettings()">Done</button>
+    <button class="invite-close" onclick="document.getElementById('inviteModal').classList.remove('show')">Close</button>
   </div>
 </div>
 
@@ -712,7 +712,7 @@ function loadSessionInfo() {
       .then(function(r) {
         if (r.data) {
           _roomId = r.data.room_id;
-          document.getElementById('clsTitle').textContent = r.data.title || 'Live Class';
+          document.getElementById('clsTitle').textContent = r.data.title || 'KI Connect';
           if (r.data.course_id) {
             _sb.from('courses').select('title').eq('id', r.data.course_id).single()
               .then(function(cr) {
@@ -760,9 +760,17 @@ async function requestPermissions() {
       document.getElementById('ldText').textContent = 'Camera unavailable, joining audio-only...';
       startSession();
     } catch(e2) {
-      showNotif('Microphone permission denied. Cannot join.', 'error');
-      document.getElementById('permModal').classList.remove('hidden');
+      // Total failure — show error with back button
       document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('permModal').classList.remove('hidden');
+      document.querySelector('.perm-card').innerHTML =
+        '<div class="perm-icon">&#128683;</div>'
+        + '<div class="perm-title">Media Access Denied</div>'
+        + '<div class="perm-sub">Camera and microphone access was denied. '
+        + 'Please allow media access in your browser settings, then try again.</div>'
+        + '<button class="perm-btn" onclick="requestPermissions()" style="margin-bottom:10px;">&#8635; Try Again</button>'
+        + '<button class="perm-btn" onclick="window.history.back()" '
+        + 'style="background:var(--surface2);border:1px solid var(--border2);">&#8592; Go Back</button>';
     }
   }
 }
@@ -779,16 +787,23 @@ function startSession() {
       teacher_id:   _user.id,
       teacher_name: _userName,
       room_id:      _roomId,
-      title:        'Live Class',
+      title:        'KI Connect Session',
       status:       'active'
     }]).select().then(function(r) {
-      if (r.data && r.data[0]) {
+      if (r.error) {
+        // DB failed but we still allow the session — just won't persist
+        console.warn('KI Connect: session DB insert failed:', r.error.message);
+        showNotif('Session started (offline mode — DB unavailable)', 'info');
+      } else if (r.data && r.data[0]) {
         _sessionId = r.data[0].id;
-        // Update URL without reload
-        var newUrl = window.location.pathname + '?room=' + _roomId + '&session=' + _sessionId + '&role=teacher';
+        var newUrl = window.location.pathname + '?room=' + _roomId
+          + '&session=' + _sessionId + '&role=teacher';
         window.history.replaceState({}, '', newUrl);
       }
       initRoom();
+    }).catch(function(e) {
+      console.warn('KI Connect: session insert exception:', e);
+      initRoom(); // start anyway
     });
   } else {
     initRoom();
@@ -820,7 +835,9 @@ function initRoom() {
 
       // Announce join to all existing peers
       broadcast({ type:'join', id:_myId, name:_userName, role:_userRole });
-      showNotif('You joined the class. Welcome!', 'success');
+      startSpeakDetect();
+      addNetQuality('tile_local');
+      showNotif('You joined KI Connect. Welcome!', 'success');
     }
   });
 
@@ -920,6 +937,10 @@ async function handleSignal(msg) {
       updateParticipantsList();
     }
 
+  } else if (msg.type === 'reaction') {
+    showFloatingReaction(msg.emoji, false);
+    addChatSystem(msg.name + ' reacted ' + msg.emoji);
+
   } else if (msg.type === 'end_session') {
     if (!_isTeacher) {
       showNotif('Class has ended. Redirecting...', 'info');
@@ -969,6 +990,7 @@ async function createPeerConnection(peerId, peerName, peerRole, isInitiator) {
 
   updateParticipantsList();
   updateGridClass();
+  monitorNetQuality(peerId, pc);
 }
 
 function addRemoteTile(peerId, peerName, peerRole, stream) {
@@ -1017,11 +1039,14 @@ function removePeer(peerId) {
 // GRID LAYOUT
 // ══════════════════════════════════════════════════════════
 function updateGridClass() {
-  var grid  = document.getElementById('videoGrid');
-  var count = grid.querySelectorAll('.vid-tile').length;
-  var cls   = count<=1?'p1':count===2?'p2':count<=4?'p4':count<=6?'p6':'p9';
+  var grid   = document.getElementById('videoGrid');
+  var tiles  = grid.querySelectorAll('.vid-tile');
+  var count  = tiles.length;
+  // Exclude screen-share tile from participant count
+  var people = grid.querySelectorAll('.vid-tile:not(.screen-share)').length;
+  var cls    = count<=1?'p1':count===2?'p2':count<=4?'p4':count<=6?'p6':'p9';
   grid.className = 'video-grid ' + cls;
-  document.getElementById('peerCount').textContent = count;
+  document.getElementById('peerCount').textContent = people;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1033,8 +1058,9 @@ function toggleMute() {
     _localStream.getAudioTracks().forEach(function(t){ t.enabled = !_muted; });
   }
   var btn = document.getElementById('btnMute');
-  btn.querySelector('.ctrl-icon').innerHTML = _muted ? '&#128263;' : '&#127908;';
+  document.getElementById('iconMute').innerHTML = _muted ? '&#128263;' : '&#127908;';
   btn.querySelector('.ctrl-lbl').textContent = _muted ? 'Unmute' : 'Mute';
+  btn.classList.toggle('off', _muted);
   btn.classList.toggle('muted', _muted);
   document.getElementById('localMutedIcon').style.display = _muted ? 'inline' : 'none';
   broadcast({ type:'mute_state', id:_myId, muted:_muted, camOff:_camOff });
@@ -1046,8 +1072,9 @@ function toggleCamera() {
     _localStream.getVideoTracks().forEach(function(t){ t.enabled = !_camOff; });
   }
   var btn = document.getElementById('btnCam');
-  btn.querySelector('.ctrl-icon').innerHTML = _camOff ? '&#128247;&#8416;' : '&#127909;';
+  document.getElementById('iconCam').innerHTML = _camOff ? '&#127909;' : '&#127909;';
   btn.querySelector('.ctrl-lbl').textContent = _camOff ? 'Start Video' : 'Camera';
+  btn.classList.toggle('off', _camOff);
   btn.classList.toggle('cam-off', _camOff);
   var localTile = document.getElementById('tile_local');
   if (localTile) localTile.classList.toggle('cam-off', _camOff);
@@ -1243,6 +1270,12 @@ function promptLeave() {
 
 function confirmLeave() {
   _leaving = true;
+  // Stop recording if active
+  if (_recording && _localRecorder) {
+    try { _localRecorder.stop(); } catch(e) {}
+  }
+  // Close AudioContext
+  if (_speakCtx) { try { _speakCtx.close(); } catch(e) {} _speakCtx = null; }
   broadcast({ type:'leave', id:_myId });
   // Close all peer connections
   Object.keys(_peers).forEach(function(pid) { _peers[pid].pc.close(); });
@@ -1288,6 +1321,47 @@ function showNotif(msg, type) {
   el._t = setTimeout(function(){ el.classList.remove('show'); }, 3500);
 }
 
+
+// ══════════════════════════════════════════════════════════
+// INVITE
+// ══════════════════════════════════════════════════════════
+function openInvite() {
+  if (!_roomId) {
+    showNotif('Session not started yet — cannot generate invite link.', 'error');
+    return;
+  }
+  var link = window.location.origin + '/classroom.html?room=' + _roomId
+    + (_sessionId ? '&session=' + _sessionId : '')
+    + (_courseId  ? '&course='  + _courseId  : '');
+  document.getElementById('inviteLink').value = link;
+  document.getElementById('inviteModal').classList.add('show');
+}
+
+function copyInviteLink() {
+  var inp = document.getElementById('inviteLink');
+  navigator.clipboard.writeText(inp.value).then(function() {
+    var btn = document.getElementById('inviteCopyBtn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+    showNotif('Link copied to clipboard.', 'success');
+  }).catch(function() {
+    inp.select();
+    document.execCommand('copy');
+    showNotif('Link copied.', 'success');
+  });
+}
+
+function sendInviteEmail() {
+  var email = document.getElementById('inviteEmail').value.trim();
+  if (!email || !email.includes('@')) { showNotif('Enter a valid email.', 'error'); return; }
+  var link  = document.getElementById('inviteLink').value;
+  var subject = encodeURIComponent('You are invited to a live class on Kulan Institute');
+  var body    = encodeURIComponent('You have been invited to join a live class session.\n\nJoin here: ' + link + '\n\nKulan Institute — kulaninstitute.org');
+  window.open('mailto:' + email + '?subject=' + subject + '&body=' + body);
+  document.getElementById('inviteEmail').value = '';
+  showNotif('Email client opened.', 'success');
+}
+
 // ══════════════════════════════════════════════════════════
 // RECORDING
 // ══════════════════════════════════════════════════════════
@@ -1298,12 +1372,17 @@ var _recording     = false;
 function toggleRecording() {
   var btn = document.getElementById('btnRecord');
   var ind = document.getElementById('recIndicator');
+  // If camera off, record audio-only
+  if (!_recording && _localStream) {
+    var hasTracks = _localStream.getTracks().length > 0;
+    if (!hasTracks) { showNotif('No active media to record.', 'error'); return; }
+  }
   if (_recording) {
     _localRecorder && _localRecorder.stop();
     _recording = false;
     btn.classList.remove('active');
     ind.classList.remove('show');
-    btn.querySelector('.ctrl-icon').innerHTML = '&#9679;';
+    document.getElementById('iconRecord').innerHTML = '&#9679;';
     btn.querySelector('.ctrl-lbl').textContent = 'Record';
   } else {
     // Record the grid view — capture the page
@@ -1327,7 +1406,7 @@ function toggleRecording() {
     _recording = true;
     btn.classList.add('active');
     ind.classList.add('show');
-    btn.querySelector('.ctrl-icon').innerHTML = '&#9632;';
+    document.getElementById('iconRecord').innerHTML = '&#9632;';
     btn.querySelector('.ctrl-lbl').textContent = 'Stop Rec';
     showNotif('Recording started.', 'success');
   }
@@ -1380,16 +1459,7 @@ function showFloatingReaction(emoji, isLocal) {
   setTimeout(function() { el.remove(); }, 2600);
 }
 
-// Hook reaction into handleSignal
-var _origHandleSignal = handleSignal;
-handleSignal = function(msg) {
-  if (msg && msg.type === 'reaction') {
-    showFloatingReaction(msg.emoji, false);
-    addChatSystem(msg.name + ' reacted ' + msg.emoji);
-    return;
-  }
-  _origHandleSignal(msg);
-};
+// reaction handled directly in handleSignal above
 
 // ══════════════════════════════════════════════════════════
 // SETTINGS
@@ -1495,6 +1565,7 @@ function startSpeakDetect() {
   try {
     var AC = window.AudioContext || window.webkitAudioContext;
     _speakCtx  = new AC();
+    if (_speakCtx.state === 'suspended') _speakCtx.resume();
     _speakAnal = _speakCtx.createAnalyser();
     _speakAnal.fftSize = 256;
     var src = _speakCtx.createMediaStreamSource(_localStream);
@@ -1522,8 +1593,10 @@ function addNetQuality(tileId) {
 }
 
 function monitorNetQuality(peerId, pc) {
-  setInterval(function() {
-    if (!pc || pc.connectionState === 'closed') return;
+  var _int = setInterval(function() {
+    if (!pc || pc.connectionState === 'closed' || !_peers[peerId]) {
+      clearInterval(_int); return;
+    }
     pc.getStats().then(function(stats) {
       var rtt = null;
       stats.forEach(function(report) {
@@ -1561,22 +1634,138 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// Hook into initRoom to start speaking detection
-var _origInitRoom = initRoom;
-initRoom = function() {
-  _origInitRoom();
-  startSpeakDetect();
-  addNetQuality('tile_local');
-};
+// speaking detection started inside initRoom directly
 
-// Hook into createPeerConnection to monitor net quality
-var _origCPC = createPeerConnection;
-createPeerConnection = async function(peerId, peerName, peerRole, isInitiator) {
-  await _origCPC(peerId, peerName, peerRole, isInitiator);
-  var peer = _peers[peerId];
-  if (peer) monitorNetQuality(peerId, peer.pc);
-};
+// net quality monitored inside createPeerConnection directly
 
 </script>
 </body>
-</html>
+</html>/* ── CONTROLS BAR ── */
+.ctrl-bar {
+  height: var(--ctrl-h);
+  background: linear-gradient(180deg, var(--surface2) 0%, var(--surface) 100%);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; flex-shrink: 0; gap: 8px;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.3);
+}
+.ctrl-left  { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.ctrl-center{ display: flex; align-items: center; gap: 6px; }
+.ctrl-right { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; }
+.ctrl-name  { font-size: 12px; font-weight: 600; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 130px; }
+
+/* Individual control buttons */
+.ctrl-btn {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; cursor: pointer; padding: 6px 10px;
+  border-radius: 12px; transition: all .2s;
+  border: none; background: transparent; color: var(--text2);
+  font-family: 'DM Sans', sans-serif; min-width: 58px;
+}
+.ctrl-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+
+.ctrl-icon-wrap {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; transition: all .2s; position: relative;
+  background: var(--surface3); border: 1px solid var(--border);
+}
+.ctrl-btn:hover .ctrl-icon-wrap { border-color: var(--border2); background: var(--surface2); }
+.ctrl-btn.active .ctrl-icon-wrap {
+  background: rgba(27,174,204,0.12); border-color: rgba(27,174,204,0.3); color: var(--cyan);
+}
+.ctrl-btn.off .ctrl-icon-wrap {
+  background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.25);
+}
+.ctrl-btn.off .ctrl-icon-wrap::after {
+  content: ''; position: absolute; width: 2px; height: 130%; border-radius: 1px;
+  background: var(--red); transform: rotate(45deg); top: -15%; left: calc(50% - 1px);
+}
+.ctrl-lbl { font-size: 10px; font-weight: 700; letter-spacing: .2px; color: inherit; }
+
+/* Unread badge */
+.badge-dot {
+  position: absolute; top: -2px; right: -2px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--red); border: 2px solid var(--surface); display: none;
+}
+
+/* Invite button */
+.ctrl-invite {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px; border-radius: 10px;
+  background: rgba(27,174,204,0.1); border: 1px solid rgba(27,174,204,0.25);
+  color: var(--cyan); font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s;
+}
+.ctrl-invite:hover { background: rgba(27,174,204,0.18); transform: translateY(-1px); }
+
+/* End button */
+.ctrl-end-btn {
+  display: inline-flex; flex-direction: column; align-items: center;
+  gap: 4px; cursor: pointer; padding: 6px 10px; border-radius: 12px;
+  border: none; background: transparent; font-family: 'DM Sans', sans-serif;
+  transition: all .2s; min-width: 58px;
+}
+.ctrl-end-btn:hover { background: rgba(239,68,68,0.08); }
+.ctrl-end-icon {
+  width: 42px; height: 42px; border-radius: 50%; background: var(--red);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; color: #fff; transition: all .2s;
+  box-shadow: 0 4px 14px rgba(239,68,68,0.35);
+}
+.ctrl-end-btn:hover .ctrl-end-icon { transform: scale(1.08); box-shadow: 0 6px 20px rgba(239,68,68,0.5); }
+.ctrl-end-lbl { font-size: 10px; font-weight: 700; color: var(--red); }
+
+/* ── INVITE MODAL ── */
+.invite-modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+  display: none; align-items: center; justify-content: center;
+  z-index: 100; backdrop-filter: blur(8px);
+}
+.invite-modal.show { display: flex; }
+.invite-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 32px; max-width: 440px; width: calc(100% - 40px);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+}
+.invite-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.invite-sub   { font-size: 13px; color: var(--text2); margin-bottom: 22px; line-height: 1.6; }
+.invite-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--text2); margin-bottom: 8px; display: block; }
+.invite-link-wrap { display: flex; gap: 8px; margin-bottom: 16px; }
+.invite-link {
+  flex: 1; background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 9px; padding: 10px 13px; color: var(--cyan);
+  font-size: 12px; font-family: monospace; outline: none;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.invite-copy {
+  padding: 10px 18px; border-radius: 9px; background: var(--cyan);
+  border: none; color: #fff; font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.invite-copy:hover { background: #18a0b8; }
+.invite-divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; }
+.invite-divider::before,.invite-divider::after { content:''; flex:1; height:1px; background: var(--border); }
+.invite-divider span { font-size: 11px; color: var(--text3); }
+.invite-email-wrap { display: flex; gap: 8px; }
+.invite-email-input {
+  flex: 1; background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 9px; padding: 10px 13px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; transition: border .2s;
+}
+.invite-email-input:focus { border-color: rgba(27,174,204,0.3); }
+.invite-send {
+  padding: 10px 18px; border-radius: 9px; background: var(--teal);
+  border: none; color: #fff; font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s;
+}
+.invite-send:hover { background: var(--teal2); }
+.invite-close {
+  width: 100%; height: 38px; margin-top: 16px; border-radius: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text2); font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
+
+
