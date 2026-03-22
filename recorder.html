@@ -276,6 +276,10 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <button class="rbtn rbtn-pause" id="btnPause" onclick="pauseRec()"  style="display:none">&#10074;&#10074; Pause</button>
     <button class="rbtn rbtn-stop"  id="btnStop"  onclick="stopRec()"   style="display:none">&#9632; Stop</button>
     <button class="rbtn rbtn-chap"  id="btnChap"  onclick="addChapter()" style="display:none">&#128204; Chapter</button>
+    <button class="rbtn" id="btnOpenStudio" onclick="goPhase(3)"
+      style="display:none;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;">
+      &#9654; Open Studio
+    </button>
     <div class="layout-sw" id="lwSw">
       <button class="ls-btn active" data-layout="side"   onclick="swLayout('side',this)">&#9646;&#9646;</button>
       <button class="ls-btn"        data-layout="pip"    onclick="swLayout('pip',this)">&#10697;</button>
@@ -504,6 +508,9 @@ function stopRec(){
   sh('btnRec',true);sh('btnPause',false);sh('btnStop',false);sh('btnChap',false);
   document.getElementById('recBadge').classList.remove('show');
   document.getElementById('recTimer').classList.remove('live');
+  // Show Open Studio button immediately (onStop fires async after blob is ready)
+  var openBtn = document.getElementById('btnOpenStudio');
+  if (openBtn) openBtn.style.display = 'inline-flex';
 }
 function onStop(){
   _blob=new Blob(_chunks,{type:bestMime()});
@@ -512,9 +519,12 @@ function onStop(){
   pv.src=url;pv.load();
   var d=new Date();
   document.getElementById('svTitle').value='Lesson — '+d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  goPhase(3);
-  pv.addEventListener('loadedmetadata',initTL,{once:true});
-  renderChStudio();
+  // Small delay to ensure blob is ready before switching phase
+  setTimeout(function(){
+    goPhase(3);
+    pv.addEventListener('loadedmetadata',initTL,{once:true});
+    renderChStudio();
+  }, 300);
 }
 
 // CHAPTERS
@@ -689,15 +699,26 @@ function startTimer(){
 
 // PHASES
 function goPhase(n){
-  document.getElementById('phaseSetup').style.display=n===1?'flex':'none';
-  document.getElementById('phaseRecord').style.display=n===2?'flex':'none';
-  document.getElementById('phaseStudio').style.display=n===3?'flex':'none';
+  var setup  = document.getElementById('phaseSetup');
+  var record = document.getElementById('phaseRecord');
+  var studio = document.getElementById('phaseStudio');
+  setup.style.display  = n===1 ? 'flex' : 'none';
+  record.style.display = n===2 ? 'flex' : 'none';
+  studio.style.display = n===3 ? 'flex' : 'none';
+  // Ensure studio fills the app shell
+  if (n===3) {
+    studio.style.flex   = '1';
+    studio.style.minHeight = '0';
+  }
   for(var i=1;i<=3;i++){
     var dot=document.getElementById('pd'+i),lbl=document.getElementById('pl'+i);
     if(i<n){dot.className='ph-dot done';lbl.className='ph-lbl';}
     else if(i===n){dot.className='ph-dot active';lbl.className='ph-lbl active';}
     else{dot.className='ph-dot';lbl.className='ph-lbl';}
   }
+  // Show/hide "Open Studio" button
+  var openBtn = document.getElementById('btnOpenStudio');
+  if (openBtn) openBtn.style.display = (n===2 && _blob) ? 'inline-flex' : 'none';
 }
 
 // PANEL TABS
