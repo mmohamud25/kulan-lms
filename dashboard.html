@@ -303,6 +303,14 @@ body.somali-on .en { display:none; }
 .btn-unenroll-sm:hover { background:rgba(239,68,68,0.06); }
 
 </style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GGBZJXPLRP');
+</script>
 </head>
 <body>
 
@@ -518,6 +526,7 @@ _sb.auth.onAuthStateChange(function(e,s){ if(e==='SIGNED_IN') tryDash(s?s.user:n
 function startDashboard(){
   document.getElementById('loadingScreen').style.display='none';
   document.getElementById('page').style.display='block';
+  if(typeof gtag!=='undefined') gtag('event','portal_view',{role:'student'});
   var h=new Date().getHours();
   document.getElementById('wbGreeting').textContent = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
   loadAll();
@@ -871,6 +880,7 @@ function enrollCourse(courseId, btn) {
       return;
     }
     showNotif('Enrolled! Good luck.', 'success');
+    if(typeof gtag!=='undefined') gtag('event','course_enroll',{course_id:courseId});
     loadAll();
   })
   .catch(function(e) {

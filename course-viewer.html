@@ -194,6 +194,14 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:#fff; heigh
 .vc-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
 
 </style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GGBZJXPLRP');
+</script>
 </head>
 <body>
 
@@ -525,6 +533,7 @@ function markComplete(matId, totalMats) {
   updateModuleState(matId);
   saveProgress();
   updateCompleteBtn(matId, totalMats);
+  if(typeof gtag!=='undefined') gtag('event','module_complete',{material_id:matId,total:totalMats,completed:_completed.length});
   // Brief pulse animation
   var btn = document.getElementById('markCompleteBtn');
   if (btn) {
