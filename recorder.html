@@ -181,6 +181,68 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   .setup-card{padding:24px 18px;}
   .layout-grid{grid-template-columns:1fr 1fr;}
 }
+
+/* ── COUNTDOWN ── */
+.countdown-overlay {
+  position:absolute; inset:0; display:none;
+  align-items:center; justify-content:center;
+  background:rgba(0,0,0,0.75); z-index:10; flex-direction:column; gap:8px;
+}
+.countdown-overlay.show { display:flex; }
+.cd-num { font-size:120px; font-weight:900; color:#fff; font-family:'Playfair Display',serif;
+  animation:cdPop .9s ease-out; line-height:1; }
+.cd-sub { font-size:14px; color:rgba(255,255,255,0.5); letter-spacing:2px; text-transform:uppercase; }
+@keyframes cdPop { 0%{transform:scale(1.6);opacity:0} 40%{opacity:1} 100%{transform:scale(1);opacity:1} }
+
+/* ── MIC METER ── */
+.mic-meter-wrap { display:flex; align-items:center; gap:6px; }
+.mic-label { font-size:11px; color:var(--text-mid); }
+.mic-bar-track { width:60px; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; }
+.mic-bar-fill { height:100%; width:0%; border-radius:3px; transition:width .08s;
+  background:linear-gradient(90deg,var(--success),#84cc16,#f59e0b,var(--red2)); }
+
+/* ── MIRROR TOGGLE ── */
+.mirror-on #recCanvas { transform: scaleX(-1); }
+
+/* ── THUMBNAIL ── */
+.thumb-wrap { position:relative; }
+#thumbCanvas { display:none; }
+.thumb-preview { width:100%; border-radius:8px; margin-top:8px; display:none; border:1px solid var(--border2); }
+.btn-grab-thumb { width:100%; padding:9px; border-radius:9px; border:1.5px solid var(--border2);
+  background:transparent; color:var(--text-mid); font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:600; cursor:pointer; transition:all .2s; margin-bottom:6px; }
+.btn-grab-thumb:hover { border-color:var(--cyan); color:var(--text); }
+.btn-dl-thumb { width:100%; padding:9px; border-radius:9px; border:none; display:none;
+  background:rgba(212,168,67,0.15); color:var(--gold); font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:700; cursor:pointer; transition:all .2s; margin-bottom:8px; }
+.btn-dl-thumb:hover { background:rgba(212,168,67,0.25); }
+
+/* ── YOUTUBE CHAPTER TEXT ── */
+.yt-chapter-box { background:var(--panel3); border-radius:8px; padding:10px 12px;
+  font-size:11px; font-family:monospace; color:var(--cyan); line-height:1.8;
+  white-space:pre; overflow-x:auto; margin:8px 0; display:none; border:1px solid var(--border2); }
+.btn-copy-ch { width:100%; padding:8px; border-radius:8px; border:1.5px solid rgba(212,168,67,0.25);
+  background:rgba(212,168,67,0.08); color:var(--gold); font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:700; cursor:pointer; margin-bottom:12px; display:none; }
+.btn-copy-ch:hover { background:rgba(212,168,67,0.16); }
+.copy-done { color:var(--success) !important; }
+
+/* ── SPEED PREVIEW ── */
+.speed-row { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px; }
+.spd-btn { padding:5px 10px; border-radius:6px; border:1.5px solid var(--border2);
+  background:transparent; color:var(--text-mid); font-family:'DM Sans',sans-serif;
+  font-size:11px; font-weight:700; cursor:pointer; transition:all .2s; }
+.spd-btn.active { background:rgba(27,174,204,0.12); border-color:var(--cyan); color:var(--cyan); }
+
+/* ── CHAPTER RENAME ── */
+.ci-nm-input { flex:1; background:var(--panel3); border:1px solid var(--cyan);
+  border-radius:4px; padding:2px 6px; font-size:12px; color:var(--text);
+  font-family:'DM Sans',sans-serif; outline:none; }
+
+/* ── MIRROR BUTTON ── */
+.rbtn-mirror { background:var(--panel3); color:var(--text-mid); border:1.5px solid var(--border2); }
+.rbtn-mirror.on { border-color:var(--cyan); color:var(--cyan); background:rgba(27,174,204,0.1); }
+
 </style>
 </head>
 <body>
@@ -259,8 +321,12 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
 <!-- PHASE 2 -->
 <div id="phaseRecord">
-  <div class="canvas-area">
+  <div class="canvas-area" id="canvasArea">
     <canvas id="recCanvas"></canvas>
+    <div class="countdown-overlay" id="cdOverlay">
+      <div class="cd-num" id="cdNum">3</div>
+      <div class="cd-sub">Get ready...</div>
+    </div>
     <div class="rec-badge" id="recBadge">
       <div class="rec-dot"></div> REC <span id="badgeTime">00:00</span>
     </div>
@@ -276,6 +342,11 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     <button class="rbtn rbtn-pause" id="btnPause" onclick="pauseRec()"  style="display:none">&#10074;&#10074; Pause</button>
     <button class="rbtn rbtn-stop"  id="btnStop"  onclick="stopRec()"   style="display:none">&#9632; Stop</button>
     <button class="rbtn rbtn-chap"  id="btnChap"  onclick="addChapter()" style="display:none">&#128204; Chapter</button>
+    <button class="rbtn rbtn-mirror" id="btnMirror" onclick="toggleMirror()" title="Mirror camera">&#8596; Mirror</button>
+    <div class="mic-meter-wrap" id="micMeter" style="display:none;">
+      <span class="mic-label">&#127908;</span>
+      <div class="mic-bar-track"><div class="mic-bar-fill" id="micFill"></div></div>
+    </div>
     <button class="rbtn" id="btnOpenStudio" onclick="openStudio()"
       style="display:none;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;">
       &#9654; Open Studio &rarr;
@@ -328,9 +399,22 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
         <label class="sv-lbl">Module Number</label>
         <input  class="sv-in"  id="svMod" type="number" value="1" min="1">
 
-        <label class="sv-lbl" style="margin-top:18px;">&#8675; Download Your Recording</label>
+        <label class="sv-lbl" style="margin-top:18px;">&#8675; Download</label>
         <button class="btn-dl btn-mp4" onclick="dlMP4()">&#8675; Download Video (.webm)</button>
-        <div class="yt-hint">Record &rarr; Download &rarr; Upload to YouTube &rarr; paste link below.</div>
+
+        <div class="thumb-wrap">
+          <button class="btn-grab-thumb" onclick="grabThumb()">&#128247; Grab Thumbnail from current frame</button>
+          <img class="thumb-preview" id="thumbPreview">
+          <canvas id="thumbCanvas"></canvas>
+          <button class="btn-dl-thumb" id="btnDlThumb" onclick="dlThumb()">&#8675; Download Thumbnail (JPG)</button>
+        </div>
+
+        <label class="sv-lbl">&#128204; YouTube Chapters</label>
+        <div class="yt-chapter-box" id="ytChBox"></div>
+        <button class="btn-copy-ch" id="btnCopyCh" onclick="copyChapters()">&#128203; Copy Chapters Text</button>
+        <div class="yt-hint">Paste this into your YouTube video description so viewers can jump to each section.</div>
+
+        <div class="yt-hint" style="margin-top:4px;">Record &rarr; Download &rarr; Upload to YouTube &rarr; paste link below.</div>
 
         <label class="sv-lbl">YouTube / Video URL</label>
         <input class="sv-in" id="svUrl" placeholder="https://youtu.be/...">
@@ -346,6 +430,12 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
   <div class="studio-bar">
     <div class="sbar-t" id="sbarT">0:00 / 0:00</div>
+    <div class="speed-row">
+      <button class="spd-btn" onclick="setSpeed(0.5,this)">0.5x</button>
+      <button class="spd-btn active" onclick="setSpeed(1,this)">1x</button>
+      <button class="spd-btn" onclick="setSpeed(1.5,this)">1.5x</button>
+      <button class="spd-btn" onclick="setSpeed(2,this)">2x</button>
+    </div>
     <div class="sbar-r">
       <button class="sbtn sbtn-play" id="sbPlay" onclick="pvToggle()">&#9654; Play</button>
       <button class="sbtn sbtn-redo"              onclick="reRecord()">&#8634; Re-record</button>
@@ -359,7 +449,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 
 <script>
 // STATE
-var _user=null,_courses=[],_layout='side',_quality=720;
+var _user=null,_courses=[],_layout='side',_quality=720,_mirrored=false,_micCtx=null,_micAnal=null,_micInt=null;
 var _camSt=null,_scrSt=null,_recorder=null,_chunks=[],_blob=null;
 var _recording=false,_paused=false,_timerSec=0,_timerInt=null,_drawInt=null;
 var _chapters=[],_camEl=null,_scrEl=null;
@@ -472,6 +562,30 @@ function syncLsw(){
 
 // RECORDING
 function startRec(){
+  // Countdown 3-2-1 before recording
+  var overlay=document.getElementById('cdOverlay');
+  var numEl=document.getElementById('cdNum');
+  overlay.classList.add('show');
+  document.getElementById('btnRec').disabled=true;
+  var count=3;
+  numEl.textContent=count;
+  var cdInt=setInterval(function(){
+    count--;
+    if(count<=0){
+      clearInterval(cdInt);
+      overlay.classList.remove('show');
+      doStartRec();
+    } else {
+      // Re-trigger animation
+      numEl.style.animation='none';
+      numEl.offsetHeight; // reflow
+      numEl.style.animation='';
+      numEl.textContent=count;
+    }
+  },1000);
+}
+
+function doStartRec(){
   _chunks=[];_chapters=[];_timerSec=0;renderChLive();
   var tracks=[];
   canvas.captureStream(30).getTracks().forEach(function(t){tracks.push(t);});
@@ -486,6 +600,7 @@ function startRec(){
   sh('btnRec',false);sh('btnPause',true);sh('btnStop',true);sh('btnChap',true);
   document.getElementById('recBadge').classList.add('show');
   document.getElementById('recTimer').classList.add('live');
+  startMicMeter();
   startTimer();
 }
 function pauseRec(){
@@ -548,18 +663,40 @@ function renderChStudio(){
   var dur=pv.duration||1;
   if(!_chapters.length){
     list.innerHTML='<div class="no-ci">No chapters yet.<br>Press <strong style="color:var(--gold)">Chapter</strong> while recording to mark key moments.</div>';
-    if(mrk)mrk.innerHTML='';return;
+    if(mrk)mrk.innerHTML='';
+    renderYTChapters();
+    return;
   }
-  list.innerHTML=_chapters.map(function(c,i){
-    return '<div class="ci" onclick="seekTo('+c.time+')">'
-      +'<span class="ci-ts">'+fmt(c.time)+'</span>'
-      +'<span class="ci-nm">'+esc(c.name)+'</span>'
+  list.innerHTML=_chapters.map(function(ch,i){
+    return '<div class="ci">'
+      +'<span class="ci-ts" onclick="seekTo('+ch.time+')">'+fmt(ch.time)+'</span>'
+      +'<span class="ci-nm" ondblclick="renameChapter('+i+',this)" title="Double-click to rename">'+esc(ch.name)+'</span>'
       +'<button class="ci-del" onclick="delCh('+i+',event)">&#215;</button>'
       +'</div>';
   }).join('');
-  if(mrk)mrk.innerHTML=_chapters.map(function(c){
-    return '<div class="tl-cm" style="left:'+(c.time/dur*100)+'%" data-n="'+esc(c.name)+'"></div>';
+  if(mrk)mrk.innerHTML=_chapters.map(function(ch){
+    return '<div class="tl-cm" style="left:'+(ch.time/dur*100)+'%" data-n="'+esc(ch.name)+'"></div>';
   }).join('');
+  renderYTChapters();
+}
+
+function renameChapter(i, el){
+  var current = _chapters[i].name;
+  var inp = document.createElement('input');
+  inp.className='ci-nm-input';
+  inp.value=current;
+  el.parentNode.replaceChild(inp, el);
+  inp.focus(); inp.select();
+  function commit(){
+    var newName = inp.value.trim() || current;
+    _chapters[i].name = newName;
+    renderChStudio();
+  }
+  inp.addEventListener('blur', commit);
+  inp.addEventListener('keydown', function(e){
+    if(e.key==='Enter') inp.blur();
+    if(e.key==='Escape'){ inp.value=current; inp.blur(); }
+  });
 }
 function delCh(i,e){e.stopPropagation();_chapters.splice(i,1);renderChStudio();}
 
@@ -738,6 +875,112 @@ function startTimer(){
 
 // PHASES
 
+
+function toggleMirror(){
+  _mirrored = !_mirrored;
+  var btn = document.getElementById('btnMirror');
+  var area = document.getElementById('canvasArea');
+  if(_mirrored){
+    area.classList.add('mirror-on');
+    btn.classList.add('on');
+    btn.innerHTML = '&#8596; Mirrored';
+  } else {
+    area.classList.remove('mirror-on');
+    btn.classList.remove('on');
+    btn.innerHTML = '&#8596; Mirror';
+  }
+}
+
+function startMicMeter(){
+  if(!_camSt) return;
+  try {
+    var AudioCtx = window.AudioContext || window.webkitAudioContext;
+    _micCtx  = new AudioCtx();
+    _micAnal = _micCtx.createAnalyser();
+    _micAnal.fftSize = 256;
+    var src = _micCtx.createMediaStreamSource(_camSt);
+    src.connect(_micAnal);
+    var buf = new Uint8Array(_micAnal.frequencyBinCount);
+    document.getElementById('micMeter').style.display = 'flex';
+    _micInt = setInterval(function(){
+      _micAnal.getByteFrequencyData(buf);
+      var avg = buf.reduce(function(a,b){return a+b;},0) / buf.length;
+      var pct = Math.min(100, (avg / 128) * 100 * 2.5);
+      document.getElementById('micFill').style.width = pct + '%';
+    }, 80);
+  } catch(e){}
+}
+
+function stopMicMeter(){
+  clearInterval(_micInt);
+  if(_micCtx) _micCtx.close().catch(function(){});
+  _micCtx=null; _micAnal=null;
+  document.getElementById('micMeter').style.display='none';
+  document.getElementById('micFill').style.width='0%';
+}
+
+function setSpeed(s, el){
+  document.getElementById('previewVideo').playbackRate = s;
+  document.querySelectorAll('.spd-btn').forEach(function(b){b.classList.remove('active');});
+  if(el) el.classList.add('active');
+}
+
+function grabThumb(){
+  var pv  = document.getElementById('previewVideo');
+  var tc  = document.getElementById('thumbCanvas');
+  var img = document.getElementById('thumbPreview');
+  var btn = document.getElementById('btnDlThumb');
+  tc.width  = pv.videoWidth  || 1280;
+  tc.height = pv.videoHeight || 720;
+  var ctx2 = tc.getContext('2d');
+  ctx2.drawImage(pv, 0, 0, tc.width, tc.height);
+  var dataUrl = tc.toDataURL('image/jpeg', 0.92);
+  img.src = dataUrl;
+  img.style.display = 'block';
+  btn.style.display = 'block';
+  showN('Thumbnail grabbed from current frame.', 'success');
+}
+
+function dlThumb(){
+  var tc   = document.getElementById('thumbCanvas');
+  var title= (document.getElementById('svTitle').value||'thumbnail').replace(/[^a-zA-Z0-9]/g,'_');
+  var a    = document.createElement('a');
+  a.href   = tc.toDataURL('image/jpeg', 0.92);
+  a.download = title + '_thumbnail.jpg';
+  a.click();
+}
+
+function renderYTChapters(){
+  var box   = document.getElementById('ytChBox');
+  var btn   = document.getElementById('btnCopyCh');
+  if(!_chapters.length){
+    box.style.display='none'; btn.style.display='none'; return;
+  }
+  // YouTube requires first chapter at 0:00
+  var lines = [];
+  if(_chapters[0].time > 0) lines.push('0:00 Introduction');
+  _chapters.forEach(function(ch){
+    lines.push(fmt(ch.time) + ' ' + ch.name);
+  });
+  box.textContent = lines.join('\n');
+  box.style.display = 'block';
+  btn.style.display = 'block';
+}
+
+function copyChapters(){
+  var box = document.getElementById('ytChBox');
+  navigator.clipboard.writeText(box.textContent).then(function(){
+    var btn = document.getElementById('btnCopyCh');
+    btn.classList.add('copy-done');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function(){
+      btn.classList.remove('copy-done');
+      btn.textContent = '📋 Copy Chapters Text';
+    }, 2000);
+  }).catch(function(){
+    showN('Copy failed — please select and copy manually.', 'error');
+  });
+}
 function openStudio(){
   goPhase(3);
   var pv=document.getElementById('previewVideo');
