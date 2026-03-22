@@ -352,6 +352,9 @@ tr:hover td{background:rgba(11,31,58,0.015);}
     <button class="nav-item" onclick="window.open('https://kulaninstitute.org','_blank')">
       <span class="nav-icon">🌐</span> View Website
     </button>
+    <button class="nav-item" onclick="startLiveClass()" style="background:linear-gradient(135deg,rgba(239,68,68,0.18),rgba(239,68,68,0.06));border:1px solid rgba(239,68,68,0.3);">
+      <span class="nav-icon">&#128247;</span> Start Live Class
+    </button>
     <button class="nav-item" onclick="window.location.href='/recorder.html'" style="background:linear-gradient(135deg,rgba(220,38,38,0.15),rgba(220,38,38,0.05));border:1px solid rgba(220,38,38,0.2);">
       <span class="nav-icon">&#127909;</span> Record Lesson
     </button>
@@ -876,6 +879,21 @@ function clearUpFile() {
   document.getElementById('upFileInput').value='';
   document.getElementById('upProgressWrap').style.display='none';
   document.getElementById('upProgressBar').style.width='0%';
+}
+
+
+function startLiveClass() {
+  // Pick course first
+  var courseId = null;
+  if (courses && courses.length) {
+    var names = courses.map(function(c,i){ return (i+1)+'. '+c.title; }).join('\n');
+    var choice = prompt('Which course is this class for?\n\n'+names+'\n\nEnter number:');
+    var idx = parseInt(choice) - 1;
+    if (!isNaN(idx) && courses[idx]) courseId = courses[idx].id;
+  }
+  var url = '/classroom.html?role=teacher';
+  if (courseId) url += '&course=' + courseId;
+  window.open(url, '_blank');
 }
 
 function uploadMaterial() {

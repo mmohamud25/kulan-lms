@@ -694,6 +694,28 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 @media(min-width:769px){
   .sidebar-overlay{display:none !important;}
 }
+
+/* ── LIVE BANNER ── */
+.live-banner {
+  display:none; background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.06));
+  border-bottom:1px solid rgba(239,68,68,0.2); padding:10px 20px;
+  align-items:center; gap:12px; flex-shrink:0; animation:lbSlide .3s ease;
+}
+.live-banner.show { display:flex; }
+@keyframes lbSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.lb-dot { width:8px; height:8px; border-radius:50%; background:var(--error); flex-shrink:0; animation:livePulse 1.2s ease-in-out infinite; }
+@keyframes livePulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+.lb-text { flex:1; font-size:13px; color:var(--text); }
+.lb-text strong { color:#fca5a5; }
+.lb-join {
+  padding:8px 20px; border-radius:9px; border:none;
+  background:var(--error); color:#fff;
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700;
+  cursor:pointer; text-decoration:none; transition:all .2s;
+  display:inline-flex; align-items:center; gap:6px;
+}
+.lb-join:hover { background:#dc2626; transform:translateY(-1px); }
+
 </style>
 </head>
 <body>
@@ -742,6 +764,12 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   </div>
 
   <!-- VIEWER BODY -->
+  <!-- Live Now Banner -->
+  <div class="live-banner" id="liveBanner">
+    <div class="lb-dot"></div>
+    <div class="lb-text">&#127909; <strong>Live class in progress</strong> — your instructor is teaching right now</div>
+    <a href="#" class="lb-join" id="liveJoinBtn">Join Live Class &rarr;</a>
+  </div>
   <div class="viewer-body">
 
     <!-- SIDEBAR -->
@@ -991,6 +1019,8 @@ function loadCourse() {
     renderModuleList(mats);
     updateProgressBar(mats.length);
     loadAllNotes();
+    checkLiveSession();
+    watchLiveSessions();
 
     // Auto-open first incomplete module
     var first = mats.find(function(m) { return _completed.indexOf(m.id) === -1; }) || mats[0];
@@ -1293,6 +1323,40 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('discChar').textContent = di.value.length + ' / 2000';
   });
 });
+
+
+// ── LIVE SESSION WATCHER ──────────────────────────────────
+function checkLiveSession() {
+  if (!_courseId) return;
+  _sb.from('live_sessions').select('id,room_id,title,teacher_name')
+    .eq('course_id', _courseId).eq('status', 'active').limit(1)
+    .then(function(r) {
+      var session = r.data && r.data[0];
+      var banner  = document.getElementById('liveBanner');
+      if (!banner) return;
+      if (session) {
+        var joinBtn = document.getElementById('liveJoinBtn');
+        if (joinBtn) {
+          joinBtn.href = '/classroom.html?room=' + session.room_id
+            + '&session=' + session.id + '&course=' + _courseId;
+        }
+        banner.classList.add('show');
+      } else {
+        banner.classList.remove('show');
+      }
+    });
+}
+
+// Subscribe to live_sessions changes for this course
+function watchLiveSessions() {
+  if (!_courseId) return;
+  _sb.channel('live_watch:' + _courseId)
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'live_sessions',
+      filter: 'course_id=eq.' + _courseId
+    }, function() { checkLiveSession(); })
+    .subscribe();
+}
 
 // ── PANEL TOGGLES ──────────────────────────────────────────────
 function toggleNotesPanel() {
