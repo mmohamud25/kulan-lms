@@ -1440,6 +1440,18 @@ var _editingPostId = null;
 // ══════════════════════════════════════════════════════════
 
 function renderStudentsNew() {
+  // Show skeleton while computing
+  var container = document.getElementById('stuRows');
+  if (container && !_allUsers.length) {
+    container.innerHTML = [1,2,3,4,5].map(function(){
+      return '<div class="stu-row" style="opacity:.4;pointer-events:none;">'
+        + '<div style="width:16px;height:16px;background:var(--border);border-radius:3px;"></div>'
+        + '<div class="stu-name-wrap"><div class="stu-avatar" style="background:var(--border);"></div>'
+        + '<div><div style="width:120px;height:12px;background:var(--border);border-radius:4px;margin-bottom:5px;"></div>'
+        + '<div style="width:160px;height:10px;background:var(--border);border-radius:4px;"></div></div></div>'
+        + '<div></div><div></div><div></div><div></div></div>';
+    }).join('');
+  }
   // Analytics
   var now       = new Date();
   var weekAgo   = new Date(now - 7*24*60*60*1000);
@@ -1450,10 +1462,11 @@ function renderStudentsNew() {
     return u.last_active && new Date(u.last_active) > weekAgo;
   }).length;
   // completed: has at least one enrollment with progress=100
-  var completedSet = new Set(students.filter(function(e){
-    return e.progress >= 100 || (e.completed_materials && e.completed_materials.length > 0 &&
-      e.completed_materials.length >= (courses.find(function(c){return c.id===e.course_id;})||{}).modules||1);
-  }).map(function(e){ return e.user_id; }));
+  // A student "completed" a course if progress >= 100
+  var completedSet = new Set(
+    students.filter(function(e){ return (e.progress||0) >= 100; })
+            .map(function(e){ return e.user_id; })
+  );
   var newMonth  = _allUsers.filter(function(u){
     return u.created_at && new Date(u.created_at) > monthAgo;
   }).length;
@@ -1482,7 +1495,8 @@ function setValue(id, val) {
 }
 
 function filterStudentRows() {
-  var search    = (document.getElementById('stuSearch')||{}).value||''.toLowerCase();
+  var raw        = document.getElementById('stuSearch');
+  var search    = raw ? raw.value.toLowerCase() : '';
   var filterC   = (document.getElementById('stuFilterCourse')||{}).value||'';
   var filterS   = (document.getElementById('stuFilterStatus')||{}).value||'';
   var sortBy    = (document.getElementById('stuSort')||{}).value||'name';
@@ -1662,8 +1676,12 @@ function openStudentProfile(userId) {
   if (!user) return;
 
   // Header
-  var initials = (user.full_name||user.email||'S').split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
-  document.getElementById('sppAvatar').textContent  = initials;
+  var initials = (user.full_name||user.email||'S').split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2) || '?';
+  var colors   = ['#0D9488','#1A3A6B','#D97706','#7c3aed','#dc2626','#0891b2'];
+  var colorIdx = (user.id||'').charCodeAt(0) % colors.length;
+  var av = document.getElementById('sppAvatar');
+  av.textContent = initials;
+  av.style.background = colors[colorIdx];
   document.getElementById('sppName').textContent    = user.full_name || user.email || 'Unknown';
   document.getElementById('sppEmail').textContent   = user.email || '';
   document.getElementById('sppRole').textContent    = user.role || 'student';
@@ -1678,8 +1696,10 @@ function openStudentProfile(userId) {
   document.getElementById('sppCompleted').textContent= completed;
 
   // Notes count
-  _sb.from('notes').select('id',{count:'exact',head:true}).eq('user_id',userId)
-    .then(function(r){ document.getElementById('sppNotes').textContent = r.count||0; });
+  _sb.from('notes').select('id').eq('user_id', userId)
+    .then(function(r){
+      document.getElementById('sppNotes').textContent = (r.data||[]).length;
+    }).catch(function(){ document.getElementById('sppNotes').textContent = '0'; });
 
   // Edit fields
   document.getElementById('sppEditName').value    = user.full_name||'';
@@ -1760,6 +1780,16 @@ function loadStudentActivity(userId) {
           + '<div class="activity-time">'+ago+'</div>'
           + '</div>';
       }).join('');
+    }).catch(function(){
+      // Comments table may not exist — show enrollments only
+      items.sort(function(a,b){ return new Date(b.time||0)-new Date(a.time||0); });
+      feed.innerHTML = items.slice(0,10).map(function(item) {
+        return '<div class="activity-item">'
+          + '<div class="activity-dot '+item.type+'"></div>'
+          + '<div class="activity-text">'+esc(item.text)+'</div>'
+          + '<div class="activity-time">'+relativeTime(item.time)+'</div>'
+          + '</div>';
+      }).join('') || '<div style="font-size:12px;color:var(--text-mid);">No activity yet.</div>';
     });
 }
 
@@ -1781,22 +1811,30 @@ function closeStudentProfile() {
 // ── SAVE PROFILE ──────────────────────────────────────────
 function saveStudentProfile() {
   if (!_currentStudentId) return;
+  var name = document.getElementById('sppEditName').value.trim();
+  if (!name) { showNotif('Name cannot be empty.', 'error'); return; }
+  var btn = document.querySelector('.spp-btn-save');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   var updates = {
-    full_name:   document.getElementById('sppEditName').value.trim(),
-    city:        document.getElementById('sppEditCity').value.trim(),
-    country:     document.getElementById('sppEditCountry').value.trim(),
-    role:        document.getElementById('sppEditRole').value,
-    updated_at:  new Date().toISOString()
+    full_name:  name,
+    city:       document.getElementById('sppEditCity').value.trim(),
+    country:    document.getElementById('sppEditCountry').value.trim(),
+    role:       document.getElementById('sppEditRole').value,
+    updated_at: new Date().toISOString()
   };
   _sb.from('users').update(updates).eq('id', _currentStudentId)
     .then(function(r) {
+      if (btn) { btn.disabled = false; btn.textContent = '\u{1F4BE} Save Changes'; }
       if (r.error) { showNotif('Error: '+r.error.message, 'error'); return; }
-      // Update local cache
       var u = _allUsers.find(function(u){ return u.id===_currentStudentId; });
       if (u) Object.assign(u, updates);
-      showNotif('Profile updated.', 'success');
-      closeStudentProfile();
+      showNotif('Profile saved.', 'success');
+      // Refresh name in panel header
+      document.getElementById('sppName').textContent = name;
       filterStudentRows();
+    }).catch(function(e){
+      if (btn) { btn.disabled = false; btn.textContent = '\u{1F4BE} Save Changes'; }
+      showNotif('Save failed. Try again.', 'error');
     });
 }
 
@@ -1805,30 +1843,63 @@ function toggleSuspend() {
   if (!_currentStudentId) return;
   var user = _allUsers.find(function(u){ return u.id===_currentStudentId; });
   if (!user) return;
-  var newStatus = user.status==='suspended' ? 'active' : 'suspended';
-  _sb.from('users').update({ status:newStatus }).eq('id', _currentStudentId)
+  var newStatus  = user.status==='suspended' ? 'active' : 'suspended';
+  var suspBtn    = document.getElementById('sppSuspendBtn');
+  if (suspBtn) { suspBtn.disabled = true; suspBtn.textContent = 'Updating...'; }
+  _sb.from('users').update({ status:newStatus, updated_at:new Date().toISOString() })
+    .eq('id', _currentStudentId)
     .then(function(r) {
+      if (suspBtn) { suspBtn.disabled = false; }
       if (r.error) { showNotif('Error: '+r.error.message, 'error'); return; }
       user.status = newStatus;
-      showNotif('Student '+(newStatus==='suspended'?'suspended':'reactivated')+'.', 'success');
-      closeStudentProfile();
+      // Update suspend button label without closing panel
+      var isSusp = newStatus==='suspended';
+      if (suspBtn) {
+        suspBtn.innerHTML = isSusp ? '&#9989; Reactivate' : '&#9940; Suspend';
+        suspBtn.style.background = isSusp ? 'rgba(22,163,74,0.08)' : '';
+        suspBtn.style.color      = isSusp ? '#15803d' : '';
+      }
+      // Update status badge in panel meta
+      document.getElementById('sppRole').textContent = user.role||'student';
+      showNotif('Student '+(isSusp?'suspended':'reactivated')+'.', 'success');
       filterStudentRows();
+    }).catch(function(){
+      if (suspBtn) { suspBtn.disabled = false; }
+      showNotif('Update failed.', 'error');
     });
 }
 
 function deleteStudent() {
   if (!_currentStudentId) return;
   var user = _allUsers.find(function(u){ return u.id===_currentStudentId; });
-  if (!confirm('Permanently delete '+(user&&user.full_name||'this student')+'? This cannot be undone.')) return;
-  // Delete from users table (cascade handles enrollments/notes)
-  _sb.from('users').delete().eq('id', _currentStudentId)
-    .then(function(r) {
-      if (r.error) { showNotif('Error: '+r.error.message, 'error'); return; }
-      _allUsers = _allUsers.filter(function(u){ return u.id!==_currentStudentId; });
-      showNotif('Student deleted.', 'success');
-      closeStudentProfile();
-      renderStudentsNew();
-    });
+  var name = user && user.full_name ? user.full_name : 'this student';
+  if (!confirm('Delete '+name+'?\n\nThis removes their profile data and enrollments. Their login account will be suspended. This cannot be undone.')) return;
+  var btn = document.querySelector('.spp-btn-delete');
+  if (btn) { btn.disabled = true; btn.textContent = 'Deleting...'; }
+  // Soft-delete: suspend + wipe PII from users table
+  _sb.from('users').update({
+    status:     'suspended',
+    full_name:  '[Deleted]',
+    city:       null,
+    country:    null,
+    avatar_url: null,
+    updated_at: new Date().toISOString()
+  }).eq('id', _currentStudentId).then(function(r) {
+    if (btn) { btn.disabled = false; btn.textContent = '\u{1F5D1} Delete'; }
+    if (r.error) { showNotif('Error: '+r.error.message, 'error'); return; }
+    // Also remove enrollments
+    _sb.from('enrollments').delete().eq('user_id', _currentStudentId).then(function(){});
+    // Update local cache
+    var u = _allUsers.find(function(u){ return u.id===_currentStudentId; });
+    if (u) { u.full_name = '[Deleted]'; u.status = 'suspended'; }
+    students = students.filter(function(e){ return e.user_id!==_currentStudentId; });
+    showNotif('Student removed.', 'success');
+    closeStudentProfile();
+    renderStudentsNew();
+  }).catch(function(){
+    if (btn) { btn.disabled = false; btn.textContent = '\u{1F5D1} Delete'; }
+    showNotif('Delete failed. Try again.', 'error');
+  });
 }
 
 function removeStudentById(userId) {
@@ -1842,6 +1913,11 @@ function removeStudentById(userId) {
     });
 }
 
+// ESC key closes profile panel
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && _currentStudentId) closeStudentProfile();
+});
+
 // Legacy renderStudents alias
 function renderStudents() { renderStudentsNew(); }
 
@@ -1853,7 +1929,7 @@ function renderStudents() { renderStudentsNew(); }
     <div class="spp-avatar" id="sppAvatar">S</div>
     <div style="flex:1;min-width:0;">
       <div class="spp-name"  id="sppName">Student Name</div>
-      <div class="spp-email" id="sppEmail">email@example.com</div>
+      <div class="spp-email" id="sppEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e58088848c89a5809d8488958980cb868a88">[email&#160;protected]</a></div>
       <div class="spp-meta">
         <span class="spp-meta-badge" id="sppRole">student</span>
         <span class="spp-meta-badge" id="sppLocation"></span>
@@ -1904,7 +1980,4 @@ function renderStudents() { renderStudentsNew(); }
     <button class="spp-btn spp-btn-delete"  onclick="deleteStudent()">&#128465; Delete</button>
   </div>
 </div>
-<div id="sppOverlay" onclick="closeStudentProfile()" style="display:none;position:fixed;inset:0;background:rgba(11,37,69,0.2);z-index:199;"></div>
-
-</body>
-</html>
+<div id="sppOverlay" onclick="closeStudentP
