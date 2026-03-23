@@ -13,8 +13,8 @@ var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
 <style>
 :root{
-  --navy:#0B1F3A;--blue:#1A3C6E;--cyan:#1BAECC;--gold:#D4A843;--teal:#0E7C7B;--white:#FFFFFF;
-  --bg:#F0F2F5;--text:#1a2840;--text-mid:#4a6080;--text-light:#8a9bb0;
+  --navy:#0B2545;--blue:#1A3A6B;--cyan:#0D9488;--gold:#D97706;--teal:#0D9488;--white:#FFFFFF;
+  --bg:#F8FAFB;--text:#1E293B;--text-mid:#64748B;--text-light:#CBD5E1;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
@@ -25,7 +25,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;
 }
 .ld-icon{
-  width:60px;height:60px;background:linear-gradient(135deg,var(--gold),#e8c060);
+  width:60px;height:60px;background:linear-gradient(135deg,var(--gold),#F59E0B);
   border-radius:16px;display:flex;align-items:center;justify-content:center;
   font-family:'Playfair Display',serif;font-weight:900;font-size:24px;color:var(--navy);
 }
@@ -50,7 +50,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
   display:flex;align-items:center;gap:12px;
 }
 .sb-icon{
-  width:38px;height:38px;background:linear-gradient(135deg,var(--gold),#e8c060);
+  width:38px;height:38px;background:linear-gradient(135deg,var(--gold),#F59E0B);
   border-radius:10px;display:flex;align-items:center;justify-content:center;
   font-family:'Playfair Display',serif;font-weight:900;font-size:16px;color:var(--navy);flex-shrink:0;
 }
@@ -71,7 +71,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .user-info{display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer;padding:6px;border-radius:8px;transition:background .2s;}
 .user-info:hover{background:rgba(255,255,255,0.06);}
 .user-avatar{
-  width:32px;height:32px;background:linear-gradient(135deg,var(--gold),#e8c060);
+  width:32px;height:32px;background:linear-gradient(135deg,var(--gold),#F59E0B);
   border-radius:50%;display:flex;align-items:center;justify-content:center;
   font-size:14px;font-weight:700;color:var(--navy);flex-shrink:0;overflow:hidden;
 }
@@ -161,12 +161,12 @@ tr:hover td{background:rgba(11,31,58,0.02);}
 
 /* ── BUTTONS ── */
 .btn{padding:10px 18px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
-.btn-gold{background:linear-gradient(135deg,var(--gold),#e8c060);color:var(--navy);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#F59E0B);color:var(--navy);}
 .btn-gold:hover{opacity:.9;transform:translateY(-1px);}
 .btn-outline{background:transparent;color:var(--text-mid);border:1.5px solid rgba(11,31,58,0.15);}
 .btn-outline:hover{border-color:var(--navy);color:var(--navy);}
 .btn-sm{padding:7px 14px;font-size:12px;}
-.btn-danger{background:rgba(220,38,38,0.08);color:#dc2626;border:1px solid rgba(220,38,38,0.15);}
+.btn-danger{background:rgba(220,38,38,0.08);color:#DC2626;border:1px solid rgba(220,38,38,0.15);}
 .btn-danger:hover{background:rgba(220,38,38,0.15);}
 
 /* ── MODALS ── */
@@ -213,12 +213,12 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
 #apModal{display:none;position:fixed;inset:0;z-index:700;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
 #apModal.open{display:flex;}
 .ap-box{background:#fff;border-radius:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
-.ap-head{background:linear-gradient(135deg,#0B1F3A,#1A3C6E);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
+.ap-head{background:linear-gradient(135deg,#0B2545,#1A3A6B);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
 .ap-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
 .ap-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;}
 .ap-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .ap-av-wrap{display:flex;justify-content:center;margin-top:-34px;margin-bottom:10px;}
-.ap-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#D4A843,#e8c060);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#0B1F3A;border:4px solid #fff;box-shadow:0 4px 16px rgba(212,168,67,.4);overflow:hidden;cursor:pointer;position:relative;}
+.ap-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#D97706,#F59E0B);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#0B2545;border:4px solid #fff;box-shadow:0 4px 16px rgba(212,168,67,.4);overflow:hidden;cursor:pointer;position:relative;}
 .ap-av:hover .ap-cam{display:flex;}
 .ap-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:16px;border-radius:50%;}
 .ap-ebadge{text-align:center;margin-bottom:16px;font-size:12px;color:#7A94B0;}
@@ -226,15 +226,15 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
 .ap-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .ap-g{margin-bottom:13px;}
 .ap-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
-.ap-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
-.ap-i:focus{border-color:#D4A843;box-shadow:0 0 0 3px rgba(212,168,67,.12);}
-.ap-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
+.ap-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B2545;outline:none;transition:border .15s;box-sizing:border-box;}
+.ap-i:focus{border-color:#D97706;box-shadow:0 0 0 3px rgba(212,168,67,.12);}
+.ap-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#475569;line-height:1.7;margin-bottom:14px;}
 .ap-btns{display:flex;gap:10px;}
 .ap-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
-.ap-save{background:linear-gradient(135deg,#D4A843,#e8c060);color:#0B1F3A;}
+.ap-save{background:linear-gradient(135deg,#D97706,#F59E0B);color:#0B2545;}
 .ap-save:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(212,168,67,.4);}
-.ap-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
-#apOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
+.ap-cancel{background:rgba(11,31,58,.06);color:#475569;}
+#apOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16A34A;margin-bottom:12px;}
 
 @media(max-width:1024px){.stats-grid{grid-template-columns:1fr 1fr;}.courses-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:900px){.sidebar{position:fixed;left:-240px;top:0;bottom:0;z-index:200;transition:left .3s;}.sidebar.open{left:0 !important;}.main{width:100%;}.stats-grid{grid-template-columns:1fr 1fr;}.courses-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
@@ -600,7 +600,7 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
     </div>
     <div class="ap-ebadge">
       <span id="apEmailShow"></span>
-      &nbsp;<span style="padding:3px 9px;background:rgba(212,168,67,.12);border-radius:20px;font-size:10px;color:#D4A843;font-weight:700;">&#128272; ADMIN</span>
+      &nbsp;<span style="padding:3px 9px;background:rgba(212,168,67,.12);border-radius:20px;font-size:10px;color:#D97706;font-weight:700;">&#128272; ADMIN</span>
     </div>
     <div class="ap-body">
       <div id="apOk">&#10003; Profile saved!</div>
@@ -610,7 +610,7 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
       </div>
       <div class="ap-g"><label class="ap-l">Institute Name</label><input class="ap-i" id="apInstitute" type="text"></div>
       <div class="ap-g"><label class="ap-l">Short Bio</label><textarea class="ap-i" id="apBio" rows="2" style="resize:vertical" placeholder="Brief description..."></textarea></div>
-      <div class="ap-note"><strong style="color:#1BAECC">&#128274; Password Reset:</strong> Go to <strong>Supabase &rarr; Authentication &rarr; Users</strong> to reset your password.</div>
+      <div class="ap-note"><strong style="color:#0D9488">&#128274; Password Reset:</strong> Go to <strong>Supabase &rarr; Authentication &rarr; Users</strong> to reset your password.</div>
       <div class="ap-btns">
         <button class="ap-btn ap-cancel" onclick="closeAdminProfile()">Cancel</button>
         <button class="ap-btn ap-save" onclick="saveAdminProfile()">Save Changes</button>
@@ -797,8 +797,8 @@ function renderCourses() {
     return;
   }
   var bgs = [
-    'linear-gradient(135deg,#0B1F3A,#1A3C6E)',
-    'linear-gradient(135deg,#0d2820,#0E7C7B)',
+    'linear-gradient(135deg,#0B2545,#1A3A6B)',
+    'linear-gradient(135deg,#0d2820,#0D9488)',
     'linear-gradient(135deg,#1a0a05,#8B5E0A)',
     'linear-gradient(135deg,#1a0d30,#3d1f6b)'
   ];
@@ -835,7 +835,7 @@ function openMaterialsFor(courseId) {
 function addCourse() {
   var titleEl = document.getElementById('cTitle');
   var title   = titleEl.value.trim();
-  if (!title) { titleEl.style.borderColor='#dc2626'; showNotif('Course title is required'); setTimeout(function(){ titleEl.style.borderColor=''; },2000); return; }
+  if (!title) { titleEl.style.borderColor='#DC2626'; showNotif('Course title is required'); setTimeout(function(){ titleEl.style.borderColor=''; },2000); return; }
   var btn = document.querySelector('#modal-addCourse .btn-gold');
   if (btn) { btn.disabled=true; btn.textContent='Saving...'; }
   _sb.from('courses').insert([{
