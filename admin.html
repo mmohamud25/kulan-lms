@@ -261,6 +261,227 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
   .table-wrap { overflow-x:auto; }
 }
 
+
+/* ═══ STUDENTS TAB ═══════════════════════════════════════ */
+/* Analytics cards */
+.stu-analytics {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 14px; margin-bottom: 22px;
+}
+.stu-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 1px 4px rgba(11,37,69,0.06);
+  transition: all .2s;
+}
+.stu-card:hover { box-shadow: 0 4px 14px rgba(11,37,69,0.1); }
+.stu-card-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.stu-card-icon.navy { background: rgba(11,37,69,0.07); }
+.stu-card-icon.teal { background: rgba(13,148,136,0.1); }
+.stu-card-icon.gold { background: rgba(217,119,6,0.1); }
+.stu-card-icon.green{ background: rgba(22,163,74,0.1); }
+.stu-card-val { font-size: 26px; font-weight: 800; color: var(--navy); line-height: 1; }
+.stu-card-lbl { font-size: 11px; color: var(--text-mid); margin-top: 3px; font-weight: 600; }
+
+/* Toolbar */
+.stu-toolbar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px; flex-wrap: wrap;
+}
+.stu-search-wrap {
+  flex: 1; min-width: 200px; display: flex; align-items: center;
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 0 12px; gap: 8px;
+  transition: border .2s;
+}
+.stu-search-wrap:focus-within { border-color: var(--cyan); }
+.stu-search { border: none; outline: none; flex: 1; padding: 9px 0;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; background: transparent;
+  color: var(--text); }
+.stu-filter {
+  height: 38px; padding: 0 14px; border-radius: 9px;
+  border: 1.5px solid var(--border); background: #fff;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+  color: var(--text); cursor: pointer; outline: none; transition: border .2s;
+}
+.stu-filter:focus { border-color: var(--cyan); }
+.stu-bulk-bar {
+  display: none; align-items: center; gap: 10px;
+  padding: 10px 16px; background: rgba(13,148,136,0.07);
+  border: 1px solid rgba(13,148,136,0.2); border-radius: 10px;
+  margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--navy);
+}
+.stu-bulk-bar.show { display: flex; }
+.stu-bulk-btn {
+  padding: 6px 14px; border-radius: 8px; border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700;
+  transition: all .2s;
+}
+.stu-bulk-export { background: var(--navy); color: #fff; }
+.stu-bulk-export:hover { background: #0B2545; }
+.stu-bulk-clear  { background: transparent; color: var(--text-mid); border: 1px solid var(--border); }
+
+/* Student rows */
+.stu-row {
+  display: grid; grid-template-columns: 32px 1fr 160px 120px 100px 130px;
+  gap: 12px; align-items: center; padding: 11px 16px;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+  transition: background .15s;
+}
+.stu-row:hover { background: rgba(13,148,136,0.03); }
+.stu-row.selected { background: rgba(13,148,136,0.06); }
+.stu-row-head {
+  display: grid; grid-template-columns: 32px 1fr 160px 120px 100px 130px;
+  gap: 12px; align-items: center; padding: 8px 16px;
+  background: var(--bg); border-bottom: 2px solid var(--border);
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .6px; color: var(--text-mid); cursor: default;
+}
+.stu-checkbox {
+  width: 16px; height: 16px; border-radius: 4px; cursor: pointer;
+  accent-color: var(--cyan);
+}
+.stu-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff;
+  background: linear-gradient(135deg, var(--cyan), var(--teal));
+}
+.stu-name-wrap { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.stu-name { font-size: 13px; font-weight: 700; color: var(--navy);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stu-email { font-size: 11px; color: var(--text-mid); overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; }
+.stu-progress-wrap { display: flex; align-items: center; gap: 8px; }
+.stu-progress-bar {
+  flex: 1; height: 5px; background: var(--border);
+  border-radius: 3px; overflow: hidden;
+}
+.stu-progress-fill { height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--teal)); }
+.stu-progress-pct { font-size: 11px; font-weight: 700; color: var(--text-mid); white-space: nowrap; }
+.stu-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+}
+.stu-badge.active   { background: rgba(22,163,74,0.1); color: #15803d; }
+.stu-badge.inactive { background: rgba(100,116,139,0.1); color: var(--text-mid); }
+.stu-badge.suspended{ background: rgba(220,38,38,0.1); color: #dc2626; }
+.stu-row-actions { display: flex; gap: 5px; }
+.stu-action-btn {
+  height: 28px; padding: 0 10px; border-radius: 7px;
+  border: 1px solid var(--border); background: transparent;
+  font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700;
+  cursor: pointer; transition: all .15s; color: var(--text-mid);
+}
+.stu-action-btn:hover { border-color: var(--cyan); color: var(--navy); }
+.stu-action-btn.danger:hover { border-color: #dc2626; color: #dc2626; }
+
+/* ─── STUDENT PROFILE PANEL ───────────────────────────── */
+.stu-profile-panel {
+  position: fixed; right: 0; top: 0; bottom: 0;
+  width: 400px; background: #fff;
+  border-left: 1px solid var(--border);
+  box-shadow: -8px 0 32px rgba(11,37,69,0.12);
+  transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+  z-index: 200; display: flex; flex-direction: column; overflow: hidden;
+}
+.stu-profile-panel.open { transform: translateX(0); }
+.spp-header {
+  padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 14px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--navy), #1A3A6B);
+}
+.spp-avatar {
+  width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 800; color: #fff;
+  background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.25);
+}
+.spp-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+.spp-email { font-size: 12px; color: rgba(255,255,255,0.6); }
+.spp-meta { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.spp-meta-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+  background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8);
+}
+.spp-close {
+  margin-left: auto; width: 28px; height: 28px; border-radius: 7px;
+  background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.7);
+  font-size: 16px; cursor: pointer; flex-shrink: 0; transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.spp-close:hover { background: rgba(255,255,255,0.2); color: #fff; }
+.spp-body { flex: 1; overflow-y: auto; padding: 18px; }
+.spp-body::-webkit-scrollbar { width: 3px; }
+.spp-body::-webkit-scrollbar-thumb { background: var(--border); }
+.spp-section { margin-bottom: 22px; }
+.spp-section-title {
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .8px; color: var(--text-mid); margin-bottom: 10px;
+}
+.spp-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.spp-stat {
+  background: var(--bg); border-radius: 10px; padding: 12px;
+  border: 1px solid var(--border); text-align: center;
+}
+.spp-stat-val { font-size: 22px; font-weight: 800; color: var(--navy); }
+.spp-stat-lbl { font-size: 10px; color: var(--text-mid); margin-top: 2px; font-weight: 600; }
+.spp-course-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: var(--bg); border-radius: 10px; border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.spp-course-name { font-size: 12px; font-weight: 700; color: var(--navy); flex: 1; }
+.spp-course-pct  { font-size: 12px; font-weight: 700; color: var(--cyan); }
+.spp-field { margin-bottom: 12px; }
+.spp-field label { font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .6px; color: var(--text-mid); display: block; margin-bottom: 5px; }
+.spp-input {
+  width: 100%; padding: 8px 12px; border-radius: 9px;
+  border: 1.5px solid var(--border); background: #fff;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--navy);
+  outline: none; transition: border .2s;
+}
+.spp-input:focus { border-color: var(--cyan); }
+.spp-actions { display: flex; gap: 8px; padding: 16px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+.spp-btn {
+  flex: 1; height: 36px; border-radius: 9px; border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; transition: all .2s;
+}
+.spp-btn-save  { background: linear-gradient(135deg, var(--cyan), var(--teal)); color: #fff; }
+.spp-btn-save:hover { transform: translateY(-1px); }
+.spp-btn-suspend { background: rgba(220,38,38,0.08); color: #dc2626; border: 1px solid rgba(220,38,38,0.2); }
+.spp-btn-suspend:hover { background: rgba(220,38,38,0.15); }
+.spp-btn-delete  { background: transparent; color: var(--text-mid); border: 1px solid var(--border); }
+.spp-btn-delete:hover  { color: #dc2626; border-color: rgba(220,38,38,0.3); }
+
+/* Activity feed */
+.activity-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0;
+  border-bottom: 1px solid var(--border); }
+.activity-item:last-child { border-bottom: none; }
+.activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  margin-top: 5px; }
+.activity-dot.enroll   { background: var(--cyan); }
+.activity-dot.complete { background: var(--green); }
+.activity-dot.comment  { background: var(--gold); }
+.activity-text { font-size: 12px; color: var(--text); flex: 1; line-height: 1.5; }
+.activity-time { font-size: 10px; color: var(--text-mid); white-space: nowrap; }
+
+@media(max-width:900px){
+  .stu-analytics { grid-template-columns: 1fr 1fr; }
+  .stu-row,.stu-row-head { grid-template-columns: 28px 1fr 80px 80px; }
+  .stu-row > :nth-child(5),
+  .stu-row > :nth-child(6),
+  .stu-row-head > :nth-child(5),
+  .stu-row-head > :nth-child(6) { display: none; }
+  .stu-profile-panel { width: 100%; }
+}
+
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
@@ -415,26 +636,71 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
 
     <!-- STUDENTS TAB -->
     <div class="tab" id="tab-students">
-      <div class="section-header">
-        <div class="section-title">Students</div>
-        <div style="display:flex;gap:10px;">
-          <button class="btn btn-outline btn-sm" onclick="exportCSV()">Export CSV</button>
-          <button class="btn btn-gold btn-sm" onclick="openModal('inviteStudent')">+ Invite Student</button>
+      <!-- Analytics -->
+      <div class="stu-analytics">
+        <div class="stu-card">
+          <div class="stu-card-icon navy">&#128100;</div>
+          <div><div class="stu-card-val" id="stuTotalVal">0</div><div class="stu-card-lbl">Total Students</div></div>
+        </div>
+        <div class="stu-card">
+          <div class="stu-card-icon teal">&#9889;</div>
+          <div><div class="stu-card-val" id="stuActiveVal">0</div><div class="stu-card-lbl">Active This Week</div></div>
+        </div>
+        <div class="stu-card">
+          <div class="stu-card-icon gold">&#127942;</div>
+          <div><div class="stu-card-val" id="stuCompleteVal">0</div><div class="stu-card-lbl">Completed a Course</div></div>
+        </div>
+        <div class="stu-card">
+          <div class="stu-card-icon green">&#127381;</div>
+          <div><div class="stu-card-val" id="stuNewVal">0</div><div class="stu-card-lbl">New This Month</div></div>
         </div>
       </div>
-      <div class="table-wrap">
-        <div class="table-header">
-          <div class="search-bar">
-            <span>&#128269;</span>
-            <input type="text" id="studentSearch" placeholder="Search by email..." oninput="renderStudents()">
-          </div>
-          <span id="studentCount" style="font-size:13px;color:var(--text-light);">0 students</span>
+
+      <!-- Toolbar -->
+      <div class="stu-toolbar">
+        <div class="stu-search-wrap">
+          <span>&#128269;</span>
+          <input class="stu-search" id="stuSearch" placeholder="Search by name or email..." oninput="filterStudentRows()">
         </div>
-        <table>
-          <thead><tr><th>Email</th><th>Course</th><th>Enrolled</th><th>Progress</th><th>Action</th></tr></thead>
-          <tbody id="studentsTable"><tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:32px;">No students yet</td></tr></tbody>
-        </table>
+        <select class="stu-filter" id="stuFilterCourse" onchange="filterStudentRows()">
+          <option value="">All Courses</option>
+        </select>
+        <select class="stu-filter" id="stuFilterStatus" onchange="filterStudentRows()">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="suspended">Suspended</option>
+        </select>
+        <select class="stu-filter" id="stuSort" onchange="filterStudentRows()">
+          <option value="name">Sort: Name</option>
+          <option value="recent">Sort: Last Active</option>
+          <option value="progress">Sort: Progress</option>
+          <option value="joined">Sort: Join Date</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="exportStudentsCSV()">&#8659; Export CSV</button>
       </div>
+
+      <!-- Bulk action bar -->
+      <div class="stu-bulk-bar" id="stuBulkBar">
+        <span id="stuBulkCount">0 selected</span>
+        <button class="stu-bulk-btn stu-bulk-export" onclick="bulkExport()">&#8659; Export Selected</button>
+        <button class="stu-bulk-btn stu-bulk-clear"  onclick="clearSelection()">&#10005; Clear</button>
+        <div style="flex:1"></div>
+      </div>
+
+      <!-- Table header -->
+      <div class="stu-row-head">
+        <input type="checkbox" class="stu-checkbox" id="stuSelectAll" onchange="toggleSelectAll(this)">
+        <span>Student</span>
+        <span>Course / Progress</span>
+        <span>Joined</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+
+      <!-- Rows -->
+      <div id="stuRows"></div>
+
     </div>
 
     <!-- MATERIALS TAB -->
@@ -635,6 +901,9 @@ var _adminUser  = null;
 var courses     = [];
 var materials   = [];
 var students    = [];
+var _allUsers   = [];
+var _selectedStudentIds = new Set();
+var _currentStudentId   = null;
 
 // ── UTILS ─────────────────────────────────────────────────────────
 function esc(s) {
@@ -734,13 +1003,16 @@ function renderAll() {
   Promise.all([
     _sb.from('courses').select('*').order('created_at'),
     _sb.from('materials').select('*').order('module_number'),
-    _sb.from('enrollments').select('*').order('enrolled_at', {ascending:false})
+    _sb.from('enrollments').select('*').order('enrolled_at', {ascending:false}),
+    _sb.from('users').select('*').eq('role','student').order('created_at',{ascending:false})
   ]).then(function(results) {
-    courses   = results[0].data || [];
-    materials = results[1].data || [];
-    students  = results[2].data || [];
+    courses      = results[0].data || [];
+    materials    = results[1].data || [];
+    students     = results[2].data || [];
+    _allUsers    = results[3].data || [];
     renderOverview();
     renderCourses();
+    renderStudentsNew();
     renderStudents();
     renderMaterials();
     populateCourseSelects();
@@ -1162,6 +1434,477 @@ var _editingPostId = null;
 // Blog posts load via switchTab — see switchTab function above
 
 
+
+// ══════════════════════════════════════════════════════════
+// STUDENTS — FULL REBUILD
+// ══════════════════════════════════════════════════════════
+
+function renderStudentsNew() {
+  // Analytics
+  var now       = new Date();
+  var weekAgo   = new Date(now - 7*24*60*60*1000);
+  var monthAgo  = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  var total     = _allUsers.length;
+  var activeW   = _allUsers.filter(function(u){
+    return u.last_active && new Date(u.last_active) > weekAgo;
+  }).length;
+  // completed: has at least one enrollment with progress=100
+  var completedSet = new Set(students.filter(function(e){
+    return e.progress >= 100 || (e.completed_materials && e.completed_materials.length > 0 &&
+      e.completed_materials.length >= (courses.find(function(c){return c.id===e.course_id;})||{}).modules||1);
+  }).map(function(e){ return e.user_id; }));
+  var newMonth  = _allUsers.filter(function(u){
+    return u.created_at && new Date(u.created_at) > monthAgo;
+  }).length;
+
+  setValue('stuTotalVal',    total);
+  setValue('stuActiveVal',   activeW);
+  setValue('stuCompleteVal', completedSet.size);
+  setValue('stuNewVal',      newMonth);
+
+  // Populate course filter
+  var cf = document.getElementById('stuFilterCourse');
+  if (cf && cf.options.length <= 1) {
+    courses.forEach(function(c) {
+      var opt = document.createElement('option');
+      opt.value = c.id; opt.textContent = c.title;
+      cf.appendChild(opt);
+    });
+  }
+
+  filterStudentRows();
+}
+
+function setValue(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function filterStudentRows() {
+  var search    = (document.getElementById('stuSearch')||{}).value||''.toLowerCase();
+  var filterC   = (document.getElementById('stuFilterCourse')||{}).value||'';
+  var filterS   = (document.getElementById('stuFilterStatus')||{}).value||'';
+  var sortBy    = (document.getElementById('stuSort')||{}).value||'name';
+
+  // Build enriched student list: one row per user (not per enrollment)
+  var userMap = {};
+  _allUsers.forEach(function(u) { userMap[u.id] = u; });
+
+  // Group enrollments by user
+  var enrollMap = {};
+  students.forEach(function(e) {
+    if (!enrollMap[e.user_id]) enrollMap[e.user_id] = [];
+    enrollMap[e.user_id].push(e);
+  });
+
+  var rows = _allUsers.map(function(u) {
+    var enrols  = enrollMap[u.id] || [];
+    var avgProg = enrols.length
+      ? Math.round(enrols.reduce(function(s,e){ return s+(e.progress||0); },0)/enrols.length)
+      : 0;
+    var lastCourse = enrols.length ? courses.find(function(c){return c.id===enrols[0].course_id;})||{} : {};
+    return {
+      id:         u.id,
+      name:       u.full_name || u.email||'',
+      email:      u.email||'',
+      status:     u.status || (u.last_active && new Date(u.last_active)>new Date(Date.now()-30*24*60*60*1000) ? 'active':'inactive'),
+      streak:     u.streak||0,
+      city:       u.city||'',
+      country:    u.country||'',
+      joined:     u.created_at,
+      lastActive: u.last_active,
+      enrollCount:enrols.length,
+      avgProgress:avgProg,
+      courseName: lastCourse.title||'—',
+      courseId:   lastCourse.id||''
+    };
+  });
+
+  // Filter
+  var sq = search.toLowerCase();
+  if (sq) rows = rows.filter(function(r){ return r.name.toLowerCase().includes(sq)||r.email.toLowerCase().includes(sq); });
+  if (filterC) rows = rows.filter(function(r){ return (enrollMap[r.id]||[]).some(function(e){return e.course_id===filterC;}); });
+  if (filterS) rows = rows.filter(function(r){ return r.status===filterS; });
+
+  // Sort
+  rows.sort(function(a,b){
+    if (sortBy==='name')     return a.name.localeCompare(b.name);
+    if (sortBy==='progress') return b.avgProgress - a.avgProgress;
+    if (sortBy==='recent')   return new Date(b.lastActive||0) - new Date(a.lastActive||0);
+    if (sortBy==='joined')   return new Date(b.joined||0) - new Date(a.joined||0);
+    return 0;
+  });
+
+  var container = document.getElementById('stuRows');
+  if (!container) return;
+
+  if (!rows.length) {
+    container.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-mid);font-size:13px;">No students found.</div>';
+    return;
+  }
+
+  container.innerHTML = rows.map(function(r) {
+    var initials = r.name ? r.name.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2) : '?';
+    var date     = r.joined ? new Date(r.joined).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+    var statusBadge = '<span class="stu-badge '+r.status+'">'+r.status+'</span>';
+    var sid      = r.id;
+    var checked  = _selectedStudentIds.has(sid) ? 'checked' : '';
+    return '<div class="stu-row'+(checked?' selected':'')+'" id="sturow_'+sid+'" data-uid="'+sid+'">'
+      + '<input type="checkbox" class="stu-checkbox" data-id="'+sid+'" '+checked+' onclick="toggleSelect(this)" onchange="updateBulkBar()">'
+      + '<div class="stu-name-wrap stu-clickable" data-uid="'+sid+'" style="cursor:pointer;">'
+      + '<div class="stu-avatar">'+initials+'</div>'
+      + '<div><div class="stu-name">'+esc(r.name||'Unknown')+'</div>'
+      + '<div class="stu-email">'+esc(r.email)+'</div></div>'
+      + '</div>'
+      + '<div class="stu-clickable" data-uid="'+sid+'" style="cursor:pointer;">'
+      + '<div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:4px;">'+esc(r.courseName)+'</div>'
+      + '<div class="stu-progress-wrap"><div class="stu-progress-bar"><div class="stu-progress-fill" style="width:'+r.avgProgress+'%"></div></div><span class="stu-progress-pct">'+r.avgProgress+'%</span></div>'
+      + '</div>'
+      + '<div style="font-size:12px;color:var(--text-mid);">'+date+'</div>'
+      + statusBadge
+      + '<div class="stu-row-actions">'
+      + '<button class="stu-action-btn stu-view-btn" data-uid="'+sid+'">View</button>'
+      + '<button class="stu-action-btn danger stu-remove-btn" data-uid="'+sid+'">Remove</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ── EVENT DELEGATION (avoids inline onclick quote issues) ────
+document.addEventListener('click', function(e) {
+  // View profile
+  var viewBtn = e.target.closest('.stu-clickable, .stu-view-btn');
+  if (viewBtn) {
+    var uid = viewBtn.getAttribute('data-uid');
+    if (uid) { openStudentProfile(uid); return; }
+  }
+  // Remove
+  var removeBtn = e.target.closest('.stu-remove-btn');
+  if (removeBtn) {
+    var uid2 = removeBtn.getAttribute('data-uid');
+    if (uid2) { removeStudentById(uid2); return; }
+  }
+});
+
+// ── SELECTION ─────────────────────────────────────────────
+function toggleSelect(cb) {
+  var id  = cb.getAttribute('data-id');
+  var row = document.getElementById('sturow_' + id);
+  if (cb.checked) { _selectedStudentIds.add(id); if(row) row.classList.add('selected'); }
+  else            { _selectedStudentIds.delete(id); if(row) row.classList.remove('selected'); }
+  updateBulkBar();
+}
+
+function toggleSelectAll(cb) {
+  document.querySelectorAll('.stu-checkbox[data-id]').forEach(function(el) {
+    el.checked = cb.checked;
+    toggleSelect(el);
+  });
+}
+
+function updateBulkBar() {
+  var bar = document.getElementById('stuBulkBar');
+  var cnt = document.getElementById('stuBulkCount');
+  if (!bar) return;
+  var n = _selectedStudentIds.size;
+  bar.classList.toggle('show', n > 0);
+  if (cnt) cnt.textContent = n + ' selected';
+}
+
+function clearSelection() {
+  _selectedStudentIds.clear();
+  document.querySelectorAll('.stu-checkbox').forEach(function(cb){ cb.checked=false; });
+  document.querySelectorAll('.stu-row').forEach(function(r){ r.classList.remove('selected'); });
+  updateBulkBar();
+}
+
+// ── BULK EXPORT ───────────────────────────────────────────
+function bulkExport() {
+  var ids  = Array.from(_selectedStudentIds);
+  var rows = _allUsers.filter(function(u){ return ids.includes(u.id); });
+  exportUsersCSV(rows);
+}
+
+function exportStudentsCSV() {
+  exportUsersCSV(_allUsers);
+}
+
+function exportUsersCSV(rows) {
+  var headers = ['Name','Email','City','Country','Streak','Enrolled Courses','Last Active','Joined','Status'];
+  var enrollMap = {};
+  students.forEach(function(e){ if(!enrollMap[e.user_id]) enrollMap[e.user_id]=0; enrollMap[e.user_id]++; });
+  var csv = [headers.join(',')].concat(rows.map(function(u) {
+    return [
+      '"'+(u.full_name||'').replace(/"/g,'""')+'"',
+      '"'+(u.email||'')+'"',
+      '"'+(u.city||'')+'"',
+      '"'+(u.country||'')+'"',
+      u.streak||0,
+      enrollMap[u.id]||0,
+      u.last_active ? new Date(u.last_active).toLocaleDateString() : '',
+      u.created_at  ? new Date(u.created_at).toLocaleDateString()  : '',
+      u.status||'active'
+    ].join(',');
+  })).join('\n');
+  var blob = new Blob([csv], {type:'text/csv'});
+  var a2   = document.createElement('a');
+  a2.href  = URL.createObjectURL(blob);
+  a2.download = 'kulan-students-' + new Date().toISOString().slice(0,10) + '.csv';
+  a2.click();
+  showNotif('CSV exported (' + rows.length + ' students)', 'success');
+}
+
+// ── STUDENT PROFILE ───────────────────────────────────────
+function openStudentProfile(userId) {
+  _currentStudentId = userId;
+  var user = _allUsers.find(function(u){ return u.id===userId; });
+  if (!user) return;
+
+  // Header
+  var initials = (user.full_name||user.email||'S').split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+  document.getElementById('sppAvatar').textContent  = initials;
+  document.getElementById('sppName').textContent    = user.full_name || user.email || 'Unknown';
+  document.getElementById('sppEmail').textContent   = user.email || '';
+  document.getElementById('sppRole').textContent    = user.role || 'student';
+  document.getElementById('sppJoined').textContent  = user.created_at ? 'Joined '+new Date(user.created_at).toLocaleDateString('en-US',{month:'short',year:'numeric'}) : '';
+  document.getElementById('sppLocation').textContent= [user.city, user.country].filter(Boolean).join(', ') || 'Location unknown';
+
+  // Stats
+  var userEnrols = students.filter(function(e){ return e.user_id===userId; });
+  var completed  = userEnrols.filter(function(e){ return e.progress>=100; }).length;
+  document.getElementById('sppStreak').textContent   = user.streak || 0;
+  document.getElementById('sppEnrolled').textContent = userEnrols.length;
+  document.getElementById('sppCompleted').textContent= completed;
+
+  // Notes count
+  _sb.from('notes').select('id',{count:'exact',head:true}).eq('user_id',userId)
+    .then(function(r){ document.getElementById('sppNotes').textContent = r.count||0; });
+
+  // Edit fields
+  document.getElementById('sppEditName').value    = user.full_name||'';
+  document.getElementById('sppEditCity').value    = user.city||'';
+  document.getElementById('sppEditCountry').value = user.country||'';
+  document.getElementById('sppEditRole').value    = user.role||'student';
+
+  // Suspend button label
+  var suspBtn = document.getElementById('sppSuspendBtn');
+  if (suspBtn) {
+    var isSusp = user.status==='suspended';
+    suspBtn.textContent = isSusp ? '&#9989; Reactivate' : '&#9940; Suspend';
+    suspBtn.style.background = isSusp ? 'rgba(22,163,74,0.08)' : '';
+    suspBtn.style.color = isSusp ? '#15803d' : '';
+  }
+
+  // Courses
+  var coursesDiv = document.getElementById('sppCourses');
+  if (coursesDiv) {
+    if (!userEnrols.length) {
+      coursesDiv.innerHTML = '<div style="font-size:12px;color:var(--text-mid);">Not enrolled in any courses.</div>';
+    } else {
+      coursesDiv.innerHTML = userEnrols.map(function(e) {
+        var course = courses.find(function(c){ return c.id===e.course_id; });
+        var pct    = e.progress||0;
+        return '<div class="spp-course-item">'
+          + '<div class="spp-course-name">'+(course?esc(course.title):'Unknown Course')+'</div>'
+          + '<div class="spp-course-pct">'+pct+'%</div>'
+          + '</div>';
+      }).join('');
+    }
+  }
+
+  // Activity feed
+  loadStudentActivity(userId);
+
+  // Open panel
+  document.getElementById('stuProfilePanel').classList.add('open');
+  document.getElementById('sppOverlay').style.display = 'block';
+}
+
+function loadStudentActivity(userId) {
+  var feed = document.getElementById('sppActivity');
+  if (!feed) return;
+
+  // Build from enrollments + comments
+  var items = [];
+  var userEnrols = students.filter(function(e){ return e.user_id===userId; });
+  userEnrols.forEach(function(e) {
+    var course = courses.find(function(c){ return c.id===e.course_id; });
+    items.push({ type:'enroll', text:'Enrolled in '+((course&&course.title)||'a course'), time:e.enrolled_at||e.created_at });
+    if (e.updated_at && e.updated_at !== e.enrolled_at) {
+      items.push({ type:'complete', text:'Made progress in '+((course&&course.title)||'a course')+' ('+((e.progress||0)+'%')+')', time:e.updated_at });
+    }
+  });
+
+  // Load comments
+  _sb.from('comments').select('content,created_at,course_id').eq('user_id',userId)
+    .order('created_at',{ascending:false}).limit(5)
+    .then(function(r) {
+      (r.data||[]).forEach(function(cm) {
+        var course = courses.find(function(c){ return c.id===cm.course_id; });
+        items.push({ type:'comment', text:'Posted a comment'+(course?' in '+course.title:''), time:cm.created_at });
+      });
+      // Sort by time desc
+      items.sort(function(a,b){ return new Date(b.time||0)-new Date(a.time||0); });
+      items = items.slice(0,10);
+
+      if (!items.length) {
+        feed.innerHTML = '<div style="font-size:12px;color:var(--text-mid);">No activity yet.</div>';
+        return;
+      }
+      feed.innerHTML = items.map(function(item) {
+        var ago = relativeTime(item.time);
+        return '<div class="activity-item">'
+          + '<div class="activity-dot '+item.type+'"></div>'
+          + '<div class="activity-text">'+esc(item.text)+'</div>'
+          + '<div class="activity-time">'+ago+'</div>'
+          + '</div>';
+      }).join('');
+    });
+}
+
+function relativeTime(ts) {
+  if (!ts) return '';
+  var diff = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
+  if (diff < 60)   return 'just now';
+  if (diff < 3600) return Math.floor(diff/60)+'m ago';
+  if (diff < 86400)return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+}
+
+function closeStudentProfile() {
+  document.getElementById('stuProfilePanel').classList.remove('open');
+  document.getElementById('sppOverlay').style.display = 'none';
+  _currentStudentId = null;
+}
+
+// ── SAVE PROFILE ──────────────────────────────────────────
+function saveStudentProfile() {
+  if (!_currentStudentId) return;
+  var updates = {
+    full_name:   document.getElementById('sppEditName').value.trim(),
+    city:        document.getElementById('sppEditCity').value.trim(),
+    country:     document.getElementById('sppEditCountry').value.trim(),
+    role:        document.getElementById('sppEditRole').value,
+    updated_at:  new Date().toISOString()
+  };
+  _sb.from('users').update(updates).eq('id', _currentStudentId)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: '+r.error.message, 'error'); return; }
+      // Update local cache
+      var u = _allUsers.find(function(u){ return u.id===_currentStudentId; });
+      if (u) Object.assign(u, updates);
+      showNotif('Profile updated.', 'success');
+      closeStudentProfile();
+      filterStudentRows();
+    });
+}
+
+// ── SUSPEND / DELETE ──────────────────────────────────────
+function toggleSuspend() {
+  if (!_currentStudentId) return;
+  var user = _allUsers.find(function(u){ return u.id===_currentStudentId; });
+  if (!user) return;
+  var newStatus = user.status==='suspended' ? 'active' : 'suspended';
+  _sb.from('users').update({ status:newStatus }).eq('id', _currentStudentId)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: '+r.error.message, 'error'); return; }
+      user.status = newStatus;
+      showNotif('Student '+(newStatus==='suspended'?'suspended':'reactivated')+'.', 'success');
+      closeStudentProfile();
+      filterStudentRows();
+    });
+}
+
+function deleteStudent() {
+  if (!_currentStudentId) return;
+  var user = _allUsers.find(function(u){ return u.id===_currentStudentId; });
+  if (!confirm('Permanently delete '+(user&&user.full_name||'this student')+'? This cannot be undone.')) return;
+  // Delete from users table (cascade handles enrollments/notes)
+  _sb.from('users').delete().eq('id', _currentStudentId)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: '+r.error.message, 'error'); return; }
+      _allUsers = _allUsers.filter(function(u){ return u.id!==_currentStudentId; });
+      showNotif('Student deleted.', 'success');
+      closeStudentProfile();
+      renderStudentsNew();
+    });
+}
+
+function removeStudentById(userId) {
+  if (!confirm('Remove all enrollments for this student?')) return;
+  _sb.from('enrollments').delete().eq('user_id', userId)
+    .then(function(r) {
+      if (r.error) { showNotif('Error: '+r.error.message, 'error'); return; }
+      students = students.filter(function(e){ return e.user_id!==userId; });
+      showNotif('Enrollments removed.', 'success');
+      filterStudentRows();
+    });
+}
+
+// Legacy renderStudents alias
+function renderStudents() { renderStudentsNew(); }
+
 </script>
+
+<!-- Student Profile Panel -->
+<div class="stu-profile-panel" id="stuProfilePanel">
+  <div class="spp-header">
+    <div class="spp-avatar" id="sppAvatar">S</div>
+    <div style="flex:1;min-width:0;">
+      <div class="spp-name"  id="sppName">Student Name</div>
+      <div class="spp-email" id="sppEmail">email@example.com</div>
+      <div class="spp-meta">
+        <span class="spp-meta-badge" id="sppRole">student</span>
+        <span class="spp-meta-badge" id="sppLocation"></span>
+        <span class="spp-meta-badge" id="sppJoined"></span>
+      </div>
+    </div>
+    <button class="spp-close" onclick="closeStudentProfile()">&#215;</button>
+  </div>
+  <div class="spp-body">
+    <!-- Stats -->
+    <div class="spp-section">
+      <div class="spp-section-title">Overview</div>
+      <div class="spp-stat-grid">
+        <div class="spp-stat"><div class="spp-stat-val" id="sppStreak">0</div><div class="spp-stat-lbl">Day Streak</div></div>
+        <div class="spp-stat"><div class="spp-stat-val" id="sppEnrolled">0</div><div class="spp-stat-lbl">Courses Enrolled</div></div>
+        <div class="spp-stat"><div class="spp-stat-val" id="sppCompleted">0</div><div class="spp-stat-lbl">Courses Completed</div></div>
+        <div class="spp-stat"><div class="spp-stat-val" id="sppNotes">0</div><div class="spp-stat-lbl">Notes Written</div></div>
+      </div>
+    </div>
+    <!-- Courses -->
+    <div class="spp-section">
+      <div class="spp-section-title">Enrolled Courses</div>
+      <div id="sppCourses"><div style="color:var(--text-mid);font-size:12px;">Loading...</div></div>
+    </div>
+    <!-- Edit -->
+    <div class="spp-section">
+      <div class="spp-section-title">Edit Profile</div>
+      <div class="spp-field"><label>Full Name</label><input class="spp-input" id="sppEditName"></div>
+      <div class="spp-field"><label>City</label><input class="spp-input" id="sppEditCity" placeholder="e.g. Columbus"></div>
+      <div class="spp-field"><label>Country</label><input class="spp-input" id="sppEditCountry" placeholder="e.g. United States"></div>
+      <div class="spp-field"><label>Role</label>
+        <select class="spp-input" id="sppEditRole">
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+    </div>
+    <!-- Activity Feed -->
+    <div class="spp-section">
+      <div class="spp-section-title">Recent Activity</div>
+      <div id="sppActivity"><div style="color:var(--text-mid);font-size:12px;">Loading...</div></div>
+    </div>
+  </div>
+  <div class="spp-actions">
+    <button class="spp-btn spp-btn-save"    onclick="saveStudentProfile()">&#128190; Save Changes</button>
+    <button class="spp-btn spp-btn-suspend" id="sppSuspendBtn" onclick="toggleSuspend()">&#9940; Suspend</button>
+    <button class="spp-btn spp-btn-delete"  onclick="deleteStudent()">&#128465; Delete</button>
+  </div>
+</div>
+<div id="sppOverlay" onclick="closeStudentProfile()" style="display:none;position:fixed;inset:0;background:rgba(11,37,69,0.2);z-index:199;"></div>
+
 </body>
 </html>
