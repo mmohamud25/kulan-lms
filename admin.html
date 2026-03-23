@@ -1341,13 +1341,13 @@ async function addNewStudent() {
   if (!email || !email.includes('@')) { showAsResult(1,'Please enter a valid email.','error'); return; }
 
   var btn = document.getElementById('asBtnCreate');
-  btn.disabled = true; btn.textContent = 'Creating...';
+  btn.disabled = true; btn.innerHTML = 'Creating...';
   hideAsResult(1);
 
   // Check if user already exists
   var existing = await _sb.from('users').select('id').eq('email',email).maybeSingle();
   if (existing.data) {
-    btn.disabled = false; btn.textContent = '+ Create Student';
+    btn.disabled = false; btn.innerHTML = '&#10010; Create Student';
     showAsResult(1,'A user with that email already exists. Use the Enroll Existing User tab.','error');
     return;
   }
@@ -1379,7 +1379,7 @@ async function addNewStudent() {
 
   var insertRes = await _sb.from('users').insert([profileData]).select().maybeSingle();
 
-  btn.disabled = false; btn.textContent = '+ Create Student';
+  btn.disabled = false; btn.innerHTML = '&#10010; Create Student';
 
   if (insertRes.error) {
     showAsResult(1, 'Could not save profile: ' + insertRes.error.message, 'error');
@@ -1440,11 +1440,11 @@ async function enrollExistingUser() {
   if (!courseId) { showAsResult(2,'Please select a course.','error'); return; }
 
   var btn = document.getElementById('asBtnEnroll');
-  btn.disabled = true; btn.textContent = 'Enrolling...';
+  btn.disabled = true; btn.innerHTML = 'Enrolling...';
   hideAsResult(2);
 
   var err = await enrollUserInCourse(_foundUserId, courseId);
-  btn.disabled = false; btn.textContent = 'Enroll Student';
+  btn.disabled = false; btn.innerHTML = 'Enroll Student';
 
   if (err) {
     showAsResult(2, err, 'error');
@@ -1923,7 +1923,7 @@ function openStudentProfile(userId) {
   var suspBtn = document.getElementById('sppSuspendBtn');
   if (suspBtn) {
     var isSusp = user.status==='suspended';
-    suspBtn.textContent = isSusp ? '&#9989; Reactivate' : '&#9940; Suspend';
+    suspBtn.innerHTML  = isSusp ? '&#9989; Reactivate' : '&#9940; Suspend';
     suspBtn.style.background = isSusp ? 'rgba(22,163,74,0.08)' : '';
     suspBtn.style.color = isSusp ? '#15803d' : '';
   }
@@ -2057,7 +2057,7 @@ function toggleSuspend() {
   if (!user) return;
   var newStatus  = user.status==='suspended' ? 'active' : 'suspended';
   var suspBtn    = document.getElementById('sppSuspendBtn');
-  if (suspBtn) { suspBtn.disabled = true; suspBtn.textContent = 'Updating...'; }
+  if (suspBtn) { suspBtn.disabled = true; suspBtn.innerHTML  = 'Updating...'; }
   _sb.from('users').update({ status:newStatus, updated_at:new Date().toISOString() })
     .eq('id', _currentStudentId)
     .then(function(r) {
