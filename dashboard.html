@@ -12,18 +12,18 @@ var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
 var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
 <style>
-:root {
-  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
-  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
-  --bg:#F4F7FB; --white:#fff;
-  --text:#1a2840; --text-mid:#4a6080; --text-light:#8a9bb0;
-  --success:#22c55e; --error:#ef4444;
+:root{
+  --navy:#0B2545; --blue:#1A3A6B; --cyan:#0D9488;
+  --gold:#D97706; --gold2:#F59E0B; --teal:#0D9488;
+  --bg:#F8FAFB; --white:#FFFFFF;
+  --text:#1E293B; --text-mid:#64748B; --text-light:#CBD5E1;
+  --success:#16A34A; --error:#DC2626;
 }
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
 body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
-#loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B1F3A,#1A3C6E);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
+#loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B2545,#1A3A6B);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
 .ld-logo { width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy); }
 .ld-spin { width:26px;height:26px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
 @keyframes spin { to{transform:rotate(360deg);} }
@@ -114,7 +114,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .cat-tag { padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(11,31,58,0.06);color:var(--text-mid); }
 .btn-enroll { width:100%;padding:11px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s; }
 .btn-enroll:hover:not(:disabled) { transform:translateY(-1px);box-shadow:0 5px 14px rgba(11,31,58,0.25); }
-.btn-enroll.enrolled { background:rgba(34,197,94,0.1);color:#16a34a;cursor:default; }
+.btn-enroll.enrolled { background:rgba(34,197,94,0.1);color:#16A34A;cursor:default; }
 .btn-enroll.coming { background:rgba(11,31,58,0.06);color:var(--text-light);cursor:not-allowed; }
 
 .announcements-list { display:flex;flex-direction:column;gap:12px; }
@@ -129,13 +129,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 .pay-icon { font-size:44px;flex-shrink:0; }
 .pay-title { font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:6px; }
 .pay-desc { font-size:14px;color:var(--text-mid);line-height:1.7; }
-.pay-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;color:#16a34a;margin-top:10px; }
+.pay-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;color:#16A34A;margin-top:10px; }
 .payments-table { background:var(--white);border-radius:14px;border:1px solid rgba(11,31,58,0.07);overflow:hidden; }
 .pt-header { display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:12px 20px;background:#F8F9FB;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);border-bottom:1px solid rgba(11,31,58,0.07); }
 .pt-row { display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:14px 20px;font-size:13px;border-bottom:1px solid rgba(11,31,58,0.05);align-items:center; }
 .pt-row:last-child { border-bottom:none; }
 .pt-course-name { font-weight:600;color:var(--navy); }
-.pt-free-badge { padding:3px 10px;border-radius:20px;background:rgba(34,197,94,0.1);color:#16a34a;font-size:11px;font-weight:600;display:inline-block; }
+.pt-free-badge { padding:3px 10px;border-radius:20px;background:rgba(34,197,94,0.1);color:#16A34A;font-size:11px;font-weight:600;display:inline-block; }
 
 .empty-state { background:var(--white);border-radius:14px;padding:52px 20px;border:1px solid rgba(11,31,58,0.07);text-align:center;color:var(--text-light); }
 .e-icon { font-size:40px;margin-bottom:12px; }
@@ -144,7 +144,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 
 .notif { position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:12px;background:var(--navy);color:#fff;font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(11,31,58,0.3);transform:translateY(80px);opacity:0;transition:all .3s;z-index:999;max-width:300px; }
 .notif.show { transform:translateY(0);opacity:1; }
-.notif.success { background:#16a34a; }
+.notif.success { background:#16A34A; }
 
 /* Profile panel */
 .profile-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;backdrop-filter:blur(3px); }
@@ -302,6 +302,154 @@ body.somali-on .en { display:none; }
 }
 .btn-unenroll-sm:hover { background:rgba(239,68,68,0.06); }
 
+
+/* ── NOTIFICATION BELL ── */
+.notif-bell {
+  position:relative; width:36px; height:36px; border-radius:50%;
+  border:1px solid var(--border,rgba(11,37,69,.09)); background:#fff;
+  font-size:16px; cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.notif-bell:hover { background:var(--bg); }
+.bell-badge {
+  position:absolute; top:-4px; right:-4px;
+  min-width:17px; height:17px; border-radius:10px;
+  background:var(--error,#DC2626); color:#fff;
+  font-size:9px; font-weight:800; font-family:'DM Sans',sans-serif;
+  display:flex; align-items:center; justify-content:center;
+  padding:0 4px; border:2px solid #fff;
+}
+
+/* ── KI CONNECT BANNERS ── */
+.ki-live-banner {
+  background:linear-gradient(135deg,rgba(220,38,38,0.07),rgba(220,38,38,0.03));
+  border:1px solid rgba(220,38,38,0.2); border-radius:14px;
+  padding:16px 20px; margin-bottom:18px;
+  display:flex; align-items:center; justify-content:space-between;
+  animation:bannerPulse 2s ease-in-out infinite; gap:16px;
+}
+@keyframes bannerPulse { 0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,0.15)} 50%{box-shadow:0 0 0 6px rgba(220,38,38,0)} }
+.ki-live-dot {
+  width:10px; height:10px; border-radius:50%; background:#DC2626;
+  flex-shrink:0; animation:liveDot 1.2s ease-in-out infinite;
+}
+@keyframes liveDot{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.ki-live-left { display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+.ki-live-title { font-size:14px; font-weight:700; color:#991b1b; margin-bottom:3px; }
+.ki-live-sub   { font-size:12px; color:#b91c1c; }
+.ki-live-btn {
+  padding:9px 20px; border-radius:9px; background:#DC2626; color:#fff;
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700;
+  text-decoration:none; transition:all .2s; white-space:nowrap; flex-shrink:0;
+}
+.ki-live-btn:hover { background:#b91c1c; transform:translateY(-1px); }
+.ki-upcoming-banner {
+  background:rgba(217,119,6,0.06); border:1px solid rgba(217,119,6,0.2);
+  border-radius:14px; padding:14px 20px; margin-bottom:18px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.ki-upcoming-btn {
+  padding:8px 18px; border-radius:9px; background:rgba(217,119,6,0.1);
+  color:var(--gold,#D97706); border:1px solid rgba(217,119,6,0.2);
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700;
+  text-decoration:none; transition:all .2s; white-space:nowrap; flex-shrink:0;
+}
+.ki-upcoming-btn:hover { background:rgba(217,119,6,0.18); }
+
+/* ── QUICK ACTIONS ── */
+.quick-actions {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:22px;
+}
+.qa-btn {
+  background:#fff; border:1px solid var(--border,rgba(11,37,69,.09));
+  border-radius:14px; padding:16px 10px; display:flex; flex-direction:column;
+  align-items:center; gap:8px; cursor:pointer; transition:all .2s;
+  box-shadow:0 1px 4px rgba(11,37,69,.05); font-family:'DM Sans',sans-serif;
+}
+.qa-btn:hover { border-color:var(--cyan,#0D9488); transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(13,148,136,.12); }
+.qa-icon { font-size:22px; }
+.qa-lbl  { font-size:11px; font-weight:700; color:var(--text-mid,#64748B); text-align:center; }
+
+/* ── HOME GRID ── */
+.home-grid { display:grid; grid-template-columns:1fr 320px; gap:18px; }
+.home-section { margin-bottom:0; }
+.hs-title {
+  font-size:14px; font-weight:700; color:var(--navy,#0B2545);
+  margin-bottom:12px; display:flex; align-items:center; gap:8px;
+}
+.home-aside { display:flex; flex-direction:column; }
+
+/* Home course mini cards */
+.home-course-card {
+  background:#fff; border:1px solid var(--border,rgba(11,37,69,.09));
+  border-radius:12px; padding:14px 16px; margin-bottom:10px;
+  display:flex; align-items:center; gap:14px;
+  box-shadow:0 1px 4px rgba(11,37,69,.05); transition:all .2s;
+  text-decoration:none; color:inherit;
+}
+.home-course-card:hover { border-color:var(--cyan,#0D9488); transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(13,148,136,.1); }
+.hcc-icon {
+  width:42px; height:42px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+}
+.hcc-info { flex:1; min-width:0; }
+.hcc-name { font-size:13px; font-weight:700; color:var(--navy,#0B2545);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:5px; }
+.hcc-progress-row { display:flex; align-items:center; gap:8px; }
+.hcc-bar { flex:1; height:4px; background:rgba(11,37,69,.08); border-radius:2px; overflow:hidden; }
+.hcc-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--cyan,#0D9488),var(--teal,#0D9488)); }
+.hcc-pct { font-size:11px; font-weight:700; color:var(--text-mid,#64748B); white-space:nowrap; }
+.hcc-arrow { font-size:14px; color:var(--text-light,#CBD5E1); flex-shrink:0; }
+
+/* ── STREAK PANEL ── */
+.streak-panel {
+  background:linear-gradient(135deg,var(--navy,#0B2545),#1A3A6B);
+  border-radius:14px; padding:20px; color:#fff;
+}
+.sp-top { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.sp-flame { font-size:32px; }
+.sp-num { font-size:36px; font-weight:900; line-height:1; }
+.sp-lbl { font-size:12px; color:rgba(255,255,255,.6); margin-top:3px; }
+.sp-milestones { display:flex; gap:8px; flex-wrap:wrap; }
+.sp-milestone {
+  padding:4px 10px; border-radius:20px; font-size:10px; font-weight:700;
+  background:rgba(255,255,255,.08); color:rgba(255,255,255,.5);
+}
+.sp-milestone.earned {
+  background:rgba(217,119,6,.25); color:#FCD34D; border:1px solid rgba(217,119,6,.3);
+}
+
+/* Home announcements */
+.home-ann-item {
+  background:#fff; border:1px solid var(--border,rgba(11,37,69,.09));
+  border-radius:10px; padding:12px 14px; margin-bottom:8px;
+  transition:border .2s; cursor:pointer;
+}
+.home-ann-item:hover { border-color:var(--cyan,#0D9488); }
+.home-ann-title { font-size:13px; font-weight:700; color:var(--navy,#0B2545); margin-bottom:3px; }
+.home-ann-time  { font-size:10px; color:var(--text-mid,#64748B); }
+.home-ann-pin   { font-size:10px; color:var(--gold,#D97706); float:right; }
+
+/* My courses search */
+.my-courses-toolbar {
+  display:flex; align-items:center; gap:10px; margin-bottom:16px;
+}
+.mct-search {
+  flex:1; padding:9px 14px; border-radius:10px;
+  border:1.5px solid var(--border,rgba(11,37,69,.09)); background:#fff;
+  font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text,#1E293B);
+  outline:none; transition:border .2s;
+}
+.mct-search:focus { border-color:var(--cyan,#0D9488); }
+
+@media(max-width:768px) {
+  .home-grid { grid-template-columns:1fr; }
+  .quick-actions { grid-template-columns:repeat(2,1fr); }
+  .ki-live-banner,.ki-upcoming-banner { flex-direction:column; align-items:flex-start; }
+}
+
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
@@ -328,6 +476,7 @@ body.somali-on .en { display:none; }
     </a>
     <div class="tb-right">
       <button class="lang-toggle" id="langToggle" onclick="toggleLang()">+ Somali</button>
+      <button class="notif-bell" id="notifBell" onclick="switchToTab('announcements')" title="Announcements" style="display:none;">&#128276;<span class="bell-badge" id="bellBadge">0</span></button>
       <button class="avatar-btn" id="avatarBtn" onclick="openProfile()" title="My Profile">&#128100;</button>
     </div>
   </div>
@@ -375,22 +524,104 @@ body.somali-on .en { display:none; }
       </div>
     </div>
 
-    <div class="continue-card" id="continueBanner" style="display:none;"></div>
+    <!-- continue banner moved to home tab -->
 
     <div class="dash-tabs">
-      <button class="dash-tab active" onclick="switchTab('courses',this)">&#128218; <span class="en"><span class="en">My Courses</span><span class="so"> &bull; Koorsadayda</span></span><span class="so">Koorsadayda</span></button>
+      <button class="dash-tab active" id="homeTab" onclick="switchTab('home',this)">&#127968; <span class="en">Home</span><span class="so">Guriga</span></button>
+      <button class="dash-tab" onclick="switchTab('courses',this)">&#128218; <span class="en">My Courses</span><span class="so">Koorsadayda</span></button>
       <button class="dash-tab" onclick="switchTab('catalog',this)">&#127758; <span class="en">Browse</span><span class="so">Raadi</span></button>
       <button class="dash-tab" onclick="switchTab('certs',this)">&#127891; <span class="en">Certificates</span><span class="so">Shahaadooyinka</span></button>
-      <button class="dash-tab" onclick="switchTab('announcements',this)">&#128226; <span class="en"><span class="en">Announcements</span><span class="so"> &bull; Xayeysiisyada</span></span><span class="so">Xayeysiisyada</span></button>
+      <button class="dash-tab" onclick="switchTab('announcements',this)">&#128226; <span class="en">Announcements</span><span class="so">Xayeysiisyada</span></button>
       <button class="dash-tab" onclick="switchTab('payments',this)">&#128176; <span class="en">Payments</span><span class="so">Lacag-bixinta</span></button>
       <button class="dash-tab" onclick="switchTab('notes',this)">&#128221; <span class="en">Notes</span><span class="so">Xusuus-qorayaasha</span></button>
     </div>
 
-    <!-- My Courses -->
-    <div class="tab-panel active" id="tab-courses">
+    <!-- Home Tab -->
+    <div class="tab-panel active" id="tab-home">
+
+      <!-- KI Connect Live Banner -->
+      <div class="ki-live-banner" id="kiLiveBanner" style="display:none;">
+        <div class="ki-live-left">
+          <div class="ki-live-dot"></div>
+          <div>
+            <div class="ki-live-title" id="kiLiveTitle">Class is Live Now</div>
+            <div class="ki-live-sub" id="kiLiveSub">Your instructor is teaching right now</div>
+          </div>
+        </div>
+        <a href="#" class="ki-live-btn" id="kiLiveBtn">Join Now &rarr;</a>
+      </div>
+
+      <!-- Upcoming Session Banner -->
+      <div class="ki-upcoming-banner" id="kiUpcomingBanner" style="display:none;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:22px;">&#128197;</span>
+          <div>
+            <div class="ki-live-title" id="kiUpcomingTitle">Upcoming Session</div>
+            <div class="ki-live-sub" id="kiUpcomingSub">Starting soon</div>
+          </div>
+        </div>
+        <a href="#" class="ki-upcoming-btn" id="kiUpcomingBtn">View Details &rarr;</a>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="qa-btn" onclick="switchToTab('courses')">
+          <span class="qa-icon">&#128218;</span>
+          <span class="qa-lbl"><span class="en">My Courses</span><span class="so">Koorsadayda</span></span>
+        </button>
+        <button class="qa-btn" onclick="switchToTab('catalog')">
+          <span class="qa-icon">&#127758;</span>
+          <span class="qa-lbl"><span class="en">Browse</span><span class="so">Raadi</span></span>
+        </button>
+        <button class="qa-btn" onclick="switchToTab('certs')">
+          <span class="qa-icon">&#127891;</span>
+          <span class="qa-lbl"><span class="en">Certificates</span><span class="so">Shahaado</span></span>
+        </button>
+        <button class="qa-btn" onclick="switchToTab('notes')">
+          <span class="qa-icon">&#128221;</span>
+          <span class="qa-lbl"><span class="en">Notes</span><span class="so">Xusuus</span></span>
+        </button>
+      </div>
+
+      <!-- Continue Banner -->
+      <div class="continue-card" id="continueBannerHome" style="display:none;"></div>
+
+      <!-- Progress Overview -->
+      <div class="home-grid">
+        <div class="home-section">
+          <div class="hs-title"><span class="en">&#128218; My Learning</span><span class="so">Barashadayda</span></div>
+          <div id="homeCoursesList"></div>
+        </div>
+        <div class="home-aside">
+          <!-- Streak card -->
+          <div class="streak-panel">
+            <div class="sp-top">
+              <div class="sp-flame">&#128293;</div>
+              <div>
+                <div class="sp-num" id="spStreakNum">0</div>
+                <div class="sp-lbl"><span class="en">Day Streak</span><span class="so">Joogtaynta</span></div>
+              </div>
+            </div>
+            <div class="sp-milestones" id="spMilestones"></div>
+          </div>
+          <!-- Recent announcements -->
+          <div class="home-section" style="margin-top:16px;">
+            <div class="hs-title">&#128226; <span class="en">Announcements</span><span class="so">Warar</span></div>
+            <div id="homeAnnouncements"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+<!-- My Courses -->
+    <div class="tab-panel" id="tab-courses">
       <div class="sec-header">
-        <div class="sec-title"><span class="en">My Courses</span><span class="so"> &bull; Koorsadayda</span></div>
+        <div class="sec-title"><span class="en">My Courses</span><span class="so">Koorsadayda</span></div>
         <a href="#" class="sec-link" onclick="switchToTab('catalog');return false;">Browse more &rarr;</a>
+      </div>
+      <div class="my-courses-toolbar">
+        <input class="mct-search" id="myCoursesSearch" placeholder="Search my courses..." oninput="renderCourses()">
       </div>
       <div class="courses-list" id="coursesList">
         <div class="empty-state"><div class="e-icon">&#9203;</div><div class="e-title">Loading...</div></div>
@@ -506,7 +737,7 @@ body.somali-on .en { display:none; }
 var _user=null, _userData=null, _courses=[], _materials=[], _enrollments=[], _started=false, _soOn=false, _notifTimer, _anncs=[], _catLevel='all';
 var ICONS=['&#129302;','&#128272;','&#128187;','&#128202;','&#127758;','&#129504;','&#128737;','&#128241;'];
 var BG=['rgba(27,174,204,0.12)','rgba(212,168,67,0.12)','rgba(14,124,123,0.12)','rgba(11,31,58,0.08)'];
-var BARS=['linear-gradient(90deg,#1BAECC,#0E7C7B)','linear-gradient(90deg,#D4A843,#e8c060)','linear-gradient(90deg,#0E7C7B,#0a5c5b)','linear-gradient(90deg,#1A3C6E,#0B1F3A)'];
+var BARS=['linear-gradient(90deg,#0D9488,#0D9488)','linear-gradient(90deg,#D97706,#F59E0B)','linear-gradient(90deg,#0D9488,#0B706B)','linear-gradient(90deg,#1A3A6B,#0B2545)'];
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function showNotif(msg,type){ var el=document.getElementById('notif'); el.textContent=msg; el.className='notif show'+(type?' '+type:''); clearTimeout(_notifTimer); _notifTimer=setTimeout(function(){ el.classList.remove('show'); },3000); }
@@ -554,11 +785,18 @@ function loadAll(){
   });
 }
 
+var _lastAnncs=[];
 function renderAll(anncs){
+  _lastAnncs=anncs||[];
   var name=(_userData&&_userData.full_name)||(_user.user_metadata&&_user.user_metadata.full_name)||_user.email.split('@')[0]||'Student';
   _userData.full_name=name;
 
-  document.getElementById('wbName').textContent='Welcome back, '+name+' \uD83D\uDC4B';
+  var hour = new Date().getHours();
+  var greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  var greetSo = hour < 12 ? 'Subax wanaagsan' : hour < 17 ? 'Galab wanaagsan' : 'Habeyn wanaagsan';
+  var wbG = document.getElementById('wbGreeting');
+  if (wbG) { wbG.innerHTML = '<span class="en">'+greet+'</span><span class="so">'+greetSo+'</span>'; }
+  document.getElementById('wbName').textContent = name + ' \uD83D\uDC4B';
   document.getElementById('avatarBtn').textContent=name.charAt(0).toUpperCase();
   document.getElementById('avatarBtn').title='My Profile — '+name;
   document.getElementById('ppNameDisplay').textContent=name;
@@ -656,7 +894,7 @@ function renderCourses(){
     // Progress ring
     var r=28; var circ=Math.round(2*Math.PI*r);
     var offset=Math.round(circ*(1-cpPct/100));
-    var ringColor=isComplete?'#16a34a':bar.match(/#[0-9a-fA-F]{6}/)?bar.match(/#[0-9a-fA-F]{6}/)[0]:'#1BAECC';
+    var ringColor=isComplete?'#16A34A':bar.match(/#[0-9a-fA-F]{6}/)?bar.match(/#[0-9a-fA-F]{6}/)[0]:'#0D9488';
 
     html+='<div class="course-row">'
       +'<div class="ring-wrap">'
@@ -704,7 +942,7 @@ function renderCourses(){
 
 // ── CONTINUE BANNER ──────────────────────────────────────────
 function renderContinueBanner() {
-  var cont = document.getElementById('continueBanner');
+  var cont = document.getElementById('continueBannerHome') || document.getElementById('continueBanner');
   if (!cont) return;
   // Find the course with the most recent progress that isn't complete
   var inProgress = _enrollments.filter(function(en) {
@@ -825,8 +1063,8 @@ function filterCatalog() {
       + '<div class="cat-tags">'
       + '<span class="cat-tag">'+(c.modules||mats.length||'?')+' Modules</span>'
       + '<span class="cat-tag">'+esc(c.level||'All Levels')+'</span>'
-      + '<span class="cat-tag" style="background:rgba(34,197,94,0.1);color:#16a34a;">Free</span>'
-      + (isComing ? '<span class="cat-tag" style="background:rgba(212,168,67,0.1);color:#b8860b;">Coming Soon</span>' : '')
+      + '<span class="cat-tag" style="background:rgba(34,197,94,0.1);color:#16A34A;">Free</span>'
+      + (isComing ? '<span class="cat-tag" style="background:rgba(212,168,67,0.1);color:#B45309;">Coming Soon</span>' : '')
       + '</div>'
       + enrollBtn
       + '</div>';
@@ -840,7 +1078,7 @@ function renderCatalog(){
 function unenrollCourse(courseId, btn) {
   if (!_user) return;
   if (!confirm('Remove yourself from this course? Your progress will be lost.')) return;
-  btn.disabled = true; btn.textContent = 'Removing...';
+  btn.disabled = true; btn.innerHTML  = 'Removing...';
   _sb.from('enrollments')
     .delete()
     .eq('user_id', _user.id)
@@ -893,7 +1131,11 @@ function enrollCourse(courseId, btn) {
 // CERTIFICATES
 function renderCerts(){
   var grid=document.getElementById('certGrid');
-  var earned=_enrollments.filter(function(e){ return e.certificate_id; });
+  var earned=_enrollments.filter(function(e){
+    var mats=_materials.filter(function(m){ return m.course_id===e.course_id; });
+    var done=e.completed_materials?e.completed_materials.length:(e.progress||0);
+    return mats.length>0 && done>=mats.length;
+  });
   if(!earned.length){
     grid.innerHTML='<div class="empty-state"><div class="e-icon">&#127891;</div><div class="e-title">No certificates yet</div><div class="e-desc">Complete a course to earn your first certificate.</div></div>';
     return;
@@ -919,7 +1161,7 @@ function renderAnnouncements(anncs){
   list.innerHTML=anncs.map(function(a){
     var type=a.type||'info';
     var icons={info:'&#128226;',warning:'&#9888;',success:'&#10003;'};
-    var colors={info:'var(--cyan)',warning:'#b45309',success:'#16a34a'};
+    var colors={info:'var(--cyan)',warning:'#b45309',success:'#16A34A'};
     var bgs={info:'rgba(27,174,204,0.08)',warning:'rgba(245,158,11,0.08)',success:'rgba(34,197,94,0.08)'};
     var borderStyle=a.pinned?'border-left:3px solid var(--gold);':'';
     return '<div class="announce-card" style="'+borderStyle+'">'
@@ -945,7 +1187,7 @@ function renderPayments(){
       +'<span class="pt-course-name">'+esc(course?course.title:'Unknown Course')+'</span>'
       +'<span><span class="pt-free-badge">Free</span></span>'
       +'<span style="color:var(--text-light);">'+formatDate(e.enrolled_at||e.created_at)+'</span>'
-      +'<span style="color:#16a34a;font-weight:600;">$0.00</span>'
+      +'<span style="color:#16A34A;font-weight:600;">$0.00</span>'
       +'</div>';
   }).join('');
 }
@@ -977,7 +1219,12 @@ function saveProfile(){
     .then(function(r){
       if(r.error){ showNotif(r.error.message.includes('column')?'Run student_setup.sql in Supabase first.':'Error: '+r.error.message,'error'); return; }
       _userData.full_name=name; _userData.city=city; _userData.country=country;
-      document.getElementById('wbName').textContent='Welcome back, '+name+' \uD83D\uDC4B';
+      var hour = new Date().getHours();
+  var greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  var greetSo = hour < 12 ? 'Subax wanaagsan' : hour < 17 ? 'Galab wanaagsan' : 'Habeyn wanaagsan';
+  var wbG = document.getElementById('wbGreeting');
+  if (wbG) { wbG.innerHTML = '<span class="en">'+greet+'</span><span class="so">'+greetSo+'</span>'; }
+  document.getElementById('wbName').textContent = name + ' \uD83D\uDC4B';
       document.getElementById('ppNameDisplay').textContent=name;
       document.getElementById('avatarBtn').textContent=name.charAt(0).toUpperCase();
   document.getElementById('avatarBtn').title='My Profile — '+name;
@@ -1008,6 +1255,221 @@ function ppPhotoSelected(input){
 function doSignOut(){
   _sb.auth.signOut().then(function(){ window.location.href='/login.html'; });
 }
+
+// ══════════════════════════════════════════════════════════
+// HOME TAB
+// ══════════════════════════════════════════════════════════
+var COURSE_COLORS = [
+  'linear-gradient(135deg,#0D9488,#0B706B)',
+  'linear-gradient(135deg,#0B2545,#1A3A6B)',
+  'linear-gradient(135deg,#D97706,#B45309)',
+  'linear-gradient(135deg,#7c3aed,#5b21b6)',
+  'linear-gradient(135deg,#DC2626,#991b1b)',
+  'linear-gradient(135deg,#0891b2,#0e7490)',
+];
+var COURSE_ICONS = ['📚','💻','🔐','🎯','📡','🧠','🛡️','📊'];
+
+function renderHome(anncs) {
+  renderContinueBannerHome();
+  renderHomeCourseMini();
+  renderStreakPanel();
+  renderHomeAnnouncements(anncs);
+  loadKIConnectSessions();
+}
+
+function renderContinueBannerHome() {
+  var cont = document.getElementById('continueBannerHome');
+  if (!cont) return;
+  var inProgress = _enrollments.filter(function(en) {
+    var mats = _materials.filter(function(m){ return m.course_id===en.course_id; });
+    var done = en.completed_materials ? en.completed_materials.length : (en.progress||0);
+    return mats.length > 0 && done < mats.length && done > 0;
+  });
+  if (!inProgress.length) { cont.style.display='none'; return; }
+  inProgress.sort(function(a,b){ return new Date(b.updated_at||0)-new Date(a.updated_at||0); });
+  var en = inProgress[0];
+  var course = _courses.find(function(c){ return c.id===en.course_id; });
+  if (!course) { cont.style.display='none'; return; }
+  var mats  = _materials.filter(function(m){ return m.course_id===en.course_id; });
+  var done  = en.completed_materials ? en.completed_materials.length : (en.progress||0);
+  var total = mats.length;
+  cont.style.display = 'flex';
+  cont.innerHTML =
+    '<div class="cc-icon">&#9654;</div>'
+    + '<div class="cc-info">'
+    + '<div class="cc-label"><span class="en">Continue Learning</span><span class="so">Waxbarasho Sii wad</span></div>'
+    + '<div class="cc-title">'+esc(course.title)+'</div>'
+    + '<div class="cc-mod">'+done+' of '+total+' modules complete</div>'
+    + '</div>'
+    + '<a href="/course-viewer.html?course='+course.id+'" class="btn-cont"><span class="en">Resume</span><span class="so">Ku Laabo</span> &rarr;</a>';
+}
+
+function renderHomeCourseMini() {
+  var list = document.getElementById('homeCoursesList');
+  if (!list) return;
+  if (!_enrollments.length) {
+    list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-mid);font-size:13px;">&#128218;<br><br>No courses yet.<br><a href="#" onclick="switchToTab(\'catalog\');return false;" style="color:var(--cyan);font-weight:700;">Browse the catalog &rarr;</a></div>';
+    return;
+  }
+  list.innerHTML = _enrollments.slice(0,5).map(function(en, i) {
+    var course = _courses.find(function(c){ return c.id===en.course_id; });
+    if (!course) return '';
+    var mats  = _materials.filter(function(m){ return m.course_id===course.id; });
+    var done  = en.completed_materials ? en.completed_materials.length : (en.progress||0);
+    var total = mats.length;
+    var pct   = total > 0 ? Math.round((done/total)*100) : 0;
+    var color = COURSE_COLORS[i % COURSE_COLORS.length];
+    var icon  = COURSE_ICONS[i % COURSE_ICONS.length];
+    return '<a href="/course-viewer.html?course='+course.id+'" class="home-course-card">'
+      + '<div class="hcc-icon" style="background:'+color+'">'+icon+'</div>'
+      + '<div class="hcc-info">'
+      + '<div class="hcc-name">'+esc(course.title)+'</div>'
+      + '<div class="hcc-progress-row">'
+      + '<div class="hcc-bar"><div class="hcc-fill" style="width:'+pct+'%"></div></div>'
+      + '<span class="hcc-pct">'+pct+'%</span>'
+      + '</div></div>'
+      + '<div class="hcc-arrow">&#8250;</div>'
+      + '</a>';
+  }).join('');
+  if (_enrollments.length > 5) {
+    list.innerHTML += '<button onclick="switchToTab(\'courses\')" style="width:100%;padding:10px;border:1px dashed var(--border);border-radius:10px;background:transparent;color:var(--text-mid);font-family:DM Sans,sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-top:4px;">View all '+_enrollments.length+' courses &rarr;</button>';
+  }
+}
+
+function renderStreakPanel() {
+  var numEl = document.getElementById('spStreakNum');
+  var milEl = document.getElementById('spMilestones');
+  if (!numEl) return;
+  var streak = (_userData && _userData.streak) || 0;
+  numEl.textContent = streak;
+  document.getElementById('streakNum').textContent   = streak;
+  document.getElementById('spStreakNum').textContent = streak;
+
+  var milestones = [
+    { days:3,   label:'3 days',   emoji:'🌱' },
+    { days:7,   label:'1 week',   emoji:'⚡' },
+    { days:14,  label:'2 weeks',  emoji:'🔥' },
+    { days:30,  label:'1 month',  emoji:'💪' },
+    { days:100, label:'100 days', emoji:'🏆' },
+  ];
+  milEl.innerHTML = milestones.map(function(m) {
+    var earned = streak >= m.days;
+    return '<div class="sp-milestone'+(earned?' earned':'')+'">'+m.emoji+' '+m.label+'</div>';
+  }).join('');
+}
+
+function renderHomeAnnouncements(anncs) {
+  var list = document.getElementById('homeAnnouncements');
+  if (!list) return;
+  var items = (anncs||[]).slice(0,3);
+  if (!items.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text-mid);padding:12px 0;">No announcements.</div>';
+    return;
+  }
+  list.innerHTML = items.map(function(a) {
+    var ago = relTime(a.created_at);
+    return '<div class="home-ann-item" onclick="switchToTab(\'announcements\')">'
+      + (a.pinned ? '<span class="home-ann-pin">&#128204; Pinned</span>' : '')
+      + '<div class="home-ann-title">'+esc(a.title)+'</div>'
+      + '<div class="home-ann-time">'+ago+'</div>'
+      + '</div>';
+  }).join('');
+
+  // Notification bell
+  var unread = (anncs||[]).length;
+  var bell   = document.getElementById('notifBell');
+  var badge  = document.getElementById('bellBadge');
+  if (bell && unread > 0) {
+    bell.style.display = 'flex';
+    if (badge) badge.textContent = unread > 9 ? '9+' : unread;
+  }
+}
+
+// ── KI CONNECT live + upcoming sessions ──────────────────
+function loadKIConnectSessions() {
+  if (!_user) return;
+  var now = new Date().toISOString();
+
+  // Check for active live sessions for enrolled courses
+  var courseIds = _enrollments.map(function(e){ return e.course_id; });
+  if (!courseIds.length) return;
+
+  _sb.from('live_sessions')
+    .select('*')
+    .eq('status','active')
+    .in('course_id', courseIds)
+    .limit(1)
+    .then(function(r) {
+      var live = r.data && r.data[0];
+      var banner = document.getElementById('kiLiveBanner');
+      if (live && banner) {
+        var course = _courses.find(function(c){ return c.id===live.course_id; });
+        document.getElementById('kiLiveTitle').textContent = (live.title||'Live Class') + (course ? ' — '+course.title : '');
+        document.getElementById('kiLiveSub').textContent  = 'Taught by '+live.teacher_name+' · Live now';
+        document.getElementById('kiLiveBtn').href = '/classroom.html?room='+live.room_id+'&session='+live.id+'&course='+(live.course_id||'');
+        banner.style.display = 'flex';
+      }
+    }).catch(function(){});
+
+  // Check for upcoming scheduled sessions today
+  var todayStart = new Date(); todayStart.setHours(0,0,0,0);
+  var todayEnd   = new Date(); todayEnd.setHours(23,59,59,999);
+
+  _sb.from('scheduled_sessions')
+    .select('*')
+    .eq('status','upcoming')
+    .gte('scheduled_at', todayStart.toISOString())
+    .lte('scheduled_at', todayEnd.toISOString())
+    .in('course_id', courseIds)
+    .order('scheduled_at')
+    .limit(1)
+    .then(function(r) {
+      var sess = r.data && r.data[0];
+      var upBanner = document.getElementById('kiUpcomingBanner');
+      if (sess && upBanner) {
+        var course = _courses.find(function(c){ return c.id===sess.course_id; });
+        var t = new Date(sess.scheduled_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        document.getElementById('kiUpcomingTitle').textContent = sess.title + (course ? ' — '+course.title : '');
+        document.getElementById('kiUpcomingSub').textContent  = 'Starting at '+t+' · '+sess.duration_mins+' min';
+        document.getElementById('kiUpcomingBtn').href = '/ki-connect.html';
+        upBanner.style.display = 'flex';
+      }
+    }).catch(function(){});
+}
+
+function relTime(ts) {
+  if (!ts) return '';
+  var diff = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
+  if (diff < 60)    return 'just now';
+  if (diff < 3600)  return Math.floor(diff/60)+'m ago';
+  if (diff < 86400) return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+}
+
+// ══════════════════════════════════════════════════════════
+// MY COURSES — add search filter
+// ══════════════════════════════════════════════════════════
+var _origRenderCourses = renderCourses;
+renderCourses = function() {
+  var searchEl = document.getElementById('myCoursesSearch');
+  var q = searchEl ? searchEl.value.toLowerCase() : '';
+  if (!q) { _origRenderCourses(); return; }
+  var list = document.getElementById('coursesList');
+  var filtered = _enrollments.filter(function(en) {
+    var c = _courses.find(function(cc){ return cc.id===en.course_id; });
+    return c && c.title.toLowerCase().includes(q);
+  });
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty-state"><div class="e-icon">&#128269;</div><div class="e-title">No courses match "'+esc(q)+'"</div></div>';
+    return;
+  }
+  // Temporarily swap enrollments for filtered render
+  var orig = _enrollments;
+  _enrollments = filtered;
+  _origRenderCourses();
+  _enrollments = orig;
+};
+
 </script>
 </body>
 </html>
