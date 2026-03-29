@@ -14,10 +14,10 @@ var TEACHER_EMAIL = 'mohamedmohammud@gmail.com';
 var ADMIN_UID     = '34e4009e-21de-4a55-ab9d-e8c767dfe898';
 </script>
 <style>
-:root {
-  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
-  --gold:#D4A843; --teal:#0E7C7B; --light:#F4F7FB;
-  --white:#FFFFFF; --text-mid:#3D5A80; --text-light:#7A94B0;
+:root{
+  --navy:#0B2545; --blue:#1A3A6B; --cyan:#0D9488;
+  --gold:#D97706; --teal:#0D9488; --light:#F8FAFB;
+  --white:#FFFFFF; --text-mid:#64748B; --text-light:#CBD5E1;
   --sidebar:260px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -30,7 +30,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--light);color:var(--navy);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
 }
 .ld-icon{
-  width:56px;height:56px;background:linear-gradient(135deg,var(--gold),#e8c060);
+  width:56px;height:56px;background:linear-gradient(135deg,var(--gold),#F59E0B);
   border-radius:14px;display:flex;align-items:center;justify-content:center;
   font-family:'Playfair Display',serif;font-weight:900;font-size:26px;color:var(--navy);
   margin-bottom:20px;
@@ -54,7 +54,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--light);color:var(--navy);
   padding:24px 20px;border-bottom:1px solid rgba(255,255,255,0.06);
 }
 .sb-icon{
-  width:40px;height:40px;background:linear-gradient(135deg,var(--gold),#e8c060);
+  width:40px;height:40px;background:linear-gradient(135deg,var(--gold),#F59E0B);
   border-radius:10px;display:flex;align-items:center;justify-content:center;
   font-family:'Playfair Display',serif;font-weight:900;font-size:18px;color:var(--navy);
   flex-shrink:0;
@@ -82,7 +82,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--light);color:var(--navy);
 .sb-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06);}
 .user-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
 .user-av{
-  width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#e8c060);
+  width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#F59E0B);
   border-radius:50%;display:flex;align-items:center;justify-content:center;
   font-size:15px;font-weight:700;color:var(--navy);flex-shrink:0;
 }
@@ -169,13 +169,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--light);color:var(--navy);
   cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all 0.2s;
   text-decoration:none;
 }
-.btn-gold{background:linear-gradient(135deg,var(--gold),#e8c060);color:var(--navy);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#F59E0B);color:var(--navy);}
 .btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(212,168,67,0.3);}
 .btn-cyan{background:linear-gradient(135deg,var(--cyan),var(--teal));color:var(--white);}
 .btn-cyan:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(27,174,204,0.3);}
 .btn-outline{background:none;border:1px solid rgba(11,31,58,0.15);color:var(--text-mid);}
 .btn-outline:hover{background:rgba(11,31,58,0.03);border-color:rgba(11,31,58,0.25);}
-.btn-danger{background:rgba(239,68,68,0.08);color:#dc2626;border:1px solid rgba(239,68,68,0.15);}
+.btn-danger{background:rgba(239,68,68,0.08);color:#DC2626;border:1px solid rgba(239,68,68,0.15);}
 .btn-danger:hover{background:rgba(239,68,68,0.14);}
 .btn-sm{padding:8px 14px;font-size:12px;}
 .btn-lg{padding:14px 28px;font-size:15px;}
@@ -232,11 +232,11 @@ tr:hover td{background:rgba(11,31,58,0.015);}
 
 /* BADGE */
 .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
-.badge-green{background:rgba(34,197,94,0.1);color:#16a34a;}
+.badge-green{background:rgba(34,197,94,0.1);color:#16A34A;}
 .badge-blue{background:rgba(27,174,204,0.1);color:var(--cyan);}
 .badge-gold{background:rgba(212,168,67,0.12);color:var(--gold);}
 .badge-gray{background:rgba(11,31,58,0.07);color:var(--text-light);}
-.badge-red{background:rgba(239,68,68,0.08);color:#dc2626;}
+.badge-red{background:rgba(239,68,68,0.08);color:#DC2626;}
 
 /* SEARCH */
 .search-wrap{display:flex;align-items:center;gap:8px;background:rgba(11,31,58,0.04);border:1px solid rgba(11,31,58,0.1);border-radius:10px;padding:9px 14px;}
@@ -348,6 +348,9 @@ tr:hover td{background:rgba(11,31,58,0.015);}
     <button class="nav-item" onclick="switchTab('students',this)">
       <span class="nav-icon">👥</span> Students
     </button>
+    <button class="nav-item" onclick="switchTab('quizzes',this)">
+      <span class="nav-icon">&#9997;</span> Manage Quizzes
+    </button>
     <div class="nav-section">Links</div>
     <button class="nav-item" onclick="window.open('https://kulaninstitute.org','_blank')">
       <span class="nav-icon">🌐</span> View Website
@@ -390,30 +393,65 @@ tr:hover td{background:rgba(11,31,58,0.015);}
 
     <!-- OVERVIEW -->
     <div class="tab active" id="tab-overview">
-      <div class="stats-row">
+      <div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
         <div class="stat-card">
-          <div class="stat-icon">📚</div>
+          <div class="stat-icon">&#128218;</div>
           <div class="stat-label">Active Courses</div>
           <div class="stat-val" id="statCourses">0</div>
-          <div class="stat-sub">Published courses</div>
+          <div class="stat-sub">Published</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">📁</div>
+          <div class="stat-icon">&#128100;</div>
+          <div class="stat-label">Total Students</div>
+          <div class="stat-val" id="statStudents">0</div>
+          <div class="stat-sub">Enrolled learners</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">&#128196;</div>
           <div class="stat-label">Total Materials</div>
           <div class="stat-val" id="statMaterials">0</div>
           <div class="stat-sub">PDFs, videos, PPTs</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">👥</div>
-          <div class="stat-label">Students</div>
-          <div class="stat-val" id="statStudents">0</div>
-          <div class="stat-sub">Enrolled learners</div>
+          <div class="stat-icon">&#127942;</div>
+          <div class="stat-label">Avg Progress</div>
+          <div class="stat-val" id="statAvgProgress">0<span style="font-size:14px;font-weight:400;">%</span></div>
+          <div class="stat-sub">Across all students</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon">⏳</div>
-          <div class="stat-label">Coming Soon</div>
-          <div class="stat-val" id="statComing">0</div>
-          <div class="stat-sub">Courses in progress</div>
+      </div>
+
+      <!-- Quick actions -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;">
+        <button onclick="switchTab('upload',null)" style="background:#fff;border:1px solid rgba(11,37,69,.09);border-radius:14px;padding:18px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='rgba(11,37,69,.09)'">
+          <span style="font-size:24px;">&#128228;</span>
+          <span style="font-size:12px;font-weight:700;color:var(--text);">Upload Material</span>
+        </button>
+        <button onclick="window.location.href='/ki-connect.html'" style="background:#fff;border:1px solid rgba(11,37,69,.09);border-radius:14px;padding:18px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='rgba(11,37,69,.09)'">
+          <span style="font-size:24px;">&#128247;</span>
+          <span style="font-size:12px;font-weight:700;color:var(--text);">KI Connect</span>
+        </button>
+        <button onclick="window.location.href='/recorder.html'" style="background:#fff;border:1px solid rgba(11,37,69,.09);border-radius:14px;padding:18px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='rgba(11,37,69,.09)'">
+          <span style="font-size:24px;">&#127909;</span>
+          <span style="font-size:12px;font-weight:700;color:var(--text);">Record Lesson</span>
+        </button>
+      </div>
+
+      <!-- Recent activity -->
+      <div style="background:#fff;border:1px solid rgba(11,37,69,.09);border-radius:16px;padding:20px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;">&#128200; Course Performance</div>
+        <div id="coursePerformance">
+          <div style="text-align:center;padding:24px;color:#94A3B8;font-size:13px;">Loading...</div>
+        </div>
+      </div>
+
+      <!-- Recent enrollments -->
+      <div style="background:#fff;border:1px solid rgba(11,37,69,.09);border-radius:16px;padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:14px;font-weight:700;color:var(--navy);">&#128100; Recent Students</div>
+          <button onclick="switchTab('students',null)" style="font-size:12px;color:var(--cyan);font-weight:700;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">View all &rarr;</button>
+        </div>
+        <div id="recentStudents">
+          <div style="text-align:center;padding:24px;color:#94A3B8;font-size:13px;">Loading...</div>
         </div>
       </div>
 
@@ -617,6 +655,41 @@ tr:hover td{background:rgba(11,31,58,0.015);}
         </table>
       </div>
     </div>
+      <!-- QUIZZES TAB -->
+      <div class="tab" id="tab-quizzes">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div style="font-size:18px;font-weight:700;color:var(--navy);">&#9997; Manage Quizzes</div>
+          <button onclick="openAddQuizModal()" style="padding:9px 18px;border-radius:9px;background:linear-gradient(135deg,var(--cyan),var(--teal));border:none;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">+ Add Quiz</button>
+        </div>
+        <div id="quizzesList">
+          <div style="text-align:center;padding:48px;color:#94A3B8;font-size:13px;">&#9997;<br><br>No quizzes yet.<br>Create your first quiz to test student knowledge.</div>
+        </div>
+      </div>
+
+      <!-- ADD QUIZ MODAL -->
+      <div id="addQuizOverlay" style="display:none;position:fixed;inset:0;background:rgba(11,37,69,.5);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+        <div style="background:#fff;border-radius:18px;max-width:560px;width:calc(100% - 32px);max-height:88vh;overflow-y:auto;box-shadow:0 24px 64px rgba(11,37,69,.25);">
+          <div style="padding:22px 24px 16px;border-bottom:1px solid rgba(11,37,69,.09);display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:18px;font-weight:700;font-family:'Playfair Display',serif;">&#9997; Add Quiz</div>
+            <button onclick="closeAddQuizModal()" style="width:30px;height:30px;border-radius:7px;border:1px solid rgba(11,37,69,.09);background:transparent;font-size:18px;cursor:pointer;">&#215;</button>
+          </div>
+          <div style="padding:20px 24px;">
+            <div class="form-group"><label class="form-label">Quiz Title *</label><input class="form-input" id="aqTitle" placeholder="e.g. Module 1 Knowledge Check"></div>
+            <div class="form-group"><label class="form-label">Course *</label><select class="form-select" id="aqCourse"></select></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="form-group"><label class="form-label">Pass Score (%)</label><input class="form-input" id="aqPass" type="number" value="70" min="0" max="100"></div>
+              <div class="form-group"><label class="form-label">Time Limit (min, 0=none)</label><input class="form-input" id="aqTime" type="number" value="0" min="0"></div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;margin-top:8px;">Questions</div>
+            <div id="aqQuestions"></div>
+            <button onclick="addQuestion()" style="width:100%;padding:10px;border:1.5px dashed rgba(11,37,69,.15);border-radius:10px;background:transparent;color:#64748B;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;">+ Add Question</button>
+          </div>
+          <div style="padding:16px 24px;border-top:1px solid rgba(11,37,69,.09);display:flex;gap:10px;">
+            <button onclick="closeAddQuizModal()" style="flex:1;height:40px;border-radius:9px;border:1px solid rgba(11,37,69,.12);background:transparent;color:#64748B;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+            <button onclick="saveQuiz()" id="saveQuizBtn" style="flex:2;height:40px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Save Quiz</button>
+          </div>
+        </div>
+      </div>
 
   </div><!-- /content -->
 </div><!-- /main -->
@@ -750,10 +823,60 @@ function renderAll() {
 }
 
 function renderStats() {
-  var active = courses.filter(function(c){return c.status==='active';}).length;
+  var active   = courses.filter(function(c){return c.status==='active'||!c.status;}).length;
+  var avgProg  = students.length ? Math.round(students.reduce(function(s,e){ return s+(e.progress||0); },0)/students.length) : 0;
   document.getElementById('statCourses').textContent   = active;
   document.getElementById('statMaterials').textContent = materials.length;
   document.getElementById('statStudents').textContent  = students.length;
+  var ap = document.getElementById('statAvgProgress');
+  if (ap) ap.innerHTML = avgProg + '<span style="font-size:14px;font-weight:400;">%</span>';
+  renderCoursePerformance();
+  renderRecentStudents();
+}
+
+function renderCoursePerformance() {
+  var el = document.getElementById('coursePerformance');
+  if (!el) return;
+  if (!courses.length) { el.innerHTML = '<div style="text-align:center;padding:20px;color:#94A3B8;font-size:13px;">No courses yet.</div>'; return; }
+  el.innerHTML = courses.map(function(c) {
+    var enrolled = students.filter(function(s){ return s.courseId===c.id||s.course_id===c.id; });
+    var avgP     = enrolled.length ? Math.round(enrolled.reduce(function(s,e){ return s+(e.progress||0); },0)/enrolled.length) : 0;
+    var mats     = materials.filter(function(m){ return m.courseId===c.id||m.course_id===c.id; }).length;
+    return '<div style="display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid rgba(11,37,69,.06);">'
+      + '<div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">&#128218;</div>'
+      + '<div style="flex:1;min-width:0;">'
+      + '<div style="font-size:13px;font-weight:700;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(c.title) + '</div>'
+      + '<div style="font-size:11px;color:#64748B;margin-top:2px;">' + enrolled.length + ' students &middot; ' + mats + ' materials</div>'
+      + '</div>'
+      + '<div style="text-align:right;flex-shrink:0;">'
+      + '<div style="font-size:16px;font-weight:800;color:var(--navy);">' + avgP + '%</div>'
+      + '<div style="font-size:10px;color:#94A3B8;">avg progress</div>'
+      + '</div></div>';
+  }).join('');
+}
+
+function renderRecentStudents() {
+  var el = document.getElementById('recentStudents');
+  if (!el) return;
+  var recent = students.slice(0,5);
+  if (!recent.length) { el.innerHTML = '<div style="text-align:center;padding:20px;color:#94A3B8;font-size:13px;">No students yet.</div>'; return; }
+  el.innerHTML = recent.map(function(s) {
+    var course  = courses.find(function(c){ return c.id===(s.courseId||s.course_id); });
+    var initials= (s.name||s.email||'?').split(' ').map(function(w){ return w[0]||''; }).join('').toUpperCase().slice(0,2)||'?';
+    var pct     = s.progress||0;
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(11,37,69,.06);">'
+      + '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">' + initials + '</div>'
+      + '<div style="flex:1;min-width:0;">'
+      + '<div style="font-size:13px;font-weight:600;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(s.name||s.email||'Student') + '</div>'
+      + '<div style="font-size:11px;color:#64748B;">' + esc(course?course.title:'—') + '</div>'
+      + '</div>'
+      + '<div style="flex-shrink:0;">'
+      + '<div style="width:60px;height:5px;background:rgba(11,37,69,.08);border-radius:3px;overflow:hidden;">'
+      + '<div style="width:' + pct + '%;height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:3px;"></div>'
+      + '</div>'
+      + '<div style="font-size:10px;color:#94A3B8;text-align:right;margin-top:2px;">' + pct + '%</div>'
+      + '</div></div>';
+  }).join('');
 }
 
 function renderCourses() {
@@ -796,7 +919,7 @@ function renderMaterials() {
       +'<div style="font-weight:700;font-size:14px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+m.title+'</div>'
       +'<div style="font-size:11px;color:#999;margin-top:3px;">Module '+m.module+' &bull; '+(course?course.title:'Unknown')+' &bull; '+m.type.toUpperCase()+'</div></div>'
       +(m.url&&!m.url.startsWith('ki_file_')?'<a href="'+m.url+'" target="_blank" style="font-size:12px;color:var(--cyan);text-decoration:none;font-weight:600;white-space:nowrap;">Preview</a>':'')
-      +'<button onclick="deleteMaterialT(\'' + m.id + '\')" style="background:rgba(220,38,38,0.08);color:#dc2626;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;">&#128465;</button>'
+      +'<button onclick="deleteMaterialT(\'' + m.id + '\')" style="background:rgba(220,38,38,0.08);color:#DC2626;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;">&#128465;</button>'
       +'</div>';
   }).join('');
 }
@@ -1126,6 +1249,183 @@ function tpAvatarPick(inp) {
   reader.readAsDataURL(inp.files[0]);
 }
 
+
+// ══════════════════════════════════════════════════════════
+// QUIZ MANAGEMENT (Teacher)
+// ══════════════════════════════════════════════════════════
+var _teacherQuizzes   = [];
+var _quizQuestionsEdit= [];
+var _teacherId        = null;
+
+function openAddQuizModal() {
+  _quizQuestionsEdit = [];
+  var overlay = document.getElementById('addQuizOverlay');
+  if (!overlay) return;
+
+  // Populate course select
+  var sel = document.getElementById('aqCourse');
+  sel.innerHTML = '<option value="">Select a course</option>';
+  courses.forEach(function(c) {
+    var opt = document.createElement('option');
+    opt.value = c.id; opt.textContent = c.title;
+    sel.appendChild(opt);
+  });
+
+  document.getElementById('aqTitle').value = '';
+  document.getElementById('aqPass').value  = '70';
+  document.getElementById('aqTime').value  = '0';
+  document.getElementById('aqQuestions').innerHTML = '';
+  addQuestion(); // Start with one question
+  overlay.style.display = 'flex';
+}
+
+function closeAddQuizModal() {
+  var overlay = document.getElementById('addQuizOverlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+var _qCount = 0;
+function addQuestion() {
+  _qCount++;
+  var idx  = _qCount;
+  var wrap = document.getElementById('aqQuestions');
+  var div  = document.createElement('div');
+  div.id   = 'qq_' + idx;
+  div.style.cssText = 'background:rgba(11,37,69,.03);border:1px solid rgba(11,37,69,.09);border-radius:11px;padding:14px;margin-bottom:10px;';
+  div.innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
+    + '<div style="font-size:12px;font-weight:700;color:var(--navy);">Question ' + idx + '</div>'
+    + '<button onclick="document.getElementById(\'qq_' + idx + '\').remove()" style="font-size:12px;color:#dc2626;background:none;border:none;cursor:pointer;font-family:\'DM Sans\',sans-serif;">Remove</button>'
+    + '</div>'
+    + '<select id="qtype_' + idx + '" onchange="updateQType(' + idx + ')" style="width:100%;padding:8px 12px;border-radius:8px;border:1.5px solid rgba(11,37,69,.12);background:#fff;font-family:\'DM Sans\',sans-serif;font-size:12px;margin-bottom:8px;">'
+    + '<option value="mcq">Multiple Choice</option>'
+    + '<option value="truefalse">True / False</option>'
+    + '<option value="short">Short Answer</option>'
+    + '</select>'
+    + '<input id="qtext_' + idx + '" style="width:100%;padding:8px 12px;border-radius:8px;border:1.5px solid rgba(11,37,69,.12);background:#fff;font-family:\'DM Sans\',sans-serif;font-size:13px;margin-bottom:8px;outline:none;" placeholder="Question text *">'
+    + '<div id="qopts_' + idx + '">'
+    + '<input id="qopt1_' + idx + '" style="width:100%;padding:7px 11px;border-radius:7px;border:1.5px solid rgba(11,37,69,.1);background:#fff;font-family:\'DM Sans\',sans-serif;font-size:12px;margin-bottom:5px;outline:none;" placeholder="Option A">'
+    + '<input id="qopt2_' + idx + '" style="width:100%;padding:7px 11px;border-radius:7px;border:1.5px solid rgba(11,37,69,.1);background:#fff;font-family:\'DM Sans\',sans-serif;font-size:12px;margin-bottom:5px;outline:none;" placeholder="Option B">'
+    + '<input id="qopt3_' + idx + '" style="width:100%;padding:7px 11px;border-radius:7px;border:1.5px solid rgba(11,37,69,.1);background:#fff;font-family:\'DM Sans\',sans-serif;font-size:12px;margin-bottom:5px;outline:none;" placeholder="Option C (optional)">'
+    + '<input id="qopt4_' + idx + '" style="width:100%;padding:7px 11px;border-radius:7px;border:1.5px solid rgba(11,37,69,.1);background:#fff;font-family:\'DM Sans\',sans-serif;font-size:12px;margin-bottom:8px;outline:none;" placeholder="Option D (optional)">'
+    + '</div>'
+    + '<input id="qans_' + idx + '" style="width:100%;padding:8px 12px;border-radius:8px;border:1.5px solid rgba(13,148,136,.25);background:rgba(13,148,136,.04);font-family:\'DM Sans\',sans-serif;font-size:12px;margin-bottom:6px;outline:none;color:var(--navy);font-weight:600;" placeholder="Correct answer (exact text) *">'
+    + '<input id="qexp_' + idx + '" style="width:100%;padding:7px 12px;border-radius:8px;border:1.5px solid rgba(11,37,69,.1);background:#fff;font-family:\'DM Sans\',sans-serif;font-size:12px;outline:none;color:#64748B;" placeholder="Explanation (optional — shown after answering)">';
+  wrap.appendChild(div);
+}
+
+function updateQType(idx) {
+  var type    = document.getElementById('qtype_' + idx).value;
+  var optsDiv = document.getElementById('qopts_' + idx);
+  var ansEl   = document.getElementById('qans_' + idx);
+  if (type === 'truefalse') {
+    optsDiv.style.display = 'none';
+    ansEl.placeholder = 'Correct answer: True or False';
+  } else if (type === 'short') {
+    optsDiv.style.display = 'none';
+    ansEl.placeholder = 'Correct answer (key phrase)';
+  } else {
+    optsDiv.style.display = 'block';
+    ansEl.placeholder = 'Correct answer (must match option text exactly)';
+  }
+}
+
+async function saveQuiz() {
+  var title    = document.getElementById('aqTitle').value.trim();
+  var courseId = document.getElementById('aqCourse').value;
+  var passScore= parseInt(document.getElementById('aqPass').value)||70;
+  var timeLimit= parseInt(document.getElementById('aqTime').value)||null;
+  if (!title || !courseId) { showNotif('Please fill in title and course.','error'); return; }
+
+  // Gather questions
+  var qDivs = document.querySelectorAll('#aqQuestions > div[id^="qq_"]');
+  var qs = [];
+  var valid = true;
+  qDivs.forEach(function(div, idx) {
+    var i    = div.id.replace('qq_','');
+    var type = document.getElementById('qtype_' + i).value;
+    var text = document.getElementById('qtext_' + i).value.trim();
+    var ans  = document.getElementById('qans_'  + i).value.trim();
+    var exp  = document.getElementById('qexp_'  + i).value.trim();
+    if (!text || !ans) { valid = false; return; }
+    var options = null;
+    if (type === 'mcq') {
+      options = [1,2,3,4].map(function(n){ return (document.getElementById('qopt'+n+'_'+i)||{}).value||''; }).filter(function(o){ return o.trim(); });
+      if (options.length < 2) { valid = false; return; }
+    }
+    qs.push({ type:type, question:text, options:options, answer:ans, explanation:exp||null, points:1, order_num:idx+1 });
+  });
+
+  if (!valid || !qs.length) { showNotif('Please complete all questions.','error'); return; }
+
+  var btn = document.getElementById('saveQuizBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  // Get current teacher ID
+  var { data: sessionData } = await _sb.auth.getSession();
+  var uid = sessionData.session && sessionData.session.user && sessionData.session.user.id;
+
+  var r = await _sb.from('quizzes').insert([{
+    course_id:  courseId,
+    title:      title,
+    pass_score: passScore,
+    time_limit: timeLimit || null,
+    created_by: uid
+  }]).select().single();
+
+  btn.disabled = false; btn.textContent = 'Save Quiz';
+  if (r.error) { showNotif('Error: ' + r.error.message, 'error'); return; }
+
+  // Insert questions
+  var questionsToInsert = qs.map(function(q) { return Object.assign({ quiz_id: r.data.id }, q); });
+  await _sb.from('quiz_questions').insert(questionsToInsert);
+
+  showNotif('Quiz created: ' + title, 'success');
+  closeAddQuizModal();
+  loadTeacherQuizzes();
+}
+
+function loadTeacherQuizzes() {
+  var el = document.getElementById('quizzesList');
+  if (!el) return;
+
+  _sb.from('quizzes').select('*, quiz_questions(count)').order('created_at',{ascending:false})
+    .then(function(r) {
+      var qzs = r.data || [];
+      if (!qzs.length) {
+        el.innerHTML = '<div style="text-align:center;padding:48px;color:#94A3B8;font-size:13px;">&#9997;<br><br>No quizzes yet.</div>';
+        return;
+      }
+      el.innerHTML = qzs.map(function(q) {
+        var course = courses.find(function(c){ return c.id===q.course_id; });
+        return '<div style="background:#fff;border:1px solid rgba(11,37,69,.09);border-radius:12px;padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;">'
+          + '<div style="width:38px;height:38px;border-radius:10px;background:rgba(13,148,136,.08);display:flex;align-items:center;justify-content:center;font-size:18px;">&#9997;</div>'
+          + '<div style="flex:1;min-width:0;">'
+          + '<div style="font-size:13px;font-weight:700;color:var(--navy);">' + esc(q.title) + '</div>'
+          + '<div style="font-size:11px;color:#64748B;margin-top:3px;">' + esc(course?course.title:'—') + ' &middot; Pass: ' + q.pass_score + '% &middot; ' + (q.time_limit ? q.time_limit + ' min' : 'Untimed') + '</div>'
+          + '</div>'
+          + '<button onclick="deleteQuiz(\'' + q.id + '\')" style="padding:6px 12px;border-radius:7px;border:1px solid rgba(220,38,38,.2);background:rgba(220,38,38,.06);color:#dc2626;font-family:\'DM Sans\',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">Delete</button>'
+          + '</div>';
+      }).join('');
+    }).catch(function() {
+      el.innerHTML = '<div style="text-align:center;padding:32px;color:#94A3B8;font-size:13px;">Run the SQL setup first to enable quizzes.</div>';
+    });
+}
+
+async function deleteQuiz(id) {
+  if (!confirm('Delete this quiz and all student attempts?')) return;
+  await _sb.from('quizzes').delete().eq('id', id);
+  showNotif('Quiz deleted.', 'success');
+  loadTeacherQuizzes();
+}
+
+// Hook into switchTab to load quizzes
+var _origTeacherSwitchTab = switchTab;
+switchTab = function(tab, btn) {
+  _origTeacherSwitchTab(tab, btn);
+  if (tab === 'quizzes') loadTeacherQuizzes();
+};
+
 </script>
 
 <!-- ════ TEACHER PROFILE MODAL ════ -->
@@ -1133,12 +1433,12 @@ function tpAvatarPick(inp) {
 #tpModal{display:none;position:fixed;inset:0;z-index:700;background:rgba(11,31,58,0.65);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:12px;}
 #tpModal.open{display:flex;}
 .tp-box{background:#fff;border-radius:22px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(11,31,58,0.3);}
-.tp-head{background:linear-gradient(135deg,#0B1F3A,#0E7C7B);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
+.tp-head{background:linear-gradient(135deg,#0B2545,#0D9488);padding:22px 24px 46px;border-radius:22px 22px 0 0;position:relative;text-align:center;}
 .tp-head h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin:0;}
 .tp-head p{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;}
 .tp-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .tp-av-wrap{display:flex;justify-content:center;margin-top:-34px;margin-bottom:10px;}
-.tp-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#1BAECC,#0E7C7B);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;border:4px solid #fff;box-shadow:0 4px 16px rgba(14,124,123,.4);overflow:hidden;cursor:pointer;position:relative;}
+.tp-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#0D9488,#0D9488);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;border:4px solid #fff;box-shadow:0 4px 16px rgba(14,124,123,.4);overflow:hidden;cursor:pointer;position:relative;}
 .tp-av:hover .tp-cam{display:flex;}
 .tp-cam{position:absolute;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;font-size:16px;border-radius:50%;}
 .tp-ebadge{text-align:center;margin-bottom:16px;font-size:12px;color:#7A94B0;}
@@ -1146,15 +1446,15 @@ function tpAvatarPick(inp) {
 .tp-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .tp-g{margin-bottom:13px;}
 .tp-l{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7A94B0;margin-bottom:5px;}
-.tp-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B1F3A;outline:none;transition:border .15s;box-sizing:border-box;}
-.tp-i:focus{border-color:#1BAECC;box-shadow:0 0 0 3px rgba(27,174,204,.12);}
-.tp-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#3D5A80;line-height:1.7;margin-bottom:14px;}
+.tp-i{width:100%;padding:10px 13px;border:1.5px solid rgba(11,31,58,.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:#0B2545;outline:none;transition:border .15s;box-sizing:border-box;}
+.tp-i:focus{border-color:#0D9488;box-shadow:0 0 0 3px rgba(27,174,204,.12);}
+.tp-note{padding:10px 13px;background:rgba(27,174,204,.05);border:1px solid rgba(27,174,204,.15);border-radius:9px;font-size:11px;color:#475569;line-height:1.7;margin-bottom:14px;}
 .tp-btns{display:flex;gap:10px;}
 .tp-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .2s;}
-.tp-save{background:linear-gradient(135deg,#1BAECC,#0E7C7B);color:#fff;}
+.tp-save{background:linear-gradient(135deg,#0D9488,#0D9488);color:#fff;}
 .tp-save:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(27,174,204,.4);}
-.tp-cancel{background:rgba(11,31,58,.06);color:#3D5A80;}
-#tpOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16a34a;margin-bottom:12px;}
+.tp-cancel{background:rgba(11,31,58,.06);color:#475569;}
+#tpOk{display:none;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;background:rgba(34,197,94,.1);color:#16A34A;margin-bottom:12px;}
 </style>
 
 <div id="tpModal" onclick="if(event.target===this)closeTeacherProfile()">
@@ -1174,7 +1474,7 @@ function tpAvatarPick(inp) {
     </div>
     <div class="tp-ebadge">
       <span id="tpEmailShow"></span>
-      &nbsp;<span style="padding:3px 9px;background:rgba(27,174,204,.12);border-radius:20px;font-size:10px;color:#1BAECC;font-weight:700;">&#127979; TEACHER</span>
+      &nbsp;<span style="padding:3px 9px;background:rgba(27,174,204,.12);border-radius:20px;font-size:10px;color:#0D9488;font-weight:700;">&#127979; TEACHER</span>
     </div>
     <div class="tp-body">
       <div id="tpOk">&#10003; Profile saved!</div>
@@ -1183,7 +1483,7 @@ function tpAvatarPick(inp) {
         <div class="tp-g"><label class="tp-l">Subject / Role</label><input class="tp-i" id="tpRole" type="text" placeholder="e.g. Cybersecurity"></div>
       </div>
       <div class="tp-g"><label class="tp-l">Short Bio</label><textarea class="tp-i" id="tpBio" rows="2" style="resize:vertical" placeholder="Brief description..."></textarea></div>
-      <div class="tp-note"><strong style="color:#1BAECC">&#128274; Password Reset:</strong> Go to your <strong>Supabase dashboard &rarr; Authentication &rarr; Users</strong> to reset your password.</div>
+      <div class="tp-note"><strong style="color:#0D9488">&#128274; Password Reset:</strong> Go to your <strong>Supabase dashboard &rarr; Authentication &rarr; Users</strong> to reset your password.</div>
       <div class="tp-btns">
         <button class="tp-btn tp-cancel" onclick="closeTeacherProfile()">Cancel</button>
         <button class="tp-btn tp-save" onclick="saveTeacherProfile()">Save Changes</button>

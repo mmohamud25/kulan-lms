@@ -20,13 +20,13 @@ var _sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
   gtag('config','G-GGBZJXPLRP');
 </script>
 <style>
-:root {
-  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --cyan2:#13c4e8;
-  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B; --teal2:#11a09f;
-  --bg:#060d18; --surface:#0c1524; --surface2:#111e30; --surface3:#162540;
-  --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.1);
-  --text:#dce8f5; --text2:#7a92b0; --text3:#3d5470;
-  --success:#22c55e; --error:#ef4444;
+:root{
+  --navy:#0B2545; --blue:#1A3A6B; --cyan:#0D9488; --cyan2:#14B8A6;
+  --gold:#D97706; --gold2:#F59E0B; --teal:#0D9488; --teal2:#0B706B;
+  --bg:#F8FAFB; --surface:#FFFFFF; --surface2:#F1F5F9; --surface3:#E2EAF4;
+  --border:rgba(11,37,69,0.09); --border2:rgba(11,37,69,0.16);
+  --text:#1E293B; --text2:#64748B; --text3:#94A3B8;
+  --success:#16A34A; --error:#DC2626;
   --sidebar-w:272px; --panel-w:360px;
   --radius:12px; --radius2:16px; --radius3:20px;
 }
@@ -48,7 +48,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   width:52px;height:52px;border-radius:14px;
   background:linear-gradient(135deg,var(--gold),var(--gold2));
   display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:#0B1F3A;
+  font-family:'Playfair Display',serif;font-weight:900;font-size:20px;color:#0B2545;
   box-shadow:0 8px 32px rgba(212,168,67,0.3);
 }
 .ld-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);}
@@ -494,8 +494,8 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   display:flex;align-items:center;justify-content:center;
   font-size:11px;font-weight:800;color:#fff;
 }
-.disc-av.student{background:linear-gradient(135deg,#1BAECC,#0E7C7B);}
-.disc-av.teacher{background:linear-gradient(135deg,#D4A843,#9a6e0a);}
+.disc-av.student{background:linear-gradient(135deg,#0D9488,#0D9488);}
+.disc-av.teacher{background:linear-gradient(135deg,#D97706,#9a6e0a);}
 .disc-av.admin  {background:linear-gradient(135deg,#7c3aed,#4c1d95);}
 .disc-author{font-size:12px;font-weight:700;color:var(--text);}
 .role-badge{
@@ -714,7 +714,80 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   cursor:pointer; text-decoration:none; transition:all .2s;
   display:inline-flex; align-items:center; gap:6px;
 }
-.lb-join:hover { background:#dc2626; transform:translateY(-1px); }
+.lb-join:hover { background:#DC2626; transform:translateY(-1px); }
+
+
+/* ── QUIZ PANEL ── */
+.quiz-panel{
+  position:fixed;top:54px;right:0;bottom:0;width:var(--panel-w);
+  background:var(--surface);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  z-index:15;box-shadow:-8px 0 32px rgba(0,0,0,.3);
+}
+.quiz-panel.open{transform:translateX(0);}
+.qp-header{
+  padding:16px 18px;border-bottom:1px solid var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surface);
+}
+.qp-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;}
+.qp-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.qp-close:hover{background:var(--surface2);}
+
+/* Quiz list */
+.quiz-list{flex:1;overflow-y:auto;padding:14px;}
+.quiz-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .2s;}
+.quiz-item:hover{border-color:rgba(13,148,136,.3);box-shadow:0 4px 14px rgba(13,148,136,.08);}
+.qi-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;}
+.qi-meta{font-size:11px;color:var(--text2);display:flex;gap:10px;flex-wrap:wrap;}
+.qi-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.qi-badge.passed{background:rgba(22,163,74,.1);color:#15803d;}
+.qi-badge.failed{background:rgba(220,38,38,.08);color:#dc2626;}
+.qi-badge.new{background:rgba(13,148,136,.08);color:var(--cyan);}
+
+/* Quiz taking UI */
+.quiz-take{flex:1;overflow-y:auto;padding:14px;display:none;flex-direction:column;}
+.quiz-take.show{display:flex;}
+.qt-progress{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-shrink:0;}
+.qt-progress-bar{flex:1;height:4px;background:rgba(11,37,69,.08);border-radius:2px;overflow:hidden;}
+.qt-progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:2px;transition:width .4s;}
+.qt-progress-txt{font-size:11px;color:var(--text2);white-space:nowrap;}
+.qt-question{font-size:14px;font-weight:700;color:var(--text);line-height:1.6;margin-bottom:16px;}
+.qt-options{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.qt-option{
+  padding:12px 14px;border-radius:10px;border:1.5px solid var(--border);
+  background:var(--surface2);cursor:pointer;transition:all .2s;
+  font-size:13px;color:var(--text);text-align:left;font-family:'DM Sans',sans-serif;
+}
+.qt-option:hover{border-color:rgba(13,148,136,.3);background:rgba(13,148,136,.04);}
+.qt-option.selected{border-color:var(--cyan);background:rgba(13,148,136,.08);color:var(--cyan);font-weight:700;}
+.qt-option.correct{border-color:var(--success,#16A34A);background:rgba(22,163,74,.08);color:#15803d;font-weight:700;}
+.qt-option.wrong{border-color:var(--error,#DC2626);background:rgba(220,38,38,.06);color:#dc2626;}
+.qt-short-input{width:100%;padding:10px 13px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border .2s;margin-bottom:16px;resize:none;min-height:80px;}
+.qt-short-input:focus{border-color:rgba(13,148,136,.3);}
+.qt-explanation{background:rgba(13,148,136,.06);border:1px solid rgba(13,148,136,.15);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--text);line-height:1.6;margin-bottom:14px;display:none;}
+.qt-explanation.show{display:block;}
+.qt-nav{display:flex;gap:8px;flex-shrink:0;}
+.qt-btn{flex:1;height:38px;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.qt-btn-submit{background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;}
+.qt-btn-submit:hover{transform:translateY(-1px);}
+.qt-btn-next{background:var(--surface3);color:var(--text);border:1px solid var(--border);}
+.qt-btn-next:hover{border-color:var(--cyan);}
+
+/* Results */
+.quiz-result{flex:1;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+.quiz-result.show{display:flex;}
+.qr-emoji{font-size:52px;margin-bottom:16px;}
+.qr-score{font-size:42px;font-weight:900;color:var(--navy);margin-bottom:6px;}
+.qr-label{font-size:14px;font-weight:700;margin-bottom:16px;}
+.qr-badge{font-size:12px;font-weight:700;padding:6px 18px;border-radius:20px;margin-bottom:24px;}
+.qr-badge.passed{background:rgba(22,163,74,.1);color:#15803d;border:1px solid rgba(22,163,74,.2);}
+.qr-badge.failed{background:rgba(220,38,38,.08);color:#dc2626;border:1px solid rgba(220,38,38,.2);}
+.qr-btns{display:flex;gap:10px;flex-direction:column;width:100%;}
+.qr-btn{padding:11px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;border:none;}
+.qr-btn-retry{background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff;}
+.qr-btn-back{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
 
 </style>
 </head>
@@ -760,6 +833,9 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
     </button>
     <button class="tn-btn disc-btn" id="discTnBtn" onclick="toggleDiscPanel()">
       &#128172; Discuss
+    </button>
+    <button class="tn-btn" id="quizTnBtn" onclick="toggleQuizPanel()" style="background:rgba(217,119,6,.08);border-color:rgba(217,119,6,.25);color:var(--gold);">
+      &#9997; Quizzes
     </button>
   </div>
 
@@ -897,6 +973,46 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
         </div>
       </div>
     </div>
+
+    <!-- QUIZ PANEL -->
+    <div class="quiz-panel" id="quizPanel">
+      <div class="qp-header">
+        <div class="qp-title">&#9997; Quizzes</div>
+        <button class="qp-close" onclick="toggleQuizPanel()">&#215;</button>
+      </div>
+      <!-- Quiz list -->
+      <div class="quiz-list" id="quizList">
+        <div style="text-align:center;padding:32px;color:var(--text2);font-size:12px;">&#9997;<br><br>No quizzes for this module yet.</div>
+      </div>
+      <!-- Quiz taking UI -->
+      <div class="quiz-take" id="quizTake">
+        <div class="qt-progress">
+          <div class="qt-progress-bar"><div class="qt-progress-fill" id="qtProgFill" style="width:0%"></div></div>
+          <span class="qt-progress-txt" id="qtProgTxt">1 / 1</span>
+        </div>
+        <div class="qt-question" id="qtQuestion"></div>
+        <div class="qt-options"  id="qtOptions"></div>
+        <textarea class="qt-short-input" id="qtShortInput" placeholder="Type your answer..." style="display:none;"></textarea>
+        <div class="qt-explanation" id="qtExplanation"></div>
+        <div class="qt-nav">
+          <button class="qt-btn qt-btn-submit" id="qtSubmitBtn" onclick="submitAnswer()">Submit Answer</button>
+          <button class="qt-btn qt-btn-next" id="qtNextBtn" onclick="nextQuestion()" style="display:none;">Next &rarr;</button>
+        </div>
+      </div>
+      <!-- Results -->
+      <div class="quiz-result" id="quizResult">
+        <div class="qr-emoji" id="qrEmoji">&#127881;</div>
+        <div class="qr-score" id="qrScore">0%</div>
+        <div class="qr-label" id="qrLabel">Quiz Complete</div>
+        <div class="qr-badge" id="qrBadge">Passed</div>
+        <div class="qr-btns">
+          <button class="qr-btn qr-btn-retry" onclick="retryQuiz()">&#8635; Try Again</button>
+          <button class="qr-btn qr-btn-back"  onclick="backToQuizList()">&#8592; All Quizzes</button>
+        </div>
+      </div>
+    </div>
+
+
 
   </div><!-- /viewer-body -->
 </div><!-- /page -->
@@ -1623,6 +1739,239 @@ function showNotif(msg, type) {
   el._t = setTimeout(function() { el.classList.remove('show'); }, 3500);
 }
 
+
+
+// ══════════════════════════════════════════════════════════
+// QUIZ SYSTEM
+// ══════════════════════════════════════════════════════════
+var _quizOpen      = false;
+var _currentQuiz   = null;
+var _quizQuestions = [];
+var _quizAnswers   = {};
+var _quizQIdx      = 0;
+var _quizAnswered  = false;
+var _quizStartTime = null;
+
+function toggleQuizPanel() {
+  _quizOpen = !_quizOpen;
+  // Close other panels
+  if (_quizOpen) {
+    document.getElementById('notesPanel').classList.remove('open');
+    document.getElementById('discPanel').classList.remove('open');
+    document.getElementById('notesTnBtn').classList.remove('active');
+    document.getElementById('discTnBtn').classList.remove('active');
+    _notesOpen = false; _discOpen = false;
+    loadQuizzes();
+  }
+  document.getElementById('quizPanel').classList.toggle('open', _quizOpen);
+  document.getElementById('quizTnBtn').classList.toggle('active', _quizOpen);
+}
+
+function loadQuizzes() {
+  if (!_courseId) return;
+  var list = document.getElementById('quizList');
+  list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text2);font-size:12px;">Loading...</div>';
+
+  var query = _sb.from('quizzes').select('*').eq('course_id', _courseId);
+  if (_currentMat) query = query.or('material_id.eq.' + _currentMat.id + ',material_id.is.null');
+
+  Promise.all([
+    query.order('created_at'),
+    _viewerUser ? _sb.from('quiz_attempts').select('quiz_id,score,passed').eq('user_id', _viewerUser.id) : Promise.resolve({data:[]})
+  ]).then(function(res) {
+    var quizzes  = res[0].data || [];
+    var attempts = res[1].data || [];
+    var attMap   = {};
+    attempts.forEach(function(a) {
+      if (!attMap[a.quiz_id] || a.score > attMap[a.quiz_id].score) attMap[a.quiz_id] = a;
+    });
+
+    if (!quizzes.length) {
+      list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text2);font-size:12px;line-height:1.8;">&#9997;<br><br>No quizzes for this module yet.<br>Check back later.</div>';
+      return;
+    }
+
+    list.innerHTML = quizzes.map(function(q) {
+      var att    = attMap[q.id];
+      var badge  = att ? (att.passed ? '<span class="qi-badge passed">&#10003; ' + att.score + '%</span>' : '<span class="qi-badge failed">&#10005; ' + att.score + '%</span>') : '<span class="qi-badge new">New</span>';
+      return '<div class="quiz-item" onclick="startQuiz(\'' + q.id + '\')">'
+        + '<div class="qi-title">' + esc(q.title) + '</div>'
+        + '<div class="qi-meta">'
+        + badge
+        + '<span>' + (q.time_limit ? q.time_limit + ' min' : 'Untimed') + '</span>'
+        + '<span>Pass: ' + q.pass_score + '%</span>'
+        + '</div></div>';
+    }).join('');
+  }).catch(function() {
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text2);font-size:12px;">Quiz system not yet enabled.<br>Run the SQL setup first.</div>';
+  });
+}
+
+async function startQuiz(quizId) {
+  // Load questions
+  var r = await _sb.from('quizzes').select('*').eq('id', quizId).single();
+  var rq= await _sb.from('quiz_questions').select('*').eq('quiz_id', quizId).order('order_num');
+  if (r.error || !rq.data || !rq.data.length) {
+    showNotif('Could not load quiz questions.', 'error'); return;
+  }
+
+  _currentQuiz    = r.data;
+  _quizQuestions  = rq.data;
+  _quizAnswers    = {};
+  _quizQIdx       = 0;
+  _quizAnswered   = false;
+  _quizStartTime  = Date.now();
+
+  document.getElementById('quizList').style.display = 'none';
+  document.getElementById('quizTake').classList.add('show');
+  document.getElementById('quizResult').classList.remove('show');
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  var q    = _quizQuestions[_quizQIdx];
+  var total= _quizQuestions.length;
+  var pct  = Math.round((_quizQIdx / total) * 100);
+
+  document.getElementById('qtProgFill').style.width = pct + '%';
+  document.getElementById('qtProgTxt').textContent  = (_quizQIdx + 1) + ' / ' + total;
+  document.getElementById('qtQuestion').textContent = q.question;
+  document.getElementById('qtExplanation').className = 'qt-explanation';
+  document.getElementById('qtSubmitBtn').style.display = 'inline-flex';
+  document.getElementById('qtNextBtn').style.display   = 'none';
+  _quizAnswered = false;
+
+  var optDiv  = document.getElementById('qtOptions');
+  var shortTa = document.getElementById('qtShortInput');
+
+  if (q.type === 'short') {
+    optDiv.style.display  = 'none';
+    shortTa.style.display = 'block';
+    shortTa.value         = '';
+  } else {
+    optDiv.style.display  = 'flex';
+    shortTa.style.display = 'none';
+    var options = q.type === 'truefalse' ? ['True', 'False'] : (q.options || []);
+    optDiv.innerHTML = options.map(function(opt, i) {
+      return '<button class="qt-option" data-val="' + esc(opt) + '" onclick="selectOption(this)">' + esc(opt) + '</button>';
+    }).join('');
+  }
+}
+
+function selectOption(btn) {
+  if (_quizAnswered) return;
+  document.querySelectorAll('.qt-option').forEach(function(el){ el.classList.remove('selected'); });
+  btn.classList.add('selected');
+}
+
+function submitAnswer() {
+  if (_quizAnswered) return;
+  var q = _quizQuestions[_quizQIdx];
+
+  var userAnswer = '';
+  if (q.type === 'short') {
+    userAnswer = document.getElementById('qtShortInput').value.trim();
+    if (!userAnswer) { showNotif('Please write an answer.', 'error'); return; }
+  } else {
+    var selected = document.querySelector('.qt-option.selected');
+    if (!selected) { showNotif('Please select an answer.', 'error'); return; }
+    userAnswer = selected.getAttribute('data-val');
+  }
+
+  _quizAnswers[q.id] = userAnswer;
+  _quizAnswered = true;
+
+  // Show correct/wrong
+  var correct = q.answer;
+  if (q.type === 'short') {
+    // Short answer: fuzzy match (contains correct answer)
+    var isCorrect = userAnswer.toLowerCase().includes(correct.toLowerCase()) || correct.toLowerCase().includes(userAnswer.toLowerCase());
+    var shortTa = document.getElementById('qtShortInput');
+    shortTa.style.borderColor = isCorrect ? '#16A34A' : '#DC2626';
+  } else {
+    document.querySelectorAll('.qt-option').forEach(function(btn) {
+      if (btn.getAttribute('data-val') === correct) btn.classList.add('correct');
+      else if (btn.classList.contains('selected'))  btn.classList.add('wrong');
+      btn.style.pointerEvents = 'none';
+    });
+  }
+
+  // Show explanation
+  if (q.explanation) {
+    var expEl = document.getElementById('qtExplanation');
+    expEl.textContent = '&#128218; ' + q.explanation;
+    expEl.classList.add('show');
+  }
+
+  document.getElementById('qtSubmitBtn').style.display = 'none';
+  var nextBtn = document.getElementById('qtNextBtn');
+  nextBtn.style.display  = 'inline-flex';
+  nextBtn.textContent    = _quizQIdx < _quizQuestions.length - 1 ? 'Next \u2192' : 'See Results';
+}
+
+function nextQuestion() {
+  _quizQIdx++;
+  if (_quizQIdx >= _quizQuestions.length) {
+    finishQuiz(); return;
+  }
+  renderQuizQuestion();
+}
+
+function finishQuiz() {
+  // Calculate score
+  var correct = 0;
+  var total   = _quizQuestions.length;
+  _quizQuestions.forEach(function(q) {
+    var ua = _quizAnswers[q.id] || '';
+    if (q.type === 'short') {
+      if (ua.toLowerCase().includes(q.answer.toLowerCase()) || q.answer.toLowerCase().includes(ua.toLowerCase())) correct++;
+    } else {
+      if (ua === q.answer) correct++;
+    }
+  });
+
+  var scorePct = total > 0 ? Math.round((correct / total) * 100) : 0;
+  var passed   = scorePct >= (_currentQuiz.pass_score || 70);
+  var timeTaken= Math.round((Date.now() - _quizStartTime) / 1000);
+
+  // Save attempt
+  if (_viewerUser) {
+    _sb.from('quiz_attempts').insert([{
+      quiz_id:      _currentQuiz.id,
+      user_id:      _viewerUser.id,
+      answers:      _quizAnswers,
+      score:        scorePct,
+      passed:       passed,
+      time_taken:   timeTaken,
+      completed_at: new Date().toISOString()
+    }]).then(function(){});
+    if (typeof gtag !== 'undefined') gtag('event','quiz_complete',{quiz_id:_currentQuiz.id,score:scorePct,passed:passed});
+  }
+
+  // Show results
+  document.getElementById('quizTake').classList.remove('show');
+  var res = document.getElementById('quizResult');
+  res.classList.add('show');
+  document.getElementById('qrEmoji').textContent = passed ? '\uD83C\uDF89' : '\uD83D\uDCDA';
+  document.getElementById('qrScore').textContent = scorePct + '%';
+  document.getElementById('qrLabel').textContent = correct + ' of ' + total + ' correct';
+  var badge = document.getElementById('qrBadge');
+  badge.textContent  = passed ? '\u2713 Passed' : '\u2715 Not passed yet';
+  badge.className    = 'qr-badge ' + (passed ? 'passed' : 'failed');
+}
+
+function retryQuiz() {
+  if (!_currentQuiz) return;
+  startQuiz(_currentQuiz.id);
+}
+
+function backToQuizList() {
+  document.getElementById('quizList').style.display = 'block';
+  document.getElementById('quizTake').classList.remove('show');
+  document.getElementById('quizResult').classList.remove('show');
+  _currentQuiz = null;
+  loadQuizzes();
+}
 
 </script>
 </body>
