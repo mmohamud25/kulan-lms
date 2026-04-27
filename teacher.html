@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teacher Portal — Kulan Institute</title>
+<meta name="description" content="Kulan Institute Teacher Portal — manage courses, upload materials, schedule live sessions, create quizzes and track student progress.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -381,7 +382,7 @@ tr:hover td{background:rgba(11,31,58,0.015);}
 
 <!-- MAIN -->
 <div class="main">
-  <div class="topbar"><button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">&#9776;</button>
+  <div class="topbar"><button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()" aria-label="Toggle navigation menu" aria-expanded="false">&#9776;</button>
     <div class="page-title" id="pageTitle">Overview</div>
     <div class="topbar-right">
       <button class="btn btn-outline btn-sm" onclick="switchTab('upload',document.querySelectorAll('.nav-item')[1])">📤 Upload</button>
@@ -1162,7 +1163,9 @@ function startTeacherPage(user, userData) {
   window._teacherUser = user;
   hideLoading();
   document.getElementById('page').style.display = 'block';
-  document.getElementById('userEmail').textContent = user.email;
+  var emailEl = document.getElementById('userEmail');
+  emailEl.textContent = user.email;
+  emailEl.title = user.email;
   document.getElementById('userAv').textContent    = user.email.charAt(0).toUpperCase();
   var name = (userData && userData.full_name)
     || (user.user_metadata && user.user_metadata.full_name)
@@ -1426,6 +1429,161 @@ switchTab = function(tab, btn) {
   if (tab === 'quizzes') loadTeacherQuizzes();
 };
 
+
+
+// ══════════════════════════════════════════════════════════
+// MODAL SYSTEM
+// ══════════════════════════════════════════════════════════
+function openModal(id) {
+  var el = document.getElementById('modal-' + id);
+  if (!el) { console.warn('Modal not found: modal-' + id); return; }
+  el.classList.add('open');
+  // Populate course select in invite modal
+  if (id === 'inviteStudent') {
+    var sel = document.getElementById('inviteCourse');
+    if (sel) {
+      sel.innerHTML = '<option value="">Select a course</option>';
+      courses.forEach(function(c) {
+        var opt = document.createElement('option');
+        opt.value = c.id; opt.textContent = c.title;
+        sel.appendChild(opt);
+      });
+    }
+  }
+  // Trap focus — close on backdrop click
+  el.addEventListener('click', function onBgClick(e) {
+    if (e.target === el) { closeModal(id); el.removeEventListener('click', onBgClick); }
+  });
+  // Close on ESC
+  document.addEventListener('keydown', function onEsc(e) {
+    if (e.key === 'Escape') { closeModal(id); document.removeEventListener('keydown', onEsc); }
+  });
+}
+
+function closeModal(id) {
+  var el = document.getElementById('modal-' + id);
+  if (el) el.classList.remove('open');
+}
+
+// ── ADD COURSE ─────────────────────────────────────────────
+async function addCourse() {
+  var title = document.getElementById('cTitle').value.trim();
+  if (!title) { showNotif('Please enter a course title.', 'error'); return; }
+
+  var titleSo  = document.getElementById('cTitleSo').value.trim();
+  var modules  = parseInt(document.getElementById('cModules').value) || 8;
+  var level    = document.getElementById('cLevel').value;
+  var status   = document.getElementById('cStatus').value;
+  var lang     = document.getElementById('cLang').value;
+  var desc     = document.getElementById('cDesc').value.trim();
+  var paid     = document.getElementById('cPaid').checked;
+  var price    = paid ? (parseFloat(document.getElementById('cPrice').value) || 0) : 0;
+
+  var btn = document.querySelector('#modal-addCourse .btn-gold');
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating...'; }
+
+  var { data: sessionData } = await _sb.auth.getSession();
+  var uid = sessionData.session && sessionData.session.user && sessionData.session.user.id;
+
+  var r = await _sb.from('courses').insert([{
+    title:       title,
+    title_so:    titleSo || null,
+    description: desc || null,
+    modules:     modules,
+    level:       level,
+    status:      status,
+    language:    lang,
+    paid:        paid,
+    price:       price,
+    created_by:  uid,
+    created_at:  new Date().toISOString()
+  }]).select().single();
+
+  if (btn) { btn.disabled = false; btn.textContent = 'Create Course'; }
+
+  if (r.error) {
+    showNotif('Error: ' + r.error.message, 'error');
+    return;
+  }
+
+  showNotif('Course created: ' + title, 'success');
+  closeModal('addCourse');
+
+  // Clear form
+  ['cTitle','cTitleSo','cDesc','cModules','cPrice'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+  var paid_el = document.getElementById('cPaid');
+  if (paid_el) paid_el.checked = false;
+  var price_wrap = document.getElementById('cPriceWrap');
+  if (price_wrap) price_wrap.style.display = 'none';
+
+  // Refresh
+  if (r.data) courses.push(dbToCourse(r.data));
+  renderStats();
+  renderCourses();
+}
+
+// ── INVITE STUDENT (teacher flow) ─────────────────────────
+async function inviteStudent() {
+  var name     = document.getElementById('inviteName').value.trim();
+  var email    = document.getElementById('inviteEmail').value.trim();
+  var courseId = document.getElementById('inviteCourse').value;
+
+  if (!name)     { showNotif('Please enter a student name.', 'error'); return; }
+  if (!email || !email.includes('@')) { showNotif('Please enter a valid email.', 'error'); return; }
+  if (!courseId) { showNotif('Please select a course.', 'error'); return; }
+
+  var btn = document.querySelector('#modal-inviteStudent .btn-gold');
+  if (btn) { btn.disabled = true; btn.innerHTML = 'Saving...'; }
+
+  // Check if user already exists
+  var existing = await _sb.from('users').select('id').eq('email', email).maybeSingle();
+
+  var userId = existing.data && existing.data.id;
+
+  if (!userId) {
+    // Create user profile (they'll get invite via Supabase Auth separately)
+    var insertRes = await _sb.from('users').insert([{
+      email:      email,
+      full_name:  name,
+      role:       'student',
+      status:     'pending',
+      created_at: new Date().toISOString()
+    }]).select().single();
+
+    if (insertRes.error) {
+      if (btn) { btn.disabled = false; btn.innerHTML = 'Save & Invite'; }
+      showNotif('Error: ' + insertRes.error.message, 'error');
+      return;
+    }
+    userId = insertRes.data && insertRes.data.id;
+  }
+
+  // Enroll in course
+  if (userId) {
+    var chk = await _sb.from('enrollments').select('id').eq('user_id', userId).eq('course_id', courseId).maybeSingle();
+    if (!chk.data) {
+      await _sb.from('enrollments').insert([{
+        user_id:             userId,
+        course_id:           courseId,
+        progress:            0,
+        completed_materials: [],
+        enrolled_at:         new Date().toISOString(),
+        updated_at:          new Date().toISOString()
+      }]);
+    }
+  }
+
+  if (btn) { btn.disabled = false; btn.innerHTML = 'Save & Invite'; }
+
+  showNotif(name + ' saved. Now go to Supabase → Auth → Users → Invite and enter ' + email, 'success');
+  closeModal('inviteStudent');
+  document.getElementById('inviteName').value  = '';
+  document.getElementById('inviteEmail').value = '';
+  renderStats();
+}
+
 </script>
 
 <!-- ════ TEACHER PROFILE MODAL ════ -->
@@ -1461,7 +1619,7 @@ switchTab = function(tab, btn) {
   <div class="tp-box">
     <div class="tp-head">
       <h3>&#9881; Teacher Profile</h3>
-      <p>Kulan Institute of Learning</p>
+      <p>Kulan Institute</p>
       <button class="tp-x" onclick="closeTeacherProfile()">&#10005;</button>
     </div>
     <div class="tp-av-wrap">
