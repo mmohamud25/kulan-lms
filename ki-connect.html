@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KI Connect — Kulan Institute</title>
+<title>KI Connect — KIST</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -17,20 +17,20 @@ var _sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 <style>
 :root{
   /* Light theme */
-  --bg:#f5f7fa;
-  --surface:#ffffff;
-  --surface2:#f0f4f8;
-  --surface3:#e8edf3;
-  --border:rgba(11,31,58,0.08);
-  --border2:rgba(11,31,58,0.14);
-  --cyan:#1BAECC;--cyan2:#0e8fa8;
-  --gold:#C4951A;--gold2:#e0a820;
-  --teal:#0E7C7B;--teal2:#0a5c5b;
-  --red:#ef4444;--green:#16a34a;
-  --text:#0B1F3A;
-  --text2:#4a6080;
-  --text3:#8a9db5;
-  --navy:#0B1F3A;
+  --bg:#F8FAFB;
+  --surface:#FFFFFF;
+  --surface2:#F1F5F9;
+  --surface3:#E2EAF4;
+  --border:rgba(11,37,69,0.09);
+  --border2:rgba(11,37,69,0.16);
+  --cyan:#0D9488;--cyan2:#14B8A6;
+  --gold:#D97706;--gold2:#F59E0B;
+  --teal:#0D9488;--teal2:#0B706B;
+  --red:#DC2626;--green:#16A34A;
+  --text:#1E293B;
+  --text2:#64748B;
+  --text3:#94A3B8;
+  --navy:#0B2545;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
@@ -57,7 +57,7 @@ html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);
 
 /* HERO */
 .hero{
-  background:linear-gradient(135deg,var(--navy) 0%,#1A3C6E 100%);
+  background:linear-gradient(135deg,var(--navy) 0%,#1A3A6B 100%);
   border:none;border-radius:20px;padding:40px;
   display:flex;align-items:center;gap:32px;margin-bottom:32px;
   position:relative;overflow:hidden;
@@ -194,9 +194,9 @@ html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);
   font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;border:none;
 }
 .sc-btn-join{background:var(--red);color:#fff;}
-.sc-btn-join:hover{background:#dc2626;}
+.sc-btn-join:hover{background:#DC2626;}
 .sc-btn-start{background:var(--cyan);color:#fff;}
-.sc-btn-start:hover{background:#18a0b8;}
+.sc-btn-start:hover{background:#0B8078;}
 .sc-btn-copy{background:var(--surface3);color:var(--text2);border:1px solid var(--border2);}
 .sc-btn-copy:hover{color:var(--text);}
 .sc-btn-cancel{background:transparent;color:var(--red);border:1px solid rgba(239,68,68,0.2);}
@@ -267,7 +267,7 @@ html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);
 }
 .notif.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .notif.success{background:#f0fdf4;border-color:rgba(22,163,74,0.3);color:#15803d;}
-.notif.error{background:#fef2f2;border-color:rgba(239,68,68,0.3);color:#dc2626;}
+.notif.error{background:#fef2f2;border-color:rgba(239,68,68,0.3);color:#DC2626;}
 
 @media(max-width:640px){
   .hero{flex-direction:column;text-align:center;}

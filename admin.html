@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel — Kulan Institute</title>
+<title>Admin Panel — KIST</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -508,7 +508,7 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
   <div class="sb-logo">
     <div class="sb-icon">KI</div>
     <div>
-      <div class="sb-name">Kulan Institute</div>
+      <div class="sb-name">Kulan Institute of Technology and Science</div>
       <div class="sb-sub">Admin Panel</div>
     </div>
   </div>
@@ -884,7 +884,7 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
   <div class="ap-box">
     <div class="ap-head">
       <h3>&#9881; Admin Profile</h3>
-      <p>Kulan Institute of Learning</p>
+      <p>Kulan Institute of Technology and Science</p>
       <button class="ap-x" onclick="closeAdminProfile()">&#10005;</button>
     </div>
     <div class="ap-av-wrap">
@@ -2187,7 +2187,7 @@ function generateProgressReport() {
     + '</style></head><body>'
     + '<div class="header">'
     + '<div><h1>' + esc(user.full_name||user.email||'Student') + '</h1><h2>Student Progress Report</h2></div>'
-    + '<div class="ki-brand"><div class="ki-name">Kulan Institute</div><div>of Learning</div><div style="margin-top:6px;color:#94A3B8;">Generated: ' + today + '</div></div>'
+    + '<div class="ki-brand"><div class="ki-name">Kulan Institute of Technology and Science</div><div>Learn. Grow. Lead.</div><div style="margin-top:6px;color:#94A3B8;">Generated: ' + today + '</div></div>'
     + '</div>'
     + '<div class="stat-row">'
     + '<div class="stat-box"><div class="stat-val">' + enrols.length + '</div><div class="stat-lbl">Courses Enrolled</div></div>'
@@ -2196,7 +2196,7 @@ function generateProgressReport() {
     + '<div class="stat-box"><div class="stat-val">' + (user.city&&user.country ? user.city+', '+user.country : user.country||user.city||'—') + '</div><div class="stat-lbl">Location</div></div>'
     + '</div>'
     + '<table><thead><tr><th>Course</th><th>Enrolled</th><th>Modules Done</th><th>Progress</th><th>Status</th></tr></thead><tbody>' + courseRows + '</tbody></table>'
-    + '<div class="footer"><div>Kulan Institute of Learning &middot; kulaninstitute.org</div><div>Confidential &middot; ' + today + '</div></div>'
+    + '<div class="footer"><div>Kulan Institute of Technology and Science &middot; kulaninstitute.org</div><div>Confidential &middot; ' + today + '</div></div>'
     + '</body></html>';
 
   var win = window.open('', '_blank', 'width=900,height=700');

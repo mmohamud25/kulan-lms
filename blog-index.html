@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — KIST</title>
+<meta name="description" content="Tech education, cybersecurity insights, community stories and updates from Kulan Institute of Technology and Science.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://xkadqvmqxdyqoddiypet.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+<style>
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
+  --white:#fff; --bg:#F4F7FB; --warm:#F8F6F1;
+  --text:#1a2840; --text-mid:#4a6080; --text-light:#8a9bb0;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); }
+
+/* NAV */
+nav {
+  background:var(--navy); padding:0 5%; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid rgba(212,168,67,0.2);
+  position:sticky; top:0; z-index:100;
+}
+.nav-logo { display:flex;align-items:center;gap:10px;text-decoration:none; }
+.nav-logo-icon { width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:16px;color:var(--navy); }
+.nav-logo-text .t1 { font-size:13px;font-weight:700;color:#fff; }
+.nav-logo-text .t2 { font-size:10px;color:rgba(212,168,67,0.7); }
+.nav-links { display:flex;align-items:center;gap:24px; }
+.nav-links a { font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;transition:color .2s; }
+.nav-links a:hover,.nav-links a.active { color:var(--gold); }
+.nav-cta { background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff !important;padding:9px 18px;border-radius:8px;font-weight:700 !important; }
+
+/* HERO */
+.hero {
+  background:linear-gradient(160deg,#060f1e,var(--navy),#0d2a50);
+  padding:72px 5% 64px; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background-image:linear-gradient(rgba(27,174,204,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.05) 1px,transparent 1px);
+  background-size:52px 52px;
+}
+.hero-inner { max-width:1200px;margin:0 auto;position:relative;z-index:1; }
+.hero-eyebrow { display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,67,0.1);border:1px solid rgba(212,168,67,0.25);border-radius:20px;padding:5px 14px;margin-bottom:18px;font-size:12px;font-weight:600;color:var(--gold); }
+.hero h1 { font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,58px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:12px; }
+.hero h1 em { color:var(--gold);font-style:italic; }
+.hero-sub { font-size:16px;color:rgba(255,255,255,0.5);line-height:1.75;max-width:520px; }
+
+/* FILTERS */
+.filters-bar { background:#fff;border-bottom:1px solid rgba(11,31,58,0.08);padding:0 5%; }
+.filters-inner { max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:16px 0;overflow-x:auto;scrollbar-width:none; }
+.filters-inner::-webkit-scrollbar { display:none; }
+.filter-btn {
+  padding:8px 18px;border-radius:20px;border:1.5px solid rgba(11,31,58,0.12);
+  background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  color:var(--text-mid);cursor:pointer;white-space:nowrap;transition:all .2s;
+}
+.filter-btn:hover { border-color:var(--cyan);color:var(--cyan); }
+.filter-btn.active { background:var(--navy);border-color:var(--navy);color:#fff; }
+
+/* MAIN GRID */
+.main { max-width:1200px;margin:0 auto;padding:52px 5% 80px; }
+
+/* FEATURED */
+.featured-wrap { margin-bottom:52px; }
+.featured-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--cyan);margin-bottom:16px;display:flex;align-items:center;gap:8px; }
+.featured-label::before { content:'';width:20px;height:2px;background:var(--cyan);border-radius:2px; }
+
+.featured-card {
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  border-radius:20px;overflow:hidden;background:#fff;
+  border:1px solid rgba(11,31,58,0.07);
+  box-shadow:0 8px 32px rgba(11,31,58,0.08);
+  cursor:pointer; transition:box-shadow .25s, transform .25s;
+  text-decoration:none;
+}
+.featured-card:hover { transform:translateY(-3px);box-shadow:0 16px 48px rgba(11,31,58,0.12); }
+.featured-thumb {
+  min-height:320px;display:flex;align-items:flex-end;padding:28px;
+  background:linear-gradient(160deg,var(--navy),var(--blue));
+  position:relative; overflow:hidden;
+}
+.featured-thumb::before { content:''; position:absolute; inset:0; background:inherit; opacity:.9; }
+.featured-thumb-pattern {
+  position:absolute;inset:0;
+  background-image:repeating-linear-gradient(60deg,rgba(212,168,67,0.06) 0,rgba(212,168,67,0.06) 1px,transparent 0,transparent 28px),repeating-linear-gradient(-60deg,rgba(27,174,204,0.04) 0,rgba(27,174,204,0.04) 1px,transparent 0,transparent 28px);
+}
+.featured-thumb-icon { font-size:64px;position:relative;z-index:1; }
+.featured-body { padding:36px 40px;display:flex;flex-direction:column;justify-content:center; }
+.post-cat { display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:14px; }
+.featured-title { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--navy);line-height:1.3;margin-bottom:14px; }
+.featured-excerpt { font-size:15px;color:var(--text-mid);line-height:1.75;margin-bottom:20px; }
+.post-meta { display:flex;align-items:center;gap:16px;font-size:12px;color:var(--text-light); }
+.post-meta-author { display:flex;align-items:center;gap:7px; }
+.author-av { width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--navy); }
+.read-link { display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--cyan);text-decoration:none;margin-top:auto; }
+.read-link:hover { gap:10px; }
+
+/* POSTS GRID */
+.posts-section-label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-light);margin-bottom:20px;display:flex;align-items:center;gap:8px; }
+.posts-section-label::before { content:'';width:20px;height:2px;background:rgba(11,31,58,0.15);border-radius:2px; }
+
+.posts-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:24px; }
+
+.post-card {
+  background:#fff;border-radius:18px;overflow:hidden;
+  border:1px solid rgba(11,31,58,0.07);
+  transition:all .25s;cursor:pointer;text-decoration:none;display:block;
+}
+.post-card:hover { transform:translateY(-4px);box-shadow:0 12px 36px rgba(11,31,58,0.1);border-color:transparent; }
+.post-thumb {
+  height:160px;display:flex;align-items:center;justify-content:center;
+  font-size:44px;position:relative;overflow:hidden;
+}
+.post-thumb-icon { position:relative;z-index:1; }
+.post-body { padding:22px; }
+.post-title { font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy);line-height:1.35;margin-bottom:10px; }
+.post-excerpt { font-size:13px;color:var(--text-mid);line-height:1.7;margin-bottom:16px; }
+.post-footer { display:flex;align-items:center;justify-content:space-between; }
+.post-date { font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px; }
+.post-arrow { font-size:13px;font-weight:700;color:var(--cyan); }
+
+/* Category colors */
+.cat-ai { background:rgba(27,174,204,0.1);color:var(--cyan); }
+.cat-cyber { background:rgba(212,168,67,0.1);color:#b8860b; }
+.cat-community { background:rgba(14,124,123,0.1);color:var(--teal); }
+.cat-trends { background:rgba(26,60,110,0.1);color:var(--blue); }
+.cat-updates { background:rgba(11,31,58,0.08);color:var(--text-mid); }
+.cat-career { background:rgba(139,92,246,0.1);color:#7c3aed; }
+
+/* thumb backgrounds per category */
+.thumb-ai      { background:linear-gradient(135deg,#0B1F3A,#1A3C6E); }
+.thumb-cyber   { background:linear-gradient(135deg,#1a2a10,#2d5a1b); }
+.thumb-community { background:linear-gradient(135deg,#0E7C7B,#0a5c5b); }
+.thumb-trends  { background:linear-gradient(135deg,#1A3C6E,#0E7C7B); }
+.thumb-updates { background:linear-gradient(135deg,#2c1810,#8B4513); }
+.thumb-career  { background:linear-gradient(135deg,#3b0764,#6d28d9); }
+
+/* EMPTY / LOADING */
+.loading-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:24px; }
+.skeleton-card { background:#fff;border-radius:18px;overflow:hidden;border:1px solid rgba(11,31,58,0.07); }
+.skeleton-thumb { height:160px;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite; }
+.skeleton-body { padding:22px; }
+.skeleton-line { height:14px;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;margin-bottom:10px; }
+.skeleton-line.short { width:60%; }
+.skeleton-line.shorter { width:40%; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+.empty-state { text-align:center;padding:80px 24px;color:var(--text-light); }
+.empty-state .e-icon { font-size:52px;margin-bottom:16px; }
+.empty-state h3 { font-size:20px;font-weight:600;color:var(--text-mid);margin-bottom:8px; }
+.empty-state p { font-size:14px;line-height:1.7; }
+
+/* FOOTER */
+footer { background:var(--navy);padding:40px 5%;border-top:1px solid rgba(255,255,255,0.07); }
+.footer-inner { max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px; }
+.footer-links { display:flex;gap:24px; }
+.footer-links a { font-size:13px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color .2s; }
+.footer-links a:hover { color:var(--gold); }
+.footer-copy { font-size:13px;color:rgba(255,255,255,0.25); }
+
+/* FADE */
+.fade-up { opacity:0;transform:translateY(24px);transition:opacity .5s ease,transform .5s ease; }
+.fade-up.visible { opacity:1;transform:none; }
+
+@media(max-width:1024px) { .posts-grid{grid-template-columns:repeat(2,1fr);} .featured-card{grid-template-columns:1fr;} .featured-thumb{min-height:200px;} }
+@media(max-width:640px) { nav{padding:0 20px;} .nav-links{display:none;} .hero{padding:52px 20px 48px;} .main{padding:36px 20px 60px;} .posts-grid{grid-template-columns:1fr;} }
+
+/* ── MOBILE NAV ── */
+.nav-mobile-btn {
+  display:none; flex-direction:column; justify-content:space-between;
+  width:26px; height:18px; background:none; border:none; cursor:pointer;
+  padding:0; z-index:101; position:relative; flex-shrink:0;
+}
+.nav-mobile-btn span { display:block; height:2px; width:100%; background:#fff; border-radius:2px; transition:all .3s; }
+.nav-mobile-btn.active span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
+.nav-mobile-btn.active span:nth-child(2) { opacity:0; }
+.nav-mobile-btn.active span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
+.nav-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:89; }
+.nav-overlay.show { display:block; }
+@media(max-width:768px) {
+  .nav-mobile-btn { display:flex; }
+  .nav-links {
+    position:fixed; top:0; right:-100%; bottom:0;
+    width:min(280px,80vw); background:var(--navy);
+    padding:80px 28px 40px; z-index:90;
+    transition:right .3s; flex-direction:column; gap:0;
+    border-left:1px solid rgba(255,255,255,0.08);
+    overflow-y:auto; display:flex;
+  }
+  .nav-links.open { right:0; }
+  .nav-links a { padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.07); font-size:15px; }
+  .nav-cta { margin-top:20px !important; text-align:center; border-bottom:none !important; }
+}
+
+@media(max-width:480px) {
+  .page-inner { padding:0 14px; }
+  .featured-card { flex-direction:column; }
+  .featured-img { height:200px; }
+  .posts-grid { grid-template-columns:1fr; }
+  .filter-bar { gap:6px; }
+  .filter-btn { padding:7px 12px; font-size:12px; }
+}
+</style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GGBZJXPLRP');
+</script>
+</head>
+<body>
+
+<nav>
+  <a href="https://kulaninstitute.org" class="nav-logo">
+    <div class="nav-logo-icon">KI</div>
+    <div class="nav-logo-text"><div class="t1">Kulan Institute of Technology and Science</div><div class="t2">Learn. Grow. Lead.</div></div>
+  </a>
+  <div class="nav-links">
+    <a href="https://kulaninstitute.org">Home</a>
+    <a href="https://about.kulaninstitute.org">About</a>
+    <a href="https://blog.kulaninstitute.org" class="active">Blog</a>
+    <a href="https://community.kulaninstitute.org">Community</a>
+    <a href="https://learn.kulaninstitute.org" class="nav-cta">Start Learning &rarr;</a>
+  </div>
+  <button class="nav-mobile-btn" id="mobileBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-overlay" id="navOverlay"></div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">&#128218; Knowledge Hub</div>
+    <h1>Tech, Community,<br>and <em>Everything In Between.</em></h1>
+    <p class="hero-sub">Guides, insights, community stories, and updates from Kulan Institute of Technology and Science — written to inform and empower.</p>
+  </div>
+</div>
+
+<div class="filters-bar">
+  <div class="filters-inner">
+    <button class="filter-btn active" onclick="filterPosts('all', this)">All Posts</button>
+    <button class="filter-btn" onclick="filterPosts('AI & Technology', this)">&#129302; AI &amp; Technology</button>
+    <button class="filter-btn" onclick="filterPosts('Cybersecurity', this)">&#128737; Cybersecurity</button>
+    <button class="filter-btn" onclick="filterPosts('Community', this)">&#127758; Community</button>
+    <button class="filter-btn" onclick="filterPosts('Tech Trends', this)">&#128200; Tech Trends</button>
+    <button class="filter-btn" onclick="filterPosts('Career', this)">&#128188; Career</button>
+    <button class="filter-btn" onclick="filterPosts('Updates', this)">&#128226; Updates</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- FEATURED -->
+  <div class="featured-wrap fade-up" id="featuredWrap">
+    <div class="featured-label">Featured Article</div>
+    <div id="featuredPost"></div>
+  </div>
+
+  <!-- ALL POSTS -->
+  <div class="posts-section-label" style="margin-top:8px;">All Articles</div>
+  <div id="postsGrid" class="posts-grid">
+    <!-- Skeleton loaders -->
+    <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a href="https://kulaninstitute.org" class="nav-logo" style="gap:10px;">
+      <div class="nav-logo-icon">KI</div>
+      <div class="nav-logo-text"><div class="t1" style="color:#fff">Kulan Institute of Technology and Science</div></div>
+    </a>
+    <div class="footer-links">
+      <a href="https://kulaninstitute.org">Home</a>
+      <a href="https://learn.kulaninstitute.org">LMS</a>
+      <a href="https://community.kulaninstitute.org">Community</a>
+      <a href="https://apply.kulaninstitute.org">Apply</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 Kulan Institute of Technology and Science</div>
+  </div>
+</footer>
+
+<script>
+var allPosts = [];
+var currentFilter = 'all';
+
+var catClassMap = {
+  'AI & Technology': 'ai',
+  'Cybersecurity':   'cyber',
+  'Community':       'community',
+  'Tech Trends':     'trends',
+  'Updates':         'updates',
+  'Career':          'career'
+};
+
+var catIconMap = {
+  'AI & Technology': '&#129302;',
+  'Cybersecurity':   '&#128737;',
+  'Community':       '&#127758;',
+  'Tech Trends':     '&#128200;',
+  'Updates':         '&#128226;',
+  'Career':          '&#128188;'
+};
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  var date = new Date(d);
+  return date.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+}
+
+function catClass(cat) { return catClassMap[cat] || 'updates'; }
+function catIcon(cat)  { return catIconMap[cat] || '&#128221;'; }
+
+// ── LOAD POSTS ──────────────────────────────────────────────────
+_sb.from('posts')
+  .select('*')
+  .eq('status','published')
+  .order('published_at', { ascending: false })
+  .then(function(result) {
+    allPosts = result.data || [];
+    renderAll();
+  });
+
+// ── FILTER ──────────────────────────────────────────────────────
+function filterPosts(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderAll();
+}
+
+function renderAll() {
+  var filtered = currentFilter === 'all'
+    ? allPosts
+    : allPosts.filter(function(p) { return p.category === currentFilter; });
+
+  if (filtered.length === 0) {
+    document.getElementById('featuredWrap').style.display = 'none';
+    document.getElementById('postsGrid').innerHTML =
+      '<div class="empty-state" style="grid-column:1/-1;">'
+      + '<div class="e-icon">&#128221;</div>'
+      + '<h3>No articles yet</h3>'
+      + '<p>Check back soon — new content is on the way.</p>'
+      + '</div>';
+    return;
+  }
+
+  document.getElementById('featuredWrap').style.display = filtered.length > 0 ? 'block' : 'none';
+
+  // Featured = first post
+  renderFeatured(filtered[0]);
+
+  // Rest in grid
+  var rest = filtered.slice(1);
+  if (rest.length === 0) {
+    document.getElementById('postsGrid').innerHTML = '';
+    return;
+  }
+  document.getElementById('postsGrid').innerHTML = rest.map(function(p) {
+    return renderCard(p);
+  }).join('');
+}
+
+function renderFeatured(p) {
+  var cc = catClass(p.category);
+  var ic = catIcon(p.category);
+  document.getElementById('featuredPost').innerHTML =
+    '<a href="/post.html?id=' + p.id + '" class="featured-card">'
+    + '<div class="featured-thumb thumb-' + cc + '">'
+    + '<div class="featured-thumb-pattern"></div>'
+    + '<div class="featured-thumb-icon">' + ic + '</div>'
+    + '</div>'
+    + '<div class="featured-body">'
+    + '<span class="post-cat cat-' + cc + '">' + esc(p.category) + '</span>'
+    + '<div class="featured-title">' + esc(p.title) + '</div>'
+    + '<p class="featured-excerpt">' + esc(p.excerpt) + '</p>'
+    + '<div class="post-meta">'
+    + '<div class="post-meta-author"><div class="author-av">M</div>' + esc(p.author || 'Mohamud Mohamed') + '</div>'
+    + '<span>&bull;</span><span>' + formatDate(p.published_at) + '</span>'
+    + (p.read_time ? '<span>&bull;</span><span>' + p.read_time + ' min read</span>' : '')
+    + '</div>'
+    + '<div class="read-link" style="margin-top:20px;">Read Article &rarr;</div>'
+    + '</div>'
+    + '</a>';
+}
+
+function renderCard(p) {
+  var cc = catClass(p.category);
+  var ic = catIcon(p.category);
+  return '<a href="/post.html?id=' + p.id + '" class="post-card">'
+    + '<div class="post-thumb thumb-' + cc + '"><div class="post-thumb-icon">' + ic + '</div></div>'
+    + '<div class="post-body">'
+    + '<span class="post-cat cat-' + cc + '" style="margin-bottom:10px;display:inline-block;">' + esc(p.category) + '</span>'
+    + '<div class="post-title">' + esc(p.title) + '</div>'
+    + '<p class="post-excerpt">' + esc(p.excerpt) + '</p>'
+    + '<div class="post-footer">'
+    + '<span class="post-date">' + formatDate(p.published_at) + '</span>'
+    + '<span class="post-arrow">Read &rarr;</span>'
+    + '</div>'
+    + '</div>'
+    + '</a>';
+}
+
+// Scroll fade
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold:0.08 });
+document.querySelectorAll('.fade-up').forEach(function(el) { obs.observe(el); });
+
+// ── MOBILE MENU ──
+(function() {
+  var btn = document.getElementById('mobileBtn');
+  var links = document.querySelector('.nav-links');
+  var overlay = document.getElementById('navOverlay');
+  if (!btn || !links) return;
+  function closeMenu() {
+    links.classList.remove('open');
+    btn.classList.remove('active');
+    if (overlay) overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  btn.addEventListener('click', function() {
+    var open = !links.classList.contains('open');
+    links.classList.toggle('open', open);
+    btn.classList.toggle('active', open);
+    if (overlay) overlay.classList.toggle('show', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  if (overlay) overlay.addEventListener('click', closeMenu);
+  links.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', closeMenu); });
+})();
+
+</script>
+</body>
+</html>

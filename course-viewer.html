@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Course Viewer — Kulan Institute</title>
+<title>Course Viewer — KIST</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -798,7 +798,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
   <div class="ld-brand">
     <div class="ld-icon">KI</div>
     <div>
-      <div class="ld-name">Kulan Institute</div>
+      <div class="ld-name">Kulan Institute of Technology and Science</div>
       <div class="ld-sub">Learning Platform</div>
     </div>
   </div>
@@ -1130,7 +1130,7 @@ function loadCourse() {
     var cb = document.getElementById('courseBadgeText'); if(cb) cb.textContent = course.title; else document.getElementById('courseBadge').textContent = course.title;
     document.getElementById('sidebarTitle').textContent = course.title;
     document.getElementById('sidebarSub').textContent   = mats.length + ' module' + (mats.length !== 1 ? 's' : '');
-    document.title = course.title + ' — Kulan Institute';
+    document.title = course.title + ' — Kulan Institute of Technology and Science';
 
     renderModuleList(mats);
     updateProgressBar(mats.length);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Certificate — Kulan Institute</title>
+<title>Certificate — KIST</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -12,12 +12,12 @@ var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
 var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
 <style>
-:root { --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B; }
+:root{ --navy:#0B2545; --blue:#1A3A6B; --cyan:#0D9488; --gold:#D97706; --gold2:#F59E0B; --teal:#0D9488; }
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'DM Sans',sans-serif; background:#F4F7FB; min-height:100vh; }
 
 /* LOADING */
-#loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B1F3A,#1A3C6E);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
+#loadingScreen { position:fixed;inset:0;background:linear-gradient(160deg,#0B2545,#1A3A6B);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9999; }
 .ld-logo { width:48px;height:48px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:22px;color:var(--navy); }
 .ld-spin { width:26px;height:26px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite; }
 @keyframes spin { to{transform:rotate(360deg);} }
@@ -137,7 +137,7 @@ body { font-family:'DM Sans',sans-serif; background:#F4F7FB; min-height:100vh; }
   <div class="cert">
     <div class="cert-header">
       <div class="cert-logo">KI</div>
-      <div class="cert-org">Kulan Institute of Learning</div>
+      <div class="cert-org">Kulan Institute of Technology and Science</div>
       <div class="cert-org-sub">Knowledge &bull; Growth &bull; Excellence</div>
     </div>
 
@@ -146,14 +146,14 @@ body { font-family:'DM Sans',sans-serif; background:#F4F7FB; min-height:100vh; }
     <div class="cert-name" id="certName">Student Name</div>
     <div class="cert-completed">has successfully completed</div>
     <div class="cert-course" id="certCourse">Course Title</div>
-    <div class="cert-meta" id="certMeta">Kulan Institute of Learning</div>
+    <div class="cert-meta" id="certMeta">Kulan Institute of Technology and Science</div>
     <div class="cert-divider"></div>
 
     <div class="cert-footer">
       <div class="cert-sig">
         <div class="cert-sig-name">Mohamud Mohamed</div>
         <div class="cert-sig-line"></div>
-        <div class="cert-sig-title">Founder &bull; Kulan Institute</div>
+        <div class="cert-sig-title">Founder &bull; Kulan Institute of Technology and Science</div>
         <div style="font-size:11px;color:#c0ccd8;margin-top:6px;" id="certDate">Date</div>
       </div>
       <div style="text-align:center;">
@@ -235,7 +235,7 @@ function buildCertificate(course, enrollment, userRow) {
 
   document.getElementById('certName').textContent   = fullName;
   document.getElementById('certCourse').textContent = course.title;
-  document.getElementById('certMeta').textContent   = (course.language||'EN')+' \u2022 '+(course.level||'All Levels')+' \u2022 Kulan Institute of Learning';
+  document.getElementById('certMeta').textContent   = (course.language||'EN')+' \u2022 '+(course.level||'All Levels')+' \u2022 Kulan Institute of Technology and Science';
   document.getElementById('certDate').textContent   = dateStr;
   document.getElementById('certLevel').textContent  = course.level || 'All Levels';
   document.getElementById('certYear').textContent   = year;

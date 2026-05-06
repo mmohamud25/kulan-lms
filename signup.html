@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Your Account — Kulan Institute</title>
+<title>Create Account — KIST</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -12,7 +12,7 @@ var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
 var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
 <style>
-:root { --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B; }
+:root{ --navy:#0B2545; --blue:#1A3A6B; --cyan:#0D9488; --gold:#D97706; --gold2:#F59E0B; --teal:#0D9488; }
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#060f1e,var(--navy),#0d2a50);position:relative;overflow:hidden;padding:20px; }
 .bg-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(27,174,204,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.05) 1px,transparent 1px);background-size:56px 56px;pointer-events:none; }
@@ -69,12 +69,12 @@ h1 { font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#
 <div class="card">
   <a href="https://kulaninstitute.org" class="logo">
     <div class="logo-icon">KI</div>
-    <div class="logo-text"><div class="t1">Kulan Institute</div><div class="t2">of Learning</div></div>
+    <div class="logo-text"><div class="t1">Kulan Institute of Technology and Science</div><div class="t2">Learn. Grow. Lead.</div></div>
   </a>
 
   <div id="invalidState">
     <h2>Invalid Link</h2>
-    <p>This signup link is invalid or has expired. Contact Kulan Institute for a new invite.</p>
+    <p>This signup link is invalid or has expired. Contact Kulan Institute of Technology and Science for a new invite.</p>
     <a href="https://kulaninstitute.org" class="go-btn">Go to Homepage</a>
   </div>
 
@@ -112,7 +112,7 @@ h1 { font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#
   <div id="successState">
     <div class="s-icon">&#127881;</div>
     <div class="s-title">Account Created!</div>
-    <p class="s-sub">Welcome to Kulan Institute. Sign in to access your courses.</p>
+    <p class="s-sub">Welcome to Kulan Institute of Technology and Science. Sign in to access your courses.</p>
     <a href="/login.html" class="go-btn">Sign In Now &rarr;</a>
   </div>
 </div>
@@ -132,7 +132,7 @@ function checkStrength() {
   var pw=document.getElementById('pw1').value, fill=document.getElementById('strengthFill'), lbl=document.getElementById('strengthLbl'), score=0;
   if(pw.length>=8) score++; if(pw.length>=12) score++;
   if(/[A-Z]/.test(pw)) score++; if(/[0-9]/.test(pw)) score++; if(/[^a-zA-Z0-9]/.test(pw)) score++;
-  var cols=['#ef4444','#f97316','#eab308','#22c55e','#16a34a'], labs=['Too short','Weak','Fair','Strong','Very strong'];
+  var cols=['#DC2626','#f97316','#eab308','#16A34A','#16A34A'], labs=['Too short','Weak','Fair','Strong','Very strong'];
   fill.style.width=(score*20)+'%'; fill.style.background=cols[Math.max(0,score-1)];
   lbl.textContent=score===0?'At least 8 characters':labs[Math.min(score-1,4)];
 }
@@ -144,7 +144,7 @@ if (!token || !email) {
   document.getElementById('emailInput').value        = decodeURIComponent(email);
   document.getElementById('nameInput').value         = decodeURIComponent(name);
   document.getElementById('displayName').textContent  = decodeURIComponent(name) || 'New Student';
-  document.getElementById('displayCourse').textContent = course ? 'Course: '+decodeURIComponent(course) : 'Kulan Institute of Learning';
+  document.getElementById('displayCourse').textContent = course ? 'Course: '+decodeURIComponent(course) : 'Kulan Institute of Technology and Science';
 }
 
 function createAccount() {

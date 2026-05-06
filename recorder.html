@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kulan Studio — Lesson Recorder</title>
+<title>Lesson Recorder — Kulan Studio</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -12,10 +12,10 @@ var SUPABASE_KEY='sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
 var _sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 </script>
 <style>
-:root {
+:root{
   --bg:#080c14;--panel:#0e1420;--panel2:#131b28;--panel3:#1a2338;
   --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-  --cyan:#1BAECC;--gold:#D4A843;--gold2:#e8c060;--teal:#0E7C7B;
+  --cyan:#0D9488;--gold:#D97706;--gold2:#F59E0B;--teal:#0D9488;
   --red:#dc2626;--red2:#ef4444;--success:#16a34a;
   --text:#e2e8f4;--text-mid:#6b7fa3;--text-light:#3d4f6b;
 }
@@ -150,7 +150,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .btn-dl{width:100%;padding:11px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;margin-bottom:8px;}
 .btn-mp4{background:linear-gradient(135deg,#1d4ed8,#1e40af);color:#fff;}
 .btn-mp4:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(29,78,216,0.35);}
-.btn-save{background:linear-gradient(135deg,var(--teal),#0a5c5b);color:#fff;}
+.btn-save{background:linear-gradient(135deg,var(--teal),#0B706B);color:#fff;}
 .btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(14,124,123,0.3);}
 .btn-save:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 .yt-hint{font-size:11px;color:var(--text-mid);line-height:1.6;margin-bottom:10px;}
@@ -164,7 +164,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;backgroun
 .sbar-r{margin-left:auto;display:flex;gap:6px;}
 .sbtn{padding:7px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;transition:all .2s;}
 .sbtn-play{background:var(--cyan);color:#fff;}
-.sbtn-play:hover{background:#18a0b8;}
+.sbtn-play:hover{background:#0B8078;}
 .sbtn-redo{background:var(--panel3);color:var(--text-mid);border:1.5px solid var(--border2);}
 .sbtn-redo:hover{color:var(--text);}
 

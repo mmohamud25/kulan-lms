@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Dashboard — Kulan Institute</title>
+<title>My Dashboard — KIST</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -472,7 +472,7 @@ body.somali-on .en { display:none; }
   <div class="topbar">
     <a href="https://kulaninstitute.org" class="tb-logo">
       <div class="tb-logo-icon">KI</div>
-      <div class="tb-logo-text"><div class="t1">Kulan Institute</div><div class="t2">of Learning</div></div>
+      <div class="tb-logo-text"><div class="t1">Kulan Institute of Technology and Science</div><div class="t2">KIST &middot; Learn. Grow. Lead.</div></div>
     </a>
     <div class="tb-right">
       <button class="lang-toggle" id="langToggle" onclick="toggleLang()">+ Somali</button>
@@ -674,7 +674,7 @@ body.somali-on .en { display:none; }
         <div class="pay-icon">&#127881;</div>
         <div>
           <div class="pay-title">All Courses Are Free</div>
-          <div class="pay-desc">Kulan Institute is committed to making education accessible to everyone. All current courses are completely free.</div>
+          <div class="pay-desc">Kulan Institute of Technology and Science is committed to making education accessible to everyone. All current courses are completely free.</div>
           <div class="pay-badge">&#10003; Free Access &mdash; No payment required</div>
         </div>
       </div>
@@ -1155,7 +1155,7 @@ function renderCerts(){
 function renderAnnouncements(anncs){
   var list=document.getElementById('announcementsList');
   if(!anncs||!anncs.length){
-    list.innerHTML='<div class="empty-state"><div class="e-icon">&#128226;</div><div class="e-title"><span class="en">No announcements yet</span><span class="so">Wali war-baahino ma jirto</span></div><div class="e-desc"><span class="en">Check back soon for updates from Kulan Institute.</span><span class="so">Dib u eeg dhawaan cusbooneysiin ka Machadka Kulan.</span></div></div>';
+    list.innerHTML='<div class="empty-state"><div class="e-icon">&#128226;</div><div class="e-title"><span class="en">No announcements yet</span><span class="so">Wali war-baahino ma jirto</span></div><div class="e-desc"><span class="en">Check back soon for updates from Kulan Institute of Technology and Science.</span><span class="so">Dib u eeg dhawaan cusbooneysiin ka Machadka Kulan.</span></div></div>';
     return;
   }
   list.innerHTML=anncs.map(function(a){

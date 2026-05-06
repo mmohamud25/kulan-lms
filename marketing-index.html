@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Kulan Institute of Technology and Science — World-class education in AI, Cybersecurity, and Technology for the global Somali diaspora. Bilingual English and Somali.">
+<meta property="og:title"       content="Kulan Institute of Technology and Science — KIST">
+<meta property="og:description" content="World-class AI, Cybersecurity, and Technology education for the Somali diaspora — fully bilingual in English and Somali, 100% free.">
+<meta property="og:type"        content="website">
+<meta property="og:url"         content="https://kulaninstitute.org/">
+<meta property="og:image"       content="https://kulaninstitute.org/og-image.png">
+<meta property="og:site_name"   content="KIST — Kulan Institute of Technology and Science">
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="Kulan Institute of Technology and Science — KIST">
+<meta name="twitter:description" content="World-class AI, Cybersecurity, and Technology education for the Somali diaspora — bilingual EN + SO, 100% free.">
+<meta name="twitter:image"       content="https://kulaninstitute.org/og-image.png">
+<meta name="author"              content="Mohamud Mohamed — Kulan Group Ltd">
+<meta name="keywords"            content="Somali education, cybersecurity, AI, Security+, bilingual, KIST, Kulan Institute, diaspora">
+<link rel="canonical"            href="https://kulaninstitute.org/">
+<link rel="icon"                 type="image/png" href="/favicon.png">
+<link rel="icon"                 sizes="32x32"    href="/favicon-32.png">
+<link rel="apple-touch-icon"     href="/favicon-180.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Kulan Institute of Technology and Science",
+  "alternateName": "KIST",
+  "url": "https://kulaninstitute.org",
+  "logo": "https://kulaninstitute.org/favicon.png",
+  "description": "World-class bilingual education in AI, Cybersecurity, and Digital Technology for the global Somali diaspora.",
+  "foundingDate": "2024",
+  "address": { "@type": "PostalAddress", "addressLocality": "Columbus", "addressRegion": "OH", "addressCountry": "US" },
+  "sameAs": ["https://linkedin.com/in/mohamed-2-mohamud", "https://learn.kulaninstitute.org"]
+}
+</script>
+<title>Kulan Institute of Technology and Science — KIST</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,600;1,700&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-GGBZJXPLRP');</script>
+<style>
+/* ═══════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════ */
+:root {
+  --ink:    #06111f;
+  --navy:   #0B2545;
+  --blue:   #1A3A6B;
+  --cyan:   #0D9488;
+  --teal:   #14B8A6;
+  --gold:   #D97706;
+  --gold2:  #F59E0B;
+  --amber:  #FBBF24;
+  --cream:  #FAF8F3;
+  --off:    #F3F0E8;
+  --white:  #FFFFFF;
+  --text:   #0f1e35;
+  --text2:  #4a5e78;
+  --text3:  #8fa3bc;
+  --border: rgba(11,37,69,0.10);
+  --ff-head: 'Cormorant Garamond', Georgia, serif;
+  --ff-body: 'DM Sans', sans-serif;
+  --ff-mono: 'DM Mono', monospace;
+}
+
+/* ═══════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; font-size:16px; }
+body {
+  font-family: var(--ff-body);
+  background: var(--cream);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width:100%; display:block; }
+a   { text-decoration:none; color:inherit; }
+
+/* ═══════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════ */
+.sr { opacity:0; transform:translateY(28px); transition:opacity .75s cubic-bezier(.4,0,.2,1), transform .75s cubic-bezier(.4,0,.2,1); }
+.sr.d1 { transition-delay:.1s; }
+.sr.d2 { transition-delay:.2s; }
+.sr.d3 { transition-delay:.3s; }
+.sr.d4 { transition-delay:.4s; }
+.sr.visible { opacity:1; transform:none; }
+
+/* ═══════════════════════════════════════
+   LANGUAGE TOGGLE
+═══════════════════════════════════════ */
+body.so-mode .en { display:none; }
+body:not(.so-mode) .so { display:none; }
+.so { font-style:italic; }
+
+/* ═══════════════════════════════════════
+   NAV
+═══════════════════════════════════════ */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height:68px;
+  display:flex; align-items:center;
+  padding:0 48px;
+  background:rgba(6,17,31,0.94);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  transition:all .35s;
+}
+.nav.scrolled {
+  height:58px;
+  background:rgba(6,17,31,0.98);
+  box-shadow:0 4px 40px rgba(0,0,0,.35);
+}
+.nav-brand { display:flex; align-items:center; gap:13px; text-decoration:none; flex-shrink:0; }
+.nav-mark {
+  width:40px; height:40px; border-radius:10px; flex-shrink:0;
+  background:linear-gradient(135deg, var(--amber), var(--gold));
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--ff-head); font-weight:700; font-size:16px;
+  color:var(--ink); box-shadow:0 2px 16px rgba(217,119,6,.3);
+  letter-spacing:-.5px;
+}
+.nav-text-top {
+  font-size:12px; font-weight:700; color:#fff;
+  letter-spacing:-.2px; line-height:1.2;
+}
+.nav-text-bot {
+  font-size:9px; color:rgba(255,255,255,.3);
+  text-transform:uppercase; letter-spacing:2px;
+}
+.nav-links {
+  display:flex; align-items:center; gap:2px;
+  margin-left:auto;
+}
+.nav-link {
+  color:rgba(255,255,255,.55); font-size:13px; font-weight:500;
+  padding:7px 16px; border-radius:8px; transition:all .2s;
+}
+.nav-link:hover { color:#fff; background:rgba(255,255,255,.06); }
+.nav-lang {
+  font-size:11px; font-weight:700; color:var(--amber);
+  padding:6px 13px; border-radius:20px;
+  border:1px solid rgba(217,119,6,.3);
+  background:rgba(217,119,6,.08);
+  cursor:pointer; margin-left:6px; transition:all .2s;
+}
+.nav-lang:hover { background:rgba(217,119,6,.18); }
+.nav-apply {
+  margin-left:10px; padding:9px 22px; border-radius:9px;
+  background:linear-gradient(135deg, var(--gold), var(--gold2));
+  color:var(--ink); font-size:13px; font-weight:700;
+  transition:all .2s; border:none; cursor:pointer;
+  font-family:var(--ff-body);
+}
+.nav-apply:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(217,119,6,.4); }
+/* Mobile nav */
+.nav-burger {
+  display:none; flex-direction:column; gap:5px; padding:8px;
+  background:transparent; border:none; cursor:pointer; margin-left:auto;
+}
+.nav-burger span { display:block; width:22px; height:2px; background:#fff; border-radius:2px; transition:all .3s; }
+.nav-mobile { display:none; }
+
+/* ═══════════════════════════════════════
+   HERO
+═══════════════════════════════════════ */
+.hero {
+  min-height:100vh;
+  background:var(--ink);
+  position:relative; overflow:hidden;
+  display:flex; align-items:center;
+  padding:120px 48px 80px;
+}
+/* Texture */
+.hero-tex {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    radial-gradient(ellipse 70% 60% at 80% 40%, rgba(13,148,136,.14) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 15% 70%, rgba(217,119,6,.1) 0%, transparent 65%);
+}
+/* Fine grid */
+.hero-grid {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size:72px 72px;
+}
+/* Diagonal lines */
+.hero-lines {
+  position:absolute; inset:0; pointer-events:none; overflow:hidden;
+}
+.hero-lines svg { position:absolute; width:100%; height:100%; }
+
+.hero-inner {
+  position:relative; max-width:1200px; margin:0 auto; width:100%;
+  display:grid; grid-template-columns:1fr 480px; gap:72px; align-items:center;
+}
+
+/* Eyebrow */
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:10px;
+  background:rgba(217,119,6,.1); border:1px solid rgba(217,119,6,.25);
+  color:var(--amber); font-size:10px; font-weight:700;
+  text-transform:uppercase; letter-spacing:2.5px;
+  padding:7px 18px; border-radius:20px; margin-bottom:28px;
+  font-family:var(--ff-mono);
+  animation:fadeUp .6s ease both;
+}
+.hero-eyebrow-dot {
+  width:6px; height:6px; border-radius:50%; background:var(--amber);
+  animation:pulse 2s ease-in-out infinite; flex-shrink:0;
+}
+@keyframes pulse { 0%,100%{opacity:.4;transform:scale(.8)} 50%{opacity:1;transform:scale(1.2)} }
+
+/* Title */
+.hero-title {
+  font-family:var(--ff-head);
+  font-size:clamp(48px, 5.5vw, 80px);
+  font-weight:300; color:#fff;
+  line-height:1.06; letter-spacing:-.5px;
+  margin-bottom:10px;
+  animation:fadeUp .7s .1s ease both;
+}
+.hero-title strong { font-weight:700; display:block; }
+.hero-title em { font-style:italic; color:var(--amber); }
+.hero-title-so {
+  font-family:var(--ff-head); font-style:italic;
+  font-size:clamp(20px, 2.2vw, 30px); color:rgba(255,255,255,.35);
+  margin-bottom:24px; font-weight:300;
+  animation:fadeUp .7s .15s ease both;
+}
+
+/* Sub */
+.hero-sub {
+  font-size:clamp(15px,1.5vw,17px); color:rgba(255,255,255,.55);
+  line-height:1.82; max-width:500px; margin-bottom:40px;
+  animation:fadeUp .7s .2s ease both;
+}
+.hero-sub strong { color:rgba(255,255,255,.85); font-weight:500; }
+
+/* Buttons */
+.hero-btns {
+  display:flex; gap:14px; flex-wrap:wrap;
+  animation:fadeUp .7s .3s ease both;
+}
+.btn-primary {
+  display:inline-flex; align-items:center; gap:9px;
+  padding:14px 30px; border-radius:11px;
+  background:linear-gradient(135deg, var(--gold), var(--gold2));
+  color:var(--ink); font-size:14px; font-weight:700;
+  border:none; cursor:pointer; font-family:var(--ff-body);
+  transition:all .25s;
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 32px rgba(217,119,6,.4); }
+.btn-outline {
+  display:inline-flex; align-items:center; gap:9px;
+  padding:14px 28px; border-radius:11px;
+  background:transparent; border:1.5px solid rgba(255,255,255,.16);
+  color:rgba(255,255,255,.72); font-size:14px; font-weight:600;
+  cursor:pointer; font-family:var(--ff-body); transition:all .25s;
+}
+.btn-outline:hover { border-color:rgba(255,255,255,.4); color:#fff; }
+
+/* Stats */
+.hero-stats {
+  display:flex; gap:36px; margin-top:44px;
+  padding-top:36px; border-top:1px solid rgba(255,255,255,.07);
+  animation:fadeUp .7s .4s ease both; flex-wrap:wrap;
+}
+.hs-num {
+  font-family:var(--ff-head); font-size:38px; font-weight:700;
+  color:#fff; line-height:1; margin-bottom:5px;
+}
+.hs-num span { color:var(--amber); }
+.hs-lbl { font-size:11px; color:rgba(255,255,255,.35); text-transform:uppercase; letter-spacing:1.5px; }
+
+/* Right — visual panel */
+.hero-panel {
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:24px; padding:32px;
+  animation:fadeUp .8s .5s ease both;
+  position:relative; overflow:hidden;
+}
+.hero-panel::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--cyan), var(--amber), transparent);
+}
+.hp-label {
+  font-family:var(--ff-mono); font-size:9px; font-weight:500;
+  text-transform:uppercase; letter-spacing:3px;
+  color:rgba(255,255,255,.25); margin-bottom:20px;
+}
+.hp-course {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 0; border-bottom:1px solid rgba(255,255,255,.06);
+  transition:background .15s;
+}
+.hp-course:last-child { border-bottom:none; }
+.hp-icon {
+  width:42px; height:42px; border-radius:11px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+}
+.hp-icon.ai   { background:rgba(13,148,136,.15); }
+.hp-icon.cyber{ background:rgba(220,38,38,.12); }
+.hp-icon.dig  { background:rgba(217,119,6,.12); }
+.hp-icon.sec  { background:rgba(124,58,237,.12); }
+.hp-name { font-size:13px; font-weight:700; color:#fff; margin-bottom:4px; }
+.hp-meta { font-size:11px; color:rgba(255,255,255,.38); }
+.hp-pct  { font-size:12px; font-weight:700; color:var(--amber); margin-left:auto; flex-shrink:0; }
+.hp-bar  { height:3px; background:rgba(255,255,255,.08); border-radius:2px; margin-top:6px; overflow:hidden; }
+.hp-fill { height:100%; border-radius:2px; background:linear-gradient(90deg, var(--cyan), var(--teal)); }
+
+.hero-panel-cta {
+  margin-top:22px; width:100%; padding:12px;
+  border-radius:10px; background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  color:rgba(255,255,255,.6); font-family:var(--ff-body);
+  font-size:13px; font-weight:600; cursor:pointer;
+  transition:all .2s; text-align:center; display:block;
+}
+.hero-panel-cta:hover { background:rgba(255,255,255,.1); color:#fff; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
+
+/* ═══════════════════════════════════════
+   BANNER STRIP
+═══════════════════════════════════════ */
+.banner-strip {
+  background:var(--navy); padding:20px 0;
+  border-top:2px solid var(--gold); border-bottom:1px solid rgba(255,255,255,.05);
+  overflow:hidden; white-space:nowrap;
+}
+.bs-track {
+  display:inline-flex; animation:scroll 32s linear infinite;
+}
+.bs-item {
+  display:inline-flex; align-items:center; gap:14px;
+  padding:0 40px; font-size:12px; font-weight:700;
+  text-transform:uppercase; letter-spacing:2px;
+  color:rgba(255,255,255,.45);
+}
+.bs-dot { width:4px; height:4px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+@keyframes scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ═══════════════════════════════════════
+   SHARED SECTION STYLES
+═══════════════════════════════════════ */
+.section-wrap { max-width:1200px; margin:0 auto; }
+.s-eyebrow {
+  font-family:var(--ff-mono); font-size:10px; font-weight:500;
+  text-transform:uppercase; letter-spacing:3px; margin-bottom:14px;
+  display:block;
+}
+.s-title {
+  font-family:var(--ff-head);
+  font-size:clamp(32px, 4vw, 54px); font-weight:600;
+  line-height:1.15; letter-spacing:-.3px;
+}
+.s-title em { font-style:italic; color:var(--gold); }
+.s-sub {
+  font-size:16px; line-height:1.8; margin-top:16px;
+  max-width:560px; color:var(--text2);
+}
+
+/* ═══════════════════════════════════════
+   MISSION
+═══════════════════════════════════════ */
+.mission { padding:120px 48px; background:var(--cream); }
+.mission-inner {
+  max-width:1200px; margin:0 auto;
+  display:grid; grid-template-columns:1fr 1fr; gap:100px; align-items:center;
+}
+.mission-left .s-eyebrow { color:var(--cyan); }
+.mission-left .s-title   { color:var(--navy); }
+.mission-left .s-sub     { margin-bottom:28px; }
+.mission-rule { width:56px; height:3px; background:var(--cyan); border-radius:2px; margin:24px 0; }
+.mission-values { display:flex; flex-direction:column; }
+.mv {
+  display:flex; gap:16px; padding:18px 0;
+  border-bottom:1px solid var(--border);
+}
+.mv:first-child { border-top:1px solid var(--border); }
+.mv-icon {
+  width:40px; height:40px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+}
+.mv-icon.c1 { background:rgba(13,148,136,.08); }
+.mv-icon.c2 { background:rgba(11,37,69,.07); }
+.mv-icon.c3 { background:rgba(217,119,6,.08); }
+.mv-title { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:3px; }
+.mv-desc  { font-size:13px; color:var(--text2); line-height:1.65; }
+
+/* Right card */
+.mission-card {
+  background:var(--navy); border-radius:24px; padding:48px;
+  position:relative; overflow:hidden;
+}
+.mission-card::after {
+  content:'KIST'; position:absolute; right:-20px; bottom:-40px;
+  font-family:var(--ff-head); font-size:160px; font-weight:900;
+  color:rgba(255,255,255,.03); line-height:1; pointer-events:none;
+  letter-spacing:-8px;
+}
+.mc-quote {
+  font-family:var(--ff-head); font-size:24px; font-weight:300;
+  font-style:italic; color:rgba(255,255,255,.82); line-height:1.65;
+  margin-bottom:24px; position:relative;
+}
+.mc-quote::before {
+  content:'\201C'; position:absolute; top:-24px; left:-8px;
+  font-size:80px; color:rgba(255,255,255,.06); line-height:1;
+  font-family:var(--ff-head); font-style:normal;
+}
+.mc-quote strong { font-weight:700; color:var(--amber); font-style:normal; }
+.mc-rule { width:48px; height:2px; background:var(--gold); margin-bottom:18px; }
+.mc-by { font-size:12px; color:rgba(255,255,255,.4); font-weight:600; letter-spacing:.5px; }
+.mc-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:32px;
+}
+.mc-stat {
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07);
+  border-radius:12px; padding:18px; text-align:center;
+}
+.mc-stat-num {
+  font-family:var(--ff-head); font-size:34px; font-weight:700;
+  color:#fff; margin-bottom:3px;
+}
+.mc-stat-num span { color:var(--amber); }
+.mc-stat-lbl { font-size:10px; color:rgba(255,255,255,.35); font-weight:600; letter-spacing:.5px; }
+
+/* ═══════════════════════════════════════
+   PROGRAMS
+═══════════════════════════════════════ */
+.programs { padding:120px 48px; background:var(--navy); }
+.programs-header {
+  display:flex; justify-content:space-between; align-items:flex-end;
+  margin-bottom:56px; flex-wrap:wrap; gap:20px;
+}
+.programs-header .s-eyebrow { color:var(--amber); }
+.programs-header .s-title   { color:#fff; }
+.programs-header .s-sub     { color:rgba(255,255,255,.45); }
+.view-all {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:13px; font-weight:700; color:rgba(255,255,255,.5);
+  border:1px solid rgba(255,255,255,.12); padding:10px 20px;
+  border-radius:9px; transition:all .2s; flex-shrink:0;
+}
+.view-all:hover { color:#fff; border-color:rgba(255,255,255,.3); }
+
+.programs-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:18px;
+}
+.prog-card {
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  border-radius:22px; padding:36px; transition:all .28s;
+  position:relative; overflow:hidden; display:block; text-decoration:none;
+}
+.prog-card::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,.02), transparent);
+  opacity:0; transition:opacity .3s;
+}
+.prog-card::after {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; border-radius:0; opacity:0; transition:opacity .3s;
+}
+.prog-card:hover { transform:translateY(-5px); border-color:rgba(255,255,255,.16); }
+.prog-card:hover::before, .prog-card:hover::after { opacity:1; }
+.pc-ai::after    { background:linear-gradient(to bottom, var(--cyan), var(--teal)); }
+.pc-cyber::after { background:linear-gradient(to bottom, #DC2626, #ef4444); }
+.pc-sec::after   { background:linear-gradient(to bottom, #7c3aed, #a855f7); }
+.pc-dig::after   { background:linear-gradient(to bottom, var(--gold), var(--amber)); }
+
+.pc-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; }
+.pc-icon {
+  width:52px; height:52px; border-radius:14px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:24px;
+}
+.pc-ai .pc-icon    { background:rgba(13,148,136,.15); }
+.pc-cyber .pc-icon { background:rgba(220,38,38,.12); }
+.pc-sec .pc-icon   { background:rgba(124,58,237,.12); }
+.pc-dig .pc-icon   { background:rgba(217,119,6,.12); }
+
+.pc-badge {
+  font-size:10px; font-weight:700; padding:4px 12px; border-radius:20px;
+  font-family:var(--ff-mono); letter-spacing:.5px;
+}
+.badge-beginner { background:rgba(22,163,74,.12); color:#4ade80; }
+.badge-inter    { background:rgba(217,119,6,.12); color:var(--amber); }
+.badge-advanced { background:rgba(220,38,38,.12); color:#f87171; }
+.badge-all      { background:rgba(255,255,255,.08); color:rgba(255,255,255,.6); }
+
+.pc-num {
+  font-family:var(--ff-head); font-size:72px; font-weight:300;
+  color:rgba(255,255,255,.05); line-height:1; margin-bottom:-10px;
+}
+.pc-name {
+  font-family:var(--ff-head); font-size:28px; font-weight:600;
+  color:#fff; margin-bottom:6px; letter-spacing:-.2px;
+}
+.pc-name-so {
+  font-family:var(--ff-head); font-style:italic; font-size:15px;
+  color:rgba(255,255,255,.3); margin-bottom:14px; font-weight:300;
+}
+.pc-desc { font-size:14px; color:rgba(255,255,255,.5); line-height:1.75; margin-bottom:24px; }
+.pc-pills { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:24px; }
+.pc-pill {
+  font-size:11px; font-weight:600; padding:4px 12px; border-radius:20px;
+  background:rgba(255,255,255,.06); color:rgba(255,255,255,.5);
+  border:1px solid rgba(255,255,255,.07);
+}
+.pc-link {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:13px; font-weight:700; color:rgba(255,255,255,.5);
+  transition:color .2s;
+}
+.pc-card:hover .pc-link, .prog-card:hover .pc-link { color:#fff; }
+
+/* ═══════════════════════════════════════
+   WHY KIST
+═══════════════════════════════════════ */
+.why { padding:120px 48px; background:var(--off); }
+.why-header { text-align:center; margin-bottom:64px; }
+.why-header .s-eyebrow { color:var(--cyan); }
+.why-header .s-title   { color:var(--navy); margin:0 auto; }
+
+.why-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; max-width:1200px; margin:0 auto; }
+.why-card {
+  background:#fff; border:1.5px solid var(--border); border-radius:20px;
+  padding:36px; box-shadow:0 4px 20px rgba(11,37,69,.06); transition:all .25s;
+}
+.why-card:hover {
+  border-color:rgba(13,148,136,.25); transform:translateY(-4px);
+  box-shadow:0 12px 40px rgba(13,148,136,.1);
+}
+.wc-num {
+  font-family:var(--ff-head); font-size:56px; font-weight:700;
+  line-height:1; margin-bottom:16px;
+  background:linear-gradient(135deg, var(--cyan), var(--teal));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.wc-title { font-size:17px; font-weight:700; color:var(--navy); margin-bottom:10px; }
+.wc-desc  { font-size:14px; color:var(--text2); line-height:1.75; }
+
+/* ═══════════════════════════════════════
+   IMPACT
+═══════════════════════════════════════ */
+.impact { padding:100px 48px; background:var(--ink); }
+.impact-inner { max-width:1200px; margin:0 auto; text-align:center; }
+.impact .s-eyebrow { color:var(--amber); margin-bottom:14px; }
+.impact .s-title   { color:#fff; margin:0 auto 56px; }
+.impact-row {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:0; border:1px solid rgba(255,255,255,.07); border-radius:20px; overflow:hidden;
+}
+.ir-cell {
+  padding:48px 28px; text-align:center;
+  border-right:1px solid rgba(255,255,255,.07); transition:background .2s;
+}
+.ir-cell:last-child { border-right:none; }
+.ir-cell:hover { background:rgba(255,255,255,.03); }
+.ir-num {
+  font-family:var(--ff-head); font-size:54px; font-weight:700;
+  color:#fff; line-height:1; margin-bottom:8px;
+}
+.ir-num span { color:var(--cyan); }
+.ir-lbl { font-size:13px; color:rgba(255,255,255,.4); font-weight:500; line-height:1.5; }
+
+/* ═══════════════════════════════════════
+   TESTIMONIALS
+═══════════════════════════════════════ */
+.testimonials { padding:120px 48px; background:var(--cream); }
+.testimonials .s-eyebrow { color:var(--cyan); }
+.testimonials .s-title   { color:var(--navy); margin-bottom:52px; }
+.test-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; max-width:1200px; margin:0 auto; }
+.test-card {
+  background:#fff; border:1.5px solid var(--border); border-radius:18px;
+  padding:32px; box-shadow:0 4px 20px rgba(11,37,69,.05); position:relative;
+}
+.test-card::before {
+  content:'\201C'; position:absolute; top:20px; right:24px;
+  font-family:var(--ff-head); font-size:72px; color:var(--off);
+  line-height:1; pointer-events:none;
+}
+.tc-text { font-size:15px; color:var(--text); line-height:1.8; margin-bottom:24px; font-style:italic; }
+.tc-rule { width:40px; height:2px; background:var(--cyan); border-radius:1px; margin-bottom:16px; }
+.tc-name { font-size:14px; font-weight:700; color:var(--navy); }
+.tc-role { font-size:12px; color:var(--text2); margin-top:2px; }
+
+/* ═══════════════════════════════════════
+   APPLY CTA
+═══════════════════════════════════════ */
+.apply-cta {
+  padding:140px 48px;
+  background:linear-gradient(135deg, var(--navy) 0%, #0a3535 100%);
+  position:relative; overflow:hidden; text-align:center;
+}
+.apply-cta-glow {
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:900px; height:500px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(ellipse, rgba(13,148,136,.18) 0%, transparent 65%);
+}
+.apply-cta-inner { position:relative; max-width:680px; margin:0 auto; }
+.apply-cta .s-eyebrow { color:var(--amber); margin-bottom:20px; }
+.apply-cta-title {
+  font-family:var(--ff-head);
+  font-size:clamp(40px,5vw,68px); font-weight:300; color:#fff;
+  line-height:1.12; margin-bottom:20px;
+}
+.apply-cta-title strong { font-weight:700; }
+.apply-cta-title em     { font-style:italic; color:var(--amber); }
+.apply-cta-sub {
+  font-size:17px; color:rgba(255,255,255,.5); line-height:1.8;
+  margin-bottom:44px;
+}
+.apply-cta-rule {
+  width:80px; height:2px; margin:0 auto 44px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.apply-cta-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+
+
+/* ═══════════════════════════════════════
+   CONTACT
+═══════════════════════════════════════ */
+.contact { padding:120px 48px; background:var(--ink); position:relative; overflow:hidden; }
+.contact-glow {
+  position:absolute; right:-100px; top:-100px; width:600px; height:600px; border-radius:50%;
+  background:radial-gradient(circle, rgba(13,148,136,.18) 0%, transparent 65%); pointer-events:none;
+}
+.contact-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+.contact-title {
+  font-family:var(--ff-head); font-size:clamp(34px,4vw,52px); font-weight:600;
+  color:#fff; line-height:1.18; margin-bottom:18px;
+}
+.contact-title em { font-style:italic; color:var(--amber); }
+.contact-sub { font-size:15px; color:rgba(255,255,255,.45); line-height:1.8; margin-bottom:32px; }
+.contact-items { display:flex; flex-direction:column; gap:16px; }
+.ci {
+  display:flex; align-items:center; gap:14px;
+  font-size:14px; color:rgba(255,255,255,.55);
+}
+.ci-icon {
+  width:40px; height:40px; border-radius:10px; flex-shrink:0;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08);
+  display:flex; align-items:center; justify-content:center; font-size:17px;
+}
+.ci strong { color:#fff; display:block; font-size:12px; margin-bottom:1px; font-weight:600; }
+.ci a { color:rgba(255,255,255,.55); text-decoration:none; transition:color .2s; }
+.ci a:hover { color:var(--amber); }
+.contact-form { display:flex; flex-direction:column; gap:14px; }
+.cf-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.cf-input,.cf-select,.cf-textarea {
+  width:100%; padding:13px 16px;
+  background:rgba(255,255,255,.05); border:1.5px solid rgba(255,255,255,.1);
+  border-radius:11px; color:#fff; font-family:var(--ff-body); font-size:14px;
+  outline:none; transition:border .2s;
+}
+.cf-input::placeholder,.cf-textarea::placeholder { color:rgba(255,255,255,.25); }
+.cf-input:focus,.cf-select:focus,.cf-textarea:focus {
+  border-color:rgba(13,148,136,.5); box-shadow:0 0 0 3px rgba(13,148,136,.1);
+}
+.cf-select { color:rgba(255,255,255,.6); cursor:pointer; }
+.cf-select option { background:#07192e; color:#fff; }
+.cf-textarea { resize:none; min-height:120px; line-height:1.65; }
+.cf-submit {
+  padding:14px; border-radius:11px; border:none; cursor:pointer;
+  background:linear-gradient(135deg, var(--gold), var(--gold2));
+  color:var(--ink); font-family:var(--ff-body); font-size:15px; font-weight:700;
+  transition:all .2s;
+}
+.cf-submit:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(217,119,6,.4); }
+.cf-submit:disabled { opacity:.6; transform:none; cursor:not-allowed; }
+.cf-msg {
+  display:none; padding:13px 16px; border-radius:10px;
+  font-size:14px; font-weight:600; line-height:1.5;
+}
+.cf-msg.success { background:rgba(22,163,74,.1); border:1px solid rgba(22,163,74,.25); color:#4ade80; }
+.cf-msg.error   { background:rgba(220,38,38,.1);  border:1px solid rgba(220,38,38,.25);  color:#f87171; }
+.contact-social { margin-top:36px; }
+.cs-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px;
+  color:rgba(255,255,255,.25); margin-bottom:14px; font-family:var(--ff-mono); }
+.cs-links { display:flex; gap:10px; flex-wrap:wrap; }
+.cs-link {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 16px; border-radius:9px; font-size:13px; font-weight:600;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.09);
+  color:rgba(255,255,255,.55); text-decoration:none; transition:all .2s;
+}
+.cs-link:hover { background:rgba(255,255,255,.12); color:#fff; }
+@media(max-width:768px) {
+  .contact-inner { grid-template-columns:1fr; gap:48px; }
+  .cf-row { grid-template-columns:1fr; }
+  .contact { padding-left:20px; padding-right:20px; }
+}
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+.footer { background:#030c17; padding:72px 48px 32px; }
+.footer-inner {
+  max-width:1200px; margin:0 auto;
+  display:grid; grid-template-columns:2.2fr 1fr 1fr 1fr; gap:56px;
+  padding-bottom:52px; border-bottom:1px solid rgba(255,255,255,.05);
+}
+.footer-brand-name { font-family:var(--ff-head); font-size:20px; font-weight:600; color:#fff; margin-bottom:4px; }
+.footer-brand-short{ font-size:11px; color:var(--amber); font-family:var(--ff-mono); letter-spacing:3px; margin-bottom:16px; }
+.footer-brand-desc { font-size:13px; color:rgba(255,255,255,.3); line-height:1.8; max-width:260px; }
+.footer-logo-mark {
+  width:40px; height:40px; border-radius:10px; margin-bottom:16px;
+  background:linear-gradient(135deg, var(--amber), var(--gold));
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--ff-head); font-weight:700; font-size:16px; color:var(--ink);
+}
+.fc-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:rgba(255,255,255,.22); margin-bottom:20px; font-family:var(--ff-mono); }
+.fc-links { display:flex; flex-direction:column; gap:11px; }
+.fc-link { color:rgba(255,255,255,.38); font-size:13px; transition:color .2s; }
+.fc-link:hover { color:rgba(255,255,255,.8); }
+.footer-bottom {
+  max-width:1200px; margin:28px auto 0;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:rgba(255,255,255,.18); flex-wrap:wrap; gap:12px;
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width:1080px) {
+  .hero-inner      { grid-template-columns:1fr; gap:52px; }
+  .hero-panel      { max-width:520px; }
+  .mission-inner   { grid-template-columns:1fr; gap:52px; }
+  .programs-grid   { grid-template-columns:1fr; }
+  .why-grid        { grid-template-columns:1fr 1fr; }
+  .impact-row      { grid-template-columns:1fr 1fr; }
+  .ir-cell:nth-child(2) { border-right:none; }
+  .ir-cell:nth-child(3) { border-top:1px solid rgba(255,255,255,.07); }
+  .test-grid       { grid-template-columns:1fr 1fr; }
+  .footer-inner    { grid-template-columns:1fr 1fr; gap:36px; }
+}
+@media (max-width:768px) {
+  .nav             { padding:0 20px; }
+  .nav-links       { display:none; }
+  .nav-burger      { display:flex; }
+  .nav-mobile.open {
+    display:flex; flex-direction:column; gap:0;
+    position:fixed; inset:68px 0 0 0;
+    background:rgba(6,17,31,.98); padding:24px 20px;
+    z-index:199;
+  }
+  .nav-mobile .nav-link { color:rgba(255,255,255,.7); font-size:18px; padding:16px 0; border-bottom:1px solid rgba(255,255,255,.06); font-weight:600; }
+  .hero,.mission,.programs,.why,.impact,.testimonials,.apply-cta,.footer {
+    padding-left:20px; padding-right:20px;
+  }
+  .hero-stats      { gap:24px; }
+  .why-grid        { grid-template-columns:1fr; }
+  .test-grid       { grid-template-columns:1fr; }
+  .footer-inner    { grid-template-columns:1fr; gap:32px; }
+  .impact-row      { grid-template-columns:1fr 1fr; border-radius:14px; }
+  .programs-header { flex-direction:column; align-items:flex-start; }
+}
+
+/* Skip nav */
+.skip-nav {
+  position:absolute; top:-100px; left:20px; z-index:9999;
+  background:var(--gold); color:var(--ink); padding:10px 20px;
+  border-radius:8px; font-weight:700; font-size:13px;
+  text-decoration:none; transition:top .2s;
+}
+.skip-nav:focus { top:20px; }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-nav">Skip to main content</a>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="/" class="nav-brand">
+    <div class="nav-mark">KI</div>
+    <div style="text-align:center;">
+      <div class="nav-text-top">Kulan Institute of Technology and Science</div>
+      <div class="nav-text-bot" style="text-align:center;">KIST &nbsp;·&nbsp; Est. 2024</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#programs"     class="nav-link">Programs</a>
+    <a href="#mission"      class="nav-link">About</a>
+    <a href="https://blog.kulaninstitute.org" class="nav-link">Blog</a>
+    <a href="https://careers.kulaninstitute.org" class="nav-link">Careers</a>
+    <a href="#contact" class="nav-link">Contact</a>
+    <button class="nav-lang" id="langBtn" onclick="toggleLang()">+ Somali</button>
+    <a href="https://apply.kulaninstitute.org" class="nav-apply">Apply Now</a>
+  </div>
+  <button class="nav-burger" id="burgerBtn" aria-label="Open menu" onclick="toggleMobile()" aria-expanded="false" aria-controls="mobileNav">
+    <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+  </button>
+</nav>
+
+<!-- Mobile nav -->
+<div class="nav-mobile" id="mobileNav">
+  <a href="#programs"  class="nav-link" onclick="toggleMobile()">Programs</a>
+  <a href="#mission"   class="nav-link" onclick="toggleMobile()">About</a>
+  <a href="https://blog.kulaninstitute.org" class="nav-link">Blog</a>
+  <a href="https://careers.kulaninstitute.org" class="nav-link">Careers</a>
+  <a href="#contact" class="nav-link" onclick="toggleMobile()">Contact</a>
+  <a href="https://apply.kulaninstitute.org" class="nav-link" style="color:var(--amber)">Apply Now →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero" aria-label="Hero">
+<div id="main-content"></div>
+  <div class="hero-tex"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-lines">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <line x1="0" y1="900" x2="600" y2="0" stroke="white" stroke-width=".5" opacity=".035"/>
+      <line x1="200" y1="900" x2="800" y2="0" stroke="white" stroke-width=".5" opacity=".025"/>
+      <line x1="1440" y1="0" x2="800" y2="900" stroke="white" stroke-width=".5" opacity=".035"/>
+    </svg>
+  </div>
+
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        <span class="en">KIST &nbsp;·&nbsp; Bilingual &nbsp;·&nbsp; EN + SO</span>
+        <span class="so">KIST &nbsp;·&nbsp; Labo Luqadood</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="en">Science, Technology,<br><strong>and <em>Community.</em></strong></span>
+        <span class="so">Sayniska, Teknoolajiyada,<br><strong>iyo <em>Bulshada.</em></strong></span>
+      </h1>
+      <p class="hero-title-so en">Sayniska, Teknoolajiyada, iyo Bulshada.</p>
+      <p class="hero-sub">
+        <span class="en">Kulan Institute of Technology and Science delivers <strong>world-class education</strong> in AI, Cybersecurity, and Digital Technology — fully in English and Somali, free for the global diaspora.</span>
+        <span class="so">Kulan Institute of Technology and Science waxay bixisaa <strong>waxbarasho heerka aduunka ah</strong> oo ku saabsan AI, Amniga Xogta, iyo Teknoolajiyada — oo ku jirta Ingiriisiga iyo Soomaaliga, bilaash ah bulshada adduunka oo dhan.</span>
+      </p>
+      <div class="hero-btns">
+        <a href="https://apply.kulaninstitute.org" class="btn-primary">
+          &#128221; <span class="en">Apply Now</span><span class="so">Hadda Codso</span>
+        </a>
+        <a href="#programs" class="btn-outline">
+          <span class="en">Explore Programs</span><span class="so">Barnaamiijyada Fiiri</span> &#8250;
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hs-num">4<span>+</span></div>
+          <div class="hs-lbl"><span class="en">Programs</span><span class="so">Barnaamiij</span></div>
+        </div>
+        <div>
+          <div class="hs-num">2<span></span></div>
+          <div class="hs-lbl"><span class="en">Languages</span><span class="so">Luqadood</span></div>
+        </div>
+        <div>
+          <div class="hs-num">100<span>%</span></div>
+          <div class="hs-lbl"><span class="en">Free Access</span><span class="so">Bilaash</span></div>
+        </div>
+        <div>
+          <div class="hs-num">&#127760;</div>
+          <div class="hs-lbl"><span class="en">Global Reach</span><span class="so">Caalamiya</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-panel">
+      <div class="hp-label">// Active Programs</div>
+      <div class="hp-course">
+        <div class="hp-icon ai">&#129302;</div>
+        <div style="flex:1;min-width:0;">
+          <div class="hp-name">AI for Beginners</div>
+          <div class="hp-meta">8 modules &middot; EN + SO &middot; Beginner</div>
+          <div class="hp-bar"><div class="hp-fill" style="width:72%"></div></div>
+        </div>
+        <div class="hp-pct">72%</div>
+      </div>
+      <div class="hp-course">
+        <div class="hp-icon cyber">&#128737;</div>
+        <div style="flex:1;min-width:0;">
+          <div class="hp-name">Cybersecurity Fundamentals</div>
+          <div class="hp-meta">6 modules &middot; EN + SO &middot; Intermediate</div>
+          <div class="hp-bar"><div class="hp-fill" style="width:48%;background:linear-gradient(90deg,#DC2626,#ef4444)"></div></div>
+        </div>
+        <div class="hp-pct" style="color:#f87171">48%</div>
+      </div>
+      <div class="hp-course">
+        <div class="hp-icon sec">&#128274;</div>
+        <div style="flex:1;min-width:0;">
+          <div class="hp-name">Security+ SY0-701 Prep</div>
+          <div class="hp-meta">333+ questions &middot; Exam Simulator</div>
+          <div class="hp-bar"><div class="hp-fill" style="width:85%;background:linear-gradient(90deg,#7c3aed,#a855f7)"></div></div>
+        </div>
+        <div class="hp-pct" style="color:#c084fc">85%</div>
+      </div>
+      <div class="hp-course">
+        <div class="hp-icon dig">&#128187;</div>
+        <div style="flex:1;min-width:0;">
+          <div class="hp-name">Digital Literacy</div>
+          <div class="hp-meta">All levels &middot; EN + SO</div>
+          <div class="hp-bar"><div class="hp-fill" style="width:61%;background:linear-gradient(90deg,var(--gold),var(--amber))"></div></div>
+        </div>
+        <div class="hp-pct" style="color:var(--amber)">61%</div>
+      </div>
+      <a href="https://learn.kulaninstitute.org" class="hero-panel-cta">
+        <span class="en">Access All Programs &nbsp;&#8250;</span>
+        <span class="so">Dhammaan Barnaamiijyada &nbsp;&#8250;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- BANNER STRIP -->
+<div class="banner-strip" aria-hidden="true">
+  <div class="bs-track">
+    <span class="bs-item">Kulan Institute of Technology and Science <span class="bs-dot"></span></span>
+    <span class="bs-item">AI &amp; Machine Learning <span class="bs-dot"></span></span>
+    <span class="bs-item">Cybersecurity <span class="bs-dot"></span></span>
+    <span class="bs-item">Security+ SY0-701 <span class="bs-dot"></span></span>
+    <span class="bs-item">Digital Literacy <span class="bs-dot"></span></span>
+    <span class="bs-item">Bilingual EN + SO <span class="bs-dot"></span></span>
+    <span class="bs-item">Columbus, OH <span class="bs-dot"></span></span>
+    <span class="bs-item">Kulan Group Ltd <span class="bs-dot"></span></span>
+    <span class="bs-item">Kulan Institute of Technology and Science <span class="bs-dot"></span></span>
+    <span class="bs-item">AI &amp; Machine Learning <span class="bs-dot"></span></span>
+    <span class="bs-item">Cybersecurity <span class="bs-dot"></span></span>
+    <span class="bs-item">Security+ SY0-701 <span class="bs-dot"></span></span>
+    <span class="bs-item">Digital Literacy <span class="bs-dot"></span></span>
+    <span class="bs-item">Bilingual EN + SO <span class="bs-dot"></span></span>
+    <span class="bs-item">Columbus, OH <span class="bs-dot"></span></span>
+    <span class="bs-item">Kulan Group Ltd <span class="bs-dot"></span></span>
+  </div>
+</div>
+
+<!-- MISSION -->
+<section class="mission" id="mission">
+  <div class="mission-inner">
+    <div class="sr">
+      <span class="s-eyebrow en">About KIST</span>
+      <span class="s-eyebrow so" style="display:none">KIST Ku Saabsan</span>
+      <h2 class="s-title en">Built for a community the world <em>overlooked.</em></h2>
+      <h2 class="s-title so" style="display:none">Bulshada adduunku <em>garan waayay</em> ayaan u dhisay.</h2>
+      <div class="mission-rule"></div>
+      <p class="s-sub en">KIST is the technology and science education arm of Kulan Group Ltd — delivering courses in AI, cybersecurity, and digital skills fully in English and Somali to underserved communities worldwide.</p>
+      <p class="s-sub so" style="display:none">KIST waa qaybta waxbarashada teknoolajiyada ee Kulan Group Ltd — oo bixisa koorsooyin AI, amniga xogta, iyo xirfadaha dhijitaalka ah oo buuxda oo Ingiriis iyo Soomaali ah.</p>
+      <div class="mission-values" style="margin-top:24px;">
+        <div class="mv">
+          <div class="mv-icon c1">&#127979;</div>
+          <div>
+            <div class="mv-title"><span class="en">Science for Everyone</span><span class="so">Sayniska Waxaa Leh Dhammaan</span></div>
+            <div class="mv-desc"><span class="en">World-class science and technology education should not depend on where you were born or what language you speak.</span><span class="so">Waxbarashada sayniska iyo teknoolajiyada heerka aduunka ah ma aha inay ku xidnaato halka aad ku dhalatay ama luqadda aad ku hadasho.</span></div>
+          </div>
+        </div>
+        <div class="mv">
+          <div class="mv-icon c2">&#127758;</div>
+          <div>
+            <div class="mv-title"><span class="en">Bilingual by Design</span><span class="so">Labo Luqadood oo Naqshad</span></div>
+            <div class="mv-desc"><span class="en">Every course, every resource, every piece of content is built natively in English and Somali — not translated after the fact.</span><span class="so">Koorso kasta, khayraad kasta, waxyaabaha xogta ah waxaa loo dhisay si asalka ah oo Ingiriis iyo Soomaali ah.</span></div>
+          </div>
+        </div>
+        <div class="mv">
+          <div class="mv-icon c3">&#128200;</div>
+          <div>
+            <div class="mv-title"><span class="en">Institution, Not Just an App</span><span class="so">Hay'ad, Maahan App Kaliya</span></div>
+            <div class="mv-desc"><span class="en">We are building a lasting institution with real impact — certifications, live classrooms, careers, and community infrastructure.</span><span class="so">Waxaan dhisaynaa hay'ad waarta oo saameyn dhab ah leh — shahaadooyin, fasallo toos ah, shaqooyin, iyo kaabayaasha bulshada.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sr d2">
+      <div class="mission-card">
+        <div class="mc-quote">
+          "The Somali diaspora is one of the most educated, driven communities in the world. They just need platforms <strong>built for them</strong> — not adapted for them."
+        </div>
+        <div class="mc-rule"></div>
+        <div class="mc-by">Mohamud Mohamed &nbsp;·&nbsp; Founder, Kulan Group Ltd</div>
+        <div class="mc-grid">
+          <div class="mc-stat"><div class="mc-stat-num">4<span>+</span></div><div class="mc-stat-lbl">Programs</div></div>
+          <div class="mc-stat"><div class="mc-stat-num">333<span>+</span></div><div class="mc-stat-lbl">Sec+ Questions</div></div>
+          <div class="mc-stat"><div class="mc-stat-num">2<span>x</span></div><div class="mc-stat-lbl">Bilingual</div></div>
+          <div class="mc-stat"><div class="mc-stat-num">Free</div><div class="mc-stat-lbl">Always Free</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMS -->
+<section class="programs" id="programs">
+  <div class="section-wrap">
+    <div class="programs-header">
+      <div class="sr">
+        <span class="s-eyebrow en">Our Programs</span>
+        <span class="s-eyebrow so" style="display:none">Barnaamiijyadayada</span>
+        <h2 class="s-title en">What you'll <em>learn at KIST.</em></h2>
+        <h2 class="s-title so" style="display:none">Waxa aad <em>KIST ka baranayso.</em></h2>
+        <p class="s-sub en">Every program is designed to be practical, bilingual, and career-ready from day one.</p>
+        <p class="s-sub so" style="display:none">Barnaamiij kasta waxaa loo naqshadeeyay inuu yahay mid waxtar leh, labo luqadood ah, oo shaqo-diyaarne ah maalinta koowaad.</p>
+      </div>
+      <a href="https://learn.kulaninstitute.org" class="view-all sr d2">
+        <span class="en">View all programs</span><span class="so">Dhammaan barnaamiijyada</span> &#8250;
+      </a>
+    </div>
+
+    <div class="programs-grid">
+
+      <a href="https://learn.kulaninstitute.org" class="prog-card pc-ai sr">
+        <div class="pc-top">
+          <div class="pc-icon">&#129302;</div>
+          <span class="pc-badge badge-beginner">Beginner</span>
+        </div>
+        <div class="pc-num">01</div>
+        <div class="pc-name"><span class="en">AI for Beginners</span><span class="so">AI-ga Bilowga</span></div>
+        <div class="pc-name-so en">Xisaabta Macquulka ah ee Bilowga</div>
+        <p class="pc-desc"><span class="en">An 8-module introduction to artificial intelligence built for complete beginners — covering how AI works, where it's used, and how to apply it in real life.</span><span class="so">Hordhac 8 module ah oo ku saabsan garashada machinaha oo loo dhisay bilow-bilowga — oo daboolaya sida AI u shaqeyso, halka loo isticmaalo, iyo sida loo codsan karo nolosha dhabta ah.</span></p>
+        <div class="pc-pills">
+          <span class="pc-pill">8 Modules</span>
+          <span class="pc-pill">EN + SO</span>
+          <span class="pc-pill">Free</span>
+          <span class="pc-pill">No experience needed</span>
+        </div>
+        <div class="pc-link"><span class="en">Enroll now</span><span class="so">Hadda iska diiwaan geli</span> &#8250;</div>
+      </a>
+
+      <a href="https://learn.kulaninstitute.org" class="prog-card pc-cyber sr d1">
+        <div class="pc-top">
+          <div class="pc-icon">&#128737;</div>
+          <span class="pc-badge badge-inter">Intermediate</span>
+        </div>
+        <div class="pc-num">02</div>
+        <div class="pc-name"><span class="en">Cybersecurity Fundamentals</span><span class="so">Aasaaska Amniga Xogta</span></div>
+        <div class="pc-name-so en">Aasaaska Amniga Xogta</div>
+        <p class="pc-desc"><span class="en">Core cybersecurity principles covering threats, defenses, incident response, and the real-world tools used by security professionals every day.</span><span class="so">Mabaadiida aasaasiga ah ee amniga xogta oo daboolaysa khatarooyinka, difaacyada, ka-jawaabista dhacdooyinka, iyo qalab dhabta ah ee xirfadlayaasha ammaanka maalintiiba u isticmaalaan.</span></p>
+        <div class="pc-pills">
+          <span class="pc-pill">6 Modules</span>
+          <span class="pc-pill">EN + SO</span>
+          <span class="pc-pill">Free</span>
+          <span class="pc-pill">Certificate</span>
+        </div>
+        <div class="pc-link"><span class="en">Enroll now</span><span class="so">Hadda iska diiwaan geli</span> &#8250;</div>
+      </a>
+
+      <a href="https://secplus.kulaninstitute.org" class="prog-card pc-sec sr d2">
+        <div class="pc-top">
+          <div class="pc-icon">&#128274;</div>
+          <span class="pc-badge badge-advanced">Advanced</span>
+        </div>
+        <div class="pc-num">03</div>
+        <div class="pc-name"><span class="en">Security+ SY0-701 Prep</span><span class="so">Security+ Diyaarinta</span></div>
+        <div class="pc-name-so en">Diyaarinta Shahaadada Security+</div>
+        <p class="pc-desc"><span class="en">A comprehensive CompTIA Security+ exam preparation platform with 333+ practice questions, performance-based question simulations, and a full exam simulator.</span><span class="so">Meel diyaarinta imtixaanka CompTIA Security+ oo buuxda leh 333+ su'aalo dhaqan ah, xaalado imtixaan oo la mid ah, iyo simulator imtixaan oo buuxa.</span></p>
+        <div class="pc-pills">
+          <span class="pc-pill">333+ Questions</span>
+          <span class="pc-pill">PBQ Simulations</span>
+          <span class="pc-pill">Exam Simulator</span>
+          <span class="pc-pill">DoD 8570</span>
+        </div>
+        <div class="pc-link"><span class="en">Start practicing</span><span class="so">Ku bilow dhaqanka</span> &#8250;</div>
+      </a>
+
+      <a href="https://learn.kulaninstitute.org" class="prog-card pc-dig sr d3">
+        <div class="pc-top">
+          <div class="pc-icon">&#128187;</div>
+          <span class="pc-badge badge-all">All Levels</span>
+        </div>
+        <div class="pc-num">04</div>
+        <div class="pc-name"><span class="en">Digital Literacy</span><span class="so">Aqoonta Dhijitaalka ah</span></div>
+        <div class="pc-name-so en">Aqoonta Dhijitaalka ah</div>
+        <p class="pc-desc"><span class="en">Essential digital skills for the modern world — covering computers, internet safety, productivity tools, and the basics of working in a technology-driven workplace.</span><span class="so">Xirfadaha dhijitaalka ee muhiimka ah ee adduunka casriga ah — oo daboolaya kombiyuutarrada, amniga internetka, qaababka waxqabadka, iyo aasaasyada shaqada beesha teknoolajiyada.</span></p>
+        <div class="pc-pills">
+          <span class="pc-pill">Self-paced</span>
+          <span class="pc-pill">EN + SO</span>
+          <span class="pc-pill">Free</span>
+          <span class="pc-pill">All ages</span>
+        </div>
+        <div class="pc-link"><span class="en">Enroll now</span><span class="so">Hadda iska diiwaan geli</span> &#8250;</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHY KIST -->
+<section class="why" id="why">
+  <div class="why-header sr">
+    <span class="s-eyebrow en" style="color:var(--cyan);display:block;">Why KIST?</span>
+    <span class="s-eyebrow so" style="display:none;color:var(--cyan);">Maxay KIST u Gaarka Tahay?</span>
+    <h2 class="s-title en">Everything your education <em>should be.</em></h2>
+    <h2 class="s-title so" style="display:none">Waxbarashada <em>aad u mudan tahay.</em></h2>
+  </div>
+  <div class="why-grid">
+    <div class="why-card sr d1">
+      <div class="wc-num">01</div>
+      <div class="wc-title"><span class="en">Truly Bilingual</span><span class="so">Runta Labo Luqadood</span></div>
+      <div class="wc-desc"><span class="en">Every single course is built natively in English and Somali — not machine-translated, not an afterthought. Lectures, materials, and quizzes are all bilingual.</span><span class="so">Koorso kasta waxaa si asalka ah loogu dhisay Ingiriisiga iyo Soomaaliga — ma aha tarjumaad mishiinka, ma aha fikirka dambe. Muhaadaro, agabka, iyo imtixaanadu waa labo luqadood.</span></div>
+    </div>
+    <div class="why-card sr d2">
+      <div class="wc-num">02</div>
+      <div class="wc-title"><span class="en">Live Classrooms</span><span class="so">Fasallada Tooska ah</span></div>
+      <div class="wc-desc"><span class="en">KI Connect brings instructors and students together in real time with WebRTC video, screen sharing, session recording, and a built-in scheduling system.</span><span class="so">KI Connect waxay wada keenaysaa macallimiin iyo ardayda isla markaaba oo leh video WebRTC, wadaagista shaashadda, duubista xulafada, iyo nidaam jadwal oo la dhisay.</span></div>
+    </div>
+    <div class="why-card sr d3">
+      <div class="wc-num">03</div>
+      <div class="wc-title"><span class="en">Career Pathways</span><span class="so">Jidadka Xirfadeed</span></div>
+      <div class="wc-desc"><span class="en">KIST connects directly to Kulan Careers — our job board built specifically for Somali diaspora professionals in tech, business, and community roles worldwide.</span><span class="so">KIST waxay si toos ah ula xidnaataa Kulan Careers — goobta shaqada ee gaar ah ee loogu dhisay xirfadlayaasha Soomaalida ee teknoolajiyada, ganacsiga, iyo doorarka bulshada adduunka oo dhan.</span></div>
+    </div>
+    <div class="why-card sr d1">
+      <div class="wc-num">04</div>
+      <div class="wc-title"><span class="en">100% Free</span><span class="so">100% Bilaash</span></div>
+      <div class="wc-desc"><span class="en">Every course, every resource, every certificate at KIST is completely free. No paywalls. No premium tiers. No barriers between you and your education.</span><span class="so">Koorso kasta, khayraad kasta, shahaado kasta ee KIST waa bilaash buuxda. Xad-xidid maleh. Heerarka lacagaha maleh. Caqabad kama dhaxayso adiga iyo waxbarashada.</span></div>
+    </div>
+    <div class="why-card sr d2">
+      <div class="wc-num">05</div>
+      <div class="wc-title"><span class="en">Industry Certifications</span><span class="so">Shahaadooyinka Warshadaha</span></div>
+      <div class="wc-desc"><span class="en">Our Security+ SY0-701 prep app is the only bilingual exam prep platform of its kind — aligned to DoD 8570 IAT Level II requirements and built by a certified professional.</span><span class="so">Abkayaga diyaarinta Security+ SY0-701 waa kaliya goobta diyaarinta imtixaanka labo luqadood ah ee noocaas ah — oo la mid ah shuruudaha DoD 8570 IAT Level II oo ay dhisay xirfadle shahaado leh.</span></div>
+    </div>
+    <div class="why-card sr d3">
+      <div class="wc-num">06</div>
+      <div class="wc-title"><span class="en">Community-Driven</span><span class="so">Bulshada Waxay Hormariyaan</span></div>
+      <div class="wc-desc"><span class="en">KIST is built by and for the Somali diaspora. Every decision — curriculum, language, design, pricing — centers on what serves our community best.</span><span class="so">KIST waxaa dhisay oo loogu talagalay Soomaalida dibadda joogta. Go'aan kasta — manhajka, luqadda, naqshadaynta, qiimaha — waxa xarumeeya waxa ugu fiican bulshadeena.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact">
+  <div class="impact-inner">
+    <span class="s-eyebrow">Impact</span>
+    <h2 class="s-title sr"><span class="en">Measuring what <em>matters.</em></span><span class="so">Waxaan cabiraa waxaa <em>muhiim ah.</em></span></h2>
+    <div class="impact-row sr d1">
+      <div class="ir-cell">
+        <div class="ir-num">333<span>+</span></div>
+        <div class="ir-lbl"><span class="en">Security+ practice questions</span><span class="so">Su'aalaha dhaqanka Security+</span></div>
+      </div>
+      <div class="ir-cell">
+        <div class="ir-num">2<span>x</span></div>
+        <div class="ir-lbl"><span class="en">Every course delivered bilingually</span><span class="so">Koorso kasta oo labo luqadood ah</span></div>
+      </div>
+      <div class="ir-cell">
+        <div class="ir-num">4<span>+</span></div>
+        <div class="ir-lbl"><span class="en">Active programs and growing</span><span class="so">Barnaamiijyo firfircoon oo koraya</span></div>
+      </div>
+      <div class="ir-cell">
+        <div class="ir-num">100<span>%</span></div>
+        <div class="ir-lbl"><span class="en">Free — always, for everyone</span><span class="so">Bilaash — had iyo jeer, dhammaan</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-wrap">
+    <div class="sr">
+      <span class="s-eyebrow en" style="color:var(--cyan);display:block;">Student Voices</span>
+      <span class="s-eyebrow so" style="display:none;color:var(--cyan);">Codadka Ardayda</span>
+      <h2 class="s-title en">What our community <em>is saying.</em></h2>
+      <h2 class="s-title so" style="display:none">Waxa bulshadeena <em>ay ku tibaaxayaan.</em></h2>
+    </div>
+    <div class="test-grid" style="margin-top:52px;">
+      <div class="test-card sr d1">
+        <p class="tc-text">"Finally an institution that teaches in Somali. I've tried other platforms but always got lost in translation. KIST is different — this was made for us."</p>
+        <div class="tc-rule"></div>
+        <div class="tc-name">Fadumo A.</div>
+        <div class="tc-role">AI for Beginners graduate &middot; Minneapolis, MN</div>
+      </div>
+      <div class="test-card sr d2">
+        <p class="tc-text">"The Security+ prep app is incredible. 333 questions, all organized by domain, with explanations. I passed my exam on the first try. Bilingual is a game changer."</p>
+        <div class="tc-rule"></div>
+        <div class="tc-name">Hassan M.</div>
+        <div class="tc-role">CompTIA Security+ Certified &middot; Columbus, OH</div>
+      </div>
+      <div class="test-card sr d3">
+        <p class="tc-text">"KI Connect changed how I learn. Being able to join a live class from anywhere and hear the instructor explain things in Somali — you can't put a price on that."</p>
+        <div class="tc-rule"></div>
+        <div class="tc-name">Khadija O.</div>
+        <div class="tc-role">Cybersecurity Fundamentals student &middot; London, UK</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLY CTA -->
+<section class="apply-cta">
+  <div class="apply-cta-glow"></div>
+  <div class="apply-cta-inner sr">
+    <span class="s-eyebrow">Apply Today</span>
+    <h2 class="apply-cta-title">
+      <span class="en">Your future in science<br>and technology <strong><em>starts here.</em></strong></span>
+      <span class="so">Mustaqbalkaaga sayniska<br>iyo teknoolajiyada <strong><em>halkan ayuu ka bilaabmayaa.</em></strong></span>
+    </h2>
+    <div class="apply-cta-rule"></div>
+    <p class="apply-cta-sub">
+      <span class="en">Join thousands of Somali diaspora students building their technology careers with KIST. Free, bilingual, and built for you.</span>
+      <span class="so">Ku biir kumanaan ardayda Soomaalida dibadda joogta ee xirfadahooda teknoolajiyada ku dhisaya KIST. Bilaash, labo luqadood, oo kuugu dhisan.</span>
+    </p>
+    <div class="apply-cta-btns">
+      <a href="https://apply.kulaninstitute.org" class="btn-primary">
+        &#128221; <span class="en">Apply Now — Free</span><span class="so">Hadda Codso — Bilaash</span>
+      </a>
+      <a href="https://learn.kulaninstitute.org" class="btn-outline">
+        <span class="en">Browse Programs</span><span class="so">Barnaamiijyada Fiiri</span> &#8250;
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-glow"></div>
+  <div class="contact-inner">
+    <div class="sr">
+      <span class="s-eyebrow" style="color:var(--amber);display:block;font-family:var(--ff-mono);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:3px;margin-bottom:14px;">Contact Us</span>
+      <h2 class="contact-title"><span class="en">Let's <em>connect.</em></span><span class="so">Aan <em>xiriirno.</em></span></h2>
+      <p class="contact-sub en">Have a question about KIST? Want to partner, teach, or get involved? We'd love to hear from you.</p>
+      <p class="contact-sub so" style="display:none;">Su'aal ma qabtaa KIST ku saabsan? Ma rabtaa in aad la shaqayso, aad barisid, ama aad ka qaybqaadato? Waan kuu soo dhaweynayaa.</p>
+      <div class="contact-items">
+        <div class="ci"><div class="ci-icon">&#128231;</div><div><strong>General Inquiries</strong><a href="mailto:hello@kulaninstitute.org">hello@kulaninstitute.org</a></div></div>
+        <div class="ci"><div class="ci-icon">&#128187;</div><div><strong>LMS Platform</strong><a href="https://learn.kulaninstitute.org" target="_blank" rel="noopener">learn.kulaninstitute.org</a></div></div>
+        <div class="ci"><div class="ci-icon">&#128188;</div><div><strong>Careers &amp; Jobs</strong><a href="https://careers.kulaninstitute.org" target="_blank" rel="noopener">careers.kulaninstitute.org</a></div></div>
+        <div class="ci"><div class="ci-icon">&#127968;</div><div><strong>Location</strong>Columbus, Ohio, United States</div></div>
+      </div>
+      <div class="contact-social">
+        <div class="cs-title">Follow KIST</div>
+        <div class="cs-links">
+          <a href="https://linkedin.com/in/mohamed-2-mohamud" class="cs-link" target="_blank" rel="noopener">&#128279; LinkedIn</a>
+          <a href="https://youtube.com" class="cs-link" target="_blank" rel="noopener">&#127909; YouTube</a>
+          <a href="https://mmohamud.me" class="cs-link" target="_blank" rel="noopener">&#127760; Portfolio</a>
+        </div>
+      </div>
+    </div>
+    <div class="sr d2">
+      <form class="contact-form" id="contactForm" novalidate>
+        <div class="cf-row">
+          <div>
+            <label for="cfName" style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);margin-bottom:6px;">Full Name *</label>
+            <input class="cf-input" id="cfName" type="text" placeholder="Your name" required aria-required="true" autocomplete="name">
+          </div>
+          <div>
+            <label for="cfEmail" style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);margin-bottom:6px;">Email *</label>
+            <input class="cf-input" id="cfEmail" type="email" placeholder="your@email.com" required aria-required="true" autocomplete="email">
+          </div>
+        </div>
+        <div>
+          <label for="cfSubject" style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);margin-bottom:6px;">I am reaching out as a...</label>
+          <select class="cf-select" id="cfSubject" aria-label="Reason for contact">
+            <option value="" disabled selected>Select one</option>
+            <option value="Prospective Student">Prospective Student</option>
+            <option value="Potential Partner">Potential Partner</option>
+            <option value="Educator / Instructor">Educator / Instructor</option>
+            <option value="Employer / Recruiter">Employer / Recruiter</option>
+            <option value="Investor">Investor</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="cfMessage" style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);margin-bottom:6px;">Message *</label>
+          <textarea class="cf-textarea" id="cfMessage" placeholder="Tell us how we can help..." required aria-required="true" minlength="10"></textarea>
+        </div>
+        <div class="cf-msg" id="cfMsg" role="alert"></div>
+        <button type="submit" class="cf-submit" id="cfBtn">Send Message &#8594;</button>
+        <p style="font-size:11px;color:rgba(255,255,255,.2);margin-top:4px;line-height:1.6;">
+          By submitting this form you agree to our
+          <a href="/privacy" style="color:rgba(255,255,255,.4);text-decoration:underline;">Privacy Policy</a>.
+          We never share your data.
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo-mark">KI</div>
+      <div class="footer-brand-name">Kulan Institute of Technology and Science</div>
+      <div class="footer-brand-short">KIST &nbsp;·&nbsp; EST. 2024</div>
+      <div class="footer-brand-desc">
+        <span class="en">A Kulan Group Ltd institution delivering world-class bilingual science and technology education for the global Somali diaspora. Based in Columbus, Ohio.</span>
+        <span class="so">Hay'ad Kulan Group Ltd oo bixisa waxbarasho sayniska iyo teknoolajiyada heerka aduunka ah oo labo luqadood ah ee Soomaalida adduunka oo dhan. Ku salaysan Columbus, Ohio.</span>
+      </div>
+    </div>
+    <div>
+      <div class="fc-title">Programs</div>
+      <div class="fc-links">
+        <a href="https://learn.kulaninstitute.org" class="fc-link">AI for Beginners</a>
+        <a href="https://learn.kulaninstitute.org" class="fc-link">Cybersecurity</a>
+        <a href="https://secplus.kulaninstitute.org" class="fc-link">Security+ Prep</a>
+        <a href="https://learn.kulaninstitute.org" class="fc-link">Digital Literacy</a>
+      </div>
+    </div>
+    <div>
+      <div class="fc-title">Kulan Group</div>
+      <div class="fc-links">
+        <a href="https://kulaninstitute.org" class="fc-link">KIST Home</a>
+        <a href="https://careers.kulaninstitute.org" class="fc-link">Kulan Careers</a>
+        <a href="https://blog.kulaninstitute.org" class="fc-link">Blog</a>
+        <a href="https://apply.kulaninstitute.org" class="fc-link">Apply</a>
+      </div>
+    </div>
+    <div>
+      <div class="fc-title">Connect</div>
+      <div class="fc-links">
+        <a href="https://linkedin.com/in/mohamed-2-mohamud" class="fc-link" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://youtube.com" class="fc-link" target="_blank" rel="noopener noreferrer">YouTube</a>
+        <a href="mailto:hello@kulaninstitute.org" class="fc-link">hello@kulaninstitute.org</a>
+        <a href="https://mmohamud.me" class="fc-link" target="_blank" rel="noopener noreferrer">Portfolio</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Kulan Group Ltd. All rights reserved. &nbsp;&middot;&nbsp; <a href="/privacy" style="color:rgba(255,255,255,.3);text-decoration:underline;">Privacy Policy</a> &nbsp;&middot;&nbsp; <a href="/terms" style="color:rgba(255,255,255,.3);text-decoration:underline;">Terms</a></span>
+    <span><span class="en">Built with purpose for the Somali diaspora</span><span class="so">Bulshada Soomaaliyeed waxaa loo dhisay</span> &#10084;</span>
+  </div>
+</footer>
+
+<script>
+// ── SCROLL NAV ──────────────────────────────────────────────
+window.addEventListener('scroll', function() {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── SCROLL REVEAL ───────────────────────────────────────────
+var io = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.sr').forEach(function(el) { io.observe(el); });
+
+// ── LANGUAGE TOGGLE ─────────────────────────────────────────
+var soMode = false;
+function toggleLang() {
+  soMode = !soMode;
+  document.body.classList.toggle('so-mode', soMode);
+  var btn = document.getElementById('langBtn');
+  btn.textContent = soMode ? '+ English' : '+ Somali';
+  // Show/hide the correct s-title variants
+  document.querySelectorAll('.s-title.en, .s-title.so').forEach(function(el) {
+    el.style.display = soMode
+      ? (el.classList.contains('so') ? 'block' : 'none')
+      : (el.classList.contains('en') ? 'block' : 'none');
+  });
+  // Same for s-eyebrow
+  document.querySelectorAll('.s-eyebrow.en, .s-eyebrow.so').forEach(function(el) {
+    el.style.display = soMode
+      ? (el.classList.contains('so') ? 'block' : 'none')
+      : (el.classList.contains('en') ? 'block' : 'none');
+  });
+}
+
+// ── CONTACT FORM ─────────────────────────────────────────────
+var cfForm = document.getElementById('contactForm');
+if (cfForm) {
+  cfForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var name    = document.getElementById('cfName').value.trim();
+    var email   = document.getElementById('cfEmail').value.trim();
+    var subject = document.getElementById('cfSubject').value;
+    var message = document.getElementById('cfMessage').value.trim();
+    var msg     = document.getElementById('cfMsg');
+    var btn     = document.getElementById('cfBtn');
+
+    // Validation
+    if (!name)    { showCfMsg('Please enter your name.', 'error'); return; }
+    if (!email || !email.includes('@')) { showCfMsg('Please enter a valid email.', 'error'); return; }
+    if (!message || message.length < 10) { showCfMsg('Please write a message (at least 10 characters).', 'error'); return; }
+
+    btn.disabled = true; btn.textContent = 'Sending...';
+    hideCfMsg();
+
+    try {
+      var res = await fetch('https://formspree.io/f/xeepavdd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name:name, email:email, subject:subject||'General Inquiry', message:message, _subject:'KIST Contact: '+name })
+      });
+      if (res.ok) {
+        showCfMsg('\u2713 Message sent! We will get back to you within 24 hours.', 'success');
+        cfForm.reset();
+        if (typeof gtag !== 'undefined') gtag('event','contact_form_submit');
+      } else {
+        showCfMsg('Something went wrong. Email us directly at hello@kulaninstitute.org', 'error');
+      }
+    } catch(err) {
+      showCfMsg('Could not send. Please email hello@kulaninstitute.org directly.', 'error');
+    }
+    btn.disabled = false; btn.textContent = 'Send Message →';
+  });
+}
+function showCfMsg(text, type) {
+  var el = document.getElementById('cfMsg');
+  if (!el) return;
+  el.textContent = text; el.className = 'cf-msg ' + type;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+function hideCfMsg() {
+  var el = document.getElementById('cfMsg');
+  if (el) el.style.display = 'none';
+}
+
+// ── MOBILE MENU ─────────────────────────────────────────────
+function toggleMobile() {
+  var nav = document.getElementById('mobileNav');
+  var btn = document.getElementById('burgerBtn');
+  nav.classList.toggle('open');
+  var isOpen = nav.classList.contains('open');
+  btn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+  btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+// Close on outside click
+document.addEventListener('click', function(e) {
+  var nav = document.getElementById('mobileNav');
+  var btn = document.getElementById('burgerBtn');
+  if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+    toggleMobile();
+  }
+});
+// Close on ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var nav = document.getElementById('mobileNav');
+    if (nav.classList.contains('open')) toggleMobile();
+  }
+});
+</script>
+</body>
+</html>

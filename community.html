@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community — KIST</title>
+<meta name="description" content="Join the Kulan Institute of Technology and Science community — connect, learn, and grow together in English and Somali.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;0,900;1,300;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:  #0A1F12;
+  --green:   #1A4028;
+  --moss:    #2D6A4F;
+  --sage:    #52B788;
+  --gold:    #D4A843;
+  --gold2:   #F0C060;
+  --cream:   #F5F0E8;
+  --warm:    #EDE8DC;
+  --rust:    #C45C2A;
+  --text:    #1a2a1e;
+  --text-mid:#4a6a52;
+  --text-lt: #8aaa92;
+  --white:   #FFFFFF;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--cream);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* ── PATTERN ── */
+.weave {
+  background-image:
+    repeating-linear-gradient(60deg, rgba(212,168,67,0.07) 0, rgba(212,168,67,0.07) 1px, transparent 0, transparent 20px),
+    repeating-linear-gradient(-60deg, rgba(82,183,136,0.05) 0, rgba(82,183,136,0.05) 1px, transparent 0, transparent 20px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0, rgba(255,255,255,0.02) 1px, transparent 0, transparent 20px);
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:0 5%; height:68px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(10,31,18,0.96); backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(82,183,136,0.12);
+}
+.nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
+.nav-logo-mark {
+  width:38px; height:38px; border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Fraunces',serif; font-weight:900; font-size:17px; color:var(--forest);
+}
+.nav-logo-text .t1 { font-size:13px; font-weight:700; color:#fff; }
+.nav-logo-text .t2 { font-size:10px; color:rgba(82,183,136,0.7); }
+.nav-right { display:flex; align-items:center; gap:20px; }
+.nav-right a {
+  font-size:13px; font-weight:500; color:rgba(255,255,255,0.55);
+  text-decoration:none; transition:color .2s;
+}
+.nav-right a:hover { color:var(--gold); }
+.nav-pill {
+  background:rgba(82,183,136,0.12); border:1px solid rgba(82,183,136,0.25);
+  color:var(--sage) !important; padding:7px 16px; border-radius:20px;
+  font-weight:600 !important;
+}
+.nav-pill:hover { background:rgba(82,183,136,0.2) !important; }
+.lang-btn {
+  background:rgba(212,168,67,0.1); border:1px solid rgba(212,168,67,0.25);
+  color:var(--gold) !important; padding:6px 14px; border-radius:20px;
+  font-size:12px !important; cursor:pointer;
+}
+.lang-btn:hover { background:rgba(212,168,67,0.18) !important; }
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  background:linear-gradient(150deg, var(--forest) 0%, var(--green) 55%, #0f2a1a 100%);
+  position:relative; overflow:hidden;
+  display:flex; align-items:center;
+  padding:120px 5% 80px;
+}
+.hero-arc {
+  position:absolute; bottom:-2px; left:0; right:0;
+  height:80px; background:var(--cream);
+  clip-path:ellipse(55% 100% at 50% 100%);
+}
+.hero-ring1 {
+  position:absolute; width:700px; height:700px;
+  border:1px solid rgba(82,183,136,0.08); border-radius:50%;
+  top:-200px; right:-200px; pointer-events:none;
+}
+.hero-ring2 {
+  position:absolute; width:500px; height:500px;
+  border:1px solid rgba(212,168,67,0.06); border-radius:50%;
+  top:-100px; right:-100px; pointer-events:none;
+}
+.hero-dots {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:radial-gradient(rgba(82,183,136,0.15) 1px, transparent 1px);
+  background-size:32px 32px;
+  mask-image:radial-gradient(ellipse 70% 70% at 70% 40%, black, transparent);
+}
+.hero-inner { max-width:1200px; width:100%; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+.hero-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(82,183,136,0.12); border:1px solid rgba(82,183,136,0.25);
+  border-radius:20px; padding:6px 16px; margin-bottom:24px;
+  font-size:12px; font-weight:600; color:var(--sage); letter-spacing:.5px;
+}
+h1.hero-title {
+  font-family:'Fraunces',serif; font-size:clamp(40px,5.5vw,68px);
+  font-weight:900; color:#fff; line-height:1.05; margin-bottom:10px;
+}
+h1.hero-title em { color:var(--gold); font-style:italic; }
+.hero-title-so {
+  font-family:'Fraunces',serif; font-size:clamp(18px,2.5vw,26px);
+  font-weight:300; font-style:italic; color:rgba(255,255,255,0.3);
+  margin-bottom:24px; display:none;
+}
+.hero-desc { font-size:17px; line-height:1.75; color:rgba(255,255,255,0.58); max-width:460px; margin-bottom:40px; }
+.hero-desc .so { display:none; }
+.hero-actions { display:flex; gap:14px; flex-wrap:wrap; }
+.btn-join {
+  display:inline-flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--forest); padding:15px 30px; border-radius:12px;
+  font-size:14px; font-weight:700; text-decoration:none;
+  transition:transform .2s, box-shadow .2s;
+  box-shadow:0 8px 24px rgba(212,168,67,0.3);
+}
+.btn-join:hover { transform:translateY(-2px); box-shadow:0 14px 35px rgba(212,168,67,0.4); }
+.btn-ghost {
+  display:inline-flex; align-items:center; gap:10px;
+  background:transparent; color:#fff; padding:15px 30px; border-radius:12px;
+  font-size:14px; font-weight:600; text-decoration:none;
+  border:1.5px solid rgba(255,255,255,0.18); transition:all .2s;
+}
+.btn-ghost:hover { border-color:var(--sage); color:var(--sage); }
+.hero-members { display:flex; align-items:center; gap:12px; margin-top:36px; }
+.hero-av-stack { display:flex; }
+.hero-av {
+  width:34px; height:34px; border-radius:50%; border:2px solid var(--forest);
+  background:linear-gradient(135deg,var(--moss),var(--sage));
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:700; color:#fff; margin-left:-10px;
+}
+.hero-av:first-child { margin-left:0; }
+.hero-members-text { font-size:13px; color:rgba(255,255,255,0.45); }
+.hero-members-text strong { color:var(--sage); }
+
+/* ── PLATFORMS (JOIN US) ── */
+.hero-platforms { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.platform-card {
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  border-radius:18px; padding:22px; text-decoration:none;
+  transition:all .25s; display:flex; flex-direction:column; gap:10px;
+  position:relative; overflow:hidden;
+}
+.platform-card::before {
+  content:''; position:absolute; inset:0; opacity:0; transition:opacity .25s;
+}
+.pc-discord::before { background:linear-gradient(135deg,rgba(88,101,242,0.15),transparent); }
+.pc-whatsapp::before { background:linear-gradient(135deg,rgba(37,211,102,0.12),transparent); }
+.pc-telegram::before { background:linear-gradient(135deg,rgba(0,136,204,0.12),transparent); }
+.pc-youtube::before { background:linear-gradient(135deg,rgba(255,0,0,0.1),transparent); }
+.platform-card:hover { transform:translateY(-4px); border-color:rgba(255,255,255,0.2); }
+.platform-card:hover::before { opacity:1; }
+.platform-icon { font-size:28px; }
+.platform-name { font-size:14px; font-weight:700; color:#fff; }
+.platform-desc { font-size:12px; color:rgba(255,255,255,0.45); line-height:1.5; }
+.platform-arrow { font-size:12px; color:rgba(255,255,255,0.3); margin-top:auto; }
+
+/* ── SECTIONS COMMON ── */
+section { padding:96px 5%; }
+.section-inner { max-width:1200px; margin:0 auto; }
+.sec-eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--moss); margin-bottom:14px;
+}
+.sec-eyebrow::before { content:''; width:20px; height:2px; background:var(--moss); border-radius:2px; }
+h2.sec-title {
+  font-family:'Fraunces',serif;
+  font-size:clamp(28px,3.5vw,44px); font-weight:700;
+  color:var(--text); line-height:1.15; margin-bottom:14px;
+}
+h2.sec-title em { color:var(--moss); font-style:italic; }
+h2.sec-title .so { display:none; font-style:italic; color:var(--text-lt); font-size:.6em; font-family:'Plus Jakarta Sans',sans-serif; font-weight:400; }
+.sec-sub { font-size:16px; color:var(--text-mid); line-height:1.75; max-width:560px; }
+.sec-sub .so { display:none; }
+.sec-header { margin-bottom:52px; }
+
+/* ── FORUMS ── */
+.forums { background:var(--cream); }
+.forums-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.forum-card {
+  background:#fff; border-radius:18px; padding:28px;
+  border:1px solid rgba(10,31,18,0.08);
+  transition:all .25s; cursor:pointer;
+}
+.forum-card:hover { border-color:var(--sage); box-shadow:0 8px 28px rgba(45,106,79,0.1); transform:translateY(-3px); }
+.forum-icon { font-size:32px; margin-bottom:14px; }
+.forum-name {
+  font-family:'Fraunces',serif; font-size:18px; font-weight:700;
+  color:var(--text); margin-bottom:6px;
+}
+.forum-name-so { font-size:12px; color:var(--text-lt); font-style:italic; margin-bottom:10px; display:none; }
+.forum-desc { font-size:13px; color:var(--text-mid); line-height:1.65; margin-bottom:16px; }
+.forum-meta { display:flex; gap:16px; }
+.forum-meta span { font-size:12px; color:var(--text-lt); }
+.forum-tag {
+  display:inline-block; padding:3px 10px; border-radius:20px;
+  font-size:11px; font-weight:600; margin-bottom:10px;
+}
+.ft-tech { background:rgba(45,106,79,0.08); color:var(--moss); }
+.ft-career { background:rgba(212,168,67,0.1); color:#a07820; }
+.ft-community { background:rgba(196,92,42,0.08); color:var(--rust); }
+
+/* ── EVENTS ── */
+.events { background:var(--warm); }
+.events-list { display:flex; flex-direction:column; gap:16px; }
+.event-card {
+  background:#fff; border-radius:16px; padding:24px 28px;
+  border:1px solid rgba(10,31,18,0.08);
+  display:grid; grid-template-columns:80px 1fr auto;
+  gap:24px; align-items:center;
+  transition:all .2s;
+}
+.event-card:hover { border-color:var(--sage); box-shadow:0 6px 20px rgba(45,106,79,0.08); }
+.event-date {
+  text-align:center; padding:12px;
+  background:linear-gradient(135deg,var(--forest),var(--green));
+  border-radius:12px; color:#fff;
+}
+.event-date .month { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--sage); }
+.event-date .day { font-family:'Fraunces',serif; font-size:28px; font-weight:700; line-height:1; }
+.event-info { }
+.event-type { font-size:11px; font-weight:700; color:var(--moss); text-transform:uppercase; letter-spacing:.8px; margin-bottom:5px; }
+.event-title { font-size:16px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.event-title-so { font-size:12px; font-style:italic; color:var(--text-lt); margin-bottom:6px; display:none; }
+.event-meta { font-size:13px; color:var(--text-mid); }
+.event-cta {
+  white-space:nowrap; padding:10px 20px; border-radius:10px;
+  background:linear-gradient(135deg,var(--forest),var(--green));
+  color:#fff; text-decoration:none; font-size:13px; font-weight:600;
+  transition:opacity .2s;
+}
+.event-cta:hover { opacity:.85; }
+
+/* ── SPOTLIGHTS ── */
+.spotlights { background:var(--cream); }
+.spotlights-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.spotlight-card {
+  background:#fff; border-radius:20px; overflow:hidden;
+  border:1px solid rgba(10,31,18,0.08);
+  transition:all .25s;
+}
+.spotlight-card:hover { transform:translateY(-5px); box-shadow:0 16px 40px rgba(10,31,18,0.1); }
+.spotlight-banner {
+  height:100px; display:flex; align-items:center; justify-content:center;
+  font-size:36px; position:relative;
+}
+.sb1 { background:linear-gradient(135deg,var(--forest),var(--green)); }
+.sb2 { background:linear-gradient(135deg,#1a0d30,#3d1f6b); }
+.sb3 { background:linear-gradient(135deg,#1a0a05,#6b2d0a); }
+.spotlight-av {
+  position:absolute; bottom:-24px; left:24px;
+  width:48px; height:48px; border-radius:50%;
+  border:3px solid #fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; font-weight:700; color:#fff;
+}
+.sa1 { background:linear-gradient(135deg,var(--sage),var(--moss)); }
+.sa2 { background:linear-gradient(135deg,#9b59b6,#6c3483); }
+.sa3 { background:linear-gradient(135deg,var(--gold),var(--rust)); }
+.spotlight-body { padding:36px 24px 24px; }
+.spotlight-name { font-size:16px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.spotlight-role { font-size:12px; color:var(--moss); font-weight:600; margin-bottom:10px; }
+.spotlight-quote { font-size:13px; color:var(--text-mid); line-height:1.65; font-style:italic; }
+.spotlight-badge {
+  display:inline-block; margin-top:14px; padding:4px 12px;
+  background:rgba(45,106,79,0.08); border-radius:20px;
+  font-size:11px; font-weight:600; color:var(--moss);
+}
+
+/* ── RESOURCES ── */
+.resources { background:var(--forest); position:relative; overflow:hidden; }
+.resources::before {
+  content:''; position:absolute; inset:0;
+  background-image:radial-gradient(rgba(82,183,136,0.04) 1px, transparent 1px);
+  background-size:28px 28px;
+}
+.resources .sec-eyebrow { color:var(--sage); }
+.resources .sec-eyebrow::before { background:var(--sage); }
+.resources h2.sec-title { color:#fff; }
+.resources h2.sec-title em { color:var(--gold); }
+.resources .sec-sub { color:rgba(255,255,255,0.5); }
+.resources-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; position:relative; z-index:1; }
+.resource-card {
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);
+  border-radius:18px; padding:24px; text-decoration:none;
+  transition:all .25s; display:flex; flex-direction:column; gap:12px;
+}
+.resource-card:hover { background:rgba(255,255,255,0.09); border-color:rgba(82,183,136,0.3); transform:translateY(-3px); }
+.resource-icon { font-size:28px; }
+.resource-type { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--sage); }
+.resource-title { font-size:14px; font-weight:700; color:#fff; line-height:1.4; }
+.resource-desc { font-size:12px; color:rgba(255,255,255,0.45); line-height:1.6; flex:1; }
+.resource-link { font-size:12px; font-weight:600; color:var(--gold); }
+
+/* ── JOBS ── */
+.jobs { background:var(--warm); }
+.jobs-list { display:flex; flex-direction:column; gap:14px; }
+.job-card {
+  background:#fff; border-radius:16px; padding:22px 26px;
+  border:1px solid rgba(10,31,18,0.08);
+  display:grid; grid-template-columns:1fr auto;
+  gap:20px; align-items:center;
+  transition:all .2s;
+}
+.job-card:hover { border-color:var(--sage); box-shadow:0 6px 20px rgba(45,106,79,0.08); }
+.job-company { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+.job-logo {
+  width:36px; height:36px; border-radius:10px;
+  background:linear-gradient(135deg,var(--forest),var(--green));
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700; color:#fff; flex-shrink:0;
+}
+.job-co-name { font-size:13px; font-weight:600; color:var(--text-mid); }
+.job-title { font-size:16px; font-weight:700; color:var(--text); margin-bottom:8px; }
+.job-tags { display:flex; gap:8px; flex-wrap:wrap; }
+.job-tag {
+  padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;
+  background:rgba(45,106,79,0.07); color:var(--moss);
+}
+.job-tag.remote { background:rgba(212,168,67,0.1); color:#a07820; }
+.job-tag.entry  { background:rgba(196,92,42,0.08); color:var(--rust); }
+.job-apply {
+  white-space:nowrap; padding:10px 22px; border-radius:10px;
+  background:linear-gradient(135deg,var(--forest),var(--green));
+  color:#fff; text-decoration:none; font-size:13px; font-weight:600;
+  transition:opacity .2s;
+}
+.job-apply:hover { opacity:.85; }
+.jobs-note { text-align:center; margin-top:28px; font-size:13px; color:var(--text-lt); }
+.jobs-note a { color:var(--moss); font-weight:600; }
+
+/* ── NEWSLETTER ── */
+.newsletter {
+  background:linear-gradient(135deg,var(--forest) 0%,var(--green) 100%);
+  padding:80px 5%; text-align:center; position:relative; overflow:hidden;
+}
+.newsletter::before {
+  content:''; position:absolute; inset:0;
+  background-image:repeating-linear-gradient(45deg,rgba(212,168,67,0.04) 0,rgba(212,168,67,0.04) 1px,transparent 0,transparent 24px);
+}
+.newsletter-inner { max-width:560px; margin:0 auto; position:relative; z-index:1; }
+.newsletter h2 {
+  font-family:'Fraunces',serif; font-size:clamp(28px,4vw,42px);
+  font-weight:700; color:#fff; margin-bottom:8px;
+}
+.newsletter h2 em { color:var(--gold); }
+.newsletter h2 .so { display:none; }
+.newsletter p { font-size:16px; color:rgba(255,255,255,0.55); margin-bottom:32px; line-height:1.7; }
+.newsletter p .so { display:none; }
+.nl-form { display:flex; gap:10px; }
+.nl-input {
+  flex:1; padding:14px 18px; border-radius:12px;
+  border:1.5px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.08); color:#fff;
+  font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; outline:none;
+  transition:border .2s;
+}
+.nl-input:focus { border-color:var(--sage); }
+.nl-input::placeholder { color:rgba(255,255,255,0.3); }
+.nl-btn {
+  padding:14px 26px; border-radius:12px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--forest); border:none; font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:14px; font-weight:700; cursor:pointer;
+  transition:transform .2s, box-shadow .2s; white-space:nowrap;
+}
+.nl-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(212,168,67,0.35); }
+.nl-note { font-size:12px; color:rgba(255,255,255,0.3); margin-top:14px; }
+
+/* ── FOOTER ── */
+footer {
+  background:var(--forest); padding:40px 5%;
+  border-top:1px solid rgba(82,183,136,0.1);
+}
+.footer-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+.footer-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.footer-links { display:flex; gap:24px; }
+.footer-links a { font-size:13px; color:rgba(255,255,255,0.4); text-decoration:none; transition:color .2s; }
+.footer-links a:hover { color:var(--gold); }
+.footer-copy { font-size:13px; color:rgba(255,255,255,0.3); }
+
+/* ── SOMALI ── */
+body.somali-on .so { display:block !important; }
+body.somali-on .so-inline { display:inline !important; }
+
+/* ── FADE ── */
+.fade-up { opacity:0; transform:translateY(28px); transition:opacity .55s ease, transform .55s ease; }
+.fade-up.visible { opacity:1; transform:none; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px) {
+  .hero-inner { grid-template-columns:1fr; }
+  .forums-grid { grid-template-columns:1fr 1fr; }
+  .spotlights-grid { grid-template-columns:1fr 1fr; }
+  .resources-grid { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:768px) {
+  nav { padding:0 20px; }
+  section { padding:72px 20px; }
+  .hero { padding:100px 20px 80px; }
+  .forums-grid { grid-template-columns:1fr; }
+  .spotlights-grid { grid-template-columns:1fr; }
+  .resources-grid { grid-template-columns:1fr 1fr; }
+  .event-card { grid-template-columns:60px 1fr; }
+  .event-cta { display:none; }
+  .job-card { grid-template-columns:1fr; }
+  .nl-form { flex-direction:column; }
+  .hero-platforms { grid-template-columns:1fr 1fr; }
+  .footer-inner { flex-direction:column; text-align:center; }
+}
+@media(max-width:480px) {
+  .resources-grid { grid-template-columns:1fr; }
+  .hero-platforms { grid-template-columns:1fr; }
+}
+
+/* ── MOBILE NAV ── */
+.nav-mobile-btn {
+  display:none; flex-direction:column; justify-content:space-between;
+  width:26px; height:18px; background:none; border:none; cursor:pointer;
+  padding:0; z-index:101; position:relative; flex-shrink:0;
+}
+.nav-mobile-btn span { display:block; height:2px; width:100%; background:#fff; border-radius:2px; transition:all .3s; }
+.nav-mobile-btn.active span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
+.nav-mobile-btn.active span:nth-child(2) { opacity:0; }
+.nav-mobile-btn.active span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
+.nav-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:89; }
+.nav-overlay.show { display:block; }
+@media(max-width:768px) {
+  .nav-mobile-btn { display:flex; }
+  .nav-right {
+    position:fixed; top:0; right:-100%; bottom:0;
+    width:min(280px,80vw); background:var(--navy);
+    padding:80px 28px 40px; z-index:90;
+    transition:right .3s; flex-direction:column; gap:0;
+    border-left:1px solid rgba(255,255,255,0.08);
+    overflow-y:auto; display:flex;
+  }
+  .nav-right.open { right:0; }
+  .nav-right a { padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.07); font-size:15px; color:rgba(255,255,255,0.8); }
+  .nav-pill { margin-top:20px !important; text-align:center; border-bottom:none !important; }
+  .lang-btn { border-bottom:1px solid rgba(255,255,255,0.07) !important; }
+}
+
+</style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GGBZJXPLRP');
+</script>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="https://kulaninstitute.org" class="nav-logo">
+    <div class="nav-logo-mark">KI</div>
+    <div class="nav-logo-text">
+      <div class="t1">Kulan Community</div>
+      <div class="t2">kulaninstitute.org</div>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a href="#forums">Forums</a>
+    <a href="#events">Events</a>
+    <a href="#resources">Resources</a>
+    <a href="#jobs">Jobs</a>
+    <a href="#" class="lang-btn" id="langToggle">+ Somali</a>
+    <a href="https://learn.kulaninstitute.org" class="nav-pill">&#127891; LMS &rarr;</a>
+  </div>
+  <button class="nav-mobile-btn" id="mobileBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- ── HERO ── -->
+<section class="hero weave" id="hero">
+  <div class="hero-ring1"></div>
+  <div class="hero-ring2"></div>
+  <div class="hero-dots"></div>
+  <div class="hero-inner">
+    <div class="hero-left fade-up">
+      <div class="hero-tag">&#127758; EN + SO &bull; Kulan Community</div>
+      <h1 class="hero-title">Where <em>Our Community</em><br>Comes to Grow.</h1>
+      <p class="hero-title-so so">Halka Bulshadeena Ku Korortaa.</p>
+      <p class="hero-desc">
+        Connect with fellow learners, share resources, find jobs, and support each other on the path to tech careers.
+        <span class="so">La xiriir arday kale, la wadaag agabka, shaqo raadi, isla kaana garab gal.</span>
+      </p>
+      <div class="hero-actions">
+        <a href="#forums" class="btn-join">&#128101; Join the Community</a>
+        <a href="#events" class="btn-ghost">Upcoming Events &darr;</a>
+      </div>
+      <div class="hero-members">
+        <div class="hero-av-stack">
+          <div class="hero-av">F</div>
+          <div class="hero-av" style="background:linear-gradient(135deg,var(--gold),#c8942a);color:var(--forest)">A</div>
+          <div class="hero-av" style="background:linear-gradient(135deg,var(--rust),#8B3010)">H</div>
+          <div class="hero-av" style="background:linear-gradient(135deg,#5865F2,#3b47d4)">M</div>
+        </div>
+        <div class="hero-members-text">Join <strong>100+ members</strong> already connected</div>
+      </div>
+    </div>
+    <div class="hero-right fade-up">
+      <div class="hero-platforms">
+        <a href="#" class="platform-card pc-discord">
+          <div class="platform-icon">&#128172;</div>
+          <div class="platform-name">Discord Server</div>
+          <div class="platform-desc">Real-time chat, study rooms, and voice hangouts</div>
+          <div class="platform-arrow">Join &rarr;</div>
+        </a>
+        <a href="#" class="platform-card pc-whatsapp">
+          <div class="platform-icon">&#128241;</div>
+          <div class="platform-name">WhatsApp Group</div>
+          <div class="platform-desc">Quick updates, announcements, and community news</div>
+          <div class="platform-arrow">Join &rarr;</div>
+        </a>
+        <a href="#" class="platform-card pc-telegram">
+          <div class="platform-icon">&#9992;&#65039;</div>
+          <div class="platform-name">Telegram Channel</div>
+          <div class="platform-desc">Job listings, resources, and course updates</div>
+          <div class="platform-arrow">Join &rarr;</div>
+        </a>
+        <a href="#" class="platform-card pc-youtube">
+          <div class="platform-icon">&#127909;</div>
+          <div class="platform-name">YouTube Channel</div>
+          <div class="platform-desc">Free video lessons, walkthroughs, and live sessions</div>
+          <div class="platform-arrow">Watch &rarr;</div>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-arc"></div>
+</section>
+
+<!-- ── FORUMS ── -->
+<section class="forums" id="forums">
+  <div class="section-inner">
+    <div class="sec-header fade-up">
+      <div class="sec-eyebrow">Discussion</div>
+      <h2 class="sec-title">Community <em>Forums</em><span class="so"> — Xafiisyada Bulshada</span></h2>
+      <p class="sec-sub">Ask questions, share knowledge, and learn from each other. All discussions welcome in English or Somali.<span class="so"> Su'aalo weydi, aqoon la wadaag, isla kaana wax ka baro.</span></p>
+    </div>
+    <div class="forums-grid">
+      <div class="forum-card fade-up">
+        <div class="forum-icon">&#129302;</div>
+        <span class="forum-tag ft-tech">Technology</span>
+        <div class="forum-name">AI &amp; Machine Learning</div>
+        <div class="forum-name-so so">Xisaabta Macquulka ah</div>
+        <p class="forum-desc">Discuss AI concepts, tools, projects, and the latest developments in the field.</p>
+        <div class="forum-meta">
+          <span>&#128172; 24 posts</span>
+          <span>&#128101; 38 members</span>
+        </div>
+      </div>
+      <div class="forum-card fade-up">
+        <div class="forum-icon">&#128737;</div>
+        <span class="forum-tag ft-tech">Technology</span>
+        <div class="forum-name">Cybersecurity</div>
+        <div class="forum-name-so so">Amniga Xogta</div>
+        <p class="forum-desc">CTF challenges, cert prep (Security+, CySA+), and real-world security discussions.</p>
+        <div class="forum-meta">
+          <span>&#128172; 31 posts</span>
+          <span>&#128101; 42 members</span>
+        </div>
+      </div>
+      <div class="forum-card fade-up">
+        <div class="forum-icon">&#128188;</div>
+        <span class="forum-tag ft-career">Career</span>
+        <div class="forum-name">Career &amp; Jobs</div>
+        <div class="forum-name-so so">Shaqo iyo Xirfad</div>
+        <p class="forum-desc">Resume reviews, interview tips, job leads, and breaking into tech from our community.</p>
+        <div class="forum-meta">
+          <span>&#128172; 19 posts</span>
+          <span>&#128101; 55 members</span>
+        </div>
+      </div>
+      <div class="forum-card fade-up">
+        <div class="forum-icon">&#127979;</div>
+        <span class="forum-tag ft-community">Community</span>
+        <div class="forum-name">Study Groups</div>
+        <div class="forum-name-so so">Kooxaha Barashada</div>
+        <p class="forum-desc">Find a study partner or form a group. Accountability makes all the difference.</p>
+        <div class="forum-meta">
+          <span>&#128172; 14 posts</span>
+          <span>&#128101; 29 members</span>
+        </div>
+      </div>
+      <div class="forum-card fade-up">
+        <div class="forum-icon">&#127758;</div>
+        <span class="forum-tag ft-community">Community</span>
+        <div class="forum-name">Somali Tech Talk</div>
+        <div class="forum-name-so so">Hadal Teknolojiyeed</div>
+        <p class="forum-desc">All-Somali discussion space. Talk tech, share in your language, build in your culture.</p>
+        <div class="forum-meta">
+          <span>&#128172; 47 posts</span>
+          <span>&#128101; 61 members</span>
+        </div>
+      </div>
+      <div class="forum-card fade-up">
+        <div class="forum-icon">&#128218;</div>
+        <span class="forum-tag ft-career">Learning</span>
+        <div class="forum-name">Course Q&amp;A</div>
+        <div class="forum-name-so so">Su'aalaha Koorsada</div>
+        <p class="forum-desc">Stuck on a lesson? Post your question here. Instructors and peers both answer.</p>
+        <div class="forum-meta">
+          <span>&#128172; 52 posts</span>
+          <span>&#128101; 73 members</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EVENTS ── -->
+<section class="events" id="events">
+  <div class="section-inner">
+    <div class="sec-header fade-up">
+      <div class="sec-eyebrow">Calendar</div>
+      <h2 class="sec-title">Upcoming <em>Events</em><span class="so"> — Dhacdooyinka</span></h2>
+      <p class="sec-sub">Live sessions, webinars, and community meetups — all free to attend.<span class="so"> Kulamo toos ah, webinaro, iyo kulanno bulsheed — dhammaan bilaash.</span></p>
+    </div>
+    <div class="events-list">
+      <div class="event-card fade-up">
+        <div class="event-date">
+          <div class="month">MAR</div>
+          <div class="day">22</div>
+        </div>
+        <div class="event-info">
+          <div class="event-type">Live Webinar</div>
+          <div class="event-title">Introduction to Prompt Engineering — Bilingual Session</div>
+          <div class="event-title-so so">Hordhaca Injineerinka Fariimaha — Labada Luqadood</div>
+          <div class="event-meta">&#128336; 7:00 PM CST &bull; &#127758; Online (Zoom) &bull; Free</div>
+        </div>
+        <a href="#" class="event-cta">Register &rarr;</a>
+      </div>
+      <div class="event-card fade-up">
+        <div class="event-date">
+          <div class="month">APR</div>
+          <div class="day">05</div>
+        </div>
+        <div class="event-info">
+          <div class="event-type">Study Session</div>
+          <div class="event-title">Security+ Exam Prep — Group Study &amp; Practice Questions</div>
+          <div class="event-title-so so">Diyaarinta Imtixaanka Security+</div>
+          <div class="event-meta">&#128336; 6:00 PM CST &bull; &#127758; Online (Discord) &bull; Free</div>
+        </div>
+        <a href="#" class="event-cta">Register &rarr;</a>
+      </div>
+      <div class="event-card fade-up">
+        <div class="event-date">
+          <div class="month">APR</div>
+          <div class="day">19</div>
+        </div>
+        <div class="event-info">
+          <div class="event-type">Community Talk</div>
+          <div class="event-title">Breaking Into Tech — Somali Professionals Panel</div>
+          <div class="event-title-so so">Teknoolojiyada Ku Gal — Xarfaha Soomaaliyeed</div>
+          <div class="event-meta">&#128336; 5:00 PM CST &bull; &#127758; Online (Zoom) &bull; Free</div>
+        </div>
+        <a href="#" class="event-cta">Register &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SPOTLIGHTS ── -->
+<section class="spotlights" id="spotlights">
+  <div class="section-inner">
+    <div class="sec-header fade-up">
+      <div class="sec-eyebrow">Student Spotlights</div>
+      <h2 class="sec-title">Our <em>People</em> Are the Story<span class="so"> — Dadkeenna</span></h2>
+      <p class="sec-sub">Every member of this community has a journey. Here are a few.<span class="so"> Xubin kasta oo bulshadeena ka mid ah waxay leedahay socdaal.</span></p>
+    </div>
+    <div class="spotlights-grid">
+      <div class="spotlight-card fade-up">
+        <div class="spotlight-banner sb1">
+          <div class="spotlight-av sa1">F</div>
+        </div>
+        <div class="spotlight-body">
+          <div class="spotlight-name">Fadumo Abdi</div>
+          <div class="spotlight-role">AI for Beginners &bull; Minneapolis, MN</div>
+          <p class="spotlight-quote">"I started with zero tech background. Six months later I'm building my first AI project and applying for data analyst roles."</p>
+          <span class="spotlight-badge">&#127775; Featured Graduate</span>
+        </div>
+      </div>
+      <div class="spotlight-card fade-up">
+        <div class="spotlight-banner sb2">
+          <div class="spotlight-av sa2">A</div>
+        </div>
+        <div class="spotlight-body">
+          <div class="spotlight-name">Ahmed Omar</div>
+          <div class="spotlight-role">Cybersecurity &bull; Columbus, OH</div>
+          <p class="spotlight-quote">"The bilingual notes helped me explain concepts to my parents — they finally understood what I was studying and why it mattered."</p>
+          <span class="spotlight-badge">&#128737; Security+ Passed</span>
+        </div>
+      </div>
+      <div class="spotlight-card fade-up">
+        <div class="spotlight-banner sb3">
+          <div class="spotlight-av sa3">H</div>
+        </div>
+        <div class="spotlight-body">
+          <div class="spotlight-name">Hodan Mohamud</div>
+          <div class="spotlight-role">Digital Literacy &bull; Seattle, WA</div>
+          <p class="spotlight-quote">"Kulan gave me more than skills. It gave me a community that looks like me, speaks like me, and wants to see me succeed."</p>
+          <span class="spotlight-badge">&#127979; Community Leader</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RESOURCES ── -->
+<section class="resources" id="resources">
+  <div class="section-inner">
+    <div class="sec-header fade-up" style="position:relative;z-index:1">
+      <div class="sec-eyebrow">Resource Library</div>
+      <h2 class="sec-title">Free <em>Tools &amp; Resources</em><span class="so"> — Agabka Bilaashka ah</span></h2>
+      <p class="sec-sub">Handpicked resources to help you learn faster and go further.<span class="so"> Agab la xushay si aad u barato degdeg ah.</span></p>
+    </div>
+    <div class="resources-grid">
+      <a href="#" class="resource-card fade-up">
+        <div class="resource-icon">&#128196;</div>
+        <div class="resource-type">Study Guide</div>
+        <div class="resource-title">Security+ SY0-701 Bilingual Notes</div>
+        <p class="resource-desc">Full exam notes in English and Somali covering all 5 domains.</p>
+        <div class="resource-link">Download PDF &rarr;</div>
+      </a>
+      <a href="#" class="resource-card fade-up">
+        <div class="resource-icon">&#128250;</div>
+        <div class="resource-type">Video Series</div>
+        <div class="resource-title">AI Basics in Somali — YouTube Playlist</div>
+        <p class="resource-desc">8-part video series walking through AI concepts in Somali.</p>
+        <div class="resource-link">Watch Free &rarr;</div>
+      </a>
+      <a href="#" class="resource-card fade-up">
+        <div class="resource-icon">&#128736;</div>
+        <div class="resource-type">Practice Labs</div>
+        <div class="resource-title">TryHackMe — Beginner Cybersecurity Path</div>
+        <p class="resource-desc">Free hands-on labs recommended by Kulan instructors.</p>
+        <div class="resource-link">Start Lab &rarr;</div>
+      </a>
+      <a href="#" class="resource-card fade-up">
+        <div class="resource-icon">&#128302;</div>
+        <div class="resource-type">Flashcards</div>
+        <div class="resource-title">CompTIA Security+ Anki Deck — EN/SO</div>
+        <p class="resource-desc">500+ flashcards covering key terms in both languages.</p>
+        <div class="resource-link">Get Deck &rarr;</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── JOBS ── -->
+<section class="jobs" id="jobs">
+  <div class="section-inner">
+    <div class="sec-header fade-up">
+      <div class="sec-eyebrow">Job Board</div>
+      <h2 class="sec-title">Opportunities for <em>Our Community</em><span class="so"> — Fursadaha</span></h2>
+      <p class="sec-sub">Entry-level and remote tech roles curated for Kulan community members.<span class="so"> Shaqooyin teknoolojiyeed oo u gaar ah xubnaha bulshadeena.</span></p>
+    </div>
+    <div class="jobs-list">
+      <div class="job-card fade-up">
+        <div>
+          <div class="job-company">
+            <div class="job-logo">KI</div>
+            <div class="job-co-name">Kulan Institute of Technology and Science</div>
+          </div>
+          <div class="job-title">Volunteer Somali Translator — Course Content</div>
+          <div class="job-tags">
+            <span class="job-tag remote">Remote</span>
+            <span class="job-tag entry">Volunteer</span>
+            <span class="job-tag">Somali Required</span>
+          </div>
+        </div>
+        <a href="https://apply.kulaninstitute.org" class="job-apply">Apply &rarr;</a>
+      </div>
+      <div class="job-card fade-up">
+        <div>
+          <div class="job-company">
+            <div class="job-logo" style="background:linear-gradient(135deg,#0066cc,#004a9e)">IT</div>
+            <div class="job-co-name">Various Companies</div>
+          </div>
+          <div class="job-title">IT Help Desk Technician — Entry Level</div>
+          <div class="job-tags">
+            <span class="job-tag remote">Remote</span>
+            <span class="job-tag entry">Entry Level</span>
+            <span class="job-tag">CompTIA A+ preferred</span>
+          </div>
+        </div>
+        <a href="#" class="job-apply">View Jobs &rarr;</a>
+      </div>
+      <div class="job-card fade-up">
+        <div>
+          <div class="job-company">
+            <div class="job-logo" style="background:linear-gradient(135deg,#6b2d0a,#c45c2a)">SOC</div>
+            <div class="job-co-name">Multiple Employers</div>
+          </div>
+          <div class="job-title">Junior SOC Analyst — Security Operations</div>
+          <div class="job-tags">
+            <span class="job-tag remote">Hybrid</span>
+            <span class="job-tag entry">Entry Level</span>
+            <span class="job-tag">Security+ preferred</span>
+          </div>
+        </div>
+        <a href="#" class="job-apply">View Jobs &rarr;</a>
+      </div>
+    </div>
+    <p class="jobs-note">Want to post a job for our community? <a href="https://apply.kulaninstitute.org">Apply Now &rarr;</a></p>
+  </div>
+</section>
+
+<!-- ── NEWSLETTER ── -->
+<section class="newsletter" id="newsletter">
+  <div class="newsletter-inner fade-up">
+    <h2>Stay in the <em>Loop</em><span class="so"> — Waran Hel</span></h2>
+    <p>
+      Weekly digest of new resources, job listings, events, and community updates — in your inbox, in both languages.
+      <span class="so">Warqad usbuuciya oo ka kooban agabka cusub, fursadaha shaqo, dhacdooyinka, iyo wararka bulshada.</span>
+    </p>
+    <div class="nl-form">
+      <input type="email" class="nl-input" placeholder="Enter your email address" id="nlEmail">
+      <button class="nl-btn" onclick="nlSignup()">Subscribe &rarr;</button>
+    </div>
+    <p class="nl-note" id="nlMsg">No spam. Unsubscribe anytime. We respect your inbox.</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <a href="https://kulaninstitute.org" class="footer-logo">
+      <div class="nav-logo-mark">KI</div>
+      <div class="nav-logo-text">
+        <div class="t1" style="color:#fff">Kulan Institute of Technology and Science</div>
+        <div class="t2">kulaninstitute.org</div>
+      </div>
+    </a>
+    <div class="footer-links">
+      <a href="https://kulaninstitute.org">Home</a>
+      <a href="https://learn.kulaninstitute.org">LMS</a>
+      <a href="#forums">Forums</a>
+      <a href="#jobs">Jobs</a>
+      <a href="https://kulaninstitute.org#contact">Contact</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 Kulan Institute of Technology and Science</div>
+  </div>
+</footer>
+
+<script>
+// Nav scroll
+window.addEventListener('scroll', function() {
+  // nav always dark on this page
+});
+
+// Lang toggle
+var toggle = document.getElementById('langToggle');
+var soOn = false;
+toggle.addEventListener('click', function(e) {
+  e.preventDefault();
+  soOn = !soOn;
+  document.body.classList.toggle('somali-on', soOn);
+  toggle.textContent = soOn ? 'English' : '+ Somali';
+});
+
+// Fade in on scroll
+var fades = document.querySelectorAll('.fade-up');
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.08, rootMargin:'0px 0px -30px 0px' });
+fades.forEach(function(el) { obs.observe(el); });
+
+// Newsletter
+function nlSignup() {
+  var email = document.getElementById('nlEmail').value.trim();
+  var msg = document.getElementById('nlMsg');
+  if (!email || !email.includes('@')) {
+    msg.textContent = 'Please enter a valid email address.';
+    msg.style.color = 'var(--error)';
+    return;
+  }
+  msg.textContent = 'Thank you! You are on the list.';
+  msg.style.color = 'var(--success)';
+  document.getElementById('nlEmail').value = '';
+  setTimeout(function() { msg.textContent = ''; }, 4000);
+}
+
+// Mobile menu
+(function() {
+  var btn = document.getElementById('mobileBtn');
+  var nav = document.querySelector('.nav-right');
+  var overlay = document.getElementById('navOverlay');
+  if (!btn || !nav) return;
+  function closeMenu() {
+    nav.classList.remove('open');
+    btn.classList.remove('active');
+    if (overlay) overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  btn.addEventListener('click', function() {
+    var open = !nav.classList.contains('open');
+    nav.classList.toggle('open', open);
+    btn.classList.toggle('active', open);
+    if (overlay) overlay.classList.toggle('show', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  if (overlay) overlay.addEventListener('click', closeMenu);
+  nav.querySelectorAll('a:not(.lang-btn)').forEach(function(a) {
+    a.addEventListener('click', closeMenu);
+  });
+})();
+
+</script>
+</body>
+</html>

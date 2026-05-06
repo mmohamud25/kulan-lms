@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — KIST</title>
+<meta name="description" content="Learn about Kulan Institute of Technology and Science — our story, mission, team, and the community we serve.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
+  --white:#FFFFFF; --bg:#F8F6F1; --warm:#EDE8DC;
+  --text:#1a2840; --text-mid:#4a6080; --text-light:#8a9bb0;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:0 5%; height:68px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(11,31,58,0.97); backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.nav-logo { display:flex;align-items:center;gap:12px;text-decoration:none; }
+.nav-logo-icon { width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:17px;color:var(--navy); }
+.nav-logo-text .t1 { font-size:13px;font-weight:700;color:#fff; }
+.nav-logo-text .t2 { font-size:10px;color:rgba(212,168,67,0.7); }
+.nav-links { display:flex;align-items:center;gap:28px; }
+.nav-links a { font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);text-decoration:none;transition:color .2s; }
+.nav-links a:hover { color:var(--gold); }
+.nav-links a.active { color:var(--gold);font-weight:700; }
+.nav-cta { background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff !important;padding:9px 20px;border-radius:8px;font-weight:700 !important;font-size:13px !important;transition:transform .2s,box-shadow .2s !important; }
+.nav-cta:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(27,174,204,0.35); }
+
+/* ── HERO ── */
+.hero {
+  min-height:560px;
+  background:linear-gradient(160deg,#060f1e 0%,var(--navy) 50%,#0d2a50 100%);
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; padding:120px 5% 80px;
+}
+.hero-grid {
+  position:absolute; inset:0;
+  background-image:linear-gradient(rgba(27,174,204,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.05) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.hero-orb { position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(212,168,67,0.08) 0%,transparent 65%);right:-100px;top:-100px;border-radius:50%; }
+.hero-inner { max-width:1200px;width:100%;margin:0 auto; }
+.hero-badge { display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,67,0.1);border:1px solid rgba(212,168,67,0.25);border-radius:20px;padding:6px 16px;margin-bottom:24px;font-size:12px;font-weight:600;color:var(--gold);letter-spacing:.5px; }
+.hero h1 { font-family:'Playfair Display',serif;font-size:clamp(40px,6vw,72px);font-weight:900;color:#fff;line-height:1.05;margin-bottom:10px; }
+.hero h1 em { color:var(--gold);font-style:italic; }
+.hero-sub { font-size:18px;color:rgba(255,255,255,0.55);line-height:1.75;max-width:560px;margin-bottom:40px; }
+.hero-arc { position:absolute;bottom:-2px;left:0;right:0;height:60px;background:var(--bg);clip-path:ellipse(55% 100% at 50% 100%); }
+
+/* ── SECTIONS ── */
+section { padding:96px 5%; }
+.section-inner { max-width:1200px;margin:0 auto; }
+.eyebrow { display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:14px; }
+.eyebrow::before { content:'';width:20px;height:2px;background:var(--cyan);border-radius:2px; }
+h2.sec-title { font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--navy);line-height:1.15;margin-bottom:14px; }
+h2.sec-title em { color:var(--cyan);font-style:italic; }
+.sec-sub { font-size:17px;color:var(--text-mid);line-height:1.75;max-width:600px; }
+
+/* ── STORY ── */
+.story { background:var(--bg); }
+.story-grid { display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center; }
+.story-visual { position:relative; }
+.story-img {
+  width:100%;aspect-ratio:4/5;border-radius:24px;
+  background:linear-gradient(160deg,var(--navy),var(--blue));
+  display:flex;align-items:center;justify-content:center;font-size:80px;
+  position:relative;overflow:hidden;
+}
+.story-img-pattern {
+  position:absolute;inset:0;
+  background-image:repeating-linear-gradient(60deg,rgba(212,168,67,0.06) 0,rgba(212,168,67,0.06) 1px,transparent 0,transparent 28px),repeating-linear-gradient(-60deg,rgba(27,174,204,0.04) 0,rgba(27,174,204,0.04) 1px,transparent 0,transparent 28px);
+}
+.story-badge { position:absolute;bottom:24px;right:-20px;background:#fff;border-radius:16px;padding:16px 20px;box-shadow:0 12px 40px rgba(11,31,58,0.15);display:flex;align-items:center;gap:12px; }
+.story-badge .num { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--navy); }
+.story-badge .lbl { font-size:12px;color:var(--text-mid);line-height:1.4; }
+.story-content p { font-size:16px;color:var(--text-mid);line-height:1.85;margin-bottom:18px; }
+.story-content p strong { color:var(--navy); }
+
+/* ── MISSION ── */
+.mission { background:#fff; }
+.mission-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:52px; }
+.mission-card { padding:32px;border-radius:20px;border:1px solid rgba(11,31,58,0.08);transition:all .25s; }
+.mission-card:hover { transform:translateY(-4px);box-shadow:0 16px 40px rgba(11,31,58,0.08);border-color:var(--cyan); }
+.mc-icon { font-size:36px;margin-bottom:16px; }
+.mc-title { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy);margin-bottom:10px; }
+.mc-desc { font-size:14px;color:var(--text-mid);line-height:1.75; }
+.mc-accent { display:block;width:32px;height:3px;border-radius:2px;margin-top:16px; }
+
+/* ── TIMELINE ── */
+.timeline { background:var(--warm); }
+.timeline-list { margin-top:52px;position:relative; }
+.timeline-list::before { content:'';position:absolute;left:24px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--cyan),var(--gold));border-radius:2px; }
+.tl-item { display:flex;gap:32px;margin-bottom:44px;position:relative; }
+.tl-dot { width:48px;height:48px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;position:relative;z-index:1;border:3px solid #fff;box-shadow:0 4px 14px rgba(11,31,58,0.15); }
+.tl-content { flex:1;padding-top:8px; }
+.tl-year { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);margin-bottom:5px; }
+.tl-title { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy);margin-bottom:8px; }
+.tl-desc { font-size:14px;color:var(--text-mid);line-height:1.75; }
+
+/* ── TEAM ── */
+.team { background:var(--bg); }
+.team-card {
+  max-width:480px;
+  background:#fff;border-radius:24px;overflow:hidden;
+  border:1px solid rgba(11,31,58,0.08);
+  box-shadow:0 12px 40px rgba(11,31,58,0.08);
+  margin-top:48px;
+}
+.team-banner { height:140px;background:linear-gradient(135deg,var(--navy),var(--blue));position:relative;display:flex;align-items:flex-end;padding:0 28px 0; }
+.team-av { width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));border:4px solid #fff;position:absolute;bottom:-44px;left:28px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--navy);box-shadow:0 8px 24px rgba(212,168,67,0.3);overflow:hidden; }
+.team-body { padding:60px 28px 28px; }
+.team-name { font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy);margin-bottom:4px; }
+.team-role { font-size:13px;font-weight:600;color:var(--teal);letter-spacing:.4px;margin-bottom:16px; }
+.team-bio { font-size:14px;color:var(--text-mid);line-height:1.8;margin-bottom:20px; }
+.team-tags { display:flex;gap:8px;flex-wrap:wrap; }
+.team-tag { padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(11,31,58,0.06);color:var(--text-mid); }
+
+/* ── PARTNERS ── */
+.partners { background:#fff; }
+.partners-note { font-size:15px;color:var(--text-mid);line-height:1.75;max-width:600px;margin-bottom:44px; }
+.partners-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:20px; }
+.partner-card { padding:28px;border-radius:18px;border:1.5px solid rgba(11,31,58,0.1);text-align:center;transition:all .25s; }
+.partner-card:hover { border-color:var(--cyan);box-shadow:0 8px 24px rgba(27,174,204,0.1); }
+.partner-icon { font-size:36px;margin-bottom:12px; }
+.partner-name { font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px; }
+.partner-desc { font-size:13px;color:var(--text-light);line-height:1.6; }
+
+/* ── CONTACT ── */
+.contact-section { background:linear-gradient(160deg,var(--navy),var(--blue));padding:80px 5%; }
+.contact-inner { max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center; }
+.contact-section .eyebrow::before { background:var(--gold); }
+.contact-section .eyebrow { color:var(--gold); }
+.contact-section h2 { font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,42px);font-weight:700;color:#fff;margin-bottom:14px; }
+.contact-section p { font-size:16px;color:rgba(255,255,255,0.55);line-height:1.75; }
+.contact-details { display:flex;flex-direction:column;gap:18px; }
+.contact-item { display:flex;align-items:center;gap:14px; }
+.contact-item-icon { width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+.contact-item-text { font-size:14px;color:rgba(255,255,255,0.6);line-height:1.6; }
+.contact-item-text strong { display:block;color:#fff;font-weight:600;margin-bottom:2px; }
+
+/* ── FOOTER ── */
+footer { background:var(--navy);padding:40px 5%;border-top:1px solid rgba(255,255,255,0.08); }
+.footer-inner { max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px; }
+.footer-links { display:flex;gap:24px; }
+.footer-links a { font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .2s; }
+.footer-links a:hover { color:var(--gold); }
+.footer-copy { font-size:13px;color:rgba(255,255,255,0.3); }
+
+/* ── FADE ── */
+.fade-up { opacity:0;transform:translateY(28px);transition:opacity .55s ease,transform .55s ease; }
+.fade-up.visible { opacity:1;transform:none; }
+
+@media(max-width:1024px) { .story-grid { grid-template-columns:1fr; } .story-visual { max-width:400px; } .contact-inner { grid-template-columns:1fr; } }
+@media(max-width:768px) { nav { padding:0 20px; } .nav-links { display:none; } section { padding:72px 20px; } .mission-grid { grid-template-columns:1fr; } .partners-grid { grid-template-columns:1fr 1fr; } .contact-section { padding:60px 20px; } }
+@media(max-width:480px) { .partners-grid { grid-template-columns:1fr; } }
+
+/* ── MOBILE NAV ── */
+.nav-mobile-btn {
+  display:none; flex-direction:column; justify-content:space-between;
+  width:28px; height:20px; background:none; border:none; cursor:pointer;
+  padding:0; z-index:101; position:relative;
+}
+.nav-mobile-btn span {
+  display:block; height:2px; width:100%;
+  background:#fff; border-radius:2px; transition:all .3s;
+}
+.nav-mobile-btn.active span:nth-child(1) { transform:translateY(9px) rotate(45deg); }
+.nav-mobile-btn.active span:nth-child(2) { opacity:0; }
+.nav-mobile-btn.active span:nth-child(3) { transform:translateY(-9px) rotate(-45deg); }
+.nav-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.55); z-index:89;
+}
+.nav-overlay.show { display:block; }
+@media(max-width:768px) {
+  .nav-mobile-btn { display:flex; }
+  .nav-links {
+    display:flex; flex-direction:column;
+    position:fixed; top:0; right:-100%; bottom:0;
+    width:min(280px,80vw); background:var(--navy);
+    padding:80px 28px 40px; z-index:90;
+    transition:right .3s; gap:0;
+    border-left:1px solid rgba(255,255,255,0.08);
+    overflow-y:auto;
+  }
+  .nav-links.open { right:0; }
+  .nav-links a {
+    padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.07);
+    font-size:15px; color:rgba(255,255,255,0.8);
+  }
+  .nav-links a.nav-cta {
+    margin-top:20px; text-align:center;
+    background:linear-gradient(135deg,var(--gold),var(--gold2));
+    color:var(--navy); border-radius:10px; padding:13px;
+    border-bottom:none;
+  }
+}
+
+</style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBZJXPLRP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GGBZJXPLRP');
+</script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="https://kulaninstitute.org" class="nav-logo">
+    <div class="nav-logo-icon">KI</div>
+    <div class="nav-logo-text">
+      <div class="t1">Kulan Institute of Technology and Science</div>
+      <div class="t2">Learn. Grow. Lead.</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="https://kulaninstitute.org">Home</a>
+    <a href="https://kulaninstitute.org#courses">Courses</a>
+    <a href="https://about.kulaninstitute.org" class="active">About</a>
+    <a href="https://blog.kulaninstitute.org">Blog</a>
+    <a href="https://community.kulaninstitute.org">Community</a>
+    <a href="https://kulaninstitute.org#contact">Contact</a>
+    <a href="https://learn.kulaninstitute.org" class="nav-cta">Start Learning &rarr;</a>
+  </div>
+  <button class="nav-mobile-btn" id="mobileBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-orb"></div>
+  <div class="hero-inner fade-up">
+    <div class="hero-badge">&#127979; About Kulan Institute of Technology and Science</div>
+    <h1>Built for <em>Our Community.</em><br>By Our Community.</h1>
+    <p class="hero-sub">We are a bilingual English and Somali educational platform on a mission to make world-class technology education accessible to everyone — regardless of language, background, or income.</p>
+  </div>
+  <div class="hero-arc"></div>
+</section>
+
+<!-- OUR STORY -->
+<section class="story" id="story">
+  <div class="section-inner">
+    <div class="story-grid">
+      <div class="story-visual fade-up">
+        <div class="story-img">
+          <div class="story-img-pattern"></div>
+          <span style="position:relative;z-index:1;">&#127979;</span>
+        </div>
+        <div class="story-badge">
+          <div>
+            <div class="num">3</div>
+            <div class="lbl">Courses<br>Launched</div>
+          </div>
+          <div style="font-size:28px;">&#128218;</div>
+        </div>
+      </div>
+      <div class="story-content fade-up">
+        <div class="eyebrow">Our Story</div>
+        <h2 class="sec-title">Why Kulan<br><em>Exists</em></h2>
+        <p>Kulan Institute of Technology and Science was founded with a simple but powerful idea: <strong>language should never be a barrier to learning technology.</strong></p>
+        <p>As a member of the Somali community in Columbus, Ohio, I saw firsthand how talented, motivated people were being left behind in the tech revolution — not because they lacked ability, but because every resource, course, and certification was in a language that was not their first.</p>
+        <p>So I built Kulan. Not just another online school, but a bilingual learning home where students can grow in both English and Somali at the same time — absorbing concepts in the language they think in, while building the English vocabulary they need to succeed in tech careers.</p>
+        <p>Every course, every material, every lesson is built with this community in mind. <strong>That will never change.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION & VALUES -->
+<section class="mission" id="mission">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="eyebrow">Mission &amp; Values</div>
+      <h2 class="sec-title">What We <em>Believe</em></h2>
+      <p class="sec-sub">Four principles guide everything we build, every course we create, and every student we serve.</p>
+    </div>
+    <div class="mission-grid">
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#127758;</div>
+        <div class="mc-title">Bilingual First</div>
+        <p class="mc-desc">Every lesson is built in both English and Somali from day one — not translated after the fact. Language is identity, and we honor that.</p>
+        <span class="mc-accent" style="background:var(--cyan);"></span>
+      </div>
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#128233;</div>
+        <div class="mc-title">Free &amp; Accessible</div>
+        <p class="mc-desc">Core courses are free forever. Quality education should never come with a price tag that excludes the people who need it most.</p>
+        <span class="mc-accent" style="background:var(--gold);"></span>
+      </div>
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#128296;</div>
+        <div class="mc-title">Career Ready</div>
+        <p class="mc-desc">No filler, no fluff. Every module teaches something you can actually use on day one in a real tech job or certification exam.</p>
+        <span class="mc-accent" style="background:var(--teal);"></span>
+      </div>
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#127775;</div>
+        <div class="mc-title">Community Driven</div>
+        <p class="mc-desc">Kulan grows with its community. Student feedback shapes courses. Community members become instructors. Everyone has a seat at the table.</p>
+        <span class="mc-accent" style="background:var(--blue);"></span>
+      </div>
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#128272;</div>
+        <div class="mc-title">Trust &amp; Safety</div>
+        <p class="mc-desc">Student data is protected, authentication is secure, and we are transparent about how the platform works. Trust is non-negotiable.</p>
+        <span class="mc-accent" style="background:#7c3aed;"></span>
+      </div>
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#128200;</div>
+        <div class="mc-title">Always Improving</div>
+        <p class="mc-desc">Kulan is a living platform. We add courses, fix bugs, listen to feedback, and keep building. The work is never done and we would not have it any other way.</p>
+        <span class="mc-accent" style="background:var(--gold2);"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline" id="timeline">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="eyebrow">Our Journey</div>
+      <h2 class="sec-title">How We Got <em>Here</em></h2>
+      <p class="sec-sub">From an idea to a live platform — the story of how Kulan came to be.</p>
+    </div>
+    <div class="timeline-list">
+      <div class="tl-item fade-up">
+        <div class="tl-dot" style="background:linear-gradient(135deg,var(--gold),var(--gold2));">&#128161;</div>
+        <div class="tl-content">
+          <div class="tl-year">Early 2025 — The Idea</div>
+          <div class="tl-title">The Problem Becomes Clear</div>
+          <p class="tl-desc">Studying for my CompTIA Security+ certification, I kept noticing the same gap — every resource was English-only. I started keeping notes in both languages for myself, and realized this was something the whole community needed.</p>
+        </div>
+      </div>
+      <div class="tl-item fade-up">
+        <div class="tl-dot" style="background:linear-gradient(135deg,var(--cyan),var(--teal));">&#128187;</div>
+        <div class="tl-content">
+          <div class="tl-year">Mid 2025 — First Build</div>
+          <div class="tl-title">Kulan Institute of Technology and Science Takes Shape</div>
+          <p class="tl-desc">Built the first version of the website — a simple bilingual HTML site with an enrollment form. Created the first course materials for AI for Beginners in both English and Somali.</p>
+        </div>
+      </div>
+      <div class="tl-item fade-up">
+        <div class="tl-dot" style="background:linear-gradient(135deg,var(--navy),var(--blue));">&#127979;</div>
+        <div class="tl-content">
+          <div class="tl-year">Late 2025 — Platform Launch</div>
+          <div class="tl-title">Full LMS Goes Live</div>
+          <p class="tl-desc">Launched the full learning management system with student accounts, course viewer, admin panel, and teacher portal. Migrated from Netlify Identity to Supabase for real authentication and database storage.</p>
+        </div>
+      </div>
+      <div class="tl-item fade-up">
+        <div class="tl-dot" style="background:linear-gradient(135deg,var(--teal),#0a5c5b);">&#127758;</div>
+        <div class="tl-content">
+          <div class="tl-year">March 2026 — Growing</div>
+          <div class="tl-title">Three Sites, Three Subdomains</div>
+          <p class="tl-desc">Expanded to three live subdomains — the marketing site, the LMS, and the community hub. Now building certificates, an application page, and more course content across AI, Cybersecurity, and Digital Literacy.</p>
+        </div>
+      </div>
+      <div class="tl-item fade-up">
+        <div class="tl-dot" style="background:linear-gradient(135deg,var(--gold),var(--gold2));">&#127919;</div>
+        <div class="tl-content">
+          <div class="tl-year">2026 &amp; Beyond — What is Next</div>
+          <div class="tl-title">Building the Future</div>
+          <p class="tl-desc">More courses in business, civic literacy, and digital skills. Growing the instructor team. Adding paid courses to sustain the free tier. Building the platform our community deserves.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team" id="team">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="eyebrow">The Team</div>
+      <h2 class="sec-title">The Person <em>Behind It</em></h2>
+      <p class="sec-sub">Right now Kulan is one person with a vision — but the community makes it much more than that.</p>
+    </div>
+    <div class="team-card fade-up">
+      <div class="team-banner">
+        <div class="team-av">M</div>
+      </div>
+      <div class="team-body">
+        <div class="team-name">Mohamud Mohamed</div>
+        <div class="team-role">Founder, Instructor &amp; Developer</div>
+        <p class="team-bio">Mohamud is the founder and sole developer of Kulan Institute of Technology and Science. He holds a BA in Business Administration and an Associate's degree in Management Information Systems, and is actively pursuing a career in cybersecurity while building Kulan alongside it.</p>
+        <p class="team-bio" style="margin-top:12px;">He created Kulan to solve a problem he lived — the lack of bilingual tech education for the Somali community. He builds every course, writes every line of code, and teaches every class himself. His goal is to grow the platform into a full team of bilingual instructors from within the community.</p>
+        <div class="team-tags">
+          <span class="team-tag">Cybersecurity</span>
+          <span class="team-tag">AI Education</span>
+          <span class="team-tag">Bilingual Content</span>
+          <span class="team-tag">CompTIA Security+</span>
+          <span class="team-tag">Columbus, Ohio</span>
+          <span class="team-tag">Somali Community</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="partners" id="partners">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="eyebrow">Partners &amp; Affiliations</div>
+      <h2 class="sec-title">Built With <em>Great Tools</em></h2>
+    </div>
+    <p class="partners-note fade-up">Kulan Institute of Technology and Science is built on a stack of world-class free and open tools. We are grateful to these platforms for making it possible to run a quality educational institution at zero cost to students.</p>
+    <div class="partners-grid">
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#127760;</div>
+        <div class="partner-name">GitHub Pages</div>
+        <p class="partner-desc">Free static hosting for all three Kulan subdomains. Zero infrastructure cost.</p>
+      </div>
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#128204;</div>
+        <div class="partner-name">Supabase</div>
+        <p class="partner-desc">Authentication, database, and real-time data for the LMS platform.</p>
+      </div>
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#128140;</div>
+        <div class="partner-name">Formspree</div>
+        <p class="partner-desc">Contact and enrollment form handling on the marketing website.</p>
+      </div>
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#127268;</div>
+        <div class="partner-name">Namecheap</div>
+        <p class="partner-desc">Domain registration and DNS management for kulaninstitute.org.</p>
+      </div>
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#128248;</div>
+        <div class="partner-name">Google Fonts</div>
+        <p class="partner-desc">Playfair Display and DM Sans — the Kulan brand typography.</p>
+      </div>
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#127891;</div>
+        <div class="partner-name">CompTIA</div>
+        <p class="partner-desc">Our Cybersecurity curriculum is aligned with CompTIA Security+ (SY0-701) objectives.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="fade-up">
+      <div class="eyebrow">Get In Touch</div>
+      <h2>Want to Work<br>With Us?</h2>
+      <p style="margin-top:14px;">Whether you want to teach, partner, volunteer, or just say hello — we want to hear from you. Kulan grows when the community shows up.</p>
+    </div>
+    <div class="contact-details fade-up">
+      <div class="contact-item">
+        <div class="contact-item-icon">&#128233;</div>
+        <div class="contact-item-text">
+          <strong>Email</strong>
+          <a href="https://apply.kulaninstitute.org" style="color:var(--cyan);">Apply Now</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">&#127758;</div>
+        <div class="contact-item-text">
+          <strong>Main Website</strong>
+          kulaninstitute.org
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">&#127891;</div>
+        <div class="contact-item-text">
+          <strong>Learning Platform</strong>
+          learn.kulaninstitute.org
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">&#128101;</div>
+        <div class="contact-item-text">
+          <strong>Community Hub</strong>
+          community.kulaninstitute.org
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">&#128205;</div>
+        <div class="contact-item-text">
+          <strong>Location</strong>
+          Columbus, Ohio, United States
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="https://kulaninstitute.org" class="nav-logo">
+      <div class="nav-logo-icon">KI</div>
+      <div class="nav-logo-text">
+        <div class="t1" style="color:#fff">Kulan Institute of Technology and Science</div>
+        <div class="t2">kulaninstitute.org</div>
+      </div>
+    </a>
+    <div class="footer-links">
+      <a href="https://kulaninstitute.org">Home</a>
+      <a href="https://learn.kulaninstitute.org">LMS</a>
+      <a href="https://blog.kulaninstitute.org">Blog</a>
+    <a href="https://community.kulaninstitute.org">Community</a>
+      <a href="https://apply.kulaninstitute.org">Apply Now</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 Kulan Institute of Technology and Science</div>
+  </div>
+</footer>
+
+<script>
+// ── NAV SCROLL ──
+var nav = document.querySelector('nav');
+if (nav) {
+  window.addEventListener('scroll', function() {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+  nav.classList.add('scrolled');
+}
+
+// ── MOBILE MENU ──
+var mobileBtn = document.getElementById('mobileBtn');
+var navLinks  = document.querySelector('.nav-links');
+var overlay   = document.getElementById('navOverlay');
+
+if (mobileBtn && navLinks) {
+  mobileBtn.addEventListener('click', function() {
+    var isOpen = navLinks.classList.contains('open');
+    navLinks.classList.toggle('open', !isOpen);
+    mobileBtn.classList.toggle('active', !isOpen);
+    if (overlay) overlay.classList.toggle('show', !isOpen);
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  });
+  if (overlay) overlay.addEventListener('click', closeMenu);
+  navLinks.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', closeMenu);
+  });
+}
+function closeMenu() {
+  if (navLinks) navLinks.classList.remove('open');
+  if (mobileBtn) mobileBtn.classList.remove('active');
+  if (overlay) overlay.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ── SCROLL FADE ──
+var fades = document.querySelectorAll('.fade-up');
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+  });
+}, { threshold:0.1, rootMargin:'0px 0px -40px 0px' });
+fades.forEach(function(el) { obs.observe(el); });
+</script>E html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — KIST</title>
+<meta name="description" content="Learn about Kulan Institute of Technology and Science — our story, mission, team, and the community we serve.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC;
+  --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B;
+  --white:#FFFFFF; --bg:#F8F6F1; --warm:#EDE8DC;
+  --text:#1a2840; --text-mid:#4a6080; --text-light:#8a9bb0;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:0 5%; height:68px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(11,31,58,0.97); backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.nav-logo { display:flex;align-items:center;gap:12px;text-decoration:none; }
+.nav-logo-icon { width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:17px;color:var(--navy); }
+.nav-logo-text .t1 { font-size:13px;font-weight:700;color:#fff; }
+.nav-logo-text .t2 { font-size:10px;color:rgba(212,168,67,0.7); }
+.nav-links { display:flex;align-items:center;gap:28px; }
+.nav-links a { font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);text-decoration:none;transition:color .2s; }
+.nav-links a:hover { color:var(--gold); }
+.nav-links a.active { color:var(--gold);font-weight:700; }
+.nav-cta { background:linear-gradient(135deg,var(--cyan),var(--teal));color:#fff !important;padding:9px 20px;border-radius:8px;font-weight:700 !important;font-size:13px !important;transition:transform .2s,box-shadow .2s !important; }
+.nav-cta:hover { transform:translateY(-1px);box-shadow:0 6px 20px rgba(27,174,204,0.35); }
+
+/* ── HERO ── */
+.hero {
+  min-height:560px;
+  background:linear-gradient(160deg,#060f1e 0%,var(--navy) 50%,#0d2a50 100%);
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; padding:120px 5% 80px;
+}
+.hero-grid {
+  position:absolute; inset:0;
+  background-image:linear-gradient(rgba(27,174,204,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.05) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.hero-orb { position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(212,168,67,0.08) 0%,transparent 65%);right:-100px;top:-100px;border-radius:50%; }
+.hero-inner { max-width:1200px;width:100%;margin:0 auto; }
+.hero-badge { display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,67,0.1);border:1px solid rgba(212,168,67,0.25);border-radius:20px;padding:6px 16px;margin-bottom:24px;font-size:12px;font-weight:600;color:var(--gold);letter-spacing:.5px; }
+.hero h1 { font-family:'Playfair Display',serif;font-size:clamp(40px,6vw,72px);font-weight:900;color:#fff;line-height:1.05;margin-bottom:10px; }
+.hero h1 em { color:var(--gold);font-style:italic; }
+.hero-sub { font-size:18px;color:rgba(255,255,255,0.55);line-height:1.75;max-width:560px;margin-bottom:40px; }
+.hero-arc { position:absolute;bottom:-2px;left:0;right:0;height:60px;background:var(--bg);clip-path:ellipse(55% 100% at 50% 100%); }
+
+/* ── SECTIONS ── */
+section { padding:96px 5%; }
+.section-inner { max-width:1200px;margin:0 auto; }
+.eyebrow { display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:14px; }
+.eyebrow::before { content:'';width:20px;height:2px;background:var(--cyan);border-radius:2px; }
+h2.sec-title { font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--navy);line-height:1.15;margin-bottom:14px; }
+h2.sec-title em { color:var(--cyan);font-style:italic; }
+.sec-sub { font-size:17px;color:var(--text-mid);line-height:1.75;max-width:600px; }
+
+/* ── STORY ── */
+.story { background:var(--bg); }
+.story-grid { display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center; }
+.story-visual { position:relative; }
+.story-img {
+  width:100%;aspect-ratio:4/5;border-radius:24px;
+  background:linear-gradient(160deg,var(--navy),var(--blue));
+  display:flex;align-items:center;justify-content:center;font-size:80px;
+  position:relative;overflow:hidden;
+}
+.story-img-pattern {
+  position:absolute;inset:0;
+  background-image:repeating-linear-gradient(60deg,rgba(212,168,67,0.06) 0,rgba(212,168,67,0.06) 1px,transparent 0,transparent 28px),repeating-linear-gradient(-60deg,rgba(27,174,204,0.04) 0,rgba(27,174,204,0.04) 1px,transparent 0,transparent 28px);
+}
+.story-badge { position:absolute;bottom:24px;right:-20px;background:#fff;border-radius:16px;padding:16px 20px;box-shadow:0 12px 40px rgba(11,31,58,0.15);display:flex;align-items:center;gap:12px; }
+.story-badge .num { font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--navy); }
+.story-badge .lbl { font-size:12px;color:var(--text-mid);line-height:1.4; }
+.story-content p { font-size:16px;color:var(--text-mid);line-height:1.85;margin-bottom:18px; }
+.story-content p strong { color:var(--navy); }
+
+/* ── MISSION ── */
+.mission { background:#fff; }
+.mission-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:52px; }
+.mission-card { padding:32px;border-radius:20px;border:1px solid rgba(11,31,58,0.08);transition:all .25s; }
+.mission-card:hover { transform:translateY(-4px);box-shadow:0 16px 40px rgba(11,31,58,0.08);border-color:var(--cyan); }
+.mc-icon { font-size:36px;margin-bottom:16px; }
+.mc-title { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy);margin-bottom:10px; }
+.mc-desc { font-size:14px;color:var(--text-mid);line-height:1.75; }
+.mc-accent { display:block;width:32px;height:3px;border-radius:2px;margin-top:16px; }
+
+/* ── TIMELINE ── */
+.timeline { background:var(--warm); }
+.timeline-list { margin-top:52px;position:relative; }
+.timeline-list::before { content:'';position:absolute;left:24px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--cyan),var(--gold));border-radius:2px; }
+.tl-item { display:flex;gap:32px;margin-bottom:44px;position:relative; }
+.tl-dot { width:48px;height:48px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;position:relative;z-index:1;border:3px solid #fff;box-shadow:0 4px 14px rgba(11,31,58,0.15); }
+.tl-content { flex:1;padding-top:8px; }
+.tl-year { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);margin-bottom:5px; }
+.tl-title { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy);margin-bottom:8px; }
+.tl-desc { font-size:14px;color:var(--text-mid);line-height:1.75; }
+
+/* ── TEAM ── */
+.team { background:var(--bg); }
+.team-card {
+  max-width:480px;
+  background:#fff;border-radius:24px;overflow:hidden;
+  border:1px solid rgba(11,31,58,0.08);
+  box-shadow:0 12px 40px rgba(11,31,58,0.08);
+  margin-top:48px;
+}
+.team-banner { height:140px;background:linear-gradient(135deg,var(--navy),var(--blue));position:relative;display:flex;align-items:flex-end;padding:0 28px 0; }
+.team-av { width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));border:4px solid #fff;position:absolute;bottom:-44px;left:28px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--navy);box-shadow:0 8px 24px rgba(212,168,67,0.3);overflow:hidden; }
+.team-body { padding:60px 28px 28px; }
+.team-name { font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--navy);margin-bottom:4px; }
+.team-role { font-size:13px;font-weight:600;color:var(--teal);letter-spacing:.4px;margin-bottom:16px; }
+.team-bio { font-size:14px;color:var(--text-mid);line-height:1.8;margin-bottom:20px; }
+.team-tags { display:flex;gap:8px;flex-wrap:wrap; }
+.team-tag { padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(11,31,58,0.06);color:var(--text-mid); }
+
+/* ── PARTNERS ── */
+.partners { background:#fff; }
+.partners-note { font-size:15px;color:var(--text-mid);line-height:1.75;max-width:600px;margin-bottom:44px; }
+.partners-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:20px; }
+.partner-card { padding:28px;border-radius:18px;border:1.5px solid rgba(11,31,58,0.1);text-align:center;transition:all .25s; }
+.partner-card:hover { border-color:var(--cyan);box-shadow:0 8px 24px rgba(27,174,204,0.1); }
+.partner-icon { font-size:36px;margin-bottom:12px; }
+.partner-name { font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px; }
+.partner-desc { font-size:13px;color:var(--text-light);line-height:1.6; }
+
+/* ── CONTACT ── */
+.contact-section { background:linear-gradient(160deg,var(--navy),var(--blue));padding:80px 5%; }
+.contact-inner { max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center; }
+.contact-section .eyebrow::before { background:var(--gold); }
+.contact-section .eyebrow { color:var(--gold); }
+.contact-section h2 { font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,42px);font-weight:700;color:#fff;margin-bottom:14px; }
+.contact-section p { font-size:16px;color:rgba(255,255,255,0.55);line-height:1.75; }
+.contact-details { display:flex;flex-direction:column;gap:18px; }
+.contact-item { display:flex;align-items:center;gap:14px; }
+.contact-item-icon { width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+.contact-item-text { font-size:14px;color:rgba(255,255,255,0.6);line-height:1.6; }
+.contact-item-text strong { display:block;color:#fff;font-weight:600;margin-bottom:2px; }
+
+/* ── FOOTER ── */
+footer { background:var(--navy);padding:40px 5%;border-top:1px solid rgba(255,255,255,0.08); }
+.footer-inner { max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px; }
+.footer-links { display:flex;gap:24px; }
+.footer-links a { font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .2s; }
+.footer-links a:hover { color:var(--gold); }
+.footer-copy { font-size:13px;color:rgba(255,255,255,0.3); }
+
+/* ── FADE ── */
+.fade-up { opacity:0;transform:translateY(28px);transition:opacity .55s ease,transform .55s ease; }
+.fade-up.visible { opacity:1;transform:none; }
+
+@media(max-width:1024px) { .story-grid { grid-template-columns:1fr; } .story-visual { max-width:400px; } .contact-inner { grid-template-columns:1fr; } }
+@media(max-width:768px) { nav { padding:0 20px; } .nav-links { display:none; } section { padding:72px 20px; } .mission-grid { grid-template-columns:1fr; } .partners-grid { grid-template-columns:1fr 1fr; } .contact-section { padding:60px 20px; } }
+@media(max-width:480px) { .partners-grid { grid-template-columns:1fr; } }
+
+/* ── MOBILE NAV ── */
+.nav-mobile-btn {
+  display:none; flex-direction:column; justify-content:space-between;
+  width:28px; height:20px; background:none; border:none; cursor:pointer;
+  padding:0; z-index:101; position:relative;
+}
+.nav-mobile-btn span {
+  display:block; height:2px; width:100%;
+  background:#fff; border-radius:2px; transition:all .3s;
+}
+.nav-mobile-btn.active span:nth-child(1) { transform:translateY(9px) rotate(45deg); }
+.nav-mobile-btn.active span:nth-child(2) { opacity:0; }
+.nav-mobile-btn.active span:nth-child(3) { transform:translateY(-9px) rotate(-45deg); }
+.nav-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.55); z-index:89;
+}
+.nav-overlay.show { display:block; }
+@media(max-width:768px) {
+  .nav-mobile-btn { display:flex; }
+  .nav-links {
+    display:flex; flex-direction:column;
+    position:fixed; top:0; right:-100%; bottom:0;
+    width:min(280px,80vw); background:var(--navy);
+    padding:80px 28px 40px; z-index:90;
+    transition:right .3s; gap:0;
+    border-left:1px solid rgba(255,255,255,0.08);
+    overflow-y:auto;
+  }
+  .nav-links.open { right:0; }
+  .nav-links a {
+    padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.07);
+    font-size:15px; color:rgba(255,255,255,0.8);
+  }
+  .nav-links a.nav-cta {
+    margin-top:20px; text-align:center;
+    background:linear-gradient(135deg,var(--gold),var(--gold2));
+    color:var(--navy); border-radius:10px; padding:13px;
+    border-bottom:none;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="https://kulaninstitute.org" class="nav-logo">
+    <div class="nav-logo-icon">KI</div>
+    <div class="nav-logo-text">
+      <div class="t1">Kulan Institute of Technology and Science</div>
+      <div class="t2">Learn. Grow. Lead.</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="https://kulaninstitute.org">Home</a>
+    <a href="https://kulaninstitute.org#courses">Courses</a>
+    <a href="https://about.kulaninstitute.org" class="active">About</a>
+    <a href="https://blog.kulaninstitute.org">Blog</a>
+    <a href="https://community.kulaninstitute.org">Community</a>
+    <a href="https://kulaninstitute.org#contact">Contact</a>
+    <a href="https://learn.kulaninstitute.org" class="nav-cta">Start Learning &rarr;</a>
+  </div>
+  <button class="nav-mobile-btn" id="mobileBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-orb"></div>
+  <div class="hero-inner fade-up">
+    <div class="hero-badge">&#127979; About Kulan Institute of Technology and Science</div>
+    <h1>Built for <em>Our Community.</em><br>By Our Community.</h1>
+    <p class="hero-sub">We are a bilingual English and Somali educational platform on a mission to make world-class technology education accessible to everyone — regardless of language, background, or income.</p>
+  </div>
+  <div class="hero-arc"></div>
+</section>
+
+<!-- OUR STORY -->
+<section class="story" id="story">
+  <div class="section-inner">
+    <div class="story-grid">
+      <div class="story-visual fade-up">
+        <div class="story-img">
+          <div class="story-img-pattern"></div>
+          <span style="position:relative;z-index:1;">&#127979;</span>
+        </div>
+        <div class="story-badge">
+          <div>
+            <div class="num">3</div>
+            <div class="lbl">Courses<br>Launched</div>
+          </div>
+          <div style="font-size:28px;">&#128218;</div>
+        </div>
+      </div>
+      <div class="story-content fade-up">
+        <div class="eyebrow">Our Story</div>
+        <h2 class="sec-title">Why Kulan<br><em>Exists</em></h2>
+        <p>Kulan Institute of Technology and Science was founded with a simple but powerful idea: <strong>language should never be a barrier to learning technology.</strong></p>
+        <p>As a member of the Somali community in Columbus, Ohio, I saw firsthand how talented, motivated people were being left behind in the tech revolution — not because they lacked ability, but because every resource, course, and certification was in a language that was not their first.</p>
+        <p>So I built Kulan. Not just another online school, but a bilingual learning home where students can grow in both English and Somali at the same time — absorbing concepts in the language they think in, while building the English vocabulary they need to succeed in tech careers.</p>
+        <p>Every course, every material, every lesson is built with this community in mind. <strong>That will never change.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION & VALUES -->
+<section class="mission" id="mission">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="eyebrow">Mission &amp; Values</div>
+      <h2 class="sec-title">What We <em>Believe</em></h2>
+      <p class="sec-sub">Four principles guide everything we build, every course we create, and every student we serve.</p>
+    </div>
+    <div class="mission-grid">
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#127758;</div>
+        <div class="mc-title">Bilingual First</div>
+        <p class="mc-desc">Every lesson is built in both English and Somali from day one — not translated after the fact. Language is identity, and we honor that.</p>
+        <span class="mc-accent" style="background:var(--cyan);"></span>
+      </div>
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#128233;</div>
+        <div class="mc-title">Free &amp; Accessible</div>
+        <p class="mc-desc">Core courses are free forever. Quality education should never come with a price tag that excludes the people who need it most.</p>
+        <span class="mc-accent" style="background:var(--gold);"></span>
+      </div>
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#128296;</div>
+        <div class="mc-title">Career Ready</div>
+        <p class="mc-desc">No filler, no fluff. Every module teaches something you can actually use on day one in a real tech job or certification exam.</p>
+        <span class="mc-accent" style="background:var(--teal);"></span>
+      </div>
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#127775;</div>
+        <div class="mc-title">Community Driven</div>
+        <p class="mc-desc">Kulan grows with its community. Student feedback shapes courses. Community members become instructors. Everyone has a seat at the table.</p>
+        <span class="mc-accent" style="background:var(--blue);"></span>
+      </div>
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#128272;</div>
+        <div class="mc-title">Trust &amp; Safety</div>
+        <p class="mc-desc">Student data is protected, authentication is secure, and we are transparent about how the platform works. Trust is non-negotiable.</p>
+        <span class="mc-accent" style="background:#7c3aed;"></span>
+      </div>
+      <div class="mission-card fade-up">
+        <div class="mc-icon">&#128200;</div>
+        <div class="mc-title">Always Improving</div>
+        <p class="mc-desc">Kulan is a living platform. We add courses, fix bugs, listen to feedback, and keep building. The work is never done and we would not have it any other way.</p>
+        <span class="mc-accent" style="background:var(--gold2);"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline" id="timeline">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="eyebrow">Our Journey</div>
+      <h2 class="sec-title">How We Got <em>Here</em></h2>
+      <p class="sec-sub">From an idea to a live platform — the story of how Kulan came to be.</p>
+    </div>
+    <div class="timeline-list">
+      <div class="tl-item fade-up">
+        <div class="tl-dot" style="background:linear-gradient(135deg,var(--gold),var(--gold2));">&#128161;</div>
+        <div class="tl-content">
+          <div class="tl-year">Early 2025 — The Idea</div>
+          <div class="tl-title">The Problem Becomes Clear</div>
+          <p class="tl-desc">Studying for my CompTIA Security+ certification, I kept noticing the same gap — every resource was English-only. I started keeping notes in both languages for myself, and realized this was something the whole community needed.</p>
+        </div>
+      </div>
+      <div class="tl-item fade-up">
+        <div class="tl-dot" style="background:linear-gradient(135deg,var(--cyan),var(--teal));">&#128187;</div>
+        <div class="tl-content">
+          <div class="tl-year">Mid 2025 — First Build</div>
+          <div class="tl-title">Kulan Institute of Technology and Science Takes Shape</div>
+          <p class="tl-desc">Built the first version of the website — a simple bilingual HTML site with an enrollment form. Created the first course materials for AI for Beginners in both English and Somali.</p>
+        </div>
+      </div>
+      <div class="tl-item fade-up">
+        <div class="tl-dot" style="background:linear-gradient(135deg,var(--navy),var(--blue));">&#127979;</div>
+        <div class="tl-content">
+          <div class="tl-year">Late 2025 — Platform Launch</div>
+          <div class="tl-title">Full LMS Goes Live</div>
+          <p class="tl-desc">Launched the full learning management system with student accounts, course viewer, admin panel, and teacher portal. Migrated from Netlify Identity to Supabase for real authentication and database storage.</p>
+        </div>
+      </div>
+      <div class="tl-item fade-up">
+        <div class="tl-dot" style="background:linear-gradient(135deg,var(--teal),#0a5c5b);">&#127758;</div>
+        <div class="tl-content">
+          <div class="tl-year">March 2026 — Growing</div>
+          <div class="tl-title">Three Sites, Three Subdomains</div>
+          <p class="tl-desc">Expanded to three live subdomains — the marketing site, the LMS, and the community hub. Now building certificates, an application page, and more course content across AI, Cybersecurity, and Digital Literacy.</p>
+        </div>
+      </div>
+      <div class="tl-item fade-up">
+        <div class="tl-dot" style="background:linear-gradient(135deg,var(--gold),var(--gold2));">&#127919;</div>
+        <div class="tl-content">
+          <div class="tl-year">2026 &amp; Beyond — What is Next</div>
+          <div class="tl-title">Building the Future</div>
+          <p class="tl-desc">More courses in business, civic literacy, and digital skills. Growing the instructor team. Adding paid courses to sustain the free tier. Building the platform our community deserves.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team" id="team">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="eyebrow">The Team</div>
+      <h2 class="sec-title">The Person <em>Behind It</em></h2>
+      <p class="sec-sub">Right now Kulan is one person with a vision — but the community makes it much more than that.</p>
+    </div>
+    <div class="team-card fade-up">
+      <div class="team-banner">
+        <div class="team-av">M</div>
+      </div>
+      <div class="team-body">
+        <div class="team-name">Mohamud Mohamed</div>
+        <div class="team-role">Founder, Instructor &amp; Developer</div>
+        <p class="team-bio">Mohamud is the founder and sole developer of Kulan Institute of Technology and Science. He holds a BA in Business Administration and an Associate's degree in Management Information Systems, and is actively pursuing a career in cybersecurity while building Kulan alongside it.</p>
+        <p class="team-bio" style="margin-top:12px;">He created Kulan to solve a problem he lived — the lack of bilingual tech education for the Somali community. He builds every course, writes every line of code, and teaches every class himself. His goal is to grow the platform into a full team of bilingual instructors from within the community.</p>
+        <div class="team-tags">
+          <span class="team-tag">Cybersecurity</span>
+          <span class="team-tag">AI Education</span>
+          <span class="team-tag">Bilingual Content</span>
+          <span class="team-tag">CompTIA Security+</span>
+          <span class="team-tag">Columbus, Ohio</span>
+          <span class="team-tag">Somali Community</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="partners" id="partners">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="eyebrow">Partners &amp; Affiliations</div>
+      <h2 class="sec-title">Built With <em>Great Tools</em></h2>
+    </div>
+    <p class="partners-note fade-up">Kulan Institute of Technology and Science is built on a stack of world-class free and open tools. We are grateful to these platforms for making it possible to run a quality educational institution at zero cost to students.</p>
+    <div class="partners-grid">
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#127760;</div>
+        <div class="partner-name">GitHub Pages</div>
+        <p class="partner-desc">Free static hosting for all three Kulan subdomains. Zero infrastructure cost.</p>
+      </div>
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#128204;</div>
+        <div class="partner-name">Supabase</div>
+        <p class="partner-desc">Authentication, database, and real-time data for the LMS platform.</p>
+      </div>
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#128140;</div>
+        <div class="partner-name">Formspree</div>
+        <p class="partner-desc">Contact and enrollment form handling on the marketing website.</p>
+      </div>
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#127268;</div>
+        <div class="partner-name">Namecheap</div>
+        <p class="partner-desc">Domain registration and DNS management for kulaninstitute.org.</p>
+      </div>
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#128248;</div>
+        <div class="partner-name">Google Fonts</div>
+        <p class="partner-desc">Playfair Display and DM Sans — the Kulan brand typography.</p>
+      </div>
+      <div class="partner-card fade-up">
+        <div class="partner-icon">&#127891;</div>
+        <div class="partner-name">CompTIA</div>
+        <p class="partner-desc">Our Cybersecurity curriculum is aligned with CompTIA Security+ (SY0-701) objectives.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="fade-up">
+      <div class="eyebrow">Get In Touch</div>
+      <h2>Want to Work<br>With Us?</h2>
+      <p style="margin-top:14px;">Whether you want to teach, partner, volunteer, or just say hello — we want to hear from you. Kulan grows when the community shows up.</p>
+    </div>
+    <div class="contact-details fade-up">
+      <div class="contact-item">
+        <div class="contact-item-icon">&#128233;</div>
+        <div class="contact-item-text">
+          <strong>Email</strong>
+          <a href="https://apply.kulaninstitute.org" style="color:var(--cyan);">Apply Now</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">&#127758;</div>
+        <div class="contact-item-text">
+          <strong>Main Website</strong>
+          kulaninstitute.org
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">&#127891;</div>
+        <div class="contact-item-text">
+          <strong>Learning Platform</strong>
+          learn.kulaninstitute.org
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">&#128101;</div>
+        <div class="contact-item-text">
+          <strong>Community Hub</strong>
+          community.kulaninstitute.org
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon">&#128205;</div>
+        <div class="contact-item-text">
+          <strong>Location</strong>
+          Columbus, Ohio, United States
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="https://kulaninstitute.org" class="nav-logo">
+      <div class="nav-logo-icon">KI</div>
+      <div class="nav-logo-text">
+        <div class="t1" style="color:#fff">Kulan Institute of Technology and Science</div>
+        <div class="t2">kulaninstitute.org</div>
+      </div>
+    </a>
+    <div class="footer-links">
+      <a href="https://kulaninstitute.org">Home</a>
+      <a href="https://learn.kulaninstitute.org">LMS</a>
+      <a href="https://blog.kulaninstitute.org">Blog</a>
+    <a href="https://community.kulaninstitute.org">Community</a>
+      <a href="https://apply.kulaninstitute.org">Apply Now</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 Kulan Institute of Technology and Science</div>
+  </div>
+</footer>
+
+<script>
+// Fade in on scroll
+var fades = document.querySelectorAll('.fade-up');
+var obs = new IntersectionObserver(
+</body>
+</html>

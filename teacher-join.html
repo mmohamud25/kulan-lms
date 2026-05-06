@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Join as Teacher — Kulan Institute</title>
+<title>Join as Teacher — KIST</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -12,7 +12,7 @@ var SUPABASE_KEY = 'sb_publishable_VVERiS7NeHDtlXJqJX8Jtg_K2UNsctv';
 var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
 <style>
-:root { --navy:#0B1F3A; --blue:#1A3C6E; --cyan:#1BAECC; --gold:#D4A843; --gold2:#e8c060; --teal:#0E7C7B; }
+:root{ --navy:#0B2545; --blue:#1A3A6B; --cyan:#0D9488; --gold:#D97706; --gold2:#F59E0B; --teal:#0D9488; }
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#060f1e,var(--navy),#0a3040);position:relative;overflow:hidden;padding:20px; }
 .bg-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(27,174,204,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(27,174,204,0.05) 1px,transparent 1px);background-size:56px 56px;pointer-events:none; }
@@ -40,7 +40,7 @@ h1 { font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#
 .status-msg { font-size:13px;padding:11px 15px;border-radius:10px;margin-bottom:14px;display:none;line-height:1.5;text-align:center; }
 .status-msg.error   { display:block;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#fca5a5; }
 .status-msg.success { display:block;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#86efac; }
-.btn-join { width:100%;padding:13px;border-radius:11px;background:linear-gradient(135deg,var(--teal),#0a5c5b);border:none;color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:6px; }
+.btn-join { width:100%;padding:13px;border-radius:11px;background:linear-gradient(135deg,var(--teal),#0B706B);border:none;color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:6px; }
 .btn-join:hover:not(:disabled) { transform:translateY(-1px);box-shadow:0 8px 24px rgba(14,124,123,0.3); }
 .btn-join:disabled { opacity:.6;cursor:not-allowed;transform:none; }
 #loadingState { text-align:center;padding:40px 0;color:rgba(255,255,255,0.5); }
@@ -54,7 +54,7 @@ h1 { font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#
 .s-icon  { font-size:52px;margin-bottom:14px; }
 .s-title { font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin-bottom:10px; }
 .s-sub   { font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;line-height:1.7; }
-.go-btn  { display:inline-block;padding:12px 26px;border-radius:10px;background:linear-gradient(135deg,var(--teal),#0a5c5b);color:#fff;font-weight:700;font-size:14px;text-decoration:none; }
+.go-btn  { display:inline-block;padding:12px 26px;border-radius:10px;background:linear-gradient(135deg,var(--teal),#0B706B);color:#fff;font-weight:700;font-size:14px;text-decoration:none; }
 @media(max-width:480px) { .card { padding:32px 22px; } }
 </style>
 <!-- Google Analytics -->
@@ -72,7 +72,7 @@ h1 { font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#
 <div class="card">
   <a href="https://kulaninstitute.org" class="logo">
     <div class="logo-icon">KI</div>
-    <div class="logo-text"><div class="t1">Kulan Institute</div><div class="t2">of Learning</div></div>
+    <div class="logo-text"><div class="t1">Kulan Institute of Technology and Science</div><div class="t2">Learn. Grow. Lead.</div></div>
   </a>
 
   <div id="loadingState">
@@ -131,7 +131,7 @@ function checkStrength() {
   var pw=document.getElementById('pw1').value, fill=document.getElementById('strengthFill'), lbl=document.getElementById('strengthLbl'), score=0;
   if(pw.length>=8) score++; if(pw.length>=12) score++;
   if(/[A-Z]/.test(pw)) score++; if(/[0-9]/.test(pw)) score++; if(/[^a-zA-Z0-9]/.test(pw)) score++;
-  var cols=['#ef4444','#f97316','#eab308','#22c55e','#16a34a'], labs=['Too short','Weak','Fair','Strong','Very strong'];
+  var cols=['#DC2626','#f97316','#eab308','#16A34A','#16A34A'], labs=['Too short','Weak','Fair','Strong','Very strong'];
   fill.style.width=(score*20)+'%'; fill.style.background=cols[Math.max(0,score-1)];
   lbl.textContent=score===0?'At least 8 characters':labs[Math.min(score-1,4)];
 }
